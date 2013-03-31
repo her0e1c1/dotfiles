@@ -1,0 +1,130 @@
+;;;; Emacs Bookmark Format Version 1 ;;;;
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("tokenizer.c"
+ (filename . "~/s/web/sphinx/python/version/python-1.0.1.rst")
+ (front-context-string . "\n\n /* Tokenizer ")
+ (rear-context-string . "*tok_state**\n\n::")
+ (position . 1428))
+("prepare"
+ (filename . "~/python/3.3.0/lib/python3.3/site-packages/requests/models.py")
+ (front-context-string . "        sendする前に")
+ (rear-context-string . "ns it.\n        \n")
+ (position . 6652))
+("PatternMatchingEventHandler"
+ (filename . "~/python/2.7.3/lib/python2.7/site-packages/watchdog-0.6.0-py2.7-macosx-10.4-x86_64.egg/watchdog/events.py")
+ (front-context-string . "class PatternMat")
+ (rear-context-string . "vent`\n    \"\"\"\n\n\n")
+ (position . 11364))
+("python-skeltons"
+ (filename . "~/s/conf/emacs/python/python.el")
+ (front-context-string . "\n\n(defcustom pyt")
+ (rear-context-string . "\n\f\n;;; Skeletons")
+ (position . 108173))
+("python-shell"
+ (filename . "~/s/conf/emacs/python/python.el")
+ (front-context-string . "; Shell integrat")
+ (rear-context-string . " (- arg)))\n\n\f\n;;")
+ (position . 63341))
+("syntax-propertize-rules"
+ (filename . "~/s/conf/emacs/python/python.el")
+ (front-context-string . "(defconst python")
+ (rear-context-string . "ce nil nil))))\n\n")
+ (position . 22233))
+("pythom-mode.el"
+ (filename . "~/s/conf/emacs/python/python.el")
+ (front-context-string . ";;;###autoload\n(")
+ (rear-context-string . "nt factor)))\n\n\f\n")
+ (position . 129692))
+("python-inferior-mode"
+ (filename . "~/s/conf/emacs/python/python.el")
+ (front-context-string . "\n(define-derived")
+ (rear-context-string . "uation chars.\")\n")
+ (position . 71188))
+("py-pylint"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defalias 'pyli")
+ (rear-context-string . "p*\"))\n\n;; Pylint")
+ (position . 575928))
+("py-copy"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defalias 'py-s")
+ (rear-context-string . ") (cdr erg)))))\n")
+ (position . 265274))
+("py-opens"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n  \"Return posit")
+ (rear-context-string . "optional regexp)")
+ (position . 197431))
+("py-comment"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n;;; Comments, F")
+ (rear-context-string . "        nil))))\n")
+ (position . 173165))
+("py-bounds"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun py-bound")
+ (rear-context-string . "))))\n\n;;; Bounds")
+ (position . 164389))
+("py-position"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun py-def-o")
+ (rear-context-string . "\n\n;;; Positions\n")
+ (position . 154733))
+("py-indent"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun py-shift")
+ (rear-context-string . "erg))\n    erg))\n")
+ (position . 145362))
+("py-font"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n;; Keymap and s")
+ (rear-context-string . " OK.\n     )))\n\n\f")
+ (position . 111541))
+("py-forward-line"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun py-forwa")
+ (rear-context-string . "um:]]*$\")))))))\n")
+ (position . 84754))
+("py-shell-send-string"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun py-shell")
+ (rear-context-string . "erg))\n    erg))\n")
+ (position . 74560))
+("py-macro"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun toggle-p")
+ (rear-context-string . "-exception forms")
+ (position . 58525))
+("pychoose"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n  (if (eq 4 (pr")
+ (rear-context-string . "interactive \"P\")")
+ (position . 432324))
+("python"
+ (filename . "~/.emacs")
+ (front-context-string . "(setq py-shell-n")
+ (rear-context-string . "\")\n             ")
+ (position . 6936))
+("pyshell"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "(defun py-shell ")
+ (rear-context-string . "sit-for 0.1)))\n\n")
+ (position . 398691))
+("python-mode"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "defgroup python-")
+ (rear-context-string . "e 'thingatpt)\n\n(")
+ (position . 2098))
+("ipython-complete"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "(let* (\n        ")
+ (rear-context-string . "eractive \"*\")\n  ")
+ (position . 564295))
+("py-shell"
+ (filename . "~/s/conf/emacs/python/python-mode.el")
+ (front-context-string . "\n(defun py-shell")
+ (rear-context-string . "(sit-for 0.1)))\n")
+ (position . 398690))
+)
