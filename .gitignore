@@ -1,0 +1,15 @@
+*.a
+*.o
+
+*.pyc
+
+.DS_Store
+*.zip
+*.tar.gz
+*.exe
+*.bz2
+
+*.bak
+*~
+a.out
+
