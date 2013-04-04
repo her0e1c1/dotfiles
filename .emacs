@@ -8,7 +8,7 @@
 (setenv "LANG" "ja_JP.UTF-8")
 
 ;再帰的にパスを加えて行く
-(let ((default-directory (expand-file-name "~/dropbox/conf/emacs/")))
+(let ((default-directory (expand-file-name "~/.emacs.d/")))
   (add-to-list 'load-path default-directory)
    (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
        (normal-top-level-add-subdirs-to-load-path)))
@@ -115,8 +115,9 @@
       (require 'carbon-font)
       (fixed-width-set-fontset "hirakaku_w3" 14)
 	  )
-;  (set-default-font "Monospace-19")
-  (set-frame-font "Hiragino-14"))
+  (set-default-font "Monospace-12")
+  ;(set-frame-font "Hiragino-14")
+  )
 
 (setq inferior-lisp-program "ccl")
 ;--------------------------------------------------
