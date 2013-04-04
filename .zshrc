@@ -48,7 +48,11 @@ zstyle ':completion' ignore-parents parent pwd ..
 
 #function
 cdls(){
-    \cd "$*" && ls
+	if [ ${#1} -eq 0 ]; then
+	   cd && ls
+	else
+       \cd "$*" && ls
+	fi
 }
 
 zshaddhistory(){
