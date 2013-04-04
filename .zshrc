@@ -67,26 +67,7 @@ zshaddhistory(){
 }
 
 
-# alias
-alias cd=cdls
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias pd='pushd'
-alias ds='dirs -v'
-alias x="xargs"
-alias j="jobs"
-alias i="ipython3"
-alias e='echo $?'
-alias rm="rm -i"
-alias cp="cp -i"
-alias mv="mv -i"
-
-
-export PATH=~/python/3.3.0/bin:$PATH
-export PATH=/home/dropbox/public/:$PATH
-export PATH=/home/dropbox/public/lib:$PATH
-export PATH=~/public/lib:$PATH
-export PATH=~/dropbox/lib:$PATH
-
 [ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
+[ -f ~/.sh.d/export ] && source .sh.d/export
+[ -f ~/.sh.d/alias ] && source .sh.d/alias
+

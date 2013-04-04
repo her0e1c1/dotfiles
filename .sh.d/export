@@ -1,0 +1,4 @@
+export PATH=~/python/2.7.3/bin:$PATH
+export PATH=~/python/3.3.0/bin:$PATH
+export PATH=~/public/lib:$PATH
+export PATH=~/dropbox/lib:$PATH
