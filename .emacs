@@ -109,15 +109,17 @@
 ;OSごとの環境設定
 ;--------------------------------------------------
 ;mac
-(if (eq window-system 'mac)
+(if (or (eq window-system 'mac)
+        (eq window-system 'ns))
+    (set-frame-font "Hiragino-14")
     (let ()
 	  ;フォントサイズを変更する
-      (require 'carbon-font)
-      (fixed-width-set-fontset "hirakaku_w3" 14)
-	  )
+      ;(require 'carbon-font)
+      ;(fixed-width-set-fontset "hirakaku_w3" 10)
+      )
   (set-default-font "Monospace-12")
-  ;(set-frame-font "Hiragino-14")
   )
+
 
 (setq inferior-lisp-program "ccl")
 ;--------------------------------------------------
