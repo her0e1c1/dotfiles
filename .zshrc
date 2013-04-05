@@ -68,6 +68,6 @@ zshaddhistory(){
 
 
 [ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
-[ -f ~/.sh.d/export ] && source .sh.d/export
-[ -f ~/.sh.d/alias ] && source .sh.d/alias
+[ -f ~/.sh.d/export ] && source ~/.sh.d/export
+[ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
 
