@@ -11,5 +11,7 @@
 
 *.bak
 *~
-a.out
+*.out
 
+temp/
+__pycache__/

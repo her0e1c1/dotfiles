@@ -1,5 +1,0 @@
-export PATH=~/python/3.3.0/bin:$PATH
-export PATH=/home/dropbox/public/:$PATH
-export PATH=/home/dropbox/public/lib:$PATH
-export PATH=~/public/lib:$PATH
-export PATH=~/dropbox/lib:$PATH
