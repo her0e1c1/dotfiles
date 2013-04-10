@@ -1,0 +1,14 @@
+[user]
+	name = her0e1c1
+	email = her0e1c1@gmail.com
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	rt = remote
+[color]
+	ui = true
+[core]
+	editor = vi
+	excludesfile = /Users/air/.gitignore
