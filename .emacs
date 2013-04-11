@@ -430,3 +430,4 @@
   (interactive)
   (delete-matching-lines "import ipdb; ipdb.set_trace()"))
 
+(load "~/.emacs.d/haskell-mode/haskell-site-file")
