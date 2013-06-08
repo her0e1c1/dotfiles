@@ -18,6 +18,11 @@
 ;(auto-install-update-emacswiki-package-name t)
 ;(auto-install-compatibility-setup)
 
+(add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
+(autoload 'csv-mode "csv-mode"
+   "Major mode for editing comma-separated value files." t)
+(setq csv-separators '("\t"))
+
 ;--------------------------------------------------
 ;face
 ;--------------------------------------------------
@@ -430,4 +435,9 @@
   (interactive)
   (delete-matching-lines "import ipdb; ipdb.set_trace()"))
 
+;haskell
 (load "~/.emacs.d/haskell-mode/haskell-site-file")
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
