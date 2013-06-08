@@ -1,0 +1,6 @@
+[ui]
+username = her0 <her0e1c1@gmail.com>
+editor = vim
+
+[extensions]
+hggit =  ~/python/2.7.3/lib/python2.7/site-packages/hg_git-0.4.0-py2.7.egg/hggit
