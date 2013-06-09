@@ -33,82 +33,83 @@
             (set-face-background 'rst-level-1-color "selectedKnobColor")
             ))
 
+
 ;--------------------------------------------------
 ;拡張子
 ;--------------------------------------------------
-;; (let (mode)
-;;   (if (require 'python-mode nil t)
-;;       (setq mode 'python-mode)
-;;     (setq mode 'python))
-;;   (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
+(let (mode)
+  (if (require 'python-mode nil t)
+      (setq mode 'python-mode)
+    (setq mode 'python))
+  (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
 
 (add-to-list 'auto-mode-alist `("\\.py\\'" . python-mode))
 
 
-;--------------------------------------------------
-;rst
-;--------------------------------------------------
+;; ;--------------------------------------------------
+;; ;rst
+;; ;--------------------------------------------------
 
 ;(setcar (cdr(assq 's5 rst-compile-toolsets)) "rst2s5.py")
 (setq rst-slides-program "open -a opera")
 
 
-;--------------------------------------------------
-;anything
-;--------------------------------------------------
+;; ;--------------------------------------------------
+;; ;anything
+;; ;--------------------------------------------------
 
 (require 'anything)
 (require 'anything-config)
 (require 'anything-match-plugin)
 
 ;設定
-(setq kill-ring-max 30)
-(setq recentf-max-menu-items 200)
-(setq recentf-max-saved-items 200 )
+(setq kill-ring-max 300)
+(setq recentf-max-menu-items 2000)
+(setq recentf-max-saved-items 2000 )
+(global-set-key (kbd "C-x C-;") 'anything-call-source)
+;; (setq anything-sources 
+;;  '(anything-c-source-buffers+ 
+;;  anything-c-source-file-name-history 
+;;  anything-c-source-recentf
+;;  anything-c-source-bookmarks
+;;  anything-c-source-register
+;;  anything-c-source-kill-ring
 
-(setq anything-sources 
- '(anything-c-source-buffers+ 
- anything-c-source-file-name-history 
- anything-c-source-recentf
- anything-c-source-bookmarks
- anything-c-source-register
- anything-c-source-kill-ring
-
- anything-c-source-buffer-not-found 
- anything-c-source-imenu 
- anything-c-source-etags-select
- anything-c-source-files-in-current-dir
- anything-c-source-man-pages
- anything-c-source-emacs-commands
- anything-c-source-emacs-functions
+;;  anything-c-source-buffer-not-found 
+;;  anything-c-source-imenu 
+;;  anything-c-source-etags-select
+;;  anything-c-source-files-in-current-dir
+;;  anything-c-source-man-pages
+;;  anything-c-source-emacs-commands
+;;  anything-c-source-emacs-functions
  
- ;self made
- anything-c-source-plocate 
- anything-c-source-home-locate
- ))
+;;  ;self made
+;;  ;anything-c-source-plocate 
+;;  ;anything-c-source-home-locate
+;;  ))
 ;; 自動でimenuのインデックスを作る 
-(setq imenu-auto-rescan t)
+;(setq imenu-auto-rescan t)
 
-(defvar anything-c-source-home-locate 
- '((name . "Home Locate") 
- (candidates . (lambda () 
- (apply 'start-process "anything-home-locate-process" nil 
- (home-locate-make-command-line anything-pattern "-r")))) 
- (type . file) 
- (requires-pattern . 3) 
- (delayed)))
+;; (defvar anything-c-source-home-locate 
+;;  '((name . "Home Locate") 
+;;  (candidates . (lambda () 
+;;  (apply 'start-process "anything-home-locate-process" nil 
+;;  (home-locate-make-command-line anything-pattern "-r")))) 
+;;  (type . file) 
+;;  (requires-pattern . 3) 
+;;  (delayed)))
 
-(defvar anything-c-source-plocate 
- '((name . "Project Locate") 
- (candidates 
- . (lambda () 
- (let ((default-directory 
- (with-current-buffer anything-current-buffer default-directory))) 
- (apply 'start-process "anything-plocate-process" nil 
- (plocate-make-command-line anything-pattern "-r"))))) 
- (type . file) 
- (requires-pattern . 3) 
- (delayed)))
+;; (defvar anything-c-source-plocate 
+;;  '((name . "Project Locate") 
+;;  (candidates 
+;;  . (lambda () 
+;;  (let ((default-directory 
+;;  (with-current-buffer anything-current-buffer default-directory))) 
+;;  (apply 'start-process "anything-plocate-process" nil 
+;;  (plocate-make-command-line anything-pattern "-r"))))) 
+;;  (type . file) 
+;;  (requires-pattern . 3) 
+;;  (delayed)))
 
 ;--------------------------------------------------
 ;OSごとの環境設定
@@ -126,10 +127,10 @@
   )
 
 
-(setq inferior-lisp-program "ccl")
-;--------------------------------------------------
-;lisp
-;--------------------------------------------------
+;; (setq inferior-lisp-program "ccl")
+;; ;--------------------------------------------------
+;; ;lisp
+;; ;--------------------------------------------------
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/slime"))
 (require 'slime)
 (slime-setup '(slime-repl slime-fancy slime-banner))
@@ -158,8 +159,12 @@
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
 
 (setq inhibit-startup-message t) ;when stating, dont split a display into two
-(setq backup-inhibited t) ;dont make backup file
-;(set-frame-parameter nil 'fullscreen 'maximized);サイズの変更
+
+ ;dont make backup file
+(setq backup-inhibited t)
+
+;サイズの変更
+(set-frame-parameter nil 'fullscreen 'maximized)
 
 ;括弧の対応関係を表示
 (show-paren-mode)
@@ -168,8 +173,6 @@
 (setq auto-save-default nil)
 (setq make-backup-files nil)
 
-;delete tool bar 
-(tool-bar-mode 0)
 
 ;delete で選択範囲を削除する、この時kill ringに値を格納しない
 (delete-selection-mode t)
@@ -201,8 +204,6 @@
 ;beep音を消す
 (setq ring-bell-function 'ignore)
 
-;スクロールバーを消す
-(toggle-scroll-bar nil)
 
 ;スクロールを一行ずつにする
 (setq scroll-step 1)
@@ -271,6 +272,10 @@
           (fy (frame-char-height)) 
           tx ty 
           ) 
+      ;delete tool bar (don't use this when running on CUI)
+      (tool-bar-mode 0)
+      ;スクロールバーを消す (don't use this on CUI)
+      (toggle-scroll-bar nil)
       ;; Next formulas discovered empiric on Windows/Linux host 
       ;; with default font (7x13). 
       (setq tx (- (/ px fx) 7)) 
@@ -374,7 +379,7 @@
 		  (,(kbd "C-S-t") . other-window-backward)
 		  ("\C-c\C-l" . toggle-truncate-lines)
 		  (,(kbd "M-g") . goto-line)
-          (,(kbd "C-z") . undo )
+          ;(,(kbd "C-z") . undo )
 		  ;("\C-a" . beginning-of-indented-line)  ;M-m
 		  ))
 
@@ -396,7 +401,7 @@
 (global-set-key "\C-cv" 'revert-buffer-force)
 (global-set-key (kbd "C-.") 'next-buffer)
 (global-set-key (kbd "C-,") 'previous-buffer)
-;(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-z") 'suspend-emacs)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
 
@@ -441,3 +446,6 @@
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;buffer再度読み込みをします。
+(global-auto-revert-mode 1)
