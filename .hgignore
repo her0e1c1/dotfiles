@@ -1,3 +1,6 @@
+_build/
+temp/
+
 syntax: glob
 
 *.a
@@ -17,5 +20,5 @@ syntax: glob
 *.dSYM/
 
 *.hi
-temp/
 __pycache__/
+

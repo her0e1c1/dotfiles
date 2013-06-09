@@ -6,22 +6,43 @@ setopt prompt_subst               # 便利なプロント
 bindkey -e                        # emacsライクなキーバインド
 
 export LANG=ja_JP.UTF-8
-export EDITOR=vi 
+export EDITOR=vi
 export PAGER=less
+
+
+autoload colors
+colors
 
 #cd ~/d/ => ~/desctopのように補完
 autoload -U compinit
-compinit -u                       # このあたりを使わないとzsh使ってる意味なし
-setopt autopushd
-setopt pushd_ignore_dups          # 同ディレクトリを履歴に追加しない
+compinit -u
+
+#setopt autopushd
+setopt auto_pushd
+
+# 同ディレクトリを履歴に追加しない
+setopt pushd_ignore_dups
+
 setopt auto_cd
-setopt list_packed 		  # リストを詰めて表示
-setopt list_types                 # 補完一覧ファイル種別表示
+
+# リストを詰めて表示
+setopt list_packed
+
+# 補完一覧ファイル種別表示
+setopt list_types                 
+
+setopt nolistbeep
+
+setopt correct
+
 
 # 履歴
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
+
+#dirsの履歴
+DIRSTACKSIZE=100
 setopt hist_ignore_dups
 setopt hist_ignore_space
 setopt hist_reduce_blanks         # スペース排除
@@ -38,13 +59,18 @@ bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 bindkey "^[/" undo
 bindkey "^[?" redo
+bindkey "^[H" run-help
 
 setopt long_list_jobs
-zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34' 
+zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 
-#cd ..をしたときに現在のディレクトリを補完に含めない
+#cdをしたときに現在のディレクトリを補完に含めない
 zstyle ':completion' ignore-parents parent pwd ..
+#補完候補を ←↓↑→ で選択 (補完候補が色分け表示される)
 zstyle ':completion:*:default' menu select=2
+# カレントディレクトリに候補がない場合のみ cdpath 上のディレクトリを候補
+#zstyle ':completion:*:cd:*' tag-order local-directories path-directories
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 #function
 cdls(){
@@ -80,4 +106,65 @@ zshaddhistory(){
 [ -f ~/.sh.d/export ] && source ~/.sh.d/export
 [ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
 
+zstyle ':completion:*' list-colors ''
 alias -g L="| less"
+alias -g G='| grep'
+
+export LSCOLORS=exfxcxdxbxegedabagacad
+alias ls="ls -G"
+
+
+zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
+			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+
+zstyle ':completion:*:default' menu select true
+
+
+#C-dでログアウトしない
+setopt ignore_eof
+
+# pushd,popdの度にディレクトリスタックの中身を表示しない
+setopt pushd_silent
+
+# カレントディレクトリ中にサブディレクトリが無い場合に cd が検索するディレクトリのリスト
+cdpath=($HOME)
+
+#beep音を鳴らさない
+setopt nobeep
+
+# cd -[tab]とcd +[tab]の役割を逆にする
+setopt pushd_minus
+
+#入力の予測
+autoload predict-on
+#predict-on
+
+
+#alias -s
+alias -s zip=zipinfo
+alias -s tgz=gzcat
+alias -s gz=gzcat
+alias -s tbz=bzcat
+alias -s bz2=bzcat
+alias -s java=lv
+alias -s c=lv
+alias -s h=lv
+alias -s C=lv
+alias -s cpp=lv
+alias -s sh=lv
+alias -s txt=lv
+alias -s xml=lv
+alias -s html=firefox
+alias -s xhtml=firefox
+alias -s gif=display
+alias -s jpg=display
+alias -s jpeg=display
+alias -s png=display
+alias -s bmp=display
+alias -s mp3=amarok
+alias -s m4a=amarok
+alias -s ogg=amarok
+alias -s mpg=svlc
+alias -s mpeg=svlc
+alias -s avi=svlc
+alias -s mp4v=svlc
