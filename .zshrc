@@ -1,6 +1,7 @@
 # PROMPT
 PS1="[@${HOST%%.*} %1~]%(!.#.$) " # この辺は好み
 
+
 ##右プロンプト
 # 右側に時間を表示する
 RPROMPT="%T"
@@ -139,7 +140,6 @@ setopt pushd_minus
 #入力の予測
 autoload predict-on
 #predict-on
-
 
 #alias -s
 alias -s zip=zipinfo
