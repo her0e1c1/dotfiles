@@ -1,6 +1,10 @@
 # PROMPT
 PS1="[@${HOST%%.*} %1~]%(!.#.$) " # この辺は好み
-RPROMPT="%T"                      # 右側に時間を表示する
+
+##右プロンプト
+# 右側に時間を表示する
+RPROMPT="%T"
+RPROMPT='%B%F{yellow}[%f%b %B%F{yellow}%~]%f%b'
 setopt transient_rprompt          # 右側まで入力がきたら時間を消す
 setopt prompt_subst               # 便利なプロント
 bindkey -e                        # emacsライクなキーバインド
@@ -10,31 +14,28 @@ export EDITOR=vi
 export PAGER=less
 
 
-autoload colors
+autoload -U colors
 colors
-
 #cd ~/d/ => ~/desctopのように補完
 autoload -U compinit
 compinit -u
-
-#setopt autopushd
+#cdしたときにも、dirsのスタックに積む
 setopt auto_pushd
-
 # 同ディレクトリを履歴に追加しない
 setopt pushd_ignore_dups
-
 setopt auto_cd
-
+#色を使う
+setopt prompt_subst
 # リストを詰めて表示
 setopt list_packed
-
 # 補完一覧ファイル種別表示
 setopt list_types                 
-
 setopt nolistbeep
-
 setopt correct
-
+#括弧の対応等を自動的に補完
+setopt auto_param_keys
+#ディレクトリ名の補完で末尾に/を自動的に付加する
+setopt auto_param_slash
 
 # 履歴
 HISTFILE=~/.zsh_history
@@ -168,3 +169,17 @@ alias -s mpg=svlc
 alias -s mpeg=svlc
 alias -s avi=svlc
 alias -s mp4v=svlc
+
+# バックグラウンドジョブの状態変化を即時報告する
+setopt notify
+
+# =以降も補完する(--prefix=/usrなど)
+setopt magic_equal_subst 
+
+#alias -g pd="pushd +"
+
+setopt extended_glob # グロブ機能を拡張する
+unsetopt caseglob    # ファイルグロブで大文字小文字を区別しない
+
+
+alias -g ....="../.."
