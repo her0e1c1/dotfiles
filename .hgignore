@@ -1,2 +1,21 @@
+syntax: glob
+
+*.a
+*.o
+*.pyc
+
+.DS_Store
+*.zip
+*.tar.gz
+*.exe
+*.bz2
 
 .#*
+*.bak
+*~
+*.out
+*.dSYM/
+
+*.hi
+temp/
+__pycache__/
