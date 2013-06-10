@@ -4,7 +4,7 @@ PS1="[@${HOST%%.*} %1~]%(!.#.$) " # この辺は好み
 
 ##右プロンプト
 # 右側に時間を表示する
-RPROMPT="%T"
+#RPROMPT="%T"
 RPROMPT='%B%F{yellow}[%f%b %B%F{yellow}%~]%f%b'
 setopt transient_rprompt          # 右側まで入力がきたら時間を消す
 setopt prompt_subst               # 便利なプロント
