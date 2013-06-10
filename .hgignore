@@ -2,7 +2,7 @@ _build/
 temp/
 
 syntax: glob
-
+*.orig
 *.a
 *.o
 *.pyc
