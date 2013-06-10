@@ -3,10 +3,38 @@ username = her0 <her0e1c1@gmail.com>
 editor = vim
 verbose = True
 
-[alias]
+[defaults]
+cdiff = -q
 
+[alias]
 latest = glog --limit 5
+
+[extdiff]
+cmd.cdiff = colordiff
+opts.cdiff =
+
+[color]
+status.modified = green bold underline
+status.added = magenta bold underline
+status.removed = red bold blue_background
+status.deleted = red underline
+status.unknown = blue bold
+status.ignored = black bold white_background
+ 
+branches.closed = black bold white_background
+branches.current = green
+ 
+qseries.applied = blue bold underline
+qseries.unapplied = black bold white_background
+qseries.missing = red bold
+
 
 [extensions]
 graphlog = 
+hgext.color =
+hgext.extdiff =
+hgext.convert =
+color =
+graphlog =
+mq =
 hggit =  ~/python/2.7.3/lib/python2.7/site-packages/hg_git-0.4.0-py2.7.egg/hggit
