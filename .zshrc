@@ -113,8 +113,13 @@ alias -g L="| less"
 alias -g G='| grep'
 
 export LSCOLORS=exfxcxdxbxegedabagacad
-alias ls="ls -G"
 
+if uname -a | grep -q 'Ubuntu'
+then
+ alias ls="ls --color"
+else
+ alias ls="ls -G"
+fi
 
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
