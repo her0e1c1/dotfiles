@@ -6,6 +6,11 @@ syntax: glob
 *.a
 *.o
 *.pyc
+*.sqlite
+*.swp
+*.swo
+.#*
+
 
 .DS_Store
 *.zip
@@ -13,7 +18,6 @@ syntax: glob
 *.exe
 *.bz2
 
-.#*
 *.bak
 *~
 *.out

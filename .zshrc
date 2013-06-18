@@ -12,7 +12,6 @@ export LANG=ja_JP.UTF-8
 export EDITOR=vi
 export PAGER=less
 
-
 autoload -U colors
 colors
 #cd ~/d/ => ~/desctopのように補完
@@ -186,3 +185,4 @@ unsetopt caseglob    # ファイルグロブで大文字小文字を区別しな
 
 
 alias -g ....="../.."
+#zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -e -o pid,user,tty,cmd'

@@ -1,3 +1,4 @@
+
 ;環境変数
 ;(setq exec-path (cons (expand-file-name "~/dropbox/bin") exec-path))
 ;(setenv "PATH" (concat (expand-file-name "~/dropbox/bin:") (getenv "PATH")))
@@ -64,52 +65,52 @@
 
 ;設定
 (setq kill-ring-max 300)
-(setq recentf-max-menu-items 2000)
-(setq recentf-max-saved-items 2000 )
+(setq recentf-max-menu-items 20000)
+(setq recentf-max-saved-items 20000 )
 (global-set-key (kbd "C-x C-;") 'anything-call-source)
-;; (setq anything-sources 
-;;  '(anything-c-source-buffers+ 
-;;  anything-c-source-file-name-history 
-;;  anything-c-source-recentf
-;;  anything-c-source-bookmarks
-;;  anything-c-source-register
-;;  anything-c-source-kill-ring
+(setq anything-sources 
+ '(anything-c-source-buffers+ 
+ anything-c-source-file-name-history 
+ anything-c-source-recentf
+ anything-c-source-bookmarks
+ anything-c-source-register
+ anything-c-source-kill-ring
 
-;;  anything-c-source-buffer-not-found 
-;;  anything-c-source-imenu 
-;;  anything-c-source-etags-select
-;;  anything-c-source-files-in-current-dir
-;;  anything-c-source-man-pages
-;;  anything-c-source-emacs-commands
-;;  anything-c-source-emacs-functions
+ anything-c-source-buffer-not-found 
+ anything-c-source-imenu 
+ anything-c-source-etags-select
+ anything-c-source-files-in-current-dir
+ anything-c-source-man-pages
+ anything-c-source-emacs-commands
+ anything-c-source-emacs-functions
  
-;;  ;self made
-;;  ;anything-c-source-plocate 
-;;  ;anything-c-source-home-locate
-;;  ))
-;; 自動でimenuのインデックスを作る 
-;(setq imenu-auto-rescan t)
+ ;self made
+ ;anything-c-source-plocate 
+ ;anything-c-source-home-locate
+ ))
+;自動でimenuのインデックスを作る 
+(setq imenu-auto-rescan t)
 
-;; (defvar anything-c-source-home-locate 
-;;  '((name . "Home Locate") 
-;;  (candidates . (lambda () 
-;;  (apply 'start-process "anything-home-locate-process" nil 
-;;  (home-locate-make-command-line anything-pattern "-r")))) 
-;;  (type . file) 
-;;  (requires-pattern . 3) 
-;;  (delayed)))
+(defvar anything-c-source-home-locate 
+ '((name . "Home Locate") 
+ (candidates . (lambda () 
+ (apply 'start-process "anything-home-locate-process" nil 
+ (home-locate-make-command-line anything-pattern "-r")))) 
+ (type . file) 
+ (requires-pattern . 3) 
+ (delayed)))
 
-;; (defvar anything-c-source-plocate 
-;;  '((name . "Project Locate") 
-;;  (candidates 
-;;  . (lambda () 
-;;  (let ((default-directory 
-;;  (with-current-buffer anything-current-buffer default-directory))) 
-;;  (apply 'start-process "anything-plocate-process" nil 
-;;  (plocate-make-command-line anything-pattern "-r"))))) 
-;;  (type . file) 
-;;  (requires-pattern . 3) 
-;;  (delayed)))
+(defvar anything-c-source-plocate 
+ '((name . "Project Locate") 
+ (candidates 
+ . (lambda () 
+ (let ((default-directory 
+ (with-current-buffer anything-current-buffer default-directory))) 
+ (apply 'start-process "anything-plocate-process" nil 
+ (plocate-make-command-line anything-pattern "-r"))))) 
+ (type . file) 
+ (requires-pattern . 3) 
+ (delayed)))
 
 ;--------------------------------------------------
 ;OSごとの環境設定
