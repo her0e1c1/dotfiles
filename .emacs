@@ -450,3 +450,6 @@
 
 ;buffer再度読み込みをします。
 (global-auto-revert-mode 1)
+
+;for ubuntu
+(set-buffer-file-coding-system 'utf-8-unix)
