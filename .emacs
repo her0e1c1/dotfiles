@@ -38,11 +38,11 @@
 ;--------------------------------------------------
 ;拡張子
 ;--------------------------------------------------
-(let (mode)
-  (if (require 'python-mode nil t)
-      (setq mode 'python-mode)
-    (setq mode 'python))
-  (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
+;; (let (mode)
+;;   (if (require 'python-mode nil t)
+;;       (setq mode 'python-mode)
+;;     (setq mode 'python))
+;;   (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
 
 (add-to-list 'auto-mode-alist `("\\.py\\'" . python-mode))
 
