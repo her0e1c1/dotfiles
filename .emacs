@@ -38,26 +38,26 @@
 ;--------------------------------------------------
 ;拡張子
 ;--------------------------------------------------
-;; (let (mode)
-;;   (if (require 'python-mode nil t)
-;;       (setq mode 'python-mode)
-;;     (setq mode 'python))
-;;   (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
+;(let (mode)
+;  (if (require 'python-mode nil t)
+;      (setq mode 'python-mode)
+;    (setq mode 'python))
+;  (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
 
 (add-to-list 'auto-mode-alist `("\\.py\\'" . python-mode))
 
 
-;; ;--------------------------------------------------
-;; ;rst
-;; ;--------------------------------------------------
+;--------------------------------------------------
+;rst
+;--------------------------------------------------
 
 ;(setcar (cdr(assq 's5 rst-compile-toolsets)) "rst2s5.py")
 (setq rst-slides-program "open -a opera")
 
 
-;; ;--------------------------------------------------
-;; ;anything
-;; ;--------------------------------------------------
+;--------------------------------------------------
+;anything
+;--------------------------------------------------
 
 (require 'anything)
 (require 'anything-config)
@@ -219,7 +219,6 @@
 ;;; 最終行に必ず一行挿入する
 ;(setq require-final-newline t)
 
-
 ;スクロールで画面を少し残す
 (setq next-screen-context-lines 1)
 
@@ -297,8 +296,6 @@
                            (set-file-modes name (logior mode (logand (/ mode 4) 73)))
                            (message (concat "Wrote " name " (+x)"))))
                      )))))
-;起動
-;(anything)
 
 ;--------------------------------------------------
 ;                    python
@@ -453,3 +450,17 @@
 
 ;for ubuntu
 (set-buffer-file-coding-system 'utf-8-unix)
+
+;自動で切り替わらないようにする
+(set-window-dedicated-p
+ (get-buffer-window "*scratch*")
+ 1)
+(set-window-dedicated-p
+ (get-buffer-window "*anything*")
+ 1)
+
+;スペルチェック
+(setq-default flyspell-mode t)
+
+;(add-to-list 'same-window-buffer-names "*scarch*")
+;(add-to-list 'same-window-buffer-names "*anything*")
