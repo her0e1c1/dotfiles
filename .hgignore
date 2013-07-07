@@ -1,5 +1,6 @@
 _build/
 temp/
+.hgsubstate
 
 syntax: glob
 *.orig
