@@ -5,6 +5,7 @@
 
 ;termの文字化け
 (setq locale-coding-system 'utf-8)
+(set-buffer-file-coding-system 'utf-8-unix)
 (setenv "LANG" "ja_JP.UTF-8")
 
 ;再帰的にパスを加えて行く
@@ -23,35 +24,14 @@
    "Major mode for editing comma-separated value files." t)
 (setq csv-separators '("\t"))
 
-;--------------------------------------------------
-;face
-;--------------------------------------------------
-
 (add-hook 'rst-mode-hook 
-          (lambda ()
-            ;(setq rst-level-face-base-color "selectedKnobColor")
-            (set-face-background 'rst-level-1-color "selectedKnobColor")
-            ))
-
-
-;--------------------------------------------------
-;拡張子
-;--------------------------------------------------
-;(let (mode)
-;  (if (require 'python-mode nil t)
-;      (setq mode 'python-mode)
-;    (setq mode 'python))
-;  (add-to-list 'auto-mode-alist `("\\.py\\'" . ,mode)))
-
-(add-to-list 'auto-mode-alist `("\\.py\\'" . python-mode))
-
-
-;--------------------------------------------------
-;rst
-;--------------------------------------------------
-
+ (lambda ()
+ ;(setq rst-level-face-base-color "selectedKnobColor")
+ (set-face-background 'rst-level-1-color "selectedKnobColor")))
 ;(setcar (cdr(assq 's5 rst-compile-toolsets)) "rst2s5.py")
 (setq rst-slides-program "open -a opera")
+
+(add-to-list 'auto-mode-alist `("\\.py\\'" . python-mode))
 
 ;--------------------------------------------------
 ;anything
@@ -198,12 +178,9 @@
 ;; "yes or no"を"y or n"に
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;括弧の補完
-(global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
-(setq skeleton-pair 1)
+;buffer再度読み込みをします。
+(global-auto-revert-mode 1)
+
 
 ;bufferの切り替えを楽にする
 (iswitchb-mode 1)
@@ -409,6 +386,12 @@
 (global-set-key (kbd "C-z") 'suspend-emacs)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
+;括弧の補完
+(global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
+(setq skeleton-pair 1)
 
 (defun toggle-vi-mode ()
   (interactive)
@@ -446,12 +429,6 @@
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 ;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-
-;buffer再度読み込みをします。
-(global-auto-revert-mode 1)
-
-;for ubuntu
-(set-buffer-file-coding-system 'utf-8-unix)
 
 ;(add-to-list 'same-window-buffer-names "*scarch*")
 ;(add-to-list 'same-window-buffer-names "*anything*")
