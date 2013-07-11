@@ -3,7 +3,6 @@
 ;(setq exec-path (cons (expand-file-name "~/dropbox/bin") exec-path))
 ;(setenv "PATH" (concat (expand-file-name "~/dropbox/bin:") (getenv "PATH")))
 
-
 ;termの文字化け
 (setq locale-coding-system 'utf-8)
 (setenv "LANG" "ja_JP.UTF-8")
@@ -11,7 +10,7 @@
 ;再帰的にパスを加えて行く
 (let ((default-directory (expand-file-name "~/.emacs.d/")))
   (add-to-list 'load-path default-directory)
-   (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+  (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
        (normal-top-level-add-subdirs-to-load-path)))
 
 (require 'auto-install)
@@ -53,7 +52,6 @@
 
 ;(setcar (cdr(assq 's5 rst-compile-toolsets)) "rst2s5.py")
 (setq rst-slides-program "open -a opera")
-
 
 ;--------------------------------------------------
 ;anything
@@ -137,9 +135,8 @@
 (slime-setup '(slime-repl slime-fancy slime-banner))
 
 ;--------------------------------------------------
-;各種設定
+;Settings for emacs
 ;--------------------------------------------------
-
 
 ;; 日本語化
 (prefer-coding-system 'utf-8)
@@ -174,12 +171,23 @@
 (setq auto-save-default nil)
 (setq make-backup-files nil)
 
-
 ;delete で選択範囲を削除する、この時kill ringに値を格納しない
 (delete-selection-mode t)
 
 ;他のアプリケーションでの貼り付け可能にする
 (setq x-select-enable-clipboard t)
+
+;自動で切り替わらないようにする
+;todo 一つにまとめる
+(set-window-dedicated-p
+ (get-buffer-window "*scratch*")
+ 1)
+(set-window-dedicated-p
+ (get-buffer-window "*anything*")
+ 1)
+
+;スペルチェック
+(setq-default flyspell-mode t)
 
 ;;; 補完可能なものを随時表示
 (icomplete-mode 0)
@@ -204,7 +212,6 @@
 
 ;beep音を消す
 (setq ring-bell-function 'ignore)
-
 
 ;スクロールを一行ずつにする
 (setq scroll-step 1)
@@ -239,9 +246,6 @@
 
 ;window 操作
 (split-window-horizontally)
-;(split-window-horizontally)
-;(other-window 1)
-;(split-window-vertically)
 
 ;window
 (set-background-color "Black")
@@ -286,49 +290,43 @@
 
 ;実行権限を自動で付ける
 (add-hook 'after-save-hook
-		  '(lambda ()
-             (save-restriction
-               (widen)
-               (if (string= "#!" (buffer-substring 1 (min 3 (point-max))))
-                   (let ((name (buffer-file-name)))
-                     (or (char-equal ?. (string-to-char (file-name-nondirectory name)))
-                         (let ((mode (file-modes name)))
-                           (set-file-modes name (logior mode (logand (/ mode 4) 73)))
-                           (message (concat "Wrote " name " (+x)"))))
-                     )))))
+'(lambda ()
+ (save-restriction
+  (widen)
+  (if (string= "#!" (buffer-substring 1 (min 3 (point-max))))
+      (let ((name (buffer-file-name)))
+           (or (char-equal ?. (string-to-char (file-name-nondirectory name)))
+               (let ((mode (file-modes name)))
+                    (set-file-modes name (logior mode (logand (/ mode 4) 73)))
+                    (message (concat "wrote " name " (+x)")))))))))
 
 ;--------------------------------------------------
 ;                    python
 ;--------------------------------------------------
 
 (add-hook 'python-mode-hook 
-		  '(lambda ()
-             (require 'python-mode)
-             (define-key python-mode-map (kbd "C-c C-i") 'python-insert-ipdb)
-             (define-key python-mode-map (kbd "C-c C-d") 'python-delete-ipdb)
-             ;(require 'flymake)
-             (setq ipython-completion-command-string  "print(';'.join(get_ipython().complete('%s', '%s')[1])) #PYTHON-MODE SILENT\n")
-             (setq py-shell-name "ipython3")
-             (setq ipython-command "/Users/air/python/3.3.0/bin/ipython3")
-             ;(require 'ipython)
-			 (add-hook 'find-file-hook 'flymake-find-file-hook)
-			 (when (load "flymake" t)
-			   (defun flymake-pyflakes-init ()
-				 (let* ((temp-file (flymake-init-create-temp-buffer-copy
-									'flymake-create-temp-inplace))
-						(local-file (file-relative-name
-									 temp-file
-									 (file-name-directory buffer-file-name))))
-				   (list "pycheckers"  (list local-file))))
-			   (add-to-list 'flymake-allowed-file-name-masks
-							'("\\.py\\'" flymake-pyflakes-init)))
-			 
-			 (load-library "flymake-cursor")
-			 ;(define-key python-mode-map (kbd "C-c i") 'py-insert-ipdb)
-			 ))
-
-;python mode
-(setq py-python-command "/Users/air/python/3.3.0/bin/ipython3")
+ '(lambda ()
+   (require 'python-mode)
+   ;(require 'flymake)
+   ;(require 'ipython)
+   (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
+   (define-key python-mode-map (kbd "c-c d") 'python-delete-ipdb)
+   (setq ipython-completion-command-string  "print(';'.join(get_ipython().complete('%s', '%s')[1])) #python-mode silent\n")
+   (setq py-shell-name "ipython3")
+   (setq ipython-command "/users/air/python/3.3.0/bin/ipython3")
+   (add-hook 'find-file-hook 'flymake-find-file-hook)
+   (when (load "flymake" t)
+    (defun flymake-pyflakes-init ()
+     (let* ((temp-file (flymake-init-create-temp-buffer-copy
+			'flymake-create-temp-inplace))
+			(local-file
+             (file-relative-name
+			 temp-file
+			 (file-name-directory buffer-file-name))))
+		   (list "pycheckers"  (list local-file))))
+    (add-to-list 'flymake-allowed-file-name-masks
+     '("\\.py\\'" flymake-pyflakes-init)))
+   (load-library "flymake-cursor")))
 
 ;--------------------------------------------------
 ;key bindings
@@ -346,9 +344,7 @@
 ;;python-modeなどでは無効になってる
 (defun revert-buffer-force()
   (interactive)
-  (revert-buffer nil t)
-)
-
+  (revert-buffer nil t))
 
 ;; \C-aでインデントを飛ばした行頭に移動
 (defun beginning-of-indented-line (current-point)
@@ -369,27 +365,38 @@
 
 ;;上書きされたくないkey binds
 (setq my-keyjack-mode-map (make-sparse-keymap))
-(mapcar (lambda (x)
-		  (define-key my-keyjack-mode-map (car x) (cdr x))
-		  ;(global-set-key (car x) (cdr x))
-		  )
-		`(("\C-t" . other-window)
-		  (,(kbd "C-S-t") . other-window-backward)
-		  ("\C-c\C-l" . toggle-truncate-lines)
-		  (,(kbd "M-g") . goto-line)
-          ;(,(kbd "C-z") . undo )
-		  ;("\C-a" . beginning-of-indented-line)  ;M-m
-		  ))
+(mapcar
+ (lambda (x)
+  (define-key my-keyjack-mode-map (car x) (cdr x)))
+`(("\C-t" . other-window)
+  (,(kbd "C-S-t") . other-window-backward)
+  ("\C-c\C-l" . toggle-truncate-lines)
+  (,(kbd "M-g") . goto-line)
+  ;(,(kbd "C-z") . undo )
+  ;("\C-a" . beginning-of-indented-line)  ;M-m
+  ))
 
+(easy-mmode-define-minor-mode
+ my-keyjack-mode-map "Grab Keys"
+ t " KeyJack" my-keyjack-mode-map)
 
-(easy-mmode-define-minor-mode my-keyjack-mode-map "Grab Keys"
-							  t " KeyJack" my-keyjack-mode-map)
+;全角入力を半角に変換します。
+(lexical-let
+ ((words `(
+  ;(,[?¥].  ,[?\\])
+  ("；". ";")
+  ("：".  ":")
+  ("）". ")")
+  ("（". "(")
+  ("　". " "))))
+ (progn
+  (defun set-key (input output)
+   (global-set-key input
+    `(lambda () (interactive)
+     (insert ,output))))
+  (dolist (w words) (set-key (car w) (cdr w)))))
 
-;全角スペースを半角スペースにして入力します。
-;(global-set-key "　" (lambda () (interactive)(insert " ")))
-;12288は全角スペース
-;(global-set-key [?\S-　] '(lambda () (interactive)(insert 12288)))
-(define-key global-map [?¥] [?\\])  ;; ¥の代わりにバックスラッシュを入力する
+(global-set-key [?¥] [?\\])  ;; ¥の代わりにバックスラッシュを入力する
 ;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
 (global-set-key [f9] 'linum-mode)  ; 行番号を表示
 (global-set-key "\C-cw" 'whitespace-mode)
@@ -415,19 +422,14 @@
 
 (defun split-window-by-5 ()
   (interactive)
-  ;(keyboard-escape-quit) Esc Esc Esc
   (split-window-horizontally)
   (split-window-horizontally)
-  (split-window-vertically)
-  ;(other-window 2)
-  ;(split-window-vertically)
-  )
+  (split-window-vertically))
 
 ;pointを表示
 (add-to-list 'mode-line-format '(:eval (int-to-string (point))))
 
 ;全角記号を半角にする；：＜＞（）『』「」など
-
 
 (defun python-insert-ipdb ()
   (interactive)
@@ -450,17 +452,6 @@
 
 ;for ubuntu
 (set-buffer-file-coding-system 'utf-8-unix)
-
-;自動で切り替わらないようにする
-(set-window-dedicated-p
- (get-buffer-window "*scratch*")
- 1)
-(set-window-dedicated-p
- (get-buffer-window "*anything*")
- 1)
-
-;スペルチェック
-(setq-default flyspell-mode t)
 
 ;(add-to-list 'same-window-buffer-names "*scarch*")
 ;(add-to-list 'same-window-buffer-names "*anything*")
