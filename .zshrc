@@ -29,7 +29,7 @@ setopt list_packed
 # 補完一覧ファイル種別表示
 setopt list_types                 
 setopt nolistbeep
-setopt correct
+#setopt correct
 #括弧の対応等を自動的に補完
 setopt auto_param_keys
 #ディレクトリ名の補完で末尾に/を自動的に付加する
@@ -106,8 +106,8 @@ zshaddhistory(){
 [ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
 
 zstyle ':completion:*' list-colors ''
-alias -g L="| less"
-alias -g G='| grep'
+
+
 
 export LSCOLORS=exfxcxdxbxegedabagacad
 
@@ -171,6 +171,11 @@ alias -s mpg=svlc
 alias -s mpeg=svlc
 alias -s avi=svlc
 alias -s mp4v=svlc
+
+#alias -g
+alias -g L="| less"
+alias -g G='| grep'
+alias -g X='| xargs'
 
 # バックグラウンドジョブの状態変化を即時報告する
 setopt notify

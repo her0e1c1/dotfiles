@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("tokenizer.c"
+(("funcdef"
+ (filename . "~/desktop/python-1.0.1/Parser/graminit.c")
+ (front-context-string . "	{259, \"funcdef\"")
+ (rear-context-string . "\\214\\224\\007\"},\n")
+ (position . 15458))
+("tokenizer.c"
  (filename . "~/s/web/sphinx/python/version/python-1.0.1.rst")
  (front-context-string . "\n\n /* Tokenizer ")
  (rear-context-string . "*tok_state**\n\n::")
