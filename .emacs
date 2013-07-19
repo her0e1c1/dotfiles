@@ -391,6 +391,8 @@
 (global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "M-Q") 'keyboard-escape-quit)
+
 (setq skeleton-pair 1)
 
 (defun toggle-vi-mode ()
@@ -432,3 +434,7 @@
 
 ;(add-to-list 'same-window-buffer-names "*scarch*")
 ;(add-to-list 'same-window-buffer-names "*anything*")
+
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
