@@ -202,3 +202,21 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin 
     alias -g C='| putclip'
 fi
+
+#alias
+alias h=history
+alias cd=cdls
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias pd='pushd'
+alias pp='popd'
+alias ds='dirs -v'
+alias x="xargs"
+alias j="jobs"
+alias i="ipython3"
+alias e='echo $?'
+#alias rm="rm -i"
+alias cp="cp -i"
+alias mv="mv -i"
+
