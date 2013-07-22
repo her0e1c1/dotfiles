@@ -365,6 +365,8 @@
   ("：".  ":")
   ("）". ")")
   ("（". "(")
+  ("。". ".")
+  ("＊". "*")
   ("　". " "))))
  (progn
   (defun set-key (input output)
@@ -436,5 +438,6 @@
 ;(add-to-list 'same-window-buffer-names "*anything*")
 
 
+;バッファが同じ名前のときの表示名を指定する
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
