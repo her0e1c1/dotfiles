@@ -258,29 +258,34 @@
 ;python
 ;--------------------------------------------------
 
+;(add-to-list 'load-path "~/.emacs.d/python")
+;(require 'python-mode)
 (add-hook 'python-mode-hook 
  '(lambda ()
-   (require 'python-mode)
-   ;(require 'flymake)
-   ;(require 'ipython)
-   (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
-   (define-key python-mode-map (kbd "c-c d") 'python-delete-ipdb)
-   (setq ipython-completion-command-string  "print(';'.join(get_ipython().complete('%s', '%s')[1])) #python-mode silent\n")
-   (setq py-shell-name "ipython3")
-   (setq ipython-command "/users/air/python/3.3.0/bin/ipython3")
-   (add-hook 'find-file-hook 'flymake-find-file-hook)
-   (when (load "flymake" t)
-    (defun flymake-pyflakes-init ()
-     (let* ((temp-file (flymake-init-create-temp-buffer-copy
-			'flymake-create-temp-inplace))
-			(local-file
-             (file-relative-name
-			 temp-file
-			 (file-name-directory buffer-file-name))))
-		   (list "pycheckers"  (list local-file))))
-    (add-to-list 'flymake-allowed-file-name-masks
-     '("\\.py\\'" flymake-pyflakes-init)))
-   (load-library "flymake-cursor")))
+    (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
+    ))
+
+;    (require 'python-mode)
+;    ;(require 'flymake)
+;    ;(require 'ipython)
+;    (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
+;    (define-key python-mode-map (kbd "c-c d") 'python-delete-ipdb)
+;    (setq ipython-completion-command-string  "print(';'.join(get_ipython().complete('%s', '%s')[1])) #python-mode silent\n")
+;    (setq py-shell-name "ipython3")
+;    (setq ipython-command "/users/air/python/3.3.0/bin/ipython3")
+;    (add-hook 'find-file-hook 'flymake-find-file-hook)
+;    (when (load "flymake" t)
+;     (defun flymake-pyflakes-init ()
+;      (let* ((temp-file (flymake-init-create-temp-buffer-copy
+; 			'flymake-create-temp-inplace))
+; 			(local-file
+;              (file-relative-name
+; 			 temp-file
+; 			 (file-name-directory buffer-file-name))))
+; 		   (list "pycheckers"  (list local-file))))
+;     (add-to-list 'flymake-allowed-file-name-masks
+;      '("\\.py\\'" flymake-pyflakes-init)))
+;    (load-library "flymake-cursor")))
 
 ;--------------------------------------------------
 ;init
