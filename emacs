@@ -150,7 +150,7 @@
 (setq skeleton-pair 1)
 
 ;python
-;(add-to-list 'load-path "~/.emacs.d/python")
+(add-to-list 'load-path "~/.emacs.d/python")
 ;(require 'python-mode)
 
 ;--------------------------------------------------
@@ -281,21 +281,19 @@
  '(lambda ()
     (define-key python-mode-map (kbd "C-c i") 'python-insert-ipdb)
     (define-key python-mode-map (kbd "C-c d") 'python-delete-ipdb)
-    ))
-;    (require 'python-mode)
-;    (add-hook 'find-file-hook 'flymake-find-file-hook)
-;    (when (load "flymake" t)
-;     (defun flymake-pyflakes-init ()
-;      (let* ((temp-file (flymake-init-create-temp-buffer-copy
-; 			'flymake-create-temp-inplace))
-; 			(local-file
-;              (file-relative-name
-; 			 temp-file
-; 			 (file-name-directory buffer-file-name))))
-; 		   (list "pycheckers"  (list local-file))))
-;     (add-to-list 'flymake-allowed-file-name-masks
-;      '("\\.py\\'" flymake-pyflakes-init)))
-;    (load-library "flymake-cursor")))
+   (add-hook 'find-file-hook 'flymake-find-file-hook)
+   (when (load "flymake" t)
+    (defun flymake-pyflakes-init ()
+     (let* ((temp-file (flymake-init-create-temp-buffer-copy
+			'flymake-create-temp-inplace))
+			(local-file
+             (file-relative-name
+			 temp-file
+			 (file-name-directory buffer-file-name))))
+		   (list "pycheckers"  (list local-file))))
+    (add-to-list 'flymake-allowed-file-name-masks
+     '("\\.py\\'" flymake-pyflakes-init)))
+   (load-library "flymake-cursor")))
 
 ;--------------------------------------------------
 ;init
