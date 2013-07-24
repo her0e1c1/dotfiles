@@ -99,6 +99,9 @@
 ;他のアプリケーションでの貼り付け可能にする
 (setq x-select-enable-clipboard t)
 
+;括弧にカソールを合わせたときに対応関係を表示
+(show-paren-mode)
+
 ;スペルチェック
 (setq-default flyspell-mode t)
 
@@ -146,10 +149,18 @@
 ;
 (setq skeleton-pair 1)
 
+;--------------------------------------------------
+;standard mode
+;--------------------------------------------------
 
 ;バッファが同じ名前のときの表示名を指定する
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+
+;履歴を表示
+(recentf-mode 1)
+(setq recentf-max-menu-items 20)
+(setq recentf-max-saved-items 100)
 
 ;--------------------------------------------------
 ;key bindings
@@ -184,6 +195,7 @@
 (global-set-key (kbd "C-.") 'next-buffer)
 (global-set-key (kbd "C-,") 'previous-buffer)
 (global-set-key (kbd "C-z") 'suspend-emacs)
+(global-set-key (kbd "C-x C-l") 'recentf-open-files)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
 ;括弧の補完
