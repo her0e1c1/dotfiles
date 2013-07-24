@@ -1,4 +1,4 @@
-;--------------------------------------------------
+;--------------------------------------------------;
 ;文字コードの設定
 ;--------------------------------------------------
 
@@ -7,9 +7,8 @@
 (set-buffer-file-coding-system 'utf-8-unix)
 (setenv "LANG" "ja_JP.UTF-8")
 
-;; 日本語化
+;日本語化
 (prefer-coding-system 'utf-8)
-
 
 ;--------------------------------------------------
 ;window settings
@@ -55,8 +54,6 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 
-
-
 ;--------------------------------------------------
 ;OSごとの環境設定
 ;--------------------------------------------------
@@ -71,7 +68,6 @@
       )
   (set-default-font "Monospace-12")
   )
-
 
 ;--------------------------------------------------
 ;Settings for emacs
@@ -121,7 +117,8 @@
 
 ;bufferの切り替えを楽にする
 (iswitchb-mode 1)
-;; tをnilにすると部分一致
+
+;tをnilにすると部分一致
 (setq iswitchb-regexp t)
 
 ;beep音を消す
@@ -159,7 +156,7 @@
 ;--------------------------------------------------
 
 ;全角入力を半角に変換します。
-(lexical-let
+(let
  ((words `(
   ;(,[?¥].  ,[?\\])
   ("；". ";")
@@ -180,7 +177,7 @@
 ;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
 (global-set-key [f9] 'linum-mode)  ; 行番号を表示
 (global-set-key "\C-cw" 'whitespace-mode)
-(define-key global-map (kbd "C-l") 'anything)
+(define-key global-map (kbd "C-l") 'iswitchb-buffer)
 (global-set-key [f12] 'flymake-goto-next-error)  ; errorへジャンプ
 (global-set-key (kbd "S-<f11>") 'flymake-goto-prev-error)
 (global-set-key "\C-cv" 'revert-buffer-force)
@@ -195,7 +192,6 @@
 (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "M-Q") 'keyboard-escape-quit)
-
 
 ;--------------------------------------------------
 ;order-made function
@@ -225,6 +221,66 @@
 (defun python-delete-ipdb ()
   (interactive)
   (delete-matching-lines "import ipdb; ipdb.set_trace()"))
+
+;--------------------------------------------------
+;KeyJack mode
+;--------------------------------------------------
+
+(defun toggle-truncate-lines ()
+  "折り返し表示をトグル動作します."
+  (interactive)
+  (if truncate-lines
+      (setq truncate-lines nil)
+    (setq truncate-lines t))
+  (recenter))
+(setq-default truncate-partial-width-windows nil)
+
+(defun other-window-backward ()
+  (interactive)
+  (other-window -1))
+
+;;上書きされたくないkey binds
+(setq my-keyjack-mode-map (make-sparse-keymap))
+(mapcar
+ (lambda (x)
+  (define-key my-keyjack-mode-map (car x) (cdr x)))
+`(("\C-t" . other-window)
+  (,(kbd "C-S-t") . other-window-backward)
+  ("\C-c\C-l" . toggle-truncate-lines)
+  (,(kbd "M-g") . goto-line)
+  ))
+
+(easy-mmode-define-minor-mode
+ my-keyjack-mode-map "Grab Keys"
+ t " KeyJack" my-keyjack-mode-map)
+
+;--------------------------------------------------
+;python
+;--------------------------------------------------
+
+(add-hook 'python-mode-hook 
+ '(lambda ()
+   (require 'python-mode)
+   ;(require 'flymake)
+   ;(require 'ipython)
+   (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
+   (define-key python-mode-map (kbd "c-c d") 'python-delete-ipdb)
+   (setq ipython-completion-command-string  "print(';'.join(get_ipython().complete('%s', '%s')[1])) #python-mode silent\n")
+   (setq py-shell-name "ipython3")
+   (setq ipython-command "/users/air/python/3.3.0/bin/ipython3")
+   (add-hook 'find-file-hook 'flymake-find-file-hook)
+   (when (load "flymake" t)
+    (defun flymake-pyflakes-init ()
+     (let* ((temp-file (flymake-init-create-temp-buffer-copy
+			'flymake-create-temp-inplace))
+			(local-file
+             (file-relative-name
+			 temp-file
+			 (file-name-directory buffer-file-name))))
+		   (list "pycheckers"  (list local-file))))
+    (add-to-list 'flymake-allowed-file-name-masks
+     '("\\.py\\'" flymake-pyflakes-init)))
+   (load-library "flymake-cursor")))
 
 ;--------------------------------------------------
 ;init
