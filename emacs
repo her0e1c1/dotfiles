@@ -162,6 +162,9 @@
 (setq recentf-max-menu-items 20)
 (setq recentf-max-saved-items 100)
 
+;
+(require 'flymake)
+
 ;--------------------------------------------------
 ;key bindings
 ;--------------------------------------------------
@@ -276,15 +279,9 @@
  '(lambda ()
     (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
     ))
-
 ;    (require 'python-mode)
-;    ;(require 'flymake)
-;    ;(require 'ipython)
 ;    (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
 ;    (define-key python-mode-map (kbd "c-c d") 'python-delete-ipdb)
-;    (setq ipython-completion-command-string  "print(';'.join(get_ipython().complete('%s', '%s')[1])) #python-mode silent\n")
-;    (setq py-shell-name "ipython3")
-;    (setq ipython-command "/users/air/python/3.3.0/bin/ipython3")
 ;    (add-hook 'find-file-hook 'flymake-find-file-hook)
 ;    (when (load "flymake" t)
 ;     (defun flymake-pyflakes-init ()
