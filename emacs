@@ -149,6 +149,10 @@
 ;
 (setq skeleton-pair 1)
 
+;python
+;(add-to-list 'load-path "~/.emacs.d/python")
+;(require 'python-mode)
+
 ;--------------------------------------------------
 ;standard mode
 ;--------------------------------------------------
@@ -270,18 +274,15 @@
  t " KeyJack" my-keyjack-mode-map)
 
 ;--------------------------------------------------
-;python
+;python-hook
 ;--------------------------------------------------
 
-;(add-to-list 'load-path "~/.emacs.d/python")
-;(require 'python-mode)
 (add-hook 'python-mode-hook 
  '(lambda ()
-    (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
+    (define-key python-mode-map (kbd "C-c i") 'python-insert-ipdb)
+    (define-key python-mode-map (kbd "C-c d") 'python-delete-ipdb)
     ))
 ;    (require 'python-mode)
-;    (define-key python-mode-map (kbd "c-c i") 'python-insert-ipdb)
-;    (define-key python-mode-map (kbd "c-c d") 'python-delete-ipdb)
 ;    (add-hook 'find-file-hook 'flymake-find-file-hook)
 ;    (when (load "flymake" t)
 ;     (defun flymake-pyflakes-init ()
