@@ -163,8 +163,8 @@
 
 ;履歴を表示
 (recentf-mode 1)
-(setq recentf-max-menu-items 20)
-(setq recentf-max-saved-items 100)
+(setq recentf-max-menu-items  10000)
+(setq recentf-max-saved-items 10000)
 
 ;
 (require 'flymake)
@@ -211,6 +211,27 @@
 (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "M-Q") 'keyboard-escape-quit)
+
+;--------------------------------------------------
+;iswitch
+;--------------------------------------------------
+
+(add-hook 'iswitchb-define-mode-map-hook
+      (lambda ()
+        (define-key iswitchb-mode-map "\C-n" 'iswitchb-next-match)
+        (define-key iswitchb-mode-map "\C-p" 'iswitchb-prev-match)
+        (define-key iswitchb-mode-map "\C-f" 'iswitchb-next-match)
+        (define-key iswitchb-mode-map "\C-b" 'iswitchb-prev-match)))
+
+;不要なバッファは無視する
+(setq iswitchb-buffer-ignore
+      '(
+        "*twittering-wget-buffer*"
+        "*twittering-http-buffer*"
+        "*WoMan-Log*"
+        "*SKK annotation*"
+        "*Completions*"
+        ))
 
 ;--------------------------------------------------
 ;order-made function
