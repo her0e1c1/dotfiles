@@ -105,6 +105,23 @@
 ;スペルチェック
 (setq-default flyspell-mode t)
 
+;実行できるスクリプトは保存時に実行権限をつける
+(add-hook 'after-save-hook
+        'executable-make-buffer-file-executable-if-script-p)
+
+;メニューバーを隠す
+(menu-bar-mode -1)
+
+;選択範囲を色つけする
+;(transient-mark-mode t)
+
+;ファイル名の補完で大文字小文字を区別しない??
+;(setq completion-ignore-case t)
+
+;C-x C-fで大文字小文字をを区別しない??
+;(setq completion-ignore-case t)
+
+
 ;補完可能なものを随時表示
 (icomplete-mode 0)
 
