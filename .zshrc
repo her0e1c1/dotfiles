@@ -12,21 +12,30 @@ RPROMPT='%B%F{yellow}[%f%b %B%F{yellow}%~]%f%b'
 #C-wでディレクトリの一部のみ削除
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
+# 履歴
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+#dirsの履歴
+DIRSTACKSIZE=100
+
+# カレントディレクトリ中にサブディレクトリが無い場合に cd が検索するディレクトリのリスト
+cdpath=($HOME)
+
 #--------------------------------------------------
 #autoload
 #--------------------------------------------------
 
 # history 操作まわり
 autoload history-search-end
-
 autoload smart-insert-last-word
-zle -N insert-last-word smart-insert-last-word
-zstyle :insert-last-word match \
-  '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
-
 autoload -U colors
+
 colors
+
 #cd ~/d/ => ~/desctopのように補完
+#c C-p/C-nでcから始まるコマンドのみの履歴を表示
 autoload -U compinit
 compinit -u
 
@@ -83,9 +92,6 @@ setopt ignore_eof
 #pushd,popdの度にディレクトリスタックの中身を表示しない
 setopt pushd_silent
 
-# カレントディレクトリ中にサブディレクトリが無い場合に cd が検索するディレクトリのリスト
-cdpath=($HOME)
-
 #beep音を鳴らさない
 setopt nobeep
 
@@ -93,24 +99,18 @@ setopt nobeep
 #表示する順番がreverseされるだけみたい？ 
 #setopt pushd_minus
 
-#入力の予測
+#入力の予測(一文字入力するたびに補完するので鬱陶しい)
 autoload predict-on
 #predict-on
 
-# 履歴
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-
-#dirsの履歴
-DIRSTACKSIZE=100
 setopt hist_ignore_dups
 setopt hist_ignore_space
 setopt hist_reduce_blanks         # スペース排除
 
 #複数のzshのプロセスで履歴を共有
 setopt share_history
-setopt EXTENDED_HISTORY           # zshの開始終了を記録
+# zshの開始終了を記録
+setopt EXTENDED_HISTORY
 setopt hist_no_store
 
 # バックグラウンドジョブの状態変化を即時報告する
@@ -206,6 +206,9 @@ zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
+zstyle :insert-last-word match \
+  '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
+
 #Tab一回押すだけで補完(一回目だと無駄なものが補完されやすいので使用しない)
 #zstyle ':completion:*:default' menu select true
 
@@ -215,6 +218,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
+zle -N insert-last-word smart-insert-last-word
 
 #--------------------------------------------------
 #exprot
