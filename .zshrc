@@ -12,7 +12,6 @@ RPROMPT='%B%F{yellow}[%f%b %B%F{yellow}%~]%f%b'
 #C-wでディレクトリの一部のみ削除
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
-
 #--------------------------------------------------
 #autoload
 #--------------------------------------------------
@@ -207,9 +206,6 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 #補完時に大文字と小文字を区別しない
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-[ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
-[ -f ~/.sh.d/export ] && source ~/.sh.d/export
-[ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
 
 zstyle ':completion:*' list-colors ''
 
@@ -279,3 +275,11 @@ alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 #compctl 指示 コマンド名(のリスト)
 #ディレクトリ名のみ補完
 compctl -/ cd chdir dirs pushd
+
+#--------------------------------------------------
+#load setting files
+#--------------------------------------------------
+
+[ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
+[ -f ~/.sh.d/export ] && source ~/.sh.d/export
+[ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
