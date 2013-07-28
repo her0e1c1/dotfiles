@@ -16,17 +16,13 @@ WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 #autoload
 #--------------------------------------------------
 
+# history 操作まわり
+autoload history-search-end
+
 autoload smart-insert-last-word
 zle -N insert-last-word smart-insert-last-word
 zstyle :insert-last-word match \
   '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
-
-
-# emacsライクなキーバインド
-bindkey -e
-
-bindkey '^]' insert-last-word
-
 
 autoload -U colors
 colors
@@ -128,15 +124,13 @@ unsetopt caseglob    # ファイルグロブで大文字小文字を区別しな
 
 setopt long_list_jobs
 
-# history 操作まわり
-autoload history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-
 #--------------------------------------------------
 #key binds
 #--------------------------------------------------
 
+# emacsライクなキーバインド
+bindkey -e
+bindkey '^]' insert-last-word
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 bindkey "^[/" undo
@@ -214,6 +208,13 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 
 #Tab一回押すだけで補完(一回目だと無駄なものが補完されやすいので使用しない)
 #zstyle ':completion:*:default' menu select true
+
+#--------------------------------------------------
+#zle
+#--------------------------------------------------
+
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
 
 #--------------------------------------------------
 #exprot
