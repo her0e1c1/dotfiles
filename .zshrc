@@ -216,7 +216,8 @@ zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
-zstyle ':completion:*:default' menu select true
+#Tab一回押すだけで補完(一回目だと無駄なものが補完されやすいので使用しない)
+#zstyle ':completion:*:default' menu select true
 
 #--------------------------------------------------
 #exprot
