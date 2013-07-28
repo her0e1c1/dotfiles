@@ -1,3 +1,4 @@
+
 ;--------------------------------------------------;
 ;文字コードの設定
 ;--------------------------------------------------
@@ -77,7 +78,7 @@
 (setq completion-ignore-case t)
 
 ;eval-expression M-:でtab補完する
-(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
+;(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
 
 ;行と列番号を表示する
 (column-number-mode t)
@@ -187,49 +188,6 @@
 (require 'flymake)
 
 ;--------------------------------------------------
-;key bindings
-;--------------------------------------------------
-
-;全角入力を半角に変換します。
-(let
- ((words `(
-  ;(,[?¥].  ,[?\\])
-  ("；". ";")
-  ("：".  ":")
-  ("）". ")")
-  ("（". "(")
-  ("。". ".")
-  ("＊". "*")
-  ("　". " "))))
- (progn
-  (defun set-key (input output)
-   (global-set-key input
-    `(lambda () (interactive)
-     (insert ,output))))
-  (dolist (w words) (set-key (car w) (cdr w)))))
-
-(global-set-key [?¥] [?\\])  ;; ¥の代わりにバックスラッシュを入力する
-;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
-(global-set-key [f9] 'linum-mode)  ; 行番号を表示
-(global-set-key "\C-cw" 'whitespace-mode)
-(define-key global-map (kbd "C-l") 'iswitchb-buffer)
-(global-set-key [f12] 'flymake-goto-next-error)  ; errorへジャンプ
-(global-set-key (kbd "S-<f11>") 'flymake-goto-prev-error)
-(global-set-key "\C-cv" 'revert-buffer-force)
-(global-set-key (kbd "C-.") 'next-buffer)
-(global-set-key (kbd "C-,") 'previous-buffer)
-(global-set-key (kbd "C-z") 'suspend-emacs)
-(global-set-key (kbd "C-x C-l") 'recentf-open-files)
-(global-set-key (kbd "M-V") 'toggle-vi-mode)
-(global-set-key (kbd "M-<f1>") 'split-window-by-5)
-;括弧の補完
-(global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "M-Q") 'keyboard-escape-quit)
-
-;--------------------------------------------------
 ;iswitch
 ;--------------------------------------------------
 
@@ -253,6 +211,19 @@
 ;--------------------------------------------------
 ;order-made function
 ;--------------------------------------------------
+
+(defun indent-rigidly-4 (beg end &optional spaces)
+  "`indent-rigidly' 4 spaces.
+With prefix-arg, or optional arg SPACES, `indent-rigidly' by that amount
+instead."
+  (interactive "r\nP")
+  (let* ((value (prefix-numeric-value spaces))
+        (default-width 4)
+        (width default-width))
+    (cond ((= value -1) (setq width (* -1 default-width)))
+          ((null spaces) (setq width default-width))
+          (t (setq width value)))
+    (indent-rigidly beg end width)))
 
 (defun toggle-vi-mode ()
   (interactive)
@@ -341,10 +312,58 @@
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
 
+
+;--------------------------------------------------
+;key bindings
+;--------------------------------------------------
+
+;全角入力を半角に変換します。
+(let
+ ((words `(
+  ;(,[?¥].  ,[?\\])
+  ("；". ";")
+  ("：".  ":")
+  ("）". ")")
+  ("（". "(")
+  ("。". ".")
+  ("＊". "*")
+  ("　". " "))))
+ (progn
+  (defun set-key (input output)
+   (global-set-key input
+    `(lambda () (interactive)
+     (insert ,output))))
+  (dolist (w words) (set-key (car w) (cdr w)))))
+
+(global-set-key [?¥] [?\\])  ;; ¥の代わりにバックスラッシュを入力する
+;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
+(global-set-key [f9] 'linum-mode)  ; 行番号を表示
+(global-set-key "\C-cw" 'whitespace-mode)
+(define-key global-map (kbd "C-l") 'iswitchb-buffer)
+(global-set-key [f12] 'flymake-goto-next-error)  ; errorへジャンプ
+(global-set-key (kbd "S-<f11>") 'flymake-goto-prev-error)
+(global-set-key "\C-cv" 'revert-buffer-force)
+(global-set-key (kbd "C-.") 'next-buffer)
+(global-set-key (kbd "C-,") 'previous-buffer)
+(global-set-key (kbd "C-z") 'suspend-emacs)
+(global-set-key (kbd "C-x C-l") 'recentf-open-files)
+(global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
+(global-set-key (kbd "M-V") 'toggle-vi-mode)
+(global-set-key (kbd "M-<f1>") 'split-window-by-5)
+;括弧の補完
+(global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
+(global-set-key (kbd "M-Q") 'keyboard-escape-quit)
+
+
+
 ;--------------------------------------------------
 ;init
 ;--------------------------------------------------
 
 ;window 操作
 (split-window-horizontally)
+
 
