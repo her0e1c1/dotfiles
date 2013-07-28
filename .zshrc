@@ -150,10 +150,6 @@ autoload predict-on
 #predict-on
 
 #alias -s
-alias -s tgz="tar xvf"
-alias -s tar.gz="tar xvf"
-alias -s zip="unzip"
-
 # alias -s zip=zipinfo
 # alias -s gz=gzcat
 # alias -s tbz=bzcat
@@ -228,3 +224,21 @@ alias e='echo $?'
 alias cp="cp -i"
 alias mv="mv -i"
 
+
+#圧縮ファイルを名前だけで展開
+function extract() {
+  case $1 in
+    *.tar.gz|*.tgz) tar xzvf $1;;
+    *.tar.xz) tar Jxvf $1;;
+    *.zip) unzip $1;;
+    *.lzh) lha e $1;;
+    *.tar.bz2|*.tbz) tar xjvf $1;;
+    *.tar.Z) tar zxvf $1;;
+    *.gz) gzip -dc $1;;
+    *.bz2) bzip2 -dc $1;;
+    *.Z) uncompress $1;;
+    *.tar) tar xvf $1;;
+    *.arj) unarj $1;;
+  esac
+}
+alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
