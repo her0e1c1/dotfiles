@@ -21,6 +21,7 @@ compinit -u
 setopt auto_pushd
 # 同ディレクトリを履歴に追加しない
 setopt pushd_ignore_dups
+#
 setopt auto_cd
 #色を使う
 setopt prompt_subst
@@ -30,10 +31,15 @@ setopt list_packed
 setopt list_types                 
 setopt nolistbeep
 #setopt correct
+
 #括弧の対応等を自動的に補完
 setopt auto_param_keys
+
 #ディレクトリ名の補完で末尾に/を自動的に付加する
 setopt auto_param_slash
+
+#show error code
+setopt printexitvalue
 
 # 履歴
 HISTFILE=~/.zsh_history
@@ -144,8 +150,11 @@ autoload predict-on
 #predict-on
 
 #alias -s
+alias -s tgz="tar xvf"
+alias -s tar.gz="tar xvf"
+alias -s zip="unzip"
+
 # alias -s zip=zipinfo
-# alias -s tgz=gzcat
 # alias -s gz=gzcat
 # alias -s tbz=bzcat
 # alias -s bz2=bzcat
