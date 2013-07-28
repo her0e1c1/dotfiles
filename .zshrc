@@ -1,3 +1,6 @@
+#--------------------------------------------------
+#prompt
+#--------------------------------------------------
 #LEFT PROMPT
 PS1="[${USER}]%(!.#.$) "
 ##右プロンプト
@@ -5,12 +8,26 @@ PS1="[${USER}]%(!.#.$) "
 #RPROMPT="%T"
 RPROMPT='%B%F{yellow}[%f%b %B%F{yellow}%~]%f%b'
 
-#右側まで入力がきたら時間を消す
-setopt transient_rprompt          
-setopt prompt_subst               # 便利なプロント
+#ディレクトリの区切りである/も含める
+#C-wでディレクトリの一部のみ削除
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
+
+#--------------------------------------------------
+#autoload
+#--------------------------------------------------
+
+autoload smart-insert-last-word
+zle -N insert-last-word smart-insert-last-word
+zstyle :insert-last-word match \
+  '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
+
 
 # emacsライクなキーバインド
 bindkey -e
+
+bindkey '^]' insert-last-word
+
 
 autoload -U colors
 colors
@@ -21,6 +38,10 @@ compinit -u
 #--------------------------------------------------
 #setopt
 #--------------------------------------------------
+
+#右側まで入力がきたら時間を消す
+setopt transient_rprompt          
+setopt prompt_subst               # 便利なプロント
 
 #cdしたときにも、dirsのスタックに積む(puと区別するので使用しない)
 #setopt auto_pushd
@@ -106,6 +127,8 @@ setopt magic_equal_subst
 setopt extended_glob # グロブ機能を拡張する
 unsetopt caseglob    # ファイルグロブで大文字小文字を区別しない
 
+setopt long_list_jobs
+
 # history 操作まわり
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
@@ -121,20 +144,11 @@ bindkey "^[/" undo
 bindkey "^[?" redo
 bindkey "^[H" run-help
 
-setopt long_list_jobs
-zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
-
-#cdをしたときに現在のディレクトリを補完に含めない
-zstyle ':completion' ignore-parents parent pwd ..
-
-#補完候補を ←↓↑→ で選択 (補完候補が色分け表示される)
-zstyle ':completion:*:default' menu select=2
-
-# カレントディレクトリに候補がない場合のみ cdpath 上のディレクトリを候補
-#zstyle ':completion:*:cd:*' tag-order local-directories path-directories
-zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
+#--------------------------------------------------
 #function
+#--------------------------------------------------
+
+#cdの後にls実行
 cdls(){
 	if [ ${#1} -eq 0 ]; then
 	   cd && ls
@@ -143,14 +157,23 @@ cdls(){
 	fi
 }
 
-autoload smart-insert-last-word
-zle -N insert-last-word smart-insert-last-word
-zstyle :insert-last-word match \
-  '*([^[:space:]][[:alpha:]/\\]|[[:alpha:]/\\][^[:space:]])*'
-bindkey '^]' insert-last-word
+#圧縮ファイルを名前だけで展開
+function extract() {
+  case $1 in
+    *.tar.gz|*.tgz) tar xzvf $1;;
+    *.tar.xz) tar Jxvf $1;;
+    *.zip) unzip $1;;
+    *.lzh) lha e $1;;
+    *.tar.bz2|*.tbz) tar xjvf $1;;
+    *.tar.Z) tar zxvf $1;;
+    *.gz) gzip -dc $1;;
+    *.bz2) bzip2 -dc $1;;
+    *.Z) uncompress $1;;
+    *.tar) tar xvf $1;;
+    *.arj) unarj $1;;
+  esac
+}
 
-WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 zshaddhistory(){
     local line=${1%%$'\n'}
@@ -163,17 +186,50 @@ zshaddhistory(){
     ]]
 }
 
+#--------------------------------------------------
+#zstyle
+#--------------------------------------------------
+
+#zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -e -o pid,user,tty,cmd'
+
+zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
+
+#cdをしたときに現在のディレクトリを補完に含めない
+zstyle ':completion' ignore-parents parent pwd ..
+
+#補完候補を ←↓↑→ で選択 (補完候補が色分け表示される)
+zstyle ':completion:*:default' menu select=2
+
+# カレントディレクトリに候補がない場合のみ cdpath 上のディレクトリを候補
+#zstyle ':completion:*:cd:*' tag-order local-directories path-directories
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
+
+#補完時に大文字と小文字を区別しない
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
 [ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
 [ -f ~/.sh.d/export ] && source ~/.sh.d/export
 [ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
 
 zstyle ':completion:*' list-colors ''
 
+zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
+			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+
+zstyle ':completion:*:default' menu select true
+
+#--------------------------------------------------
 #exprot
+#--------------------------------------------------
+
 export LSCOLORS=exfxcxdxbxegedabagacad
 export LANG=ja_JP.UTF-8
 export EDITOR=vi
 export PAGER=less
+
+#--------------------------------------------------
+#alias
+#--------------------------------------------------
 
 if uname -a | grep -q 'Ubuntu'
 then
@@ -182,22 +238,11 @@ else
  alias ls="ls -G"
 fi
 
-zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
-			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
-
-zstyle ':completion:*:default' menu select true
-
-
-#--------------------------------------------------
-#alias
-#--------------------------------------------------
-
 #alias -g
 alias -g L="| less"
 alias -g G='| grep'
 alias -g X='| xargs'
 alias -g ..="../.."
-#zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -e -o pid,user,tty,cmd'
 
 #標準出力をクリップボードにコピー
 if which pbcopy >/dev/null 2>&1 ; then 
@@ -223,28 +268,11 @@ alias ds='dirs -v'
 alias j="jobs"
 alias i="ipython3"
 alias e='echo $?'
-#alias rm="rm -i"
+alias rm="rm -i"
 alias cp="cp -i"
 alias mv="mv -i"
 alias sl='ls -CF'
 alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
-
-#圧縮ファイルを名前だけで展開
-function extract() {
-  case $1 in
-    *.tar.gz|*.tgz) tar xzvf $1;;
-    *.tar.xz) tar Jxvf $1;;
-    *.zip) unzip $1;;
-    *.lzh) lha e $1;;
-    *.tar.bz2|*.tbz) tar xjvf $1;;
-    *.tar.Z) tar zxvf $1;;
-    *.gz) gzip -dc $1;;
-    *.bz2) bzip2 -dc $1;;
-    *.Z) uncompress $1;;
-    *.tar) tar xvf $1;;
-    *.arj) unarj $1;;
-  esac
-}
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 #compctl 指示 コマンド名(のリスト)
