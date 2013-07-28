@@ -7,8 +7,10 @@
 	ci = commit
 	st = status
 	rt = remote
+    di = diff
+    dic = "diff --cached"
 [color]
 	ui = true
 [core]
-	editor = vi
+	editor = vim
 	excludesfile = /Users/air/.gitignore
