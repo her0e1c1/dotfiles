@@ -187,11 +187,16 @@
 
 ;履歴を表示
 (recentf-mode 1)
-(setq recentf-max-menu-items  10000)
-(setq recentf-max-saved-items 10000)
+(setq recentf-max-menu-items  100000)
+(setq recentf-max-saved-items 100000)
 
 ;
 (require 'flymake)
+
+;emacs server
+(require 'server)
+(unless (server-running-p)
+ (server-start))
 
 ;--------------------------------------------------
 ;iswitch
@@ -203,16 +208,10 @@
         (define-key iswitchb-mode-map "\C-p" 'iswitchb-prev-match)
         (define-key iswitchb-mode-map "\C-f" 'iswitchb-next-match)
         (define-key iswitchb-mode-map "\C-b" 'iswitchb-prev-match)))
-
+(iswitchb-default-keybindings)
 ;不要なバッファは無視する
-(setq iswitchb-buffer-ignore
-      '(
-        "*twittering-wget-buffer*"
-        "*twittering-http-buffer*"
-        "*WoMan-Log*"
-        "*SKK annotation*"
-        "*Completions*"
-        ))
+(setq iswitchb-buffer-ignore '("^\\*"))
+(add-to-list 'iswitchb-buffer-ignore "/\/i/\/i`/\/i/\/i*")
 
 ;--------------------------------------------------
 ;order-made function
@@ -371,5 +370,3 @@ instead."
 
 ;window 操作
 (split-window-horizontally)
-
-
