@@ -74,6 +74,12 @@
 ;Settings for emacs
 ;--------------------------------------------------
 
+;初期位置
+(cd "~/")
+
+;リージョンを kill-ring に入れないで削除できるようにする
+(delete-selection-mode t)
+
 ;C-x C-fで大文字小文字をを区別しない
 (setq completion-ignore-case t)
 
