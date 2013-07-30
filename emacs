@@ -348,9 +348,9 @@ instead."
 (global-set-key [f12] 'flymake-goto-next-error)  ; errorへジャンプ
 (global-set-key (kbd "S-<f11>") 'flymake-goto-prev-error)
 (global-set-key "\C-cv" 'revert-buffer-force)
-(global-set-key (kbd "C-.") 'next-buffer)
-(global-set-key (kbd "C-,") 'previous-buffer)
-(global-set-key (kbd "C-z") 'suspend-emacs)
+(global-set-key (kbd "M-.") 'next-buffer)
+(global-set-key (kbd "M-,") 'previous-buffer)
+;(global-set-key (kbd "C-z") 'suspend-emacs)
 (global-set-key (kbd "C-x C-l") 'recentf-open-files)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)

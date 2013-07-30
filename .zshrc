@@ -276,6 +276,7 @@ alias mv="mv -i"
 alias sl='ls -CF'
 alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
 alias e='emacsclient -nw -a ""'
+alias en='emacsclient -n'
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 #compctl 指示 コマンド名(のリスト)
