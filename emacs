@@ -369,4 +369,4 @@ instead."
 ;--------------------------------------------------
 
 ;window 操作
-(split-window-horizontally)
+;(split-window-horizontally)
