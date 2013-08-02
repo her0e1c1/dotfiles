@@ -277,7 +277,7 @@ instead."
 (mapcar
  (lambda (x)
   (define-key my-keyjack-mode-map (car x) (cdr x)))
-`(("\C-t" . other-window)
+`(("\M-t" . other-window)
   (,(kbd "C-S-t") . other-window-backward)
   ("\C-c\C-l" . toggle-truncate-lines)
   (,(kbd "M-g") . goto-line)
@@ -332,6 +332,7 @@ instead."
   ("（". "(")
   ("。". ".")
   ("＊". "*")
+  ("、". ",")
   ("　". " "))))
  (progn
   (defun set-key (input output)
@@ -361,7 +362,7 @@ instead."
 (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "M-Q") 'keyboard-escape-quit)
-
+(global-set-key (kbd "M-G") 'grep-find)
 
 
 ;--------------------------------------------------
