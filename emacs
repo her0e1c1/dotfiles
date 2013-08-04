@@ -218,7 +218,7 @@
 ;--------------------------------------------------
 
 ;scrachの中身を終了時に保存
-(setq scratch-path "~/.emacs.d/scratch")
+(setq scratch-path "~/.scratch")
 (defun save-scratch-data ()
   (let ((str (progn
                (set-buffer (get-buffer "*scratch*"))
@@ -237,6 +237,10 @@
 (defadvice save-buffers-kill-emacs
   (before save-scratch-buffer activate)
   (save-scratch-data))
+(defadvice kill-emacs
+  (before save-scratch-buffer1 activate)
+  (save-scratch-data))
+
 (defun read-scratch-data ()
   (let ((file scratch-path))
     (when (file-exists-p file)
@@ -355,6 +359,16 @@ instead."
 (let
  ((words `(
   ;(,[?¥].  ,[?\\])
+  ("０". "0")
+  ("１". "1")
+  ("２". "2")
+  ("３". "3")
+  ("４". "4")
+  ("５". "5")
+  ("６". "6")
+  ("７". "7")
+  ("８". "8")
+  ("９". "9")
   ("；". ";")
   ("：".  ":")
   ("）". ")")
