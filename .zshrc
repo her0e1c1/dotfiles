@@ -313,6 +313,7 @@ alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
 alias e='emacsclient -nw -a ""'
 alias en='emacsclient -n'
 alias et='emacsclient -t'
+alias c="cdr"
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 #--------------------------------------------------

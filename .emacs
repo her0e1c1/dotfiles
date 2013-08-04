@@ -170,6 +170,9 @@
 (setq windmove-wrap-around t)
 
 ;emacsを終了した時の状態を保存
+(setq desktop-dirname "~/")
+(setq desktop-base-file-name ".emacs.d.desktop")
+(setq desktop-save t)
 (desktop-save-mode 1)
 
 ;
