@@ -188,8 +188,10 @@ zshaddhistory(){
 #--------------------------------------------------
 #zstyle
 #--------------------------------------------------
+#参照 http://zsh.sourceforge.net/Doc/Release/Completion-System.html
+#zstyle ":MODE: :COMMAND:" STYLE STRINGS
 
-#zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -e -o pid,user,tty,cmd'
+#zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -e -o pid,user,tty,cmd
 
 zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 
@@ -209,6 +211,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 zstyle ':completion:*' list-colors ''
 
+#コマンドsudoを実行するときだけ, 補完するときのコマンドパス
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 			     /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
