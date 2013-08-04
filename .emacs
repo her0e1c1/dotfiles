@@ -170,6 +170,9 @@
 ;巡回する
 (setq windmove-wrap-around t)
 
+;emacsを終了した時の状態を保存
+(desktop-save-mode 1)
+
 ;
 (setq skeleton-pair 1)
 
@@ -208,7 +211,7 @@
         (define-key iswitchb-mode-map "\C-p" 'iswitchb-prev-match)
         (define-key iswitchb-mode-map "\C-f" 'iswitchb-next-match)
         (define-key iswitchb-mode-map "\C-b" 'iswitchb-prev-match)))
-(iswitchb-default-keybindings)
+;(iswitchb-default-keybindings)
 ;不要なバッファは無視する
 ;(setq iswitchb-buffer-ignore '("^\\*"))
 ;(add-to-list 'iswitchb-buffer-ignore "/\/i/\/i`/\/i/\/i*")
