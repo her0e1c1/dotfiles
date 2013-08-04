@@ -246,6 +246,23 @@ export LSCOLORS=exfxcxdxbxegedabagacad
 export LANG=ja_JP.UTF-8
 export EDITOR=vi
 export PAGER=less
+export SPHINX_PATH=~/github/sphinx_document:~/Dropbox/private/sphinx
+
+sphinx_auto_build(){
+    OLD_PATH=`pwd`;
+    for p in ${(s/:/)SPHINX_PATH};do
+        if [ -d $p ];then
+            \cd $p;
+            echo `pwd`
+            if which inotifywait ;then
+                while inotifywait -e modify ./**/*.rst;do
+                    make html 1> /dev/null 2> /dev/null;
+                done
+            fi
+        fi
+    done
+    \cd $OLD_PATH;
+}
 
 #--------------------------------------------------
 #alias

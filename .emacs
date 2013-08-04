@@ -50,7 +50,6 @@
 ;tab settings
 ;--------------------------------------------------
 
-;M-4 C-x tab もまとめたい
 (setq default-tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
@@ -391,14 +390,14 @@ instead."
 ;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
 (global-set-key [f9] 'linum-mode)  ; 行番号を表示
 (global-set-key "\C-cw" 'whitespace-mode)
-(define-key global-map (kbd "C-l") 'iswitchb-buffer)
 (global-set-key [f12] 'flymake-goto-next-error)  ; errorへジャンプ
 (global-set-key (kbd "S-<f11>") 'flymake-goto-prev-error)
 (global-set-key "\C-cv" 'revert-buffer-force)
 (global-set-key (kbd "M-.") 'next-buffer)
 (global-set-key (kbd "M-,") 'previous-buffer)
 ;(global-set-key (kbd "C-z") 'suspend-emacs)
-(global-set-key (kbd "C-x C-l") 'recentf-open-files)
+(global-set-key (kbd "C-l") 'recentf-open-files)
+(define-key global-map (kbd "C-x C-l") 'iswitchb-buffer)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
