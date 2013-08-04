@@ -210,12 +210,41 @@
         (define-key iswitchb-mode-map "\C-b" 'iswitchb-prev-match)))
 (iswitchb-default-keybindings)
 ;不要なバッファは無視する
-(setq iswitchb-buffer-ignore '("^\\*"))
-(add-to-list 'iswitchb-buffer-ignore "/\/i/\/i`/\/i/\/i*")
+;(setq iswitchb-buffer-ignore '("^\\*"))
+;(add-to-list 'iswitchb-buffer-ignore "/\/i/\/i`/\/i/\/i*")
 
 ;--------------------------------------------------
 ;order-made function
 ;--------------------------------------------------
+
+;scrachの中身を終了時に保存
+(setq scratch-path "~/.emacs.d/scratch")
+(defun save-scratch-data ()
+  (let ((str (progn
+               (set-buffer (get-buffer "*scratch*"))
+               (buffer-substring-no-properties
+                (point-min) (point-max))))
+        (file scratch-path))
+    (if (get-file-buffer (expand-file-name file))
+        (setq buf (get-file-buffer (expand-file-name file)))
+      (setq buf (find-file-noselect file)))
+    (set-buffer buf)
+    (erase-buffer)
+    (insert str)
+    (save-buffer)
+    (kill-buffer buf)))
+;scrathの中身を開始時に復元
+(defadvice save-buffers-kill-emacs
+  (before save-scratch-buffer activate)
+  (save-scratch-data))
+(defun read-scratch-data ()
+  (let ((file scratch-path))
+    (when (file-exists-p file)
+      (set-buffer (get-buffer "*scratch*"))
+      (erase-buffer)
+      (insert-file-contents file))
+    ))
+(read-scratch-data)
 
 (defun indent-rigidly-4 (beg end &optional spaces)
   "`indent-rigidly' 4 spaces.

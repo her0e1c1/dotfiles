@@ -150,6 +150,12 @@ cdls(){
 	fi
 }
 
+#emacsのデーモン再起動
+function kill_emacs(){
+    emacsclient -e "(kill-emacs)";
+    emacs --daemon
+}
+
 #圧縮ファイルを名前だけで展開
 function extract() {
   case $1 in
@@ -277,6 +283,7 @@ alias sl='ls -CF'
 alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
 alias e='emacsclient -nw -a ""'
 alias en='emacsclient -n'
+alias et='emacsclient -t'
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
 #compctl 指示 コマンド名(のリスト)
