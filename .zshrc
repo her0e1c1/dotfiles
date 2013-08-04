@@ -26,6 +26,7 @@ cdpath=($HOME)
 #--------------------------------------------------
 #autoload
 #--------------------------------------------------
+#標準関数で使用するものは, ロードする
 
 # history 操作まわり
 autoload history-search-end
@@ -38,6 +39,14 @@ colors
 #c C-p/C-nでcから始まるコマンドのみの履歴を表示
 autoload -U compinit
 compinit -u
+
+typeset -ga chpwd_functions
+autoload -U chpwd_recent_dirs cdr
+chpwd_functions+=chpwd_recent_dirs
+zstyle ":chpwd:*" recent-dirs-max 500
+#zstyle ":chpwd:*" recent-dirs-default true
+zstyle ":completion:*" recent-dirs-insert always
+
 
 #--------------------------------------------------
 #setopt
@@ -189,7 +198,7 @@ zshaddhistory(){
 #zstyle
 #--------------------------------------------------
 #参照 http://zsh.sourceforge.net/Doc/Release/Completion-System.html
-#zstyle ":MODE: :COMMAND:" STYLE STRINGS
+#zstyle ":HOOK-MODE: :COMMAND:" STYLE STRINGS
 
 #zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -e -o pid,user,tty,cmd
 
