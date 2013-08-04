@@ -14,3 +14,5 @@
 [core]
 	editor = vim
 	excludesfile = /Users/air/.gitignore
+[push]
+    default = matching
