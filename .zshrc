@@ -286,9 +286,16 @@ alias en='emacsclient -n'
 alias et='emacsclient -t'
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 
+#--------------------------------------------------
+#compctl
+#--------------------------------------------------
+
 #compctl 指示 コマンド名(のリスト)
 #ディレクトリ名のみ補完
 compctl -/ cd chdir dirs pushd
+
+#補完候補を.bz2にする
+compctl -g '*.(bz2)' bunzip2
 
 #--------------------------------------------------
 #load setting files
