@@ -255,10 +255,10 @@ sphinx_auto_build(){
             \cd $p;
             echo `pwd`
             if which inotifywait ;then
-                while inotifywait -e modify ./**/*.rst;do
-                    make html 1> /dev/null 2> /dev/null;
-                done
+                while inotifywait -e modify ./**/*.rst;do make html; done &
             fi
+       else
+            echo "$pは存在しません";
         fi
     done
     \cd $OLD_PATH;
