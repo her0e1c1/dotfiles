@@ -194,6 +194,8 @@
 (recentf-mode 1)
 (setq recentf-max-menu-items  100000)
 (setq recentf-max-saved-items 100000)
+(setq recentf-auto-cleanup 'never)
+(run-with-idle-timer 30 t 'recentf-save-list)
 
 ;
 (require 'flymake)
