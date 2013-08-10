@@ -160,7 +160,7 @@ cdls(){
 }
 
 #emacsのデーモン再起動
-function kill_emacs(){
+function restart_emacs(){
     emacsclient -e "(kill-emacs)";
     emacs --daemon
 }

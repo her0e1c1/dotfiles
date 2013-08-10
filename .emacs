@@ -170,10 +170,21 @@
 (setq windmove-wrap-around t)
 
 ;emacsを終了した時の状態を保存
+(require 'desktop)
+
 (setq desktop-dirname "~/")
-(setq desktop-base-file-name ".emacs.d.desktop")
+(setq desktop-base-file-name ".emacs.desktop")
 (setq desktop-save t)
 (desktop-save-mode 1)
+(desktop-load-default)
+(desktop-read)
+(setq history-length 250)
+(add-to-list 'desktop-globals-to-save 'extended-command-history)
+(add-to-list 'desktop-globals-to-save 'shell-command-history)
+(defadvice save-buffers-kill-terminal
+  (before deskto-save-before-kill-emacs activate)
+  (desktop-save-in-desktop-dir))
+;(add-to-list 'desktop-globals-to-save 'file-name-history)
 
 ;
 (setq skeleton-pair 1)
@@ -226,6 +237,12 @@
 ;--------------------------------------------------
 ;order-made function
 ;--------------------------------------------------
+
+;; (defadvice yes-or-no-p (around yes-or-no-p-always-yes)
+;;   "Return always yes."
+;;   (setq ad-return-value t))
+;; (ad-activate-regexp "yes-or-no-p-always-yes")
+;; (ad-deactivate-regexp "yes-or-no-p-always-yes")
 
 ;scrachの中身を終了時に保存
 (setq scratch-path "~/.scratch")
