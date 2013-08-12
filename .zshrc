@@ -275,6 +275,7 @@ then
 elif uname -a |grep -q "air"
 then
  alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
+ alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
 else
  alias ls="ls -G"
 fi
