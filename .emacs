@@ -1,3 +1,30 @@
+(defvar temp-directory (concat "~/tmp/" (user-login-name)))
+(make-directory temp-directory t)
+
+; One of the main issues for me is that my home directory is
+; NFS mounted.  By setting all the autosave directories in /tmp,
+; things run much quicker
+(setq auto-save-directory (concat temp-directory "/autosave")
+      auto-save-hash-directory (concat temp-directory "/autosave-hash")
+      auto-save-directory-fallback "/tmp/"
+      auto-save-list-file-prefix (concat temp-directory "/autosave-")
+      auto-save-hash-p nil
+      auto-save-timeout 100
+      auto-save-interval 300)
+(make-directory auto-save-directory t)
+;(require 'auto-save)
+
+(defadvice recentf-open-files (after recentf-set-overlay-directory-adv activate)
+  (set-buffer "*Open Recent*")
+  (save-excursion
+    (while (re-search-forward "\\(^  \\[[0-9]\\] \\|^  \\)\\(.*/\\)$" nil t nil)
+      (overlay-put (make-overlay (match-beginning 2) (match-end 2))
+                   'face `((:foreground ,"#F1266F"))))))
+;(require 'recentf-ext)
+(setq load-path (append (list (expand-file-name "~/.icalendar")) load-path))
+(require 'icalendar)
+(setq appt-display-duration 60)
+
 
 ;--------------------------------------------------;
 ;文字コードの設定
@@ -170,21 +197,34 @@
 (setq windmove-wrap-around t)
 
 ;emacsを終了した時の状態を保存
-(require 'desktop)
 
 (setq desktop-dirname "~/")
 (setq desktop-base-file-name ".emacs.desktop")
 (setq desktop-save t)
+(require 'desktop)
 (desktop-save-mode 1)
 (desktop-load-default)
 (desktop-read)
 (setq history-length 250)
+(setq desktop-dirname "~/")
 (add-to-list 'desktop-globals-to-save 'extended-command-history)
 (add-to-list 'desktop-globals-to-save 'shell-command-history)
 (defadvice save-buffers-kill-terminal
   (before deskto-save-before-kill-emacs activate)
-  (desktop-save-in-desktop-dir))
+  (setq desktop-save t)
+  (setq desktop-base-file-name ".emacs.desktop")
+  (desktop-save "~/")
+  )
 ;(add-to-list 'desktop-globals-to-save 'file-name-history)
+(setq desktop-dirname "~/")
+(setq desktop-base-file-name ".emacs.desktop")
+
+(require 'filecache)
+(file-cache-add-directory-list
+   (list "~" "~/bin"))
+(add-hook 'minibuffer-setup-hook
+          '(lambda ()
+             (local-set-key "\C-c\C-i" 'file-cache-minibuffer-complete)))
 
 ;
 (setq skeleton-pair 1)
@@ -211,13 +251,9 @@
   (run-with-idle-timer 30 t 'recentf-save-list)
   (recentf-mode 1))
 
-;
 (require 'flymake)
+(require 'cl)
 
-;emacs server
-(require 'server)
-(unless (server-running-p)
- (server-start))
 
 ;--------------------------------------------------
 ;iswitch
@@ -337,7 +373,7 @@ instead."
 (mapcar
  (lambda (x)
   (define-key my-keyjack-mode-map (car x) (cdr x)))
-`(("\M-t" . other-window)
+`(;("\M-t" . other-window)
   (,(kbd "C-S-t") . other-window-backward)
   ("\C-c\C-l" . toggle-truncate-lines)
   (,(kbd "M-g") . goto-line)
@@ -445,3 +481,58 @@ instead."
 
 ;window 操作
 ;(split-window-horizontally)
+(put 'upcase-region 'disabled nil)
+
+
+(defun other-window-or-split ()
+  (interactive)
+  (when (one-window-p)
+    (split-window-horizontally))
+  (other-window 1))
+
+(global-set-key (kbd "M-t") 'other-window-or-split)
+
+;; ブックマークを変更したら即保存する
+(setq bookmark-save-flag 1)
+(progn
+  (setq bookmark-sort-flag nil)
+  (defun bookmark-arrange-latest-top ()
+    (let ((latest ( bookmark-get-bookmark bookmark)))
+      (setq bookmark-alist (cons latest (delq latest bookmark-aliset))))
+    (bookmark-save))
+  (add-hook 'bookmark-after-jump-hook 'bookmark-arrange-latest-top))
+
+(require 'server)
+
+(defvar installing-package-list
+  '(
+    w3m
+    icalendar
+    php-mode
+    scala-mode
+    markdown-mode
+    scss-mode
+    haskell-mode
+    google-c-style
+    yaml-mode
+    open-junk-file
+    bookmark+
+    recentf-ext
+    dired+
+    ))
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (unless (server-running-p)
+    (package-initialize))
+  (dolist (pkg installing-package-list)
+    (unless (package-installed-p pkg)
+      (package-install pkg))))
+
+;emacs server
+;this code should be at the last line
+(unless (server-running-p)
+ (server-start))
+
