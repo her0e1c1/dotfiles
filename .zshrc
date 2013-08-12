@@ -246,6 +246,8 @@ export LSCOLORS=exfxcxdxbxegedabagacad
 export LANG=ja_JP.UTF-8
 export EDITOR=vi
 export PAGER=less
+export DROPBOX_PATH=~/Dropbox
+export MINEDB=~/Dropbox/mine.db
 export SPHINX_PATH=~/github/sphinx_document:~/Dropbox/private/sphinx
 
 sphinx_auto_build(){
