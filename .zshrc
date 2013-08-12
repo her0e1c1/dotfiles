@@ -271,6 +271,10 @@ sphinx_auto_build(){
 if uname -a | grep -q 'Ubuntu'
 then
  alias ls="ls --color"
+
+elif uname -a |grep -q "air"
+then
+ alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
 else
  alias ls="ls -G"
 fi
