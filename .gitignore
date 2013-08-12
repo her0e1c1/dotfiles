@@ -11,7 +11,8 @@
 *.bak
 *~
 *.out
-*.dSYM/
+*.dSYM
+.emacs.d/
 
 *.hi
 temp/
