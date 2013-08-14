@@ -20,7 +20,6 @@
     (while (re-search-forward "\\(^  \\[[0-9]\\] \\|^  \\)\\(.*/\\)$" nil t nil)
       (overlay-put (make-overlay (match-beginning 2) (match-end 2))
                    'face `((:foreground ,"#F1266F"))))))
-;(require 'recentf-ext)
 (setq load-path (append (list (expand-file-name "~/.icalendar")) load-path))
 (require 'icalendar)
 (setq appt-display-duration 60)
@@ -529,7 +528,8 @@ instead."
     (package-initialize))
   (dolist (pkg installing-package-list)
     (unless (package-installed-p pkg)
-      (package-install pkg))))
+      (package-install pkg)))
+  (require 'recentf-ext))
 
 ;emacs server
 ;this code should be at the last line
