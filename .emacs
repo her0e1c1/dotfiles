@@ -506,16 +506,16 @@ instead."
 
 (defvar installing-package-list
   '(
-    w3m
+    ;w3m
     icalendar
-    php-mode
-    scala-mode
-    markdown-mode
-    scss-mode
-    haskell-mode
-    google-c-style
-    yaml-mode
-    open-junk-file
+    ;php-mode
+    ;scala-mode
+    ;markdown-mode
+    ;scss-mode
+    ;haskell-mode
+    ;google-c-style
+    ;yaml-mode
+    ;open-junk-file
     bookmark+
     recentf-ext
     dired+
