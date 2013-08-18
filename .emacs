@@ -20,7 +20,6 @@
     (while (re-search-forward "\\(^  \\[[0-9]\\] \\|^  \\)\\(.*/\\)$" nil t nil)
       (overlay-put (make-overlay (match-beginning 2) (match-end 2))
                    'face `((:foreground ,"#F1266F"))))))
-;(require 'recentf-ext)
 (setq load-path (append (list (expand-file-name "~/.icalendar")) load-path))
 (require 'icalendar)
 (setq appt-display-duration 60)
@@ -198,26 +197,26 @@
 
 ;emacsを終了した時の状態を保存
 
-(setq desktop-dirname "~/")
-(setq desktop-base-file-name ".emacs.desktop")
-(setq desktop-save t)
-(require 'desktop)
-(desktop-save-mode 1)
-(desktop-load-default)
-(desktop-read)
-(setq history-length 250)
-(setq desktop-dirname "~/")
-(add-to-list 'desktop-globals-to-save 'extended-command-history)
-(add-to-list 'desktop-globals-to-save 'shell-command-history)
-(defadvice save-buffers-kill-terminal
-  (before deskto-save-before-kill-emacs activate)
-  (setq desktop-save t)
-  (setq desktop-base-file-name ".emacs.desktop")
-  (desktop-save "~/")
-  )
-;(add-to-list 'desktop-globals-to-save 'file-name-history)
-(setq desktop-dirname "~/")
-(setq desktop-base-file-name ".emacs.desktop")
+;; (setq desktop-dirname "~/")
+;; (setq desktop-base-file-name ".emacs.desktop")
+;; (setq desktop-save t)
+;; (require 'desktop)
+;; (desktop-save-mode 1)
+;; (desktop-load-default)
+;; (desktop-read)
+;; (setq history-length 250)
+;; (setq desktop-dirname "~/")
+;; (add-to-list 'desktop-globals-to-save 'extended-command-history)
+;; (add-to-list 'desktop-globals-to-save 'shell-command-history)
+;; (defadvice save-buffers-kill-terminal
+;;   (before deskto-save-before-kill-emacs activate)
+;;   (setq desktop-save t)
+;;   (setq desktop-base-file-name ".emacs.desktop")
+;;   (desktop-save "~/")
+;;   )
+;; ;(add-to-list 'desktop-globals-to-save 'file-name-history)
+;; (setq desktop-dirname "~/")
+;; (setq desktop-base-file-name ".emacs.desktop")
 
 (require 'filecache)
 (file-cache-add-directory-list
@@ -506,16 +505,16 @@ instead."
 
 (defvar installing-package-list
   '(
-    w3m
+    ;w3m
     icalendar
-    php-mode
-    scala-mode
-    markdown-mode
-    scss-mode
-    haskell-mode
-    google-c-style
-    yaml-mode
-    open-junk-file
+    ;php-mode
+    ;scala-mode
+    ;markdown-mode
+    ;scss-mode
+    ;haskell-mode
+    ;google-c-style
+    ;yaml-mode
+    ;open-junk-file
     bookmark+
     recentf-ext
     dired+
@@ -529,7 +528,8 @@ instead."
     (package-initialize))
   (dolist (pkg installing-package-list)
     (unless (package-installed-p pkg)
-      (package-install pkg))))
+      (package-install pkg)))
+  (require 'recentf-ext))
 
 ;emacs server
 ;this code should be at the last line

@@ -26,4 +26,4 @@ syntax: glob
 
 *.hi
 __pycache__/
-
+.emacs.d/

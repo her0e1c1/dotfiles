@@ -286,6 +286,8 @@ fi
 alias -g L="| less"
 alias -g G='| grep'
 alias -g X='| xargs'
+alias -g N1='1>/dev/null'
+alias -g N2='2>/dev/null'
 alias -g ..="../.."
 
 #標準出力をクリップボードにコピー
