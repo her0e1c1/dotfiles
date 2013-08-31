@@ -1,0 +1,163 @@
+(defvar temp-directory (concat "~/tmp/" (user-login-name)))
+(make-directory temp-directory t)
+
+; One of the main issues for me is that my home directory is
+; NFS mounted.  By setting all the autosave directories in /tmp,
+; things run much quicker
+;; (setq auto-save-directory (concat temp-directory "/autosave")
+;;       auto-save-hash-directory (concat temp-directory "/autosave-hash")
+;;       auto-save-directory-fallback "/tmp/"
+;;       auto-save-list-file-prefix (concat temp-directory "/autosave-")
+;;       auto-save-hash-p nil
+;;       auto-save-timeout 100
+;;       auto-save-interval 300)
+;; (make-directory auto-save-directory t)
+;(require 'auto-save)
+
+(defadvice recentf-open-files (after recentf-set-overlay-directory-adv activate)
+  (set-buffer "*Open Recent*")
+  (save-excursion
+    (while (re-search-forward "\\(^  \\[[0-9]\\] \\|^  \\)\\(.*/\\)$" nil t nil)
+      (overlay-put (make-overlay (match-beginning 2) (match-end 2))
+                   'face `((:foreground ,"#F1266F"))))))
+(setq load-path (append (list (expand-file-name "~/.icalendar")) load-path))
+(require 'icalendar)
+(setq appt-display-duration 60)
+
+
+(defvar installing-package-list
+  '(
+    ;w3m
+    icalendar
+    ;php-mode
+    ;scala-mode
+    ;markdown-mode
+    ;scss-mode
+    ;haskell-mode
+    ;google-c-style
+    ;yaml-mode
+    ;open-junk-file
+    bookmark+
+    recentf-ext
+    dired+
+    ))
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (unless (server-running-p)
+    (package-initialize))
+  (dolist (pkg installing-package-list)
+    (unless (package-installed-p pkg)
+      (package-install pkg)))
+  (require 'recentf-ext))
+
+;emacs server
+;this code should be at the last line
+(unless (server-running-p)
+ (server-start))
+
+;; ブックマークを変更したら即保存する
+(setq bookmark-save-flag 1)
+(progn
+  (setq bookmark-sort-flag nil)
+  (defun bookmark-arrange-latest-top ()
+    (let ((latest ( bookmark-get-bookmark bookmark)))
+      (setq bookmark-alist (cons latest (delq latest bookmark-aliset))))
+    (bookmark-save))
+  (add-hook 'bookmark-after-jump-hook 'bookmark-arrange-latest-top))
+
+;; (defadvice yes-or-no-p (around yes-or-no-p-always-yes)
+;;   "Return always yes."
+;;   (setq ad-return-value t))
+;; (ad-activate-regexp "yes-or-no-p-always-yes")
+;; (ad-deactivate-regexp "yes-or-no-p-always-yes")
+
+;scrachの中身を終了時に保存
+(setq scratch-path "~/.scratch")
+(defun save-scratch-data ()
+  (let ((str (progn
+               (set-buffer (get-buffer "*scratch*"))
+               (buffer-substring-no-properties
+                (point-min) (point-max))))
+        (file scratch-path))
+    (if (get-file-buffer (expand-file-name file))
+        (setq buf (get-file-buffer (expand-file-name file)))
+      (setq buf (find-file-noselect file)))
+    (set-buffer buf)
+    (erase-buffer)
+    (insert str)
+    (save-buffer)
+    (kill-buffer buf)))
+;scrathの中身を開始時に復元
+(defadvice save-buffers-kill-emacs
+  (before save-scratch-buffer activate)
+  (save-scratch-data))
+(defadvice kill-emacs
+  (before save-scratch-buffer1 activate)
+  (save-scratch-data))
+
+(defun read-scratch-data ()
+  (let ((file scratch-path))
+    (when (file-exists-p file)
+      (set-buffer (get-buffer "*scratch*"))
+      (erase-buffer)
+      (insert-file-contents file))
+    ))
+(read-scratch-data)
+
+
+;emacsを終了した時の状態を保存
+
+;; (setq desktop-dirname "~/")
+;; (setq desktop-base-file-name ".emacs.desktop")
+;; (setq desktop-save t)
+;; (require 'desktop)
+;; (desktop-save-mode 1)
+;; (desktop-load-default)
+;; (desktop-read)
+;; (setq history-length 250)
+;; (setq desktop-dirname "~/")
+;; (add-to-list 'desktop-globals-to-save 'extended-command-history)
+;; (add-to-list 'desktop-globals-to-save 'shell-command-history)
+;; (defadvice save-buffers-kill-terminal
+;;   (before deskto-save-before-kill-emacs activate)
+;;   (setq desktop-save t)
+;;   (setq desktop-base-file-name ".emacs.desktop")
+;;   (desktop-save "~/")
+;;   )
+;; ;(add-to-list 'desktop-globals-to-save 'file-name-history)
+;; (setq desktop-dirname "~/")
+;; (setq desktop-base-file-name ".emacs.desktop")
+
+(require 'filecache)
+(file-cache-add-directory-list
+   (list "~" "~/bin"))
+(add-hook 'minibuffer-setup-hook
+          '(lambda ()
+             (local-set-key "\C-c\C-i" 'file-cache-minibuffer-complete)))
+
+
+;起動時にwindowを最大化する
+(when window-system 
+    (let (
+          (px (display-pixel-width)) 
+          (py (display-pixel-height)) 
+          (fx (frame-char-width)) 
+          (fy (frame-char-height)) 
+          tx ty 
+          ) 
+      ;delete tool bar (don't use this when running on CUI)
+      (tool-bar-mode 0)
+      ;スクロールバーを消す (don't use this on CUI)
+      (toggle-scroll-bar nil)
+      ;; Next formulas discovered empiric on Windows/Linux host 
+      ;; with default font (7x13). 
+      (setq tx (- (/ px fx) 7)) 
+      (setq ty (- (/ py fy) 4)) 
+      (setq initial-frame-alist '((top . 2) (left . 2))) 
+      (add-to-list 'initial-frame-alist (cons 'width tx)) 
+      (add-to-list 'initial-frame-alist (cons 'height ty))))
+
+
