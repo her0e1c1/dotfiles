@@ -21,7 +21,7 @@ def execute(cmd):
     os.system(cmd)
     
 
-def make_dir:
+def make_dir():
     pass
 
 
@@ -40,6 +40,11 @@ def apt_get():
         cmd = "sudo apt-get install -y %s" % pkg
         execute(cmd)
 
+
+def pkg_install():
+    for pkg in MYCONFIG.values("pkg_install"):
+        cmd = "pkg intall %s" % pkg
+        execute(cmd)
 
 def easy_install(packages):
     cmd = "sudo easy_install3 {package}"
