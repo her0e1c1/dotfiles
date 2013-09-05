@@ -11,8 +11,8 @@ export XMODIFIERS='@im=SCIM'
 #export GTK_IM_MODULE=scim
 #echo '*inputMethod : SCIM' | xrdb -merge
 scim -d &
-xmodmap ~/.xmodmap
-xrdb .Xresources
+#xmodmap ~/.xmodmap
+#xrdb .Xresources
 #gui
 fluxbox
 
