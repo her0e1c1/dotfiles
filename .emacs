@@ -26,7 +26,7 @@
   (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
   (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize)
-  (package-refresh-contents)
+  ;(package-refresh-contents)
   (dolist (pkg installing-package-list)
     (if (package-installed-p pkg)
         (require pkg)
