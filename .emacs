@@ -30,6 +30,7 @@
   (dolist (pkg installing-package-list)
     (if (package-installed-p pkg)
         (require pkg)
+      (package-refresh-contents)
       (package-install pkg))))
 
 ;--------------------------------------------------
