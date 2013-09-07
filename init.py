@@ -46,8 +46,14 @@ def pkg_install():
         cmd = "pkg intall %s" % pkg
         execute(cmd)
 
-def easy_install(packages):
+def easy_install3(packages):
     cmd = "sudo easy_install3 {package}"
+    for p in packages:
+        execute(cmd.format(package=p))
+
+
+def easy_install(packages):
+    cmd = "sudo easy_install {package}"
     for p in packages:
         execute(cmd.format(package=p))
 
@@ -56,6 +62,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--home", action="store_true")
     p.add_argument("--easy-install", action="store_true")
+    p.add_argument("--easy-install3", action="store_true")
     p.add_argument("--apt-get", action="store_true")
 
     args = p.parse_args()
@@ -63,6 +70,8 @@ def main():
     if args.home:
         home()
     if args.easy_install:
+        easy_install(MYCONFIG.values("easy_install"))
+    if args.easy_install3:
         easy_install(MYCONFIG.values("easy_install3"))
     if args.apt_get:
         apt_get()
