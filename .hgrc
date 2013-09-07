@@ -11,6 +11,7 @@ latest = glog --limit 5
 
 [extdiff]
 cmd.cdiff = colordiff
+cmd.vimdiff = vimdiff
 opts.cdiff =
 
 [color]
@@ -37,4 +38,4 @@ hgext.convert =
 color =
 graphlog =
 mq =
-hggit =  ~/python/2.7.3/lib/python2.7/site-packages/hg_git-0.4.0-py2.7.egg/hggit
+#hggit =  ~/python/2.7.3/lib/python2.7/site-packages/hg_git-0.4.0-py2.7.egg/hggit
