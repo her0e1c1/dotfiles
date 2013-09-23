@@ -1,3 +1,50 @@
+;--------------------------------------------------
+;packages
+;--------------------------------------------------
+
+(defvar installing-package-list
+  '(
+    ;w3m
+    icalendar
+    ;php-mode
+    ;scala-mode
+    ;markdown-mode
+    ;scss-mode
+    ;haskell-mode
+    ;google-c-style
+    ;yaml-mode
+    ;open-junk-file
+    bookmark+
+    recentf-ext
+    dired+
+    ;slime
+    js2-mode
+    ))
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (package-initialize)
+  ;(package-refresh-contents)
+  (dolist (pkg installing-package-list)
+    (if (package-installed-p pkg)
+        (require pkg)
+      (package-refresh-contents)
+      (package-install pkg))))
+
+;--------------------------------------------------
+;js
+;--------------------------------------------------
+
+(global-set-key (kbd "C-c C-c") 'slime-js-reload)
+(add-hook 'js2-mode-hook
+          (lambda ()
+            (slime-js-minor-mode 1)))
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+
 ;--------------------------------------------------;
 ;文字コードの設定
 ;--------------------------------------------------
