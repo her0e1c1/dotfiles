@@ -324,6 +324,15 @@ alias en='emacsclient -n'
 alias et='emacsclient -t'
 alias c="cdr"
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
+alias sudo="sudo "  # sudo時にアリアス有効
+
+export MYSQL_USER="mytest"
+export MYSQL_DATABASE="mytest"
+mysql_execute (){
+    eval "mysql -u $MYSQL_USER $MYSQL_DATABASE -e '$@;'";
+}
+alias mysqle=mysql_execute
+
 
 #--------------------------------------------------
 #compctl
@@ -343,6 +352,8 @@ compctl -g '*.(bz2)' bunzip2
 [ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
 [ -f ~/.sh.d/export ] && source ~/.sh.d/export
 [ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
+[ -f ~/.shell_local ] && source ~/.shell_local # 各マシンローカルごとの設定ファイル
+
 
 #--------------------------------------------------
 #each settings
