@@ -283,7 +283,7 @@ else
 fi
 
 #alias -g
-alias -g L="| less"
+alias -g L="| less -S"
 alias -g G='| grep'
 alias -g X='| xargs'
 alias -g N1='1>/dev/null'
@@ -329,10 +329,16 @@ alias sudo="sudo "  # sudo時にアリアス有効
 export MYSQL_USER="mytest"
 export MYSQL_DATABASE="mytest"
 mysql_execute (){
-    eval "mysql -u $MYSQL_USER $MYSQL_DATABASE -e '$@;'";
+    mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
 }
 alias mysqle=mysql_execute
 
+function repeat (){
+    # do arg2 command `arg1` times
+    if [ $# = 2 ]; then
+        for i in {1..$1}; do $2;done;
+    fi
+}
 
 #--------------------------------------------------
 #compctl
