@@ -165,6 +165,10 @@ function restart_emacs(){
     emacs --daemon
 }
 
+function kill_emacs(){
+	emacsclient -e "(kill-emacs)";
+}
+
 #圧縮ファイルを名前だけで展開
 function extract() {
   case $1 in
