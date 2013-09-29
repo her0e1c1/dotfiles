@@ -288,7 +288,8 @@ alias -g G='| grep'
 alias -g X='| xargs'
 alias -g N1='1>/dev/null'
 alias -g N2='2>/dev/null'
-#alias -g ..="../.."
+alias -g N21='2>&1'
+alias ..=".."
 
 #標準出力をクリップボードにコピー
 if which pbcopy >/dev/null 2>&1 ; then 
