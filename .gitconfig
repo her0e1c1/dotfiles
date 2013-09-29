@@ -5,9 +5,9 @@
 	co = checkout
 	br = branch
 	ci = commit
-	st = status
+	s = status
 	rt = remote
-    di = diff
+    d = diff
     dic = "diff --cached"
 [color]
 	ui = true
