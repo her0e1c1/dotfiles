@@ -45,6 +45,16 @@
 
 (add-to-list 'auto-mode-alist '("\\.tpl$" . jinja2-mode))
 
+;--------------------------------------------------
+;rst
+;--------------------------------------------------
+
+(add-hook 'rst-mode-hook
+ '(lambda ()
+ (define-key rst-mode-map (kbd "C-c C-n") 'rst-forward-section)
+ (define-key rst-mode-map (kbd "C-c C-p") 'rst-backward-section)
+ (define-key rst-mode-map (kbd "C-c C-t") 'rst-toc)))
+
 ;--------------------------------------------------;
 ;文字コードの設定
 ;--------------------------------------------------
@@ -66,7 +76,6 @@
 (set-foreground-color "White")
 (set-cursor-color "Gray")
 (add-to-list 'default-frame-alist '(alpha . (0.95 0.90)))
-
 
 (when (fboundp 'winner-mode)
   (winner-mode 1))
@@ -389,7 +398,7 @@ instead."
 (global-set-key "\C-cv" 'revert-buffer-force)
 (global-set-key (kbd "M-.") 'next-buffer)
 (global-set-key (kbd "M-,") 'previous-buffer)
-(global-set-key (kbd "M-DEL")
+(global-set-key (kbd "M-k")
     (lambda () (interactive)(delete-region (line-beginning-position) (1+(point)))))
 (global-set-key (kbd "C-l") 'recentf-open-files)
 (define-key global-map (kbd "C-x C-l") 'iswitchb-buffer)
