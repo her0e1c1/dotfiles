@@ -18,6 +18,8 @@
     recentf-ext
     dired+
     js2-mode
+    evil
+    key-chord
     ))
 
 (when (>= emacs-major-version 24)
@@ -32,6 +34,11 @@
       (package-refresh-contents)
       (package-install pkg))))
 
+
+(require 'evil)
+(require 'key-chord)
+(key-chord-mode 1)
+(setq key-chord-two-keys-delay 0.05)
 ;--------------------------------------------------
 ;js
 ;--------------------------------------------------
@@ -389,6 +396,11 @@ instead."
      (insert ,output))))
   (dolist (w words) (set-key (car w) (cdr w)))))
 
+(defun toggle-evil-mode()
+  (interactive)
+  (evil-mode 'toggle))
+
+(global-set-key (kbd "M-e") 'toggle-evil-mode)
 (global-set-key [?¥] [?\\])  ;; ¥の代わりにバックスラッシュを入力する
 ;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
 (global-set-key (kbd "C-c C-i") 'linum-mode)  ; 行番号を表示
@@ -413,7 +425,24 @@ instead."
 (global-set-key (kbd "M-Q") 'keyboard-escape-quit)
 (global-set-key (kbd "M-G") 'grep-find)
 
-
+;; change mode-line color by evil state
+(lexical-let ((default-color (cons (face-background 'mode-line)
+                                  (face-foreground 'mode-line))))
+ (add-hook 'post-command-hook
+   (lambda ()
+     (let ((color (cond ((minibufferp) default-color)
+                        ((evil-insert-state-p) '("#e80000" . "#ffffff"))
+                        ((evil-emacs-state-p)  '("#444488" . "#ffffff"))
+                        ((buffer-modified-p)   '("#006fa0" . "#ffffff"))
+                        (t default-color))))
+       (set-face-background 'mode-line (car color))
+       (set-face-foreground 'mode-line (cdr color))))))
+(setcdr evil-insert-state-map nil)
+;; but [escape] should switch back to normal state
+(define-key evil-insert-state-map [escape] 'evil-normal-state)
+(key-chord-define evil-insert-state-map (kbd "jk") 'evil-normal-state)
+;; (define-key help-mode-map (kbd "i") 'evil-emacs-state)
+;; (define-key grep-mode-map (kbd "i") 'evil-emacs-state)
 ;--------------------------------------------------
 ;init
 ;--------------------------------------------------
