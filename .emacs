@@ -412,6 +412,9 @@ instead."
 (global-set-key (kbd "M-,") 'previous-buffer)
 (global-set-key (kbd "M-k")
     (lambda () (interactive)(delete-region (line-beginning-position) (1+(point)))))
+(global-set-key (kbd "M-F") 
+    (lambda () (interactive) (message "%s"(get-text-property (point) 'face))))
+
 (global-set-key (kbd "C-l") 'recentf-open-files)
 (define-key global-map (kbd "C-x C-l") 'iswitchb-buffer)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
@@ -461,3 +464,68 @@ instead."
 
 (require 'server)
 (server-start)
+
+;cl
+(defmacro mac (expr)
+  `(print (macroexpand ',expr)))
+
+(defmacro nil!(x)
+  `(setf ,x nil))
+
+
+(defvar list-methods-mode-map nil)
+(unless list-methods-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "n" 'next-line)
+    (define-key map "p" 'previous-line)
+    (define-key map "q" 'bury-buffer)
+    (define-key map "\r" 'list-methods-select-method)
+    (setq list-methods-mode-map map)))
+
+(defun list-methods-mode ()
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map list-methods-mode-map)
+  (setq major-mode 'list-methods-mode)
+  (setq mode-name "List Methods")
+  (run-hooks 'list-methods-mode-hook))
+
+(defun list-methods-get-methods (buffer)
+  (save-excursion
+    (set-buffer buffer)
+    (goto-char (point-min))
+    (let ((case-fold-search nil)
+            methods)
+      (while (re-search-forward "\\(class\\|def\\) +\\([a-zA-Z0-9_]+\\)(" nil t)
+        ;; バッファと位置も返すように変更
+        (push (list (match-string 2) buffer (point))
+                    methods))
+      (nreverse methods))))
+
+(defun list-methods ()
+  (interactive)
+  (let ((methods (list-methods-get-methods (current-buffer)))
+        (orig-buffer (current-buffer))
+        (buffer (get-buffer-create "*test*")))
+    (set-buffer buffer)
+    (erase-buffer)
+    (dolist (method methods)
+      (let ((pos (point)))
+        (insert (car method) "\n")
+        (put-text-property pos (point)
+                              'list-methods-method-buffer (nth 1 method))
+        (put-text-property pos (point)
+                              'list-methods-method-position (nth 2 method))))
+    (pop-to-buffer buffer)
+    (goto-char (point-min))
+    ;; モード設定を追加
+    (list-methods-mode)))
+
+(defun list-methods-select-method ()
+  (interactive)
+  (let ((buffer (get-text-property (point) 'list-methods-method-buffer))
+        (pos (get-text-property (point) 'list-methods-method-position)))
+    (when (and buffer pos)
+      (pop-to-buffer buffer)
+      (goto-char pos))))
+(put 'erase-buffer 'disabled nil)
