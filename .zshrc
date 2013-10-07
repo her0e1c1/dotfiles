@@ -253,6 +253,7 @@ export PAGER=less
 export DROPBOX_PATH=~/Dropbox
 export MINEDB=~/Dropbox/mine.db
 export SPHINX_PATH=~/github/sphinx_document:~/Dropbox/private/sphinx
+export PYTHONSTARTUP=~/.pythonrc
 
 sphinx_auto_build(){
     OLD_PATH=`pwd`;
