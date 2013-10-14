@@ -294,6 +294,7 @@ alias -g X='| xargs'
 alias -g N1='1>/dev/null'
 alias -g N2='2>/dev/null'
 alias -g N21='2>&1'
+alias -g P='| perl -nlE'
 alias ..=".."
 
 #標準出力をクリップボードにコピー
