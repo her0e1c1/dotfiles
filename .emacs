@@ -446,6 +446,10 @@ instead."
 ;; but [escape] should switch back to normal state
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
 (key-chord-define evil-insert-state-map (kbd "jk") 'evil-normal-state)
+(define-key evil-insert-state-map (kbd "M-c") 'evil-normal-state)
+(define-key evil-replace-state-map (kbd "M-c") 'evil-normal-state)
+(define-key evil-normal-state-map (kbd "M-c") 'evil-normal-state)
+(define-key evil-visual-state-map (kbd "M-c") 'evil-normal-state)
 ;; (define-key help-mode-map (kbd "i") 'evil-emacs-state)
 ;; (define-key grep-mode-map (kbd "i") 'evil-emacs-state)
 ;--------------------------------------------------
