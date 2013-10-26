@@ -186,13 +186,12 @@ function extract() {
   esac
 }
 
-
 zshaddhistory(){
     local line=${1%%$'\n'}
     local cmd=${line%% *}
 
     [[ ${#line} -ge 4
-       && ${cmd} != (l|l[sal])
+       && ${cmd} != (l[sal])
        && ${cmd} != (c|cd)
        && ${cmd} != (m|man)
     ]]
@@ -294,7 +293,9 @@ alias -g X='| xargs'
 alias -g N1='1>/dev/null'
 alias -g N2='2>/dev/null'
 alias -g N21='2>&1'
-alias -g P='| perl -nlE'
+alias -g PP='| perl -plE'
+alias -g PN='| perl -nlE'
+alias -g P='| perl -E'
 alias ..=".."
 
 #標準出力をクリップボードにコピー
@@ -314,7 +315,7 @@ alias h=history
 alias cd=cdls
 alias ll='ls -alF'
 alias la='ls -A'
-alias {l,sl}='ls -CF'
+alias l='ls'
 alias pd='pushd'
 alias po='popd'
 alias ds='dirs -v'
@@ -326,9 +327,12 @@ alias cp="cp -i"
 alias mv="mv -i"
 alias sl='ls -CF'
 alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
-alias e='emacsclient -nw -a ""'
+alias ea='emacsclient -nw -a ""'
 alias en='emacsclient -n'
-alias et='emacsclient -t'
+alias e='emacsclient -t'
+alias p='perl -E'
+alias pp='perl -plE'
+alias pn='perl -nlE'
 alias c="cdr"
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 alias sudo="sudo "  # sudo時にアリアス有効
