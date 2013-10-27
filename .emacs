@@ -450,6 +450,7 @@ instead."
 (define-key evil-replace-state-map (kbd "M-c") 'evil-normal-state)
 (define-key evil-normal-state-map (kbd "M-c") 'evil-normal-state)
 (define-key evil-visual-state-map (kbd "M-c") 'evil-normal-state)
+(global-set-key (kbd "M-a") 'toggle-input-method)
 ;; (define-key help-mode-map (kbd "i") 'evil-emacs-state)
 ;; (define-key grep-mode-map (kbd "i") 'evil-emacs-state)
 ;--------------------------------------------------

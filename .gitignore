@@ -1,3 +1,5 @@
+.#*
+
 *.a
 *.o
 *.pyc
@@ -17,3 +19,6 @@
 *.hi
 temp/
 __pycache__/
+
+
+*.core
