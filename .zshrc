@@ -322,7 +322,7 @@ alias ds='dirs -v'
 alias j="jobs"
 alias i="ipython3"
 alias e='echo $?'
-alias rm="rm -i"
+#alias rm="rm -i"
 alias cp="cp -i"
 alias mv="mv -i"
 alias sl='ls -CF'
@@ -380,3 +380,5 @@ if uname -a | grep -q "FreeBSD"
 then
     setxkbmap -rules xorg -model jp106 -layout jp
 fi
+
+alias racket="/Applications/Racket\ v5.3.6/bin/racket"
