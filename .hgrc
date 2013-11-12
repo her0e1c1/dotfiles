@@ -6,8 +6,14 @@ verbose = True
 [defaults]
 cdiff = -q
 
+
 [alias]
 latest = glog --limit 5
+br = branches
+s = status
+d = diff
+di = diff
+bm = bookmarks
 
 [extdiff]
 cmd.cdiff = colordiff
@@ -29,8 +35,8 @@ qseries.applied = blue bold underline
 qseries.unapplied = black bold white_background
 qseries.missing = red bold
 
-
 [extensions]
+purge = 
 graphlog = 
 hgext.color =
 hgext.extdiff =
