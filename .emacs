@@ -36,8 +36,8 @@
 
 
 (require 'evil)
-(require 'key-chord)
-(key-chord-mode 1)
+;; (require 'key-chord)
+;; (key-chord-mode 1)
 (setq key-chord-two-keys-delay 0.05)
 ;--------------------------------------------------
 ;js
@@ -228,11 +228,11 @@
 ;履歴を表示
 (when (require 'recentf nil t)
   (setq recentf-auto-save-timer)
-  (setq recentf-max-menu-items  100000)
-  (setq recentf-max-saved-items 100000)
+  (setq recentf-max-menu-items  1000)
+  (setq recentf-max-saved-items 1000)
   (setq recentf-exclude '(".recentf"))
   (setq recentf-auto-cleanup 'never)
-  (run-with-idle-timer 30 t 'recentf-save-list)
+  (run-with-idle-timer 60 t 'recentf-save-list)
   (recentf-mode 1))
 
 (require 'flymake)
