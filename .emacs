@@ -422,6 +422,7 @@ instead."
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
+(global-set-key (kbd "C-S-D") 'vc-diff)
 ;括弧の補完
 (global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
@@ -504,7 +505,6 @@ instead."
     (let ((case-fold-search nil)
             methods)
       (while (re-search-forward "\\(class\\|def\\) +\\([a-zA-Z0-9_]+\\)(" nil t)
-        ;; バッファと位置も返すように変更
         (push (list (match-string 2) buffer (point))
                     methods))
       (nreverse methods))))
