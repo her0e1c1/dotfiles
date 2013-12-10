@@ -382,3 +382,4 @@ then
 fi
 
 alias racket="/Applications/Racket\ v5.3.6/bin/racket"
+export PATH=$PATH:~/gae/google_appengine
