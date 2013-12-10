@@ -6,8 +6,19 @@ verbose = True
 [defaults]
 cdiff = -q
 
+[pager]
+pager = LESS='-R' less
+quiet = True
+attend = help, diff, log, glog
+
 [alias]
 latest = glog --limit 5
+br = branches
+s = status
+d = diff
+di = diff
+bm = bookmarks
+branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
 
 [extdiff]
 cmd.cdiff = colordiff
@@ -29,8 +40,9 @@ qseries.applied = blue bold underline
 qseries.unapplied = black bold white_background
 qseries.missing = red bold
 
-
 [extensions]
+purge = 
+pager =
 graphlog = 
 hgext.color =
 hgext.extdiff =

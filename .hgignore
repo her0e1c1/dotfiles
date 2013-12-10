@@ -1,6 +1,7 @@
 _build/
 temp/
 .hgsubstate
+.hgignore
 
 syntax: glob
 *.orig

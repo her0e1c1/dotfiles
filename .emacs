@@ -36,8 +36,8 @@
 
 
 (require 'evil)
-(require 'key-chord)
-(key-chord-mode 1)
+;; (require 'key-chord)
+;; (key-chord-mode 1)
 (setq key-chord-two-keys-delay 0.05)
 ;--------------------------------------------------
 ;js
@@ -228,11 +228,11 @@
 ;履歴を表示
 (when (require 'recentf nil t)
   (setq recentf-auto-save-timer)
-  (setq recentf-max-menu-items  100000)
-  (setq recentf-max-saved-items 100000)
+  (setq recentf-max-menu-items  1000)
+  (setq recentf-max-saved-items 1000)
   (setq recentf-exclude '(".recentf"))
   (setq recentf-auto-cleanup 'never)
-  (run-with-idle-timer 30 t 'recentf-save-list)
+  (run-with-idle-timer 60 t 'recentf-save-list)
   (recentf-mode 1))
 
 (require 'flymake)
@@ -422,6 +422,7 @@ instead."
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
+(global-set-key (kbd "C-S-D") 'vc-diff)
 ;括弧の補完
 (global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
@@ -504,7 +505,6 @@ instead."
     (let ((case-fold-search nil)
             methods)
       (while (re-search-forward "\\(class\\|def\\) +\\([a-zA-Z0-9_]+\\)(" nil t)
-        ;; バッファと位置も返すように変更
         (push (list (match-string 2) buffer (point))
                     methods))
       (nreverse methods))))
