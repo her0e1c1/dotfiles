@@ -2,6 +2,7 @@ _build/
 temp/
 .hgsubstate
 .hgignore
+my_development.ini
 
 syntax: glob
 *.orig
