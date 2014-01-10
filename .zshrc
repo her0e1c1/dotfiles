@@ -382,3 +382,6 @@ then
 fi
 
 alias racket="/Applications/Racket\ v5.3.6/bin/racket"
+export PATH=$PATH:~/gae/google_appengine
+
+eval `ssh-agent` && ssh-add ~/.ssh/git_id_rsa
