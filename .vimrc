@@ -10,3 +10,4 @@ set ruler
 set showcmd
 set mouse=a
 set wildmenu
+noremap <CR> o<ESC>
