@@ -342,7 +342,7 @@ export MYSQL_DATABASE="mytest"
 mysql_execute (){
     mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
 }
-alias mysqle=mysql_execute
+alias my=mysql_execute
 
 function repeat (){
     # do arg2 command `arg1` times
@@ -384,4 +384,4 @@ fi
 alias racket="/Applications/Racket\ v5.3.6/bin/racket"
 export PATH=$PATH:~/gae/google_appengine
 
-eval `ssh-agent` && ssh-add ~/.ssh/git_id_rsa
+eval `ssh-agent` > /dev/null && ssh-add ~/.ssh/git_id_rsa 2> /dev/null

@@ -3,6 +3,7 @@ username = her0 <her0e1c1@gmail.com>
 editor = vim
 verbose = True
 
+merge = vimdiff
 [defaults]
 cdiff = -q
 
@@ -12,6 +13,20 @@ quiet = True
 attend = help, diff, log, glog
 
 [alias]
+
+rl = resolve -l
+sl = qselect
+sls = qselect -s
+mergein = merge --tool internal:merge
+prev = diff -c -1
+
+sq = qseries -s
+qstatus = status --rev qparent:qtip
+qm = qpush --move
+
+
+qo = qpop
+qu = qpush
 latest = glog --limit 5
 br = branches
 s = status
@@ -42,6 +57,8 @@ qseries.missing = red bold
 
 [extensions]
 purge = 
+rebase =
+record = 
 pager =
 graphlog = 
 hgext.color =
