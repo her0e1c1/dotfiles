@@ -537,3 +537,6 @@ instead."
       (pop-to-buffer buffer)
       (goto-char pos))))
 (put 'erase-buffer 'disabled nil)
+;(setq explicit-shell-file-name "/bin/bash")
+(setq tramp-verbose 10)
+;(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))

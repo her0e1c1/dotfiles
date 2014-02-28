@@ -386,3 +386,13 @@ alias racket="/Applications/Racket\ v5.3.6/bin/racket"
 export PATH=$PATH:~/gae/google_appengine
 
 eval `ssh-agent` > /dev/null && ssh-add ~/.ssh/git_id_rsa 2> /dev/null
+
+if [[ "$TERM" == "dumb" ]]
+then
+  unsetopt zle
+  unsetopt prompt_cr
+  unsetopt prompt_subst
+  unfunction precmd
+  unfunction preexec
+  PS1='$ '
+fi
