@@ -14,6 +14,8 @@
     ;google-c-style
     ;yaml-mode
     ;open-junk-file
+    smartparens
+    auto-complete
     bookmark+
     recentf-ext
     dired+
@@ -38,7 +40,19 @@
 (require 'evil)
 ;; (require 'key-chord)
 ;; (key-chord-mode 1)
-(setq key-chord-two-keys-delay 0.05)
+;;(setq key-chord-two-keys-delay 0.05)
+
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/dict")
+(ac-config-default)
+(setq ac-use-menu-map t)
+;; デフォルトで設定済み
+(define-key ac-menu-map "\C-n" 'ac-next)
+(define-key ac-menu-map "\C-p" 'ac-previous)
+
+(require 'smartparens-config)
+(smartparens-global-mode t)
+
 ;--------------------------------------------------
 ;js
 ;--------------------------------------------------
