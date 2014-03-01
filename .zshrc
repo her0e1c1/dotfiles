@@ -396,3 +396,6 @@ then
   unfunction preexec
   PS1='$ '
 fi
+
+# for zenburn-emacs
+export TERM=xterm-256color

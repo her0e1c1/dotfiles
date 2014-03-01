@@ -1,0 +1,12 @@
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (dolist (pa my/package-archives)
+    (add-to-list 'package-archives pa))
+  (package-initialize)
+  (dolist (pkg my/installing-package-list)
+    (if (package-installed-p pkg)
+        (require pkg)
+      (package-refresh-contents)
+      (package-install pkg))))
+
+(provide 'init-elpa)
