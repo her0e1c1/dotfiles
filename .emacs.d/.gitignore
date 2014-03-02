@@ -4,3 +4,9 @@
 *.elc
 *~
 /url/
+.cask/
+.mc-lists.el
+snippets/
+ac-comphist.dat
+eshell/
+

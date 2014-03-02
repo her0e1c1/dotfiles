@@ -23,6 +23,7 @@
     f
     ht
     helm
+    helm-swoop
     smartparens
     auto-complete
     bookmark+

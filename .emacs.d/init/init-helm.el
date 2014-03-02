@@ -9,6 +9,8 @@
         helm-source-recentf
         helm-source-find-files
         helm-source-findutils
+        helm-source-files-in-current-dir
+        helm-source-file-name-history
         helm-source-buffers-list
         helm-source-bookmarks
         helm-source-google-suggest
@@ -16,6 +18,35 @@
         ;helm-source-ls-git
         )
       "*helm mini*"))
+
+(require 'helm-swoop)
+
+;; 現在のバッファに対して検索
+(global-set-key (kbd "M-s") 'helm-swoop)
+
+;; 全てのバッファに対して検索(複数のバッファが必要)
+(global-set-key (kbd "M-S") 'helm-multi-swoop-all)
+;(global-set-key (kbd "M-S") 'helm-multi-swoop)
+
+;; Save buffer when helm-multi-swoop-edit complete
+(setq helm-multi-swoop-edit-save t)
+
+;; 値がtの場合はウィンドウ内に分割、nilなら別のウィンドウを使用
+(setq helm-swoop-split-with-multiple-windows nil)
+
+;; ウィンドウ分割方向 'split-window-vertically or 'split-window-horizontally
+(setq helm-swoop-split-direction 'split-window-vertically)
+
+;; nilなら一覧のテキストカラーを失う代わりに、起動スピードをほんの少し上げる
+(setq helm-swoop-speed-or-color t)
+
+;(global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
+;(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
+
+;; isearch実行中にhelm-swoopに移行
+;(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+;; helm-swoop実行中にhelm-multi-swoop-allに移行
+;(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
 
 ; mini バッファを表示
 (global-set-key (kbd "C-l") 'helm-mini)
@@ -32,7 +63,7 @@
 (define-key helm-find-files-map (kbd "TAB") 'helm-execute-persistent-action)
 
 ;
-(define-key global-map (kbd "C-c i")   'helm-imenu)
+(define-key global-map (kbd "C-x i")   'helm-imenu)
 
 ; bufferを表示
 (define-key global-map (kbd "C-x b")   'helm-buffers-list)
@@ -42,10 +73,11 @@
 
 ; grep (markはC-@でできる)
 (global-set-key (kbd "M-g") 'helm-do-grep)
+;(global-set-key (kbd "M-h") 'helm-occur)
 
 ; C-hを削除キーにする
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
-;(define-key helm-find-files-map (kbd "C-h") 'delete-backward-char)
+(define-key helm-find-files-map (kbd "C-h") 'delete-backward-char)
 
 ;; Tab補完をするように変更
 ;(define-key helm-read-file-map (kbd "TAB") 'helm-execute-persistent-action)

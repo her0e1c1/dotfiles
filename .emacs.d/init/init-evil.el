@@ -23,7 +23,7 @@
 
 (setcdr evil-insert-state-map nil)
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
-;(key-chord-define evil-insert-state-map (kbd "jk") 'evil-normal-state)
+;; (key-chord-define evil-insert-state-map (kbd "jk") 'evil-normal-state)
 ;; (define-key evil-insert-state-map (kbd "M-c") 'evil-normal-state)
 ;; (define-key evil-replace-state-map (kbd "M-c") 'evil-normal-state)
 ;; (define-key evil-normal-state-map (kbd "M-c") 'evil-normal-state)
