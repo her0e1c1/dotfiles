@@ -15,8 +15,8 @@
 (yas-global-mode 1)
 
 ;; use "M-o" to expand, not "TAB"
-(define-key yas-minor-mode-map (kbd "M-o") 'yas-expand)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
+;(define-key yas-minor-mode-map (kbd "M-o") 'yas-expand)
+;(define-key yas-minor-mode-map (kbd "TAB") nil)
 
 ;; 既存スニペットを挿入する
 (define-key yas-minor-mode-map (kbd "C-x i i") 'yas-insert-snippet)

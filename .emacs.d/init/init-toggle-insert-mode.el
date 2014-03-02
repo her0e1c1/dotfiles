@@ -1,6 +1,7 @@
 ;全角入力を半角に変換します。
-(let
- ((words `(
+(defun toggle-full/half-mode()
+  (interactive)
+  (defvar words `(
   ;(,[?¥].  ,[?\\])
   ("０". "0")
   ("１". "1")
@@ -12,23 +13,47 @@
   ("７". "7")
   ("８". "8")
   ("９". "9")
-  ;("ー". "-")
+  ("ー". "-")
+  ("＿". "_")
+  ("＝". "=")
+  ("＄". "$")
+  ("％". "%")
+  ("＆". "&")
   ("；". ";")
+  ("〜". "~")
+  ("「". "[")
+  ("」". "]")
+  ("＾". "^")
   ("｀". "`")
-  ("：".  ":")
+  ("：". ":")
   ("）". ")")
   ("（". "(")
   ("。". ".")
   ("＊". "*")
   ("＜". "<")
-  ("＠", "@")
+  ("￥". "\\")
+  ("＠". "@")
   ("＞". ">")
   ("、". ",")
+  ("”". "\"")
+  ("’". "'")
   ("＃". "#")
-  ("　". " "))))
- (progn
-  (defun set-key (input output)
-   (global-set-key input
-    `(lambda () (interactive)
-     (insert ,output))))
-  (dolist (w words) (set-key (car w) (cdr w)))))
+  ("　". " ")))
+  (defvar toggle nil)
+  (if toggle
+      (progn (setq toggle nil) (message "let half words be still as them"))
+      (setq toggle t)
+      (message "make full words into half words"))
+  (progn
+    (defun set-key (input output)
+      (global-set-key input
+                      `(lambda () (interactive)
+                         (insert ,output))))
+    (dolist (w words) (set-key (car w)
+                               (if toggle (cdr w)
+                                 (car w)))))
+  )
+
+(global-set-key (kbd "C-c t") 'toggle-full/half-mode)
+
+(provide 'init-toggle-insert-mode)

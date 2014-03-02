@@ -10,10 +10,16 @@
 ;;; 始めに読み込む必要があるファイル
 (require 'my-packages)
 (require 'init-env)
+
+;;; pacakgeに依存しないもの
 (require 'init-global-set-key)
 (require 'init-keyjack)
 (require 'init-elpa)
 (require 'init-recentf)
+(require 'init-toggle-insert-mode)
+(require 'init-scheme)
+(require 'init-rst)
+
 ;;; init以外で読み込むライブラリ
 (require 'cl)
 (require 'dash)
