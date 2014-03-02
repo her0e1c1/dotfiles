@@ -10,6 +10,10 @@
     ;google-c-style
     yaml-mode
     ;open-junk-file
+    ;ace-jump-mode  ; evil-ace-jump-modeで代用
+    expand-region
+    multiple-cursors
+    projectile
     zenburn-theme
     rainbow-delimiters
     flycheck

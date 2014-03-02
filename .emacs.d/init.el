@@ -12,18 +12,8 @@
 (require 'init-env)
 (require 'init-global-set-key)
 (require 'init-keyjack)
-
-;;; osごとの設定
-(require 'init-mac)
-
-;;; 読み込むパッケージはelpa以下に記述
 (require 'init-elpa)
-(require 'init-helm)
-(require 'init-auto-complete)
-(require 'init-flycheck)
-(require 'init-evil)
-(require 'init-python)
-
+(require 'init-recentf)
 ;;; init以外で読み込むライブラリ
 (require 'cl)
 (require 'dash)
@@ -31,6 +21,22 @@
 (require 's)
 (require 'ht)
 ;(require 'flymake)
+
+;;; osごとの設定
+(require 'init-mac)
+
+;;; 読み込むパッケージはelpa以下に記述
+(require 'init-helm)
+(require 'init-auto-complete)
+(require 'init-flycheck)
+(require 'init-evil)
+(require 'init-python)
+(require 'init-javascript)
+(require 'init-multiple-cursors)
+(require 'init-smartparents)
+(require 'init-yasnippet)
+(require 'init-rainbow-delimiters)
+(require 'init-expand-region)
 
 ;;; サーバー起動
 (require 'server)

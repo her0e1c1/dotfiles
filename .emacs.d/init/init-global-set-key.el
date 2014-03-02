@@ -1,8 +1,8 @@
 (global-set-key (kbd "M-e") 'toggle-evil-mode)
 (global-set-key [?¥] [?\\])  ;; ¥の代わりにバックスラッシュを入力する
 ;(define-key global-map "\C-h" 'delete-backward-char) ; 削除
-(global-set-key (kbd "C-c C-i") 'linum-mode)  ; 行番号を表示
-(global-set-key "\C-cw" 'whitespace-mode)
+(global-set-key (kbd "C-c i") 'linum-mode)  ; 行番号を表示
+(global-set-key (kbd "C-c w") 'whitespace-mode)
 (global-set-key [f12] 'flymake-goto-next-error)  ; errorへジャンプ
 (global-set-key (kbd "S-<f11>") 'flymake-goto-prev-error)
 (global-set-key "\C-cv" 'revert-buffer-force)
@@ -19,13 +19,17 @@
 (global-set-key (kbd "M-V") 'toggle-vi-mode)
 (global-set-key (kbd "M-<f1>") 'split-window-by-5)
 (global-set-key (kbd "C-S-D") 'vc-diff)
-;括弧の補完
-(global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "M-Q") 'keyboard-escape-quit)
-(global-set-key (kbd "M-G") 'grep-find)
+
+; バックスペースを設定
+(global-set-key (kbd "C-h") 'delete-backward-char)
+
+;; ;括弧の補完
+;; (global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
+;; (global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
+;; (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
+;; (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
+;; (global-set-key (kbd "M-Q") 'keyboard-escape-quit)
+;; (global-set-key (kbd "M-G") 'grep-find)
 
 ;; but [escape] should switch back to normal state
 (global-set-key (kbd "M-a") 'toggle-input-method)

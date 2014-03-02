@@ -25,8 +25,9 @@
 `(
   ;("\M-t" . other-window)
   (,(kbd "C-S-t") . other-window-backward)
-  ("\C-c\C-l" . toggle-truncate-lines)
-  (,(kbd "M-g") . goto-line)
+  ;("\C-c\C-l" . toggle-truncate-lines)
+  ("\C-cl" . toggle-truncate-lines)
+  ;(,(kbd "M-g") . goto-line)
   ))
 
 (easy-mmode-define-minor-mode

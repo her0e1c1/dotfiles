@@ -1,12 +1,76 @@
 (require 'helm-config)
+(require 'helm-files)
+
+(defun helm-mini()
+  (interactive)
+  (require 'helm-files)
+  (helm-other-buffer
+        '(
+        helm-source-recentf
+        helm-source-find-files
+        helm-source-findutils
+        helm-source-buffers-list
+        helm-source-bookmarks
+        helm-source-google-suggest
+        helm-source-locate
+        ;helm-source-ls-git
+        )
+      "*helm mini*"))
+
+; mini バッファを表示
 (global-set-key (kbd "C-l") 'helm-mini)
 
-; (helm :sources '(helm-source-findutils
-;                  helm-source-recentf
-;                  helm-source-bookmarks
-;                  helm-source-buffers-list
-;                  helm-source-google-suggest
-;                  helm-source-locate
-;                  helm-source-ls-git)
-;       :buffer "*helm all the things*")
+; 最近開いたファイルを表示 
+(global-set-key (kbd "C-x C-r") 'helm-recentf)
+
+; kill ringを表示
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
+; find-files
+(define-key global-map (kbd "C-x C-f") 'helm-find-files)
+; アクションではなくてTab補完できるようにする
+(define-key helm-find-files-map (kbd "TAB") 'helm-execute-persistent-action)
+
+;
+(define-key global-map (kbd "C-c i")   'helm-imenu)
+
+; bufferを表示
+(define-key global-map (kbd "C-x b")   'helm-buffers-list)
+
+; M-xをhelmで実行
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+; grep (markはC-@でできる)
+(global-set-key (kbd "M-g") 'helm-do-grep)
+
+; C-hを削除キーにする
+(define-key helm-map (kbd "C-h") 'delete-backward-char)
+;(define-key helm-find-files-map (kbd "C-h") 'delete-backward-char)
+
+;; Tab補完をするように変更
+;(define-key helm-read-file-map (kbd "TAB") 'helm-execute-persistent-action)
+
+; yasnippetで複数選択肢がある場合にhelmを起動
+(defun shk-yas/helm-prompt (prompt choices &optional display-fn)
+    "Use helm to select a snippet. Put this into `yas/prompt-functions.'"
+    (interactive)
+    (setq display-fn (or display-fn 'identity))
+    (if (require 'helm-config)
+        (let (tmpsource cands result rmap)
+          (setq cands (mapcar (lambda (x) (funcall display-fn x)) choices))
+          (setq rmap (mapcar (lambda (x) (cons (funcall display-fn x) x)) choices))
+          (setq tmpsource
+                (list
+                 (cons 'name prompt)
+                 (cons 'candidates cands)
+                 '(action . (("Expand" . (lambda (selection) selection))))
+                 ))
+          (setq result (helm-other-buffer '(tmpsource) "*helm-select-yasnippet"))
+          (if (null result)
+              (signal 'quit "user quit!")
+            (cdr (assoc result rmap))))
+      nil))
+
+(setq yas-prompt-functions '(shk-yas/helm-prompt))
+
 (provide 'init-helm)
