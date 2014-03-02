@@ -1,5 +1,7 @@
 (require 'helm-config)
 (require 'helm-files)
+(require 'helm-swoop)
+(require 'helm-dired-recent-dirs)
 
 (defun helm-mini()
   (interactive)
@@ -7,19 +9,20 @@
   (helm-other-buffer
         '(
         helm-source-recentf
+        helm-source-buffers-list
         helm-source-find-files
         helm-source-findutils
+        helm-source-dired-recent-dirs
         helm-source-files-in-current-dir
         helm-source-file-name-history
-        helm-source-buffers-list
         helm-source-bookmarks
         helm-source-google-suggest
         helm-source-locate
+        helm-source-mac-spotlight
         ;helm-source-ls-git
         )
       "*helm mini*"))
 
-(require 'helm-swoop)
 
 ;; 現在のバッファに対して検索
 (global-set-key (kbd "M-s") 'helm-swoop)
@@ -53,6 +56,9 @@
 
 ; 最近開いたファイルを表示 
 (global-set-key (kbd "C-x C-r") 'helm-recentf)
+
+; 最近開いたディレクトリを表示 
+(global-set-key (kbd "C-x C-d") 'helm-dired-recent-dirs-view)
 
 ; kill ringを表示
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)

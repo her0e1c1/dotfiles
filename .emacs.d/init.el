@@ -37,6 +37,7 @@
 (require 'init-yasnippet)
 (require 'init-rainbow-delimiters)
 (require 'init-expand-region)
+;(require 'init-slime)
 
 ;;; サーバー起動
 (require 'server)

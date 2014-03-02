@@ -24,6 +24,7 @@
     ht
     helm
     helm-swoop
+    helm-dired-recent-dirs
     smartparens
     auto-complete
     bookmark+
