@@ -20,6 +20,7 @@
 (require 'f)
 (require 's)
 (require 'ht)
+(require 'smartrep)
 ;(require 'flymake)
 
 ;;; osごとの設定
@@ -38,6 +39,7 @@
 (require 'init-rainbow-delimiters)
 (require 'init-expand-region)
 ;(require 'init-slime)
+(require 'init-foreign-regexp)
 
 ;;; サーバー起動
 (require 'server)

@@ -11,6 +11,8 @@
     yaml-mode
     ;open-junk-file
     ;ace-jump-mode  ; evil-ace-jump-modeで代用
+    smartrep
+    foreign-regexp  ; perlの正規表現を利用
     expand-region
     multiple-cursors
     projectile
@@ -24,6 +26,7 @@
     ht
     helm
     helm-swoop
+    ;helm-shell-history
     helm-dired-recent-dirs
     smartparens
     auto-complete

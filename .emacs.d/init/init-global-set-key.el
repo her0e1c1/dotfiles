@@ -24,12 +24,18 @@
 ; バックスペースを設定
 (global-set-key (kbd "C-h") 'delete-backward-char)
 
+; windowの分割を取り消す
+(global-set-key (kbd "M-Q") 'keyboard-escape-quit)
+
+; 正規表現の確認にre-builderを使う
+(global-set-key (kbd "M-R") 're-builder)
+
 ;; ;括弧の補完
 ;; (global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
 ;; (global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
 ;; (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
 ;; (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
-;; (global-set-key (kbd "M-Q") 'keyboard-escape-quit)
+
 ;; (global-set-key (kbd "M-G") 'grep-find)
 
 ;; but [escape] should switch back to normal state

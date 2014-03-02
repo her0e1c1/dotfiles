@@ -132,7 +132,7 @@ setopt extended_glob # グロブ機能を拡張する
 unsetopt caseglob    # ファイルグロブで大文字小文字を区別しない
 
 setopt long_list_jobs
-
+setopt rc_quotes
 #--------------------------------------------------
 #key binds
 #--------------------------------------------------
@@ -399,3 +399,4 @@ fi
 
 # for zenburn-emacs
 export TERM=xterm-256color
+
