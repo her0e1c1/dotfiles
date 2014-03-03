@@ -8,6 +8,7 @@
 (add-to-list 'load-path (expand-file-name "config" user-emacs-directory))
 
 ;;; 始めに読み込む必要があるファイル
+(require 'init-recentf)
 (require 'my-packages)
 (require 'init-env)
 
@@ -15,7 +16,6 @@
 (require 'init-global-set-key)
 (require 'init-keyjack)
 (require 'init-elpa)
-(require 'init-recentf)
 (require 'init-toggle-insert-mode)
 (require 'init-scheme)
 (require 'init-rst)

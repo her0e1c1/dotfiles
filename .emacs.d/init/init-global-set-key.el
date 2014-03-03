@@ -21,12 +21,14 @@
 ;; (global-set-key (kbd "M-F") 
 ;;     (lambda () (interactive) (message "%s"(get-text-property (point) 'face))))
 
-;(global-set-key (kbd "C-l") 'recentf-open-files)
-(define-key global-map (kbd "C-x C-l") 'iswitchb-buffer)
+(global-set-key (kbd "C-x C-o") 'find-file)
+(global-set-key (kbd "C-x C-l") 'recentf-open-files)
+(global-set-key (kbd "C-x <escape>") 'kill-emacs)
+;; (define-key global-map (kbd "C-x C-l") 'iswitchb-buffer)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
-(global-set-key (kbd "M-V") 'toggle-vi-mode)
-(global-set-key (kbd "M-<f1>") 'split-window-by-5)
-(global-set-key (kbd "C-S-D") 'vc-diff)
+;; (global-set-key (kbd "M-V") 'toggle-vi-mode)
+;; (global-set-key (kbd "M-<f1>") 'split-window-by-5)
+;; (global-set-key (kbd "C-S-D") 'vc-diff)
 
 ; バックスペースを設定
 (global-set-key (kbd "C-h") 'delete-backward-char)

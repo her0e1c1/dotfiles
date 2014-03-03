@@ -9,8 +9,8 @@
 
 (add-hook 'python-mode-hook 
  '(lambda ()
-    (define-key python-mode-map (kbd "C-c i") 'python-insert-ipdb)
-    (define-key python-mode-map (kbd "C-c d") 'python-delete-ipdb)
+    (define-key python-mode-map (kbd "C-c C-i") 'python-insert-ipdb)
+    (define-key python-mode-map (kbd "C-c C-d") 'python-delete-ipdb)
    ;; (add-hook 'find-file-hook 'flymake-find-file-hook)
    ;; (when (load "flymake" t)
    ;;  (defun flymake-pyflakes-init ()

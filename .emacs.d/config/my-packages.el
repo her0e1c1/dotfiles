@@ -10,7 +10,7 @@
     ;google-c-style
     yaml-mode
     ;open-junk-file
-    ;ace-jump-mode  ; evil-ace-jump-modeで代用
+    ace-jump-mode  ; evil-ace-jump-modeで代用
     smartrep
     foreign-regexp  ; perlの正規表現を利用
     expand-region
