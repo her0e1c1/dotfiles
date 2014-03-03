@@ -16,7 +16,7 @@
     expand-region
     multiple-cursors
     projectile
-    ;zenburn-theme
+    zenburn-theme
     rainbow-delimiters
     flycheck
     yasnippet

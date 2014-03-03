@@ -44,6 +44,7 @@
 (require 'init-yasnippet)
 (require 'init-rainbow-delimiters)
 (require 'init-expand-region)
+(require 'init-zenburn)
 ;; (require 'init-slime)
 (require 'init-foreign-regexp)
 
