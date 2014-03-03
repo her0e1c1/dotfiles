@@ -4,6 +4,10 @@
 ; eshellを起動
 (global-set-key (kbd "M-E") 'eshell)
 
+; helpのprefix keyを変更
+(define-key global-map "\M-H" 'help-command)
+(fset 'help-command help-map)
+
 ; ¥の代わりにバックスラッシュを入力する
 ;(global-set-key [?¥] [?\\])
 
@@ -23,7 +27,7 @@
 
 (global-set-key (kbd "C-x C-o") 'find-file)
 (global-set-key (kbd "C-x C-l") 'recentf-open-files)
-(global-set-key (kbd "C-x <escape>") 'kill-emacs)
+(global-set-key (kbd "C-x <escape>") 'save-buffers-kill-terminal)
 ;; (define-key global-map (kbd "C-x C-l") 'iswitchb-buffer)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
 ;; (global-set-key (kbd "M-V") 'toggle-vi-mode)

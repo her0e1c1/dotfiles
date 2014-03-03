@@ -10,7 +10,7 @@
     ;google-c-style
     yaml-mode
     ;open-junk-file
-    ace-jump-mode  ; evil-ace-jump-modeで代用
+    ace-jump-mode  ; evil-ace-jump-modeで使用する
     smartrep
     foreign-regexp  ; perlの正規表現を利用
     expand-region
@@ -26,7 +26,6 @@
     ht
     helm
     helm-swoop
-    ;helm-shell-history
     helm-dired-recent-dirs
     smartparens
     auto-complete
@@ -35,7 +34,8 @@
     dired+
     js2-mode
     evil
-    key-chord
+    jinja2-mode
+    ;key-chord
     ))
 
 (defvar my/package-archives 
