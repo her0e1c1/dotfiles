@@ -3,7 +3,7 @@
   (unless (>= emacs-major-version minver)
     (error "Your Emacs is too old. this requires v%s or higher" minver)))
 
-; 初期化ファイルを読み込むディレクトリを設定
+;;; 初期化ファイルを読み込むディレクトリを設定
 (add-to-list 'load-path (expand-file-name "init" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "config" user-emacs-directory))
 
@@ -27,7 +27,7 @@
 (require 's)
 (require 'ht)
 (require 'smartrep)
-;(require 'flymake)
+;; (require 'flymake)
 
 ;;; osごとの設定
 (require 'init-mac)
@@ -35,7 +35,7 @@
 ;;; 読み込むパッケージはelpa以下に記述
 (require 'init-helm)
 (require 'init-auto-complete)
-(require 'init-flycheck)
+;; (require 'init-flycheck)
 (require 'init-evil)
 (require 'init-python)
 (require 'init-javascript)
@@ -44,7 +44,7 @@
 (require 'init-yasnippet)
 (require 'init-rainbow-delimiters)
 (require 'init-expand-region)
-;(require 'init-slime)
+;; (require 'init-slime)
 (require 'init-foreign-regexp)
 
 ;;; サーバー起動
