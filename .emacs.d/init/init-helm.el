@@ -88,6 +88,11 @@
 ;; Tab補完をするように変更
 ;(define-key helm-read-file-map (kbd "TAB") 'helm-execute-persistent-action)
 
+;; directory nameも合わせて表示する
+(setq helm-ff-toggle-basename t)
+
+(setq helm-split-window-default-side 'right)
+
 ; yasnippetで複数選択肢がある場合にhelmを起動
 (defun shk-yas/helm-prompt (prompt choices &optional display-fn)
     "Use helm to select a snippet. Put this into `yas/prompt-functions.'"
