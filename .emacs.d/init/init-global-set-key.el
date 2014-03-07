@@ -59,4 +59,21 @@
 
 ; 次のwindowに移動する
 (global-set-key (kbd "M-t") 'other-window-or-split)
+
+; スペ-ス4でインデントする
+(defun indent-rigidly-4 (beg end &optional spaces)
+  "`indent-rigidly' 4 spaces.
+With prefix-arg, or optional arg SPACES, `indent-rigidly' by that amount
+instead."
+  (interactive "r\nP")
+  (let* ((value (prefix-numeric-value spaces))
+        (default-width 4)
+        (width default-width))
+    (cond ((= value -1) (setq width (* -1 default-width)))
+          ((null spaces) (setq width default-width))
+          (t (setq width value)))
+    (indent-rigidly beg end width)))
+
+(global-set-key (kbd "C-x TAB") 'indent-rigidly-4)
+
 (provide 'init-global-set-key)
