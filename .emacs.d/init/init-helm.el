@@ -9,6 +9,7 @@
   (helm-other-buffer
         '(
         helm-source-recentf
+        ;helm-source-occur
         helm-source-buffers-list
         helm-source-find-files
         helm-source-findutils
