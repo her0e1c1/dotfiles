@@ -14,7 +14,6 @@
 
 ;;; pacakgeに依存しないもの
 (require 'init-global-set-key)
-(require 'init-keyjack)
 (require 'init-elpa)
 (require 'init-toggle-insert-mode)
 (require 'init-scheme)
@@ -47,6 +46,9 @@
 (require 'init-zenburn)
 ;; (require 'init-slime)
 (require 'init-foreign-regexp)
+
+;;; 最後に上書きされたくないキー設定を反映
+(require 'init-keyjack)
 
 ;;; サーバー起動
 (require 'server)

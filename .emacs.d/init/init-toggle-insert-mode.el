@@ -54,6 +54,4 @@
                                  (car w)))))
   )
 
-(global-set-key (kbd "C-c t") 'toggle-full/half-mode)
-
 (provide 'init-toggle-insert-mode)

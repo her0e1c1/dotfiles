@@ -11,12 +11,6 @@
 ; ¥の代わりにバックスラッシュを入力する
 ;(global-set-key [?¥] [?\\])
 
-; 行番号を表示
-(global-set-key (kbd "C-c i") 'linum-mode)
-
-; 空文字を表示
-(global-set-key (kbd "C-c w") 'whitespace-mode)
-
 ;; (global-set-key "\C-cv" 'revert-buffer-force)
 ;; (global-set-key (kbd "M-.") 'next-buffer)
 ;; (global-set-key (kbd "M-,") 'previous-buffer)
@@ -53,9 +47,6 @@
 (global-set-key (kbd "M-F") 'grep-find)
 
 ;; but [escape] should switch back to normal state
-
-; 入力メソッドを切り換える
-(global-set-key (kbd "M-a") 'toggle-input-method)
 
 ; 次のwindowに移動する
 (global-set-key (kbd "M-t") 'other-window-or-split)
