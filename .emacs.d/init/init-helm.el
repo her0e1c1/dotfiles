@@ -91,6 +91,7 @@
 
 ;; directory nameも合わせて表示する
 (setq helm-ff-toggle-basename t)
+(setq helm-ff-transformer-show-only-basename nil)
 
 (setq helm-split-window-default-side 'right)
 
