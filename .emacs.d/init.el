@@ -34,7 +34,7 @@
 ;;; 読み込むパッケージはelpa以下に記述
 (require 'init-helm)
 (require 'init-auto-complete)
-(require 'init-flycheck)
+;(require 'init-flycheck)
 (require 'init-evil)
 (require 'init-python)
 (require 'init-javascript)
