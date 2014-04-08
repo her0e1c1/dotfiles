@@ -12,14 +12,14 @@
         ;helm-source-occur
         helm-source-buffers-list
         helm-source-find-files
-        helm-source-findutils
-        helm-source-dired-recent-dirs
+        ;; helm-source-findutils
+        ;; helm-source-dired-recent-dirs
         helm-source-files-in-current-dir
-        helm-source-file-name-history
-        helm-source-bookmarks
-        helm-source-google-suggest
-        helm-source-locate
-        helm-source-mac-spotlight
+        ;; helm-source-file-name-history
+        ;; helm-source-bookmarks
+        ;; helm-source-google-suggest
+        ;; helm-source-locate
+        ;; helm-source-mac-spotlight
         ;helm-source-ls-git
         )
       "*helm mini*"))
