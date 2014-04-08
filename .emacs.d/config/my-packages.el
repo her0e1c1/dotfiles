@@ -12,10 +12,10 @@
     ;open-junk-file
     ace-jump-mode  ; evil-ace-jump-modeで使用する
     smartrep
-    foreign-regexp  ; perlの正規表現を利用
-    expand-region
-    multiple-cursors
-    projectile
+    ;foreign-regexp  ; perlの正規表現を利用
+    ;expand-region
+    ;multiple-cursors
+    ;projectile
     zenburn-theme
     rainbow-delimiters
     flycheck

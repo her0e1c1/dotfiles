@@ -34,18 +34,18 @@
 ;;; 読み込むパッケージはelpa以下に記述
 (require 'init-helm)
 (require 'init-auto-complete)
-(require 'init-flycheck)
+;(require 'init-flycheck)
 (require 'init-evil)
 (require 'init-python)
 (require 'init-javascript)
-(require 'init-multiple-cursors)
-(require 'init-smartparents)
+;(require 'init-multiple-cursors)
+;(require 'init-smartparents)
 (require 'init-yasnippet)
 (require 'init-rainbow-delimiters)
-(require 'init-expand-region)
+;(require 'init-expand-region)
 (require 'init-zenburn)
 ;; (require 'init-slime)
-(require 'init-foreign-regexp)
+;(require 'init-foreign-regexp)
 
 ;;; 最後に上書きされたくないキー設定を反映
 (require 'init-keyjack)
