@@ -1,0 +1,60 @@
+---
+- hosts: prisoners 
+  remote_user: root
+  gather_facts: yes
+  vars:
+      ansible_python_interpreter: "/usr/local/bin/python"
+  tasks:
+    - name: pkg install
+      pkgng: name={{ item }} state=present cached=no
+      with_items:
+        - vim
+        - emacs24
+        - tmux
+        - python
+        - python3
+        - zsh
+        - git
+        #- virtualbox-ose-additions
+        - wget
+        - sqlite3
+        - devel/py-pbr  # install pip
+        - devel/py-virtualenv # install virtualenv
+        - mercurial
+        - mysql51-server
+        - mysql51-client
+
+    - name: create user
+      user: name=me state=present password=soRQg4JUIxU3E shell=/usr/local/bin/zsh
+
+- hosts: prisoners
+  vars:
+      project_home: /root/_projects/test
+      github_home: ~/github
+      github_repo_home: https://github.com/her0e1c1/home.git
+      ansible_python_interpreter: /usr/local/bin/python
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: mkdir project home ({{ project_home }})
+      file: dest={{ project_home }} state=directory
+    - name: create virtualenv
+      shell: virtualenv {{ project_home }} --no-site-packages
+
+    - name: github
+      file: dest={{ github_home }} state=directory
+    - name: git pull home
+      git: repo={{ github_repo_home }} dest={{ github_home }}
+
+- hosts: prisoners
+  vars:
+      ansible_python_interpreter: "/usr/local/bin/python"
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: pip install
+      pip: name={{ item }}
+      with_items:
+        - sphinx
+        - ipython
+        - ipdb

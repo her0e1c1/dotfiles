@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from fabric.api import *
 from . import host  # 設定ファイルなので始めに読み込ませること
+from . import utils as u
 from . import hg
 from . import start 
 from . import gae

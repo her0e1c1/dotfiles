@@ -7,7 +7,7 @@ from fabric import contrib
 
 @task
 def new(name, ip_addr, number, root="/usr/jails/", nameserver="192.168.1.1"):
-    """新しいprisonerを作成し、 sshでログインできるようにする.
+    """新しいprisonerを作成し、 sshでログインできるようにする。
 
     1. ezjail-adminを使って新しいprisonerを作成
 
