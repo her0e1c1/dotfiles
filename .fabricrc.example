@@ -1,2 +1,7 @@
 hg_pass = test
 hg_user = test
+
+## google app engine settings
+#gae_download_url = http://googleappengine.googlecode.com/files/google_appengine_1.8.9.zip
+gae_download_url = http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip
+gae_lib_dir = ~/gae
