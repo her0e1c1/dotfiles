@@ -4,6 +4,7 @@ from fabric.api import *
 from fabric import contrib
 from fabric.colors import magenta
 
+
 @task
 def setup(replace=False):
     """gaeの環境を構築する。

@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
 from fabric.api import *
-from . import host
+from . import host  # 設定ファイルなので始めに読み込ませること
 from . import hg
 from . import start 
 from . import gae
+from . import jail
 
 
 env.user = "root"
 env.roledefs = {
-    "prisoners": ["192.168.1.101"]
+    "localhost": ["localhost"],
+    "jailer": ["192.168.1.100"],
+    "prisoners": ["192.168.1.101"],
 }
