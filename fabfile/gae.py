@@ -2,7 +2,7 @@
 import os
 from fabric.api import *
 from fabric import contrib
-
+from fabric.colors import magenta
 
 @task
 def setup(replace=False):
@@ -23,7 +23,7 @@ def setup(replace=False):
     with cd(env.gae_lib_dir):
         base = os.path.basename(env.gae_download_url)
         if contrib.files.exists(base):
-            print("you already downloaded %s." % base)
+            print(magenta("you already downloaded %s." % base))
         else:
             run("wget %s" % env.gae_download_url)
 
@@ -31,6 +31,6 @@ def setup(replace=False):
             run("rm -fr google_appengine")
 
         if contrib.files.exists("google_appengine"):
-            print("google_appengine already exists.")
+            print(magenta("google_appengine already exists."))
         else:
             run("unzip %s" % base)
