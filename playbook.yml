@@ -9,6 +9,8 @@
   tasks:
     - name: make a github directory
       file: dest={{ github_dir }} state=directory
+    # - name: git pull home
+    #   git: repo={{ github_repo_home }} dest={{ github_home_home }}
     - name: ln -s {{ repo_home_dir }} ~/
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
