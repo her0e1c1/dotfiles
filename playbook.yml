@@ -3,7 +3,18 @@
   connection: local
   vars:
     save_dir: ~/repositories
+    repo_home_dir: ~/github/home
   tasks:
+    - name: ln -s {{ repo_home_dir }} ~/
+      file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
+      with_items:
+        - .emacs
+        - .emacs.d
+        - .zshrc
+        - .gitconfig
+        - .tmux.conf
+        - .vimrc
+        - .hgrc
     - name: pull github repositories
       git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }}
       with_items:
@@ -91,7 +102,6 @@
       file: dest={{ project_home }} state=directory
     - name: create virtualenv
       shell: virtualenv {{ project_home }} --no-site-packages
-
     - name: github
       file: dest={{ github_home }} state=directory
     - name: git pull home
