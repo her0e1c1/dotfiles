@@ -1,4 +1,34 @@
 ---
+- hosts: 127.0.0.1
+  connection: local
+  vars:
+    save_dir: ~/repositories
+  tasks:
+    - name: pull github repositories
+      git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }}
+      with_items:
+        - mitsuhiko/flask.git
+        - kennethreitz/requests.git
+        - ansible/ansible.git
+        - django/django.git
+        - fabric/fabric.git
+        - mitsuhiko/jinja2.git
+        - pydata/pandas.git
+        - numpy/numpy.git
+        - paxan/python-dateutil.git
+        - gruns/furl.git
+        - lxml/lxml.git
+        - scipy/scipy.git
+        - matplotlib/matplotlib.git
+        - gawel/pyquery.git
+        - gorakhargosh/watchdog.git
+        - paramiko/paramiko.git
+        - mitsuhiko/markupsafe.git
+        - Pylons/pyramid.git
+        - bbangert/beaker.git
+        - scikit-learn/scikit-learn.git
+        - mitsuhiko/werkzeug.git
+
 - hosts: prisoners 
   remote_user: root
   gather_facts: yes
