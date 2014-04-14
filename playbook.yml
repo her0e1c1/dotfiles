@@ -28,6 +28,24 @@
         - bbangert/beaker.git
         - scikit-learn/scikit-learn.git
         - mitsuhiko/werkzeug.git
+    - name: download google app engine SDK
+      get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip
+    - name: download python 3.4.0
+      get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz
+    - name: unzip sdk
+      unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/
+    - name: unzip python 3.4.0
+      unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/
+    - name: clone mercurial repositories by git
+      git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
+      with_items:
+        - zzzeek/sqlalchemy.git
+    - name: clone mercurial repositories by git
+      hg: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
+      with_items:
+        - birkenfeld/sphinx
+        - birkenfeld/pygments-main
+        - mirror/docutils
 
 - hosts: prisoners 
   remote_user: root
@@ -53,8 +71,11 @@
         - mercurial
         - mysql51-server
         - mysql51-client
-
-    - name: create user
+    - name: mkdir ~/.ssh
+      file: dest=~/.ssh state=directory mode=700
+    - name: modify user root
+      user: name=root state=present shell=/usr/local/bin/zsh
+    - name: create user me
       user: name=me state=present password=soRQg4JUIxU3E shell=/usr/local/bin/zsh
 
 - hosts: prisoners
