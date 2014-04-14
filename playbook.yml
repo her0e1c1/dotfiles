@@ -50,9 +50,9 @@
     - name: download python 3.4.0
       get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz
     - name: unzip sdk
-      unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/
+      unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/ copy=no
     - name: unzip python 3.4.0
-      unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/
+      unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/ copy=no
     - name: clone mercurial repositories by git
       git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
       with_items:
