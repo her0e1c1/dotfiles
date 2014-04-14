@@ -3,8 +3,12 @@
   connection: local
   vars:
     save_dir: ~/repositories
+    github_dir: ~/github
+    repo_home: https://github.com/her0e1c1/home.git
     repo_home_dir: ~/github/home
   tasks:
+    - name: make a github directory
+      file: dest={{ github_dir }} state=directory
     - name: ln -s {{ repo_home_dir }} ~/
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
