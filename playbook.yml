@@ -1,0 +1,131 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  vars:
+    save_dir: ~/repositories
+    github_dir: ~/github
+    repo_home: https://github.com/her0e1c1/home.git
+    repo_home_dir: ~/github/home
+  tasks:
+    - name: make a github directory
+      file: dest={{ github_dir }} state=directory
+    # - name: git pull home
+    #   git: repo={{ github_repo_home }} dest={{ github_home_home }}
+    - name: ln -s {{ repo_home_dir }} ~/
+      file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
+      with_items:
+        - .emacs
+        - .emacs.d
+        - .zshrc
+        - .gitconfig
+        - .tmux.conf
+        - .vimrc
+        - .hgrc
+    - name: pull github repositories
+      git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }}
+      with_items:
+        - mitsuhiko/flask.git
+        - kennethreitz/requests.git
+        - ansible/ansible.git
+        - django/django.git
+        - fabric/fabric.git
+        - mitsuhiko/jinja2.git
+        - pydata/pandas.git
+        - numpy/numpy.git
+        - paxan/python-dateutil.git
+        - gruns/furl.git
+        - lxml/lxml.git
+        - scipy/scipy.git
+        - matplotlib/matplotlib.git
+        - gawel/pyquery.git
+        - gorakhargosh/watchdog.git
+        - paramiko/paramiko.git
+        - mitsuhiko/markupsafe.git
+        - Pylons/pyramid.git
+        - bbangert/beaker.git
+        - scikit-learn/scikit-learn.git
+        - mitsuhiko/werkzeug.git
+        - zopefoundation/zope.interface.git
+        - Pylons/venusian.git
+        - Pylons/colander.git
+
+    - name: download google app engine SDK
+      get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip
+    - name: download python 3.4.0
+      get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz
+    - name: unzip sdk
+      unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/ copy=no
+    - name: unzip python 3.4.0
+      unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/ copy=no
+    - name: clone mercurial repositories by git
+      git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
+      with_items:
+        - zzzeek/sqlalchemy.git
+    - name: clone mercurial repositories by git
+      hg: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
+      with_items:
+        - birkenfeld/sphinx
+        - birkenfeld/pygments-main
+        - mirror/docutils
+
+- hosts: prisoners 
+  remote_user: root
+  gather_facts: yes
+  vars:
+      ansible_python_interpreter: "/usr/local/bin/python"
+  tasks:
+    - name: pkg install
+      pkgng: name={{ item }} state=present cached=no
+      with_items:
+        - vim
+        - emacs24
+        - tmux
+        - python
+        - python3
+        - zsh
+        - git
+        #- virtualbox-ose-additions
+        - wget
+        - sqlite3
+        - devel/py-pbr  # install pip
+        - devel/py-virtualenv # install virtualenv
+        - mercurial
+        - mysql51-server
+        - mysql51-client
+    - name: mkdir ~/.ssh
+      file: dest=~/.ssh state=directory mode=700
+    - name: modify user root
+      user: name=root state=present shell=/usr/local/bin/zsh
+    - name: create user me
+      user: name=me state=present password=soRQg4JUIxU3E shell=/usr/local/bin/zsh
+
+- hosts: prisoners
+  vars:
+      project_home: /root/_projects/test
+      github_home: ~/github
+      github_repo_home: https://github.com/her0e1c1/home.git
+      ansible_python_interpreter: /usr/local/bin/python
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: mkdir project home ({{ project_home }})
+      file: dest={{ project_home }} state=directory
+    - name: create virtualenv
+      shell: virtualenv {{ project_home }} --no-site-packages
+    - name: github
+      file: dest={{ github_home }} state=directory
+    - name: git pull home
+      git: repo={{ github_repo_home }} dest={{ github_home }}
+
+- hosts: prisoners
+  vars:
+      ansible_python_interpreter: "/usr/local/bin/python"
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: pip install
+      pip: name={{ item }}
+      with_items:
+        - sphinx
+        - ipython
+        - ipdb
