@@ -23,7 +23,8 @@ def push():
             local("git add .")
             with quiet():
                 rv = local("git ci -m 'auto commit by fabric'")
-
-            import ipdb; ipdb.set_trace()
-            local("git push")
+            if rv.successed:
+                local("git push")
+            else:
+                print("stop to push")
                 
