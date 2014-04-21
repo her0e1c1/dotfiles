@@ -53,6 +53,8 @@
         - zopefoundation/zope.interface.git
         - Pylons/venusian.git
         - Pylons/colander.git
+        - pypa/pip.git
+        - python/cpython.git
 
     - name: download google app engine SDK
       get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip
