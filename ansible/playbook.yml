@@ -50,6 +50,10 @@
         - benoitc/gunicorn.git
         - pexpect/pexpect.git
         - ipython/ipython.git
+        - zopefoundation/zope.interface.git
+        - Pylons/venusian.git
+        - Pylons/colander.git
+
     - name: download google app engine SDK
       get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip
     - name: download python 3.4.0
