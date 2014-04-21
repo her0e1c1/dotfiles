@@ -18,8 +18,10 @@ def push():
     require("github_dir")
     for d in env.github_dir:
         # if nothing to commit, stop to push
-        with lcd(d), settings(warn_only=True):
-            print("git auto commit and push %s" % d)
+        print("git auto commit and push %s" % d)
+        with lcd(d):
             local("git add .")
-            local("git ci -m 'auto commit by fabric'")
-            local("git push")
+            with quiet():
+                rv = local("git ci -m 'auto commit by fabric'")
+            if rv.success:
+                local("git push")
