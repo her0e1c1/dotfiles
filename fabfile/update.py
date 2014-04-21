@@ -3,6 +3,8 @@ from fabric.api import *
 
 @task(default=True)
 def update():
+    """pull github and buid sphinx.
+    """
     require("github_dir")
     for d in env.github_dir:
         with lcd(d):
@@ -15,6 +17,8 @@ def update():
 
 @task
 def push():
+    """push github repository.
+    """
     require("github_dir")
     for d in env.github_dir:
         # if nothing to commit, stop to push
