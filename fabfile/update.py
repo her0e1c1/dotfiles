@@ -23,7 +23,7 @@ def push():
             local("git add .")
             with quiet():
                 rv = local("git ci -m 'auto commit by fabric'")
-            if rv.successed:
+            if rv.succeeded:
                 local("git push")
             else:
                 print("stop to push")
