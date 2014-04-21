@@ -32,3 +32,12 @@ def push():
             else:
                 print("stop to push")
                 
+@task
+def ansible(limit=None):
+    """run playbook """
+    require("ansible")
+    env.ansible["limit"] = limit
+    cmd = "ansible-playbook -i {hosts} {playbook}"
+    if limit is not None:
+        cmd += " --limit {limit}"
+    local(cmd.format(**env.ansible))

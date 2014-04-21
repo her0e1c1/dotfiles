@@ -21,3 +21,8 @@ env.github_dir = [
     "~/github/home",
     "~/github/sphinx_document",
 ]
+
+env.ansible = {
+    "playbook": "~/github/home/ansible/playbook.yml",
+    "hosts": "~/github/home/ansible/hosts",
+}
