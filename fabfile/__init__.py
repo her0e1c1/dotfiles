@@ -11,7 +11,7 @@ from . import update
 
 env.user = "root"
 env.roledefs = {
-    "localhost": ["localhost"],
+    "mac": ["localhost"],
     "win": ["localhost"],
     "jailer": ["192.168.1.100"],
     "prisoners": ["192.168.1.101"],
