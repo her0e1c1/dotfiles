@@ -19,8 +19,6 @@ def jailer():
 
 
 def win():
-    import ipdb; ipdb.set_trace()
-
     env.run = local
     env.sphinx_dir = [
         ("~/github/sphinx_document", "/media/sf_share/sphinx_document"),
