@@ -51,7 +51,7 @@ cacerts = /etc/ssl/certs/ca-certificates.crt
 [pager]
 pager = LESS='-R' less
 quiet = True
-attend = help, diff, log, glog, qdiff, lb, qd, prev, db, dt, do
+attend = help, diff, log, glog, qdiff, lb, qd, prev, db, dt, do, md
 
 [extensions]
 pager =
