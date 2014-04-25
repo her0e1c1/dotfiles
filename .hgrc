@@ -1,45 +1,76 @@
 [ui]
-username = her0 <her0e1c1@gmail.com>
-editor = vim
-verbose = True
+#style = compact
+ignore = ~/.hgignore
+merge = internal:merge 
+#merge = vimdiff
 
-merge = vimdiff
 [defaults]
 cdiff = -q
+ 
+[alias]
+rl = resolve -l
+sl = qselect
+sls = qselect -s
+#mergein = merge --tool internal:merge
+prev = diff -c -1
+latest = glog --limit 5
+l = log -b . --limit 5
+b = branches
+bb = branch
+s = status .
+qq = qqueue
+q = qseries -s
+sq = qseries -s
+d = diff .
+db = diff -r "min(branch(.)):."
+dt = diff -r ".:max(branch(.))"
+di = diff
+qd = qdiff
+bm = bookmarks
+lb = log -b .
+do = diff -r "max(branch('$1')):."
+branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
+qstatus = status --rev qparent:qtip
+qs = qstatus
+
+o = qpop
+oa = qpop -a
+u = qpush
+ua = qpush -a
+um = qpush --move
+
+# with --mq option
+ms = st --mq 
+mci = ci --mq
+md = diff --mq
+ml = log -b . --limit 5
+
+[web]
+cacerts = /etc/ssl/certs/ca-certificates.crt
 
 [pager]
 pager = LESS='-R' less
 quiet = True
-attend = help, diff, log, glog
+attend = help, diff, log, glog, qdiff, lb, qd, prev, db, dt, do
 
-[alias]
-
-rl = resolve -l
-sl = qselect
-sls = qselect -s
-mergein = merge --tool internal:merge
-prev = diff -c -1
-
-sq = qseries -s
-qstatus = status --rev qparent:qtip
-qm = qpush --move
-
-
-qo = qpop
-qu = qpush
-latest = glog --limit 5
-br = branches
-s = status
-d = diff
-di = diff
-bm = bookmarks
-branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
+[extensions]
+pager =
+rebase =
+purge = 
+record = 
+hgext.color =
+hgext.extdiff =
+hgext.convert =
+color =
+graphlog =
+mq =
+hggit = /usr/local/lib/python2.7/dist-packages/hggit
 
 [extdiff]
-cmd.cdiff = colordiff
-cmd.vimdiff = vimdiff
-opts.cdiff =
+#cmd.vimdiff = vimdiff
+#opts.cdiff =
 
+ 
 [color]
 status.modified = green bold underline
 status.added = magenta bold underline
@@ -55,16 +86,11 @@ qseries.applied = blue bold underline
 qseries.unapplied = black bold white_background
 qseries.missing = red bold
 
-[extensions]
-purge = 
-rebase =
-record = 
-pager =
-graphlog = 
-hgext.color =
-hgext.extdiff =
-hgext.convert =
-color =
-graphlog =
-mq =
-#hggit =  ~/python/2.7.3/lib/python2.7/site-packages/hg_git-0.4.0-py2.7.egg/hggit
+[extdiff]
+cmd.vimdiff =
+
+[alias]
+vi  = vimdiff
+vim = vimdiff
+
+%include ~/Dropbox/lib/hgrc

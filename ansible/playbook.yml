@@ -22,7 +22,7 @@
         - .vimrc
         - fabric
         - ansible
-        #- .hgrc
+        - .hgrc
     - name: pull github repositories
       git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }}
       with_items:
