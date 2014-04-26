@@ -6,6 +6,8 @@
     github_dir: ~/github
     repo_home: https://github.com/her0e1c1/home.git
     repo_home_dir: ~/github/home
+    repo_emacsd_dir: ~/github/emacs.d
+    repo_fabfile_dir: ~/github/fabfile
   tasks:
     - name: make a github directory
       file: dest={{ github_dir }} state=directory
@@ -14,17 +16,23 @@
     - name: ln -s {{ repo_home_dir }} ~/
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
-        - .emacs
-        - .emacs.d
         - .zshrc
         - .gitconfig
         - .tmux.conf
         - .vimrc
-        - fabric
         - ansible
         - .hgrc
+    - name: set emacs.d
+      file: src={{ repo_emacsd_dir }}/{{ item }} dest=~/{{ item }} state=link
+      with_items:
+        - .emacs
+        - .emacs.d
+    - name: set fabfile
+      file: src={{ repo_fabfile_dir }}/{{ item }} dest=~/{{ item }} state=link
+      with_items:
+        - fabfile
     - name: pull github repositories
-      git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }}
+      git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }} update=no
       with_items:
         - mitsuhiko/flask.git
         - kennethreitz/requests.git
@@ -55,17 +63,17 @@
         - Pylons/colander.git
         - pypa/pip.git
         - python/cpython.git
-
+        - schacon/hg-git.git
     - name: download google app engine SDK
-      get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip
+      get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip force=no
     - name: download python 3.4.0
-      get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz
+      get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz force=no
     - name: unzip sdk
       unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/ copy=no
     - name: unzip python 3.4.0
       unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/ copy=no
     - name: clone mercurial repositories by git
-      git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
+      git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }} update=no
       with_items:
         - zzzeek/sqlalchemy.git
     - name: clone mercurial repositories by git
