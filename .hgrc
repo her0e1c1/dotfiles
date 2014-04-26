@@ -93,4 +93,4 @@ cmd.vimdiff =
 vi  = vimdiff
 vim = vimdiff
 
-%include ~/Dropbox/lib/hgrc
+%include ~/lib/hgrc

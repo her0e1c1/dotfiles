@@ -1,5 +1,0 @@
-(require 'projectile)
-(projectile-global-mode)
-(add-hook 'python-mode-hook 'projectile-on)
-(setq projectile-require-project-root nil)
-(provide 'init-projectile)
