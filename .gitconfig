@@ -6,13 +6,15 @@
 	br = branch
 	ci = commit
 	s = status
+	st = status
 	rt = remote
     d = diff
+    dc = "diff --cached"
     dic = "diff --cached"
 [color]
 	ui = true
 [core]
 	editor = vim
-	excludesfile = /Users/air/.gitignore
+	excludesfile = ~/.gitignore
 [push]
     default = matching
