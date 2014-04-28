@@ -13,11 +13,14 @@ sl = qselect
 sls = qselect -s
 #mergein = merge --tool internal:merge
 prev = diff -c -1
-latest = glog --limit 5
-l = log -b . --limit 5
 b = branches
 bb = branch
 s = status .
+
+# log
+latest = glog --limit 5
+l = log -b . --limit 5
+lb = log --color always -b .
 
 # diff
 d = diff --color always .
@@ -30,7 +33,6 @@ qd = qdiff --color always
 vi  = vimdiff
 vim = vimdiff
 bm = bookmarks
-lb = log --color always -b .
 
 # mq
 qq = qqueue
@@ -75,11 +77,6 @@ graphlog =
 mq =
 hggit = /usr/local/lib/python2.7/dist-packages/hggit
 
-[extdiff]
-#cmd.vimdiff = vimdiff
-#opts.cdiff =
-
- 
 [color]
 status.modified = green bold underline
 status.added = magenta bold underline
