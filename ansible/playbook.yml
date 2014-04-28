@@ -6,13 +6,19 @@
     github_dir: ~/github
     repo_home: https://github.com/her0e1c1/home.git
     repo_home_dir: ~/github/home
+    repo_emacsd: ssh://git@github.com/her0e1c1/emacs.d.git
     repo_emacsd_dir: ~/github/emacs.d
+    repo_fabfile: ssh://git@github.com/her0e1c1/fabfile.git
     repo_fabfile_dir: ~/github/fabfile
   tasks:
     - name: make a github directory
       file: dest={{ github_dir }} state=directory
     # - name: git pull home
     #   git: repo={{ github_repo_home }} dest={{ github_home_home }}
+    - name: git pull at emacsd repository
+      git: repo={{ repo_emacsd }} dest={{ repo_emacsd_dir }} update=no accept_hostkey=True
+    - name: git pull at fabfile repository
+      git: repo={{ repo_fabfile }} dest={{ repo_fabfile_dir }} update=no accept_hostkey=True
     - name: ln -s {{ repo_home_dir }} ~/
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
