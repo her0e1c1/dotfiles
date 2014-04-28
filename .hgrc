@@ -18,21 +18,28 @@ l = log -b . --limit 5
 b = branches
 bb = branch
 s = status .
-qq = qqueue
-q = qseries -s
-sq = qseries -s
+
+# diff
 d = diff .
 db = diff -r "min(branch(.)):."
 dt = diff -r ".:max(branch(.))"
-di = diff
-qd = qdiff
-bm = bookmarks
-lb = log -b .
 do = diff -r "max(branch('$1')):."
 branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
+di = diff
+qd = qdiff
+vi  = vimdiff
+vim = vimdiff
+bm = bookmarks
+lb = log -b .
+
+# mq
+qq = qqueue
+q = qseries -s
+sq = qseries -s
 qstatus = status --rev qparent:qtip
 qs = qstatus
 
+# qpush/qpop
 o = qpop
 oa = qpop -a
 u = qpush
@@ -89,9 +96,5 @@ qseries.missing = red bold
 
 [extdiff]
 cmd.vimdiff =
-
-[alias]
-vi  = vimdiff
-vim = vimdiff
 
 %include ~/lib/hgrc
