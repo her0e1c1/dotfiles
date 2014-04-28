@@ -44,6 +44,7 @@ ms = st --mq
 mci = ci --mq
 md = diff --mq
 ml = log -b . --limit 5
+mpush = push --mq
 
 [web]
 cacerts = /etc/ssl/certs/ca-certificates.crt
