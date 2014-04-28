@@ -38,6 +38,7 @@ q = qseries -s
 sq = qseries -s
 qstatus = status --rev qparent:qtip
 qs = qstatus
+qe = qrefresh -e
 
 # qpush/qpop
 o = qpop
