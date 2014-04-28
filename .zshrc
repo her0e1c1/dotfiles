@@ -287,7 +287,7 @@ else
 fi
 
 #alias -g
-alias -g L="| less -S"
+alias -g L="| less -SR"
 alias -g G='| grep'
 alias -g X='| xargs'
 alias -g N1='1>/dev/null'

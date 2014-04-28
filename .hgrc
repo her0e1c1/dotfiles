@@ -20,17 +20,17 @@ bb = branch
 s = status .
 
 # diff
-d = diff .
-db = diff -r "min(branch(.)):."
-dt = diff -r ".:max(branch(.))"
-do = diff -r "max(branch('$1')):."
+d = diff --color always .
+db = diff --color always -r "min(branch(.)):."
+dt = diff --color always -r ".:max(branch(.))"
+do = diff --color always -r "max(branch('$1')):."
 branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
 di = diff
-qd = qdiff
+qd = qdiff --color always
 vi  = vimdiff
 vim = vimdiff
 bm = bookmarks
-lb = log -b .
+lb = log --color always -b .
 
 # mq
 qq = qqueue
