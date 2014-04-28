@@ -10,6 +10,10 @@
     repo_emacsd_dir: ~/github/emacs.d
     repo_fabfile: ssh://git@github.com/her0e1c1/fabfile.git
     repo_fabfile_dir: ~/github/fabfile
+    repo_study: git@bitbucket.org:her0e1c1/study.git
+    repo_study_dir: ~/github/study
+    repo_samples: ssh://git@github.com/her0e1c1/samples.git
+    repo_samples_dir: ~/github/samples
   tasks:
     - name: make a github directory
       file: dest={{ github_dir }} state=directory
@@ -19,6 +23,10 @@
       git: repo={{ repo_emacsd }} dest={{ repo_emacsd_dir }} update=no accept_hostkey=True
     - name: git pull at fabfile repository
       git: repo={{ repo_fabfile }} dest={{ repo_fabfile_dir }} update=no accept_hostkey=True
+    - name: git pull at study repository
+      git: repo={{ repo_study }} dest={{ repo_study_dir }} update=no accept_hostkey=True
+    - name: git pull at samples repository
+      git: repo={{ repo_samples }} dest={{ repo_samples_dir }} update=no accept_hostkey=True
     - name: ln -s {{ repo_home_dir }} ~/
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
