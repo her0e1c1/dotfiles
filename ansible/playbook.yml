@@ -27,6 +27,8 @@
       git: repo={{ repo_study }} dest={{ repo_study_dir }} update=no accept_hostkey=True
     - name: git pull at samples repository
       git: repo={{ repo_samples }} dest={{ repo_samples_dir }} update=no accept_hostkey=True
+    - name: copy fabricrc
+      copy: src={{ repo_fabfile_dir }}/.fabricrc.example dest=~/.fabricrc
     - name: ln -s {{ repo_home_dir }} ~/
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
