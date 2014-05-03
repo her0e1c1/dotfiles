@@ -1,0 +1,15 @@
+
+---
+
+github_repos:
+  - repo: https://github.com/her0e1c1/home.git
+    dest: ~/github/home
+  - repo: ssh://git@github.com/her0e1c1/emacs.d.git
+    dest: ~/github/emacs.d
+  - repo: ssh://git@github.com/her0e1c1/fabfile.git
+    dest: ~/github/fabfile
+  - repo: git@bitbucket.org:her0e1c1/study.git
+    dest:  ~/github/study
+  - repo: ssh://git@github.com/her0e1c1/samples.git
+    dest: ~/github/samples
+    

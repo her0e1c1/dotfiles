@@ -1,4 +1,13 @@
 ---
+
+- hosts: localhost 
+  connection: local
+  vars_files:
+    - ./vars/repos.yml
+  tasks:
+    - name: git pull from repositories
+      git: repo={{ item.repo }} dest={{ item.dest }} update=no
+      with_items: github_repos
 - hosts: localhost 
   connection: local
   vars:
