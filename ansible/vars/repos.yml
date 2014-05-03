@@ -12,4 +12,5 @@ github_repos:
     dest:  ~/github/study
   - repo: ssh://git@github.com/her0e1c1/samples.git
     dest: ~/github/samples
-    
+  - repo: git@bitbucket.org:her0e1c1/article.git
+    dest: ~/github/article
