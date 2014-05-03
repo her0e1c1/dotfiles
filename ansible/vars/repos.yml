@@ -70,3 +70,8 @@ pkg_installs:
   - mercurial
   - mysql51-server
   - mysql51-client
+
+pip_installs:
+  - sphinx
+  - ipython
+  - ipdb

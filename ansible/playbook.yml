@@ -96,7 +96,4 @@
   tasks:
     - name: pip install
       pip: name={{ item }}
-      with_items:
-        - sphinx
-        - ipython
-        - ipdb
+      with_items: pip_installs
