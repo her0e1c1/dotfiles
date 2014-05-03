@@ -1,4 +1,3 @@
-
 ---
 
 github_repos:
@@ -14,3 +13,60 @@ github_repos:
     dest: ~/github/samples
   - repo: git@bitbucket.org:her0e1c1/article.git
     dest: ~/github/article
+
+home_files:
+  - .zshrc
+  - .gitconfig
+  - .tmux.conf
+  - .vimrc
+  - ansible
+  - .hgrc
+
+repos:
+  - mitsuhiko/flask.git
+  - kennethreitz/requests.git
+  - ansible/ansible.git
+  - django/django.git
+  - fabric/fabric.git
+  - mitsuhiko/jinja2.git
+  - pydata/pandas.git
+  - numpy/numpy.git
+  - paxan/python-dateutil.git
+  - gruns/furl.git
+  - lxml/lxml.git
+  - scipy/scipy.git
+  - matplotlib/matplotlib.git
+  - gawel/pyquery.git
+  - gorakhargosh/watchdog.git
+  - paramiko/paramiko.git
+  - mitsuhiko/markupsafe.git
+  - Pylons/pyramid.git
+  - bbangert/beaker.git
+  - scikit-learn/scikit-learn.git
+  - mitsuhiko/werkzeug.git
+  - benoitc/gunicorn.git
+  - pexpect/pexpect.git
+  - ipython/ipython.git
+  - zopefoundation/zope.interface.git
+  - Pylons/venusian.git
+  - Pylons/colander.git
+  - pypa/pip.git
+  - python/cpython.git
+  - schacon/hg-git.git
+
+pkg_installs:
+  - vim
+  - emacs24
+  - tmux
+  - python
+  - python3
+  - zsh
+  - git
+  #- virtualbox-ose-additions
+  - wget
+  - sqlite3
+  - devel/py-pbr  # install pip
+  - devel/py-virtualenv # install virtualenv
+  - mercurial
+  - mysql51-server
+  - mysql51-client

@@ -4,49 +4,28 @@
   connection: local
   vars_files:
     - ./vars/repos.yml
+  vars:
+    repo_home_dir: ~/github/home
   tasks:
     - name: git pull from repositories
-      git: repo={{ item.repo }} dest={{ item.dest }} update=no
+      git: repo={{ item.repo }} dest={{ item.dest }} update=no accept_hostkey=True
       with_items: github_repos
+    - name: ln -s {{ repo_home_dir }} ~/
+      file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
+      with_items: home_files
+
 - hosts: localhost 
   connection: local
   vars:
     save_dir: ~/repositories
     github_dir: ~/github
-    repo_home: https://github.com/her0e1c1/home.git
-    repo_home_dir: ~/github/home
-    repo_emacsd: ssh://git@github.com/her0e1c1/emacs.d.git
-    repo_emacsd_dir: ~/github/emacs.d
-    repo_fabfile: ssh://git@github.com/her0e1c1/fabfile.git
-    repo_fabfile_dir: ~/github/fabfile
-    repo_study: git@bitbucket.org:her0e1c1/study.git
-    repo_study_dir: ~/github/study
-    repo_samples: ssh://git@github.com/her0e1c1/samples.git
-    repo_samples_dir: ~/github/samples
   tasks:
     - name: make a github directory
       file: dest={{ github_dir }} state=directory
     # - name: git pull home
     #   git: repo={{ github_repo_home }} dest={{ github_home_home }}
-    - name: git pull at emacsd repository
-      git: repo={{ repo_emacsd }} dest={{ repo_emacsd_dir }} update=no accept_hostkey=True
-    - name: git pull at fabfile repository
-      git: repo={{ repo_fabfile }} dest={{ repo_fabfile_dir }} update=no accept_hostkey=True
-    - name: git pull at study repository
-      git: repo={{ repo_study }} dest={{ repo_study_dir }} update=no accept_hostkey=True
-    - name: git pull at samples repository
-      git: repo={{ repo_samples }} dest={{ repo_samples_dir }} update=no accept_hostkey=True
     - name: copy fabricrc
       copy: src={{ repo_fabfile_dir }}/.fabricrc.example dest=~/.fabricrc force=no
-    - name: ln -s {{ repo_home_dir }} ~/
-      file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
-      with_items:
-        - .zshrc
-        - .gitconfig
-        - .tmux.conf
-        - .vimrc
-        - ansible
-        - .hgrc
     - name: set emacs.d
       file: src={{ repo_emacsd_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
@@ -56,39 +35,6 @@
       file: src={{ repo_fabfile_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items:
         - fabfile
-    - name: pull github repositories
-      git: repo=https://github.com/{{ item }} dest={{ save_dir }}/{{ item }} update=no
-      with_items:
-        - mitsuhiko/flask.git
-        - kennethreitz/requests.git
-        - ansible/ansible.git
-        - django/django.git
-        - fabric/fabric.git
-        - mitsuhiko/jinja2.git
-        - pydata/pandas.git
-        - numpy/numpy.git
-        - paxan/python-dateutil.git
-        - gruns/furl.git
-        - lxml/lxml.git
-        - scipy/scipy.git
-        - matplotlib/matplotlib.git
-        - gawel/pyquery.git
-        - gorakhargosh/watchdog.git
-        - paramiko/paramiko.git
-        - mitsuhiko/markupsafe.git
-        - Pylons/pyramid.git
-        - bbangert/beaker.git
-        - scikit-learn/scikit-learn.git
-        - mitsuhiko/werkzeug.git
-        - benoitc/gunicorn.git
-        - pexpect/pexpect.git
-        - ipython/ipython.git
-        - zopefoundation/zope.interface.git
-        - Pylons/venusian.git
-        - Pylons/colander.git
-        - pypa/pip.git
-        - python/cpython.git
-        - schacon/hg-git.git
     - name: download google app engine SDK
       get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip force=no
     - name: download python 3.4.0
@@ -116,22 +62,7 @@
   tasks:
     - name: pkg install
       pkgng: name={{ item }} state=present cached=no
-      with_items:
-        - vim
-        - emacs24
-        - tmux
-        - python
-        - python3
-        - zsh
-        - git
-        #- virtualbox-ose-additions
-        - wget
-        - sqlite3
-        - devel/py-pbr  # install pip
-        - devel/py-virtualenv # install virtualenv
-        - mercurial
-        - mysql51-server
-        - mysql51-client
+      with_items: pkg_installs
     - name: mkdir ~/.ssh
       file: dest=~/.ssh state=directory mode=700
     - name: modify user root
