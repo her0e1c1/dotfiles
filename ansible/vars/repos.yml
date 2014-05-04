@@ -64,6 +64,7 @@ pkg_installs:
   - git
   #- virtualbox-ose-additions
   - wget
+  - the_silver_searcher  # ag
   - sqlite3
   - devel/py-pbr  # install pip
   - devel/py-virtualenv # install virtualenv
