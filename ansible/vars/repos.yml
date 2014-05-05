@@ -71,8 +71,12 @@ pkg_installs:
   - mercurial
   - mysql51-server
   - mysql51-client
-
+  - npm
 pip_installs:
   - sphinx
   - ipython
   - ipdb
+
+
+npm_installs:
+  - swank-js
