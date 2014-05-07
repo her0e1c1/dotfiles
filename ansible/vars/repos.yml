@@ -1,6 +1,9 @@
 ---
+dirs:
+  - gitub_home: ~/github/home 
+    fabfile: ~/github/fabfile
 
-github_repos:
+github:
   - repo: https://github.com/her0e1c1/home.git
     dest: ~/github/home
   - repo: ssh://git@github.com/her0e1c1/emacs.d.git
@@ -11,6 +14,8 @@ github_repos:
     dest:  ~/github/study
   - repo: ssh://git@github.com/her0e1c1/samples.git
     dest: ~/github/samples
+
+private_repos:
   - repo: git@bitbucket.org:her0e1c1/article.git
     dest: ~/github/article
 
@@ -72,11 +77,16 @@ pkg_installs:
   - mysql51-server
   - mysql51-client
   - npm
+
 pip_installs:
   - sphinx
   - ipython
   - ipdb
 
-
 npm_installs:
   - swank-js
+
+apt_installs:
+  - emacs24
+  - zsh
+  - vim

@@ -1,6 +1,31 @@
 ---
+- hosts: work
+  connection: local
+  vars_files:
+    - ./vars/repos.yml
+  tasks:
+    - name: git pull from repositories
+      git: repo={{ item.repo }} dest={{ item.dest }} update=no accept_hostkey=True
+      with_items: github
+    - name: ln -s GITHUB_HOME/* ~/
+      file: src=~/github/home/{{ item }} dest=~/{{ item }} state=link
+      with_items: home_files
+    - name: apt-get
+      apt: pkg={{ item }} state=latest
+      with_items: apt_installs
+    - name: copy fabricrc
+      copy: src={{ item.fabfile }}/.fabricrc.example dest=~/.fabricrc.example force=yes
+      with_items: dirs
+    - name: set fabfile
+      file: src={{ item.fabfile }}/fabfile dest=~/fibfile state=link
+      with_items: dirs
+    # - name: set emacs.d
+    #   file: src={{ repo_emacsd_dir }}/{{ item }} dest=~/{{ item }} state=link
+    #   with_items:
+    #     - .emacs
+    #     - .emacs.d
 
-- hosts: localhost 
+- hosts: mac
   connection: local
   vars_files:
     - ./vars/repos.yml
@@ -14,7 +39,7 @@
       file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
       with_items: home_files
 
-- hosts: localhost 
+- hosts: mac
   connection: local
   vars:
     save_dir: ~/repositories
