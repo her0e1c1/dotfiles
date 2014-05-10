@@ -82,6 +82,8 @@ pip_installs:
   - sphinx
   - ipython
   - ipdb
+  - sqlalchemy
+  - pycrypto
 
 npm_installs:
   - swank-js
