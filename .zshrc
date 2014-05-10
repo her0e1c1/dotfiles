@@ -405,4 +405,4 @@ export TERM=xterm-256color
 export PATH="/usr/local/heroku/bin:$PATH"
 
 ### python password manager
-export PW_URL="sqlite:///~/.mine"
+export PW_URL="sqlite:///~/.mine.db"
