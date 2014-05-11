@@ -1,0 +1,29 @@
+---
+- hosts: mac
+  connection: local
+  gather_facts: no
+  roles:
+    - mac
+    - local
+    - common
+    - pip
+
+- hosts: work
+  connection: local
+  gather_facts: no
+  roles:
+    - local
+    - common
+    - apt
+    - pip
+
+- hosts: prisoners
+  vars:
+      ansible_python_interpreter: "/usr/local/bin/python"
+  remote_user: root
+  gather_facts: yes
+  roles:
+    - prisoners
+    - common
+    - pkg
+    - pip

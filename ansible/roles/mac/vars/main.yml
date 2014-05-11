@@ -1,0 +1,5 @@
+homebrew_intalls:
+  - tmux
+  - zsh
+  - git
+  - mercurial

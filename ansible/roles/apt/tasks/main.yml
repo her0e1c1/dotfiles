@@ -1,0 +1,4 @@
+---
+- name: apt-get
+  apt: pkg={{ item }} state=latest
+  with_items: apt_installs

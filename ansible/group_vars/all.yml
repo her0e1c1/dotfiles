@@ -1,0 +1,34 @@
+dirs:
+  repositories: ~/repositories
+  sphinx_build: ~/sphinx_build
+
+github:
+  home:
+    repo: https://github.com/her0e1c1/home.git
+    dest: ~/github/home
+    files:
+      - .zshrc
+      - .gitconfig
+      - .tmux.conf
+      - .vimrc
+      - ansible
+      - .hgrc
+  emacsd:
+    repo: ssh://git@github.com/her0e1c1/emacs.d.git
+    dest: ~/github/emacs.d
+    files:
+      - .emacs
+      - .emacs.d
+      - .eshell
+  fabfile:
+    repo: ssh://git@github.com/her0e1c1/fabfile.git
+    dest: ~/github/fabfile
+    files:
+      - .fabricrc.example
+      - fabfile
+  study:
+    repo: git@bitbucket.org:her0e1c1/study.git
+    dest:  ~/github/study
+  samples:
+    repo: ssh://git@github.com/her0e1c1/samples.git
+    dest: ~/github/samples

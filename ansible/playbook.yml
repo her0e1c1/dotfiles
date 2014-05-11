@@ -1,108 +1,30 @@
----
-- hosts: work
-  connection: local
-  vars_files:
-    - ./vars/repos.yml
-  tasks:
-    - name: git pull from repositories
-      git: repo={{ item.repo }} dest={{ item.dest }} update=no accept_hostkey=True
-      with_items: github
-    - name: ln -s GITHUB_HOME/* ~/
-      file: src=~/github/home/{{ item }} dest=~/{{ item }} state=link
-      with_items: home_files
-    - name: apt-get
-      apt: pkg={{ item }} state=latest
-      with_items: apt_installs
-    - name: copy fabricrc
-      copy: src={{ item.fabfile }}/.fabricrc.example dest=~/.fabricrc.example force=yes
-      with_items: dirs
-    - name: set fabfile
-      file: src={{ item.fabfile }}/fabfile dest=~/fibfile state=link
-      with_items: dirs
-    # - name: set emacs.d
-    #   file: src={{ repo_emacsd_dir }}/{{ item }} dest=~/{{ item }} state=link
-    #   with_items:
-    #     - .emacs
-    #     - .emacs.d
-
 - hosts: mac
   connection: local
   vars_files:
     - ./vars/repos.yml
-  vars:
-    repo_home_dir: ~/github/home
-  tasks:
-    - name: git pull from repositories
-      git: repo={{ item.repo }} dest={{ item.dest }} update=no accept_hostkey=True
-      with_items: github_repos
-    - name: ln -s {{ repo_home_dir }} ~/
-      file: src={{ repo_home_dir }}/{{ item }} dest=~/{{ item }} state=link
-      with_items: home_files
 
 - hosts: mac
   connection: local
-  vars:
-    save_dir: ~/repositories
-    github_dir: ~/github
   tasks:
-    - name: make a github directory
-      file: dest={{ github_dir }} state=directory
-    # - name: git pull home
-    #   git: repo={{ github_repo_home }} dest={{ github_home_home }}
-    - name: copy fabricrc
-      copy: src={{ repo_fabfile_dir }}/.fabricrc.example dest=~/.fabricrc force=no
-    - name: set emacs.d
-      file: src={{ repo_emacsd_dir }}/{{ item }} dest=~/{{ item }} state=link
-      with_items:
-        - .emacs
-        - .emacs.d
-    - name: set fabfile
-      file: src={{ repo_fabfile_dir }}/{{ item }} dest=~/{{ item }} state=link
-      with_items:
-        - fabfile
     - name: download google app engine SDK
       get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip force=no
+
     - name: download python 3.4.0
       get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz force=no
+
     - name: unzip sdk
       unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/ copy=no
     - name: unzip python 3.4.0
       unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/ copy=no
+
     - name: clone mercurial repositories by git
       git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }} update=no
       with_items:
         - zzzeek/sqlalchemy.git
-    - name: clone mercurial repositories by git
-      hg: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }}
-      with_items:
-        - birkenfeld/sphinx
-        - birkenfeld/pygments-main
-        - mirror/docutils
-
-- hosts: prisoners 
-  remote_user: root
-  gather_facts: yes
-  vars:
-      ansible_python_interpreter: "/usr/local/bin/python"
-  tasks:
-    - name: pkg install
-      pkgng: name={{ item }} state=present cached=no
-      with_items: pkg_installs
-    - name: mkdir ~/.ssh
-      file: dest=~/.ssh state=directory mode=700
-    - name: modify user root
-      user: name=root state=present shell=/usr/local/bin/zsh
-    - name: create user me
-      user: name=me state=present password=soRQg4JUIxU3E shell=/usr/local/bin/zsh
 
 - hosts: prisoners
   vars:
       project_home: /root/_projects/test
-      github_home: ~/github
-      github_repo_home: https://github.com/her0e1c1/home.git
-      ansible_python_interpreter: /usr/local/bin/python
-  remote_user: root
-  gather_facts: no
   tasks:
     - name: mkdir project home ({{ project_home }})
       file: dest={{ project_home }} state=directory
@@ -112,13 +34,3 @@
       file: dest={{ github_home }} state=directory
     - name: git pull home
       git: repo={{ github_repo_home }} dest={{ github_home }}
-
-- hosts: prisoners
-  vars:
-      ansible_python_interpreter: "/usr/local/bin/python"
-  remote_user: root
-  gather_facts: no
-  tasks:
-    - name: pip install
-      pip: name={{ item }}
-      with_items: pip_installs

@@ -1,0 +1,8 @@
+pip_installs:
+  - sphinx
+  - ipython
+  - ipdb
+  - sqlalchemy
+  - pycrypto
+  - fabric
+  - ansible

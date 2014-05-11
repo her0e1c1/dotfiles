@@ -1,0 +1,4 @@
+---
+- name: install
+  homebrew: name={{ item }} state=present update_homebrew=no
+  with_items: homebrew_intalls 

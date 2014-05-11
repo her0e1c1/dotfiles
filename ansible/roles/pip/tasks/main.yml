@@ -1,0 +1,4 @@
+---
+- name: pip install
+  pip: name={{ item }}
+  with_items: pip_installs

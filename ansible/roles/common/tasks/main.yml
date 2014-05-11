@@ -1,0 +1,12 @@
+---
+- name: ln -s GITHUB_HOME/* ~/
+  file: src={{ github.home.dest }}/{{ item }} dest=~/{{ item }} state=link
+  with_items: github.home.files
+
+- name: set fabfile symbol link
+  file: src={{ github.fabfile.dest }}/{{ item }} dest=~/{{ item }} state=link
+  with_items: github.fabfile.files
+
+- name: set emacs.d symbol link
+  file: src={{ github.emacsd.dest }}/{{ item }} dest=~/{{ item }} state=link
+  with_items: github.emacsd.files

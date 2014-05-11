@@ -1,0 +1,13 @@
+---
+- name: mkdir ~/.ssh
+  file: dest=~/.ssh state=directory mode=700
+
+- name: modify user root
+  user: name=root state=present shell=/usr/local/bin/zsh
+
+- name: create user me
+  user: name=me state=present password=soRQg4JUIxU3E shell=/usr/local/bin/zsh
+
+- name: git pull from repositories
+  git: repo={{ item.value.repo }} dest={{ item.value.dest }} accept_hostkey=True
+  with_dict: github

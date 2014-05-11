@@ -1,0 +1,18 @@
+pkg_installs:
+  - vim
+  - emacs24
+  - tmux
+  - python
+  - python3
+  - zsh
+  - git
+  #- virtualbox-ose-additions
+  - wget
+  - the_silver_searcher  # ag
+  - sqlite3
+  - devel/py-pbr  # install pip
+  - devel/py-virtualenv # install virtualenv
+  - mercurial
+  - mysql51-server
+  - mysql51-client
+  - npm
