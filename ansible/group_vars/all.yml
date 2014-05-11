@@ -2,6 +2,9 @@ dirs:
   repositories: ~/repositories
   sphinx_build: ~/sphinx_build
 
+keys:
+  github: "$HOME/.ssh/git_id_rsa"
+
 github:
   home:
     repo: https://github.com/her0e1c1/home.git

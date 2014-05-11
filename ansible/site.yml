@@ -16,14 +16,16 @@
     - common
     - apt
     - pip
+    - npm
 
 - hosts: prisoners
   vars:
       ansible_python_interpreter: "/usr/local/bin/python"
   remote_user: root
-  gather_facts: yes
+  gather_facts: no
   roles:
     - prisoners
     - common
     - pkg
     - pip
+    - npm
