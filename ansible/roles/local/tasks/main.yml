@@ -1,4 +1,0 @@
----
-- name: git pull from repositories (update=NO!!!)
-  git: repo={{ item.value.repo }} dest={{ item.value.dest }} update=no accept_hostkey=True
-  with_dict: github

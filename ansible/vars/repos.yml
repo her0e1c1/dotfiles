@@ -1,6 +1,0 @@
----
-private_repos:
-  - repo: git@bitbucket.org:her0e1c1/article.git
-    dest: ~/github/article
-
-#- silversearcher-ag

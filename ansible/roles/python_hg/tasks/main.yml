@@ -1,4 +1,0 @@
----
-- name: clone mercurial repositories by git
-  hg: repo=http://bitbucket.org/{{ item }} dest={{ dirs.repositories }}/{{ item }}
-  with_items: repos

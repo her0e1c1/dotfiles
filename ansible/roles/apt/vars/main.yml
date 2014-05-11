@@ -1,5 +1,0 @@
-
-apt_installs:
-  - emacs24
-  - zsh
-  - vim

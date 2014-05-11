@@ -1,4 +1,0 @@
----
-- name: git pull from repositories (update=NO)
-  git: repo={{ item }} dest={{ dirs.github }}/{{ item.split('/')|last }} update=no accept_hostkey=True
-  with_items: repos

@@ -1,4 +1,0 @@
----
-- name: pkg install
-  pkgng: name={{ item }} state=present cached=no
-  with_items: pkg_installs

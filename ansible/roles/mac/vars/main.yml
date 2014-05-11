@@ -1,8 +1,0 @@
-homebrew_intalls:
-  - tmux
-  - zsh
-  - git
-  - mercurial
-
-repos:
-  - git@bitbucket.org:her0e1c1/article.git

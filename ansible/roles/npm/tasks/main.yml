@@ -1,5 +1,0 @@
----
-- name: npm install packages
-  npm: name={{ item }} state=present global=yes
-  with_items: npm_installs
-  
