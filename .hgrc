@@ -57,7 +57,7 @@ ml = log -b . --limit 5
 mpush = push --mq
 
 [web]
-cacerts = /etc/ssl/certs/ca-certificates.crt
+#cacerts = /etc/ssl/certs/ca-certificates.crt
 
 [pager]
 pager = LESS='-R' less
@@ -75,7 +75,7 @@ hgext.convert =
 color =
 graphlog =
 mq =
-hggit = /usr/local/lib/python2.7/dist-packages/hggit
+#hggit = /usr/local/lib/python2.7/dist-packages/hggit
 
 [color]
 status.modified = green bold underline
