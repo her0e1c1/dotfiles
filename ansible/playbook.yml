@@ -1,8 +1,0 @@
-- hosts: mac
-  connection: local
-  tasks:
-  tasks:
-    - name: mkdir project home ({{ project_home }})
-      file: dest={{ project_home }} state=directory
-    - name: create virtualenv
-      shell: virtualenv {{ project_home }} --no-site-packages
