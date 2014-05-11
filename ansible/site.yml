@@ -3,7 +3,6 @@
   connection: local
   gather_facts: no
   roles:
-    - gae
     - mac
     - local
     - common
@@ -30,4 +29,5 @@
     - pkg
     - pip
     - npm
+    - gae
     #- python_github
