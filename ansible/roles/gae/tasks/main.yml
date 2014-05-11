@@ -9,3 +9,7 @@
 - name: unzip the downloaded gae zip file
   unarchive: src={{ gae.dest }} dest={{ gae.dest|dirname }} copy=no creates
   when: result|changed
+
+- name: git pull from repositories
+  git: name={{ item }} dest={{ dirs.projects }}/{{ item.split("/")|last }} update=no
+  with_items: repos

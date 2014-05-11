@@ -1,4 +1,7 @@
 ---
+- name: mkdir projects root directory
+  file: dest={{ dirs.projects }} state=directory
+
 - name: ln -s GITHUB_HOME/* ~/
   file: src={{ github.home.dest }}/{{ item }} dest=~/{{ item }} state=link
   with_items: github.home.files

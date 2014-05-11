@@ -3,3 +3,6 @@ homebrew_intalls:
   - zsh
   - git
   - mercurial
+
+repos:
+  - git@bitbucket.org:her0e1c1/article.git

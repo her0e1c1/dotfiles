@@ -2,6 +2,7 @@ dirs:
   repositories: ~/repositories
   sphinx_build: ~/sphinx_build
   github: ~/github
+  projects: ~/projects
 
 github:
   home:
