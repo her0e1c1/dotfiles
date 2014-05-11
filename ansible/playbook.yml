@@ -1,36 +1,8 @@
 - hosts: mac
   connection: local
-  vars_files:
-    - ./vars/repos.yml
-
-- hosts: mac
-  connection: local
   tasks:
-    - name: download google app engine SDK
-      get_url: dest={{ save_dir }}/gae.zip url=http://commondatastorage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.2.zip force=no
-
-    - name: download python 3.4.0
-      get_url: dest={{ save_dir }}/python-3.4.0.tgz url=http://www.python.org/ftp/python/3.4.0/Python-3.4.0.tgz force=no
-
-    - name: unzip sdk
-      unarchive: src={{ save_dir }}/gae.zip dest={{ save_dir }}/ copy=no
-    - name: unzip python 3.4.0
-      unarchive: src={{ save_dir }}/python-3.4.0.tgz dest={{ save_dir }}/ copy=no
-
-    - name: clone mercurial repositories by git
-      git: repo=http://bitbucket.org/{{ item }} dest={{ save_dir }}/{{ item }} update=no
-      with_items:
-        - zzzeek/sqlalchemy.git
-
-- hosts: prisoners
-  vars:
-      project_home: /root/_projects/test
   tasks:
     - name: mkdir project home ({{ project_home }})
       file: dest={{ project_home }} state=directory
     - name: create virtualenv
       shell: virtualenv {{ project_home }} --no-site-packages
-    - name: github
-      file: dest={{ github_home }} state=directory
-    - name: git pull home
-      git: repo={{ github_repo_home }} dest={{ github_home }}

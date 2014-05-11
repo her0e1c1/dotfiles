@@ -1,13 +1,11 @@
 dirs:
   repositories: ~/repositories
   sphinx_build: ~/sphinx_build
-
-keys:
-  github: "$HOME/.ssh/git_id_rsa"
+  github: ~/github
 
 github:
   home:
-    repo: https://github.com/her0e1c1/home.git
+    repo: ssh://git@github.com/her0e1c1/home.git
     dest: ~/github/home
     files:
       - .zshrc

@@ -1,0 +1,4 @@
+
+gae:
+  dest: ~/gae/gae.zip
+  latest: http://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.4.zip
