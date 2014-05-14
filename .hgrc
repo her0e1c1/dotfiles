@@ -40,12 +40,14 @@ qs = qstatus
 qe = qrefresh -e
 
 # guard
-g = qguard
-gl = qguard -l
+g = qguard -l
+gg = qguard
+gn = qguard -n
 
 # select
 sl = qselect
-sls = qselect -s
+ss = qselect -sv
+sn = qselect -n
 
 # qpush/qpop
 o = qpop
