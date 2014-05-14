@@ -9,8 +9,6 @@ cdiff = -q
  
 [alias]
 rl = resolve -l
-sl = qselect
-sls = qselect -s
 #mergein = merge --tool internal:merge
 prev = diff -c -1
 b = branches
@@ -30,7 +28,6 @@ do = diff --color always -r "max(branch('$1')):."
 branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
 di = diff
 qd = qdiff --color always
-vi  = vimdiff
 vim = vimdiff
 bm = bookmarks
 
@@ -41,6 +38,14 @@ sq = qseries -s
 qstatus = status --rev qparent:qtip
 qs = qstatus
 qe = qrefresh -e
+
+# guard
+g = qguard
+gl = qguard -l
+
+# select
+sl = qselect
+sls = qselect -s
 
 # qpush/qpop
 o = qpop
