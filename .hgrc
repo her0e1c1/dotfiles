@@ -83,7 +83,14 @@ hgext.convert =
 color =
 graphlog =
 mq =
+#phase =
 #hggit = /usr/local/lib/python2.7/dist-packages/hggit
+
+#[phases]
+#publish = False
+
+[mq]
+secret = True
 
 [color]
 status.modified = green bold underline
