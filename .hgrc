@@ -83,6 +83,7 @@ hgext.convert =
 color =
 graphlog =
 mq =
+#mercurial_keyring = 
 #phase =
 #hggit = /usr/local/lib/python2.7/dist-packages/hggit
 
