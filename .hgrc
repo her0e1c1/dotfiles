@@ -39,6 +39,7 @@ sq = qseries -s
 qstatus = status --rev qparent:qtip
 qs = qstatus
 qe = qrefresh -e
+qa = qfinish -a
 
 # guard
 g = qguard -l
