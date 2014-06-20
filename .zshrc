@@ -340,6 +340,7 @@ alias sudo="sudo "  # sudo時にアリアス有効
 alias v="view"
 export MYSQL_USER="mytest"
 export MYSQL_DATABASE="mytest"
+alias m=mysql_execute
 mysql_execute (){
     mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
 }

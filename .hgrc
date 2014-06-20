@@ -9,6 +9,7 @@ cdiff = -q
  
 [alias]
 rl = resolve -l
+ca = ci --amend
 #mergein = merge --tool internal:merge
 prev = diff -c -1
 b = branches
@@ -38,8 +39,15 @@ q = qseries -s
 sq = qseries -s
 qstatus = status --rev qparent:qtip
 qs = qstatus
-qe = qrefresh -e
 qa = qfinish -a
+
+# qrefresh
+qr = qrefresh -s
+qe = qrefresh -se
+
+# qnew
+n = qnew
+nt = qnew 
 
 # guard
 g = qguard -l
