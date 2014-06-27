@@ -10,12 +10,17 @@ cdiff = -q
 [alias]
 rl = resolve -l
 ca = ci --amend
-#mergein = merge --tool internal:merge
 prev = diff -c -1
 b = branches
 bb = branch
 s = status .
 so = st --rev "max(branch('$1')):."
+
+# merge
+mergel = merge --tool internal:local
+mergeo = merge --tool internal:other
+mergep = merge --tool internal:prompt
+merged = merge --tool internal:dump
 
 # log
 latest = glog --limit 5
