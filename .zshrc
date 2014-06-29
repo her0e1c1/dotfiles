@@ -294,8 +294,8 @@ alias -g N1='1>/dev/null'
 alias -g N2='2>/dev/null'
 alias -g N21='2>&1'
 alias -g PP='| perl -plE'
-alias -g PN='| perl -nlE'
-alias -g P='| perl -E'
+alias -g PN='| perl -anlE'
+alias -g P='| perl -aplE'
 alias ..=".."
 
 #標準出力をクリップボードにコピー
