@@ -407,3 +407,21 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 ### python password manager
 export PW_URL="sqlite:///~/.mine.db"
+alias prm='perl -E ''
+use File::Basename;
+use File::Spec;
+$d="$ENV{HOME}/.trash";
+mkdir $d unless -d $d; $c=1;
+for(@ARGV){while(1){
+  ($base, $dir, $ext) = fileparse($_, qr/\.[^.]*$/);
+  say "$base __ $dir __ $ext";
+  if($c !=1){
+   if(-d) 
+  }
+  $base .= $c if $c != 1;
+  $_ = $dir . $base . $ext;
+  $o = File::Spec->catfile($d, basename($_));
+  say "$_ _ $o" ;
+  unless(-e $o){`mv $_ $o`; last};$c++;
+}}
+'''
