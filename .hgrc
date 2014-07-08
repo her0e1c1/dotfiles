@@ -45,6 +45,7 @@ sq = qseries -s
 qstatus = status --rev qparent:qtip
 qs = qstatus
 qa = qfinish -a
+qg = qgoto
 
 # qrefresh
 qr = qrefresh -s
