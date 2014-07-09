@@ -413,15 +413,11 @@ use File::Spec;
 $d="$ENV{HOME}/.trash";
 mkdir $d unless -d $d; $c=1;
 for(@ARGV){while(1){
-  ($base, $dir, $ext) = fileparse($_, qr/\.[^.]*$/);
-  say "$base __ $dir __ $ext";
-  if($c !=1){
-   if(-d) 
-  }
-  $base .= $c if $c != 1;
-  $_ = $dir . $base . $ext;
-  $o = File::Spec->catfile($d, basename($_));
-  say "$_ _ $o" ;
-  unless(-e $o){`mv $_ $o`; last};$c++;
+  unless(-e){say "no $_ exists"; last};
+  $base = basename $_;
+  $base .= "_$c" if($c !=1);
+  $o = File::Spec->catfile($d, $base);
+  $cmd = "mv $_ $o";
+  unless(-e $o){say $cmd; system $cmd; last};$c++;
 }}
 '''
