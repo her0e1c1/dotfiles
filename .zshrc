@@ -411,6 +411,7 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 ### python password manager
 export PW_URL="sqlite:///~/.mine.db"
+
 alias prm='perl -E ''
 use File::Basename;
 use File::Spec;
@@ -425,3 +426,6 @@ for(@ARGV){while(1){
   unless(-e $o){say $cmd; system $cmd; last};$c++;
 }}
 '''
+
+### Python Code
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
