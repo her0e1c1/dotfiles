@@ -43,7 +43,11 @@ compinit -u
 typeset -ga chpwd_functions
 autoload -U chpwd_recent_dirs cdr
 chpwd_functions+=chpwd_recent_dirs
-zstyle ":chpwd:*" recent-dirs-max 500
+
+## ディレクトリが変わったらディレクトリスタックを表示。
+chpwd_functions=($chpwd_functions dirs)
+
+zstyle ":chpwd:*" recent-dirs-max 50
 #zstyle ":chpwd:*" recent-dirs-default true
 zstyle ":completion:*" recent-dirs-insert always
 
@@ -293,9 +297,9 @@ alias -g X='| xargs'
 alias -g N1='1>/dev/null'
 alias -g N2='2>/dev/null'
 alias -g N21='2>&1'
-alias -g PP='| perl -plE'
-alias -g PN='| perl -anlE'
-alias -g P='| perl -aplE'
+alias -g PP='| perl -aplE'
+alias -g P0='| perl -an0lE'
+alias -g P='| perl -anlE'
 alias ..=".."
 
 #標準出力をクリップボードにコピー
