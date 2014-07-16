@@ -274,6 +274,10 @@ sphinx_auto_build(){
     \cd $OLD_PATH;
 }
 
+### Perl for one liner
+PERL_MODULES=(File::Spec::Functions File::Basename)
+PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
+
 #--------------------------------------------------
 #alias
 #--------------------------------------------------
@@ -297,9 +301,9 @@ alias -g X='| xargs'
 alias -g N1='1>/dev/null'
 alias -g N2='2>/dev/null'
 alias -g N21='2>&1'
-alias -g PP='| perl -aplE'
-alias -g P0='| perl -an0lE'
-alias -g P='| perl -anlE'
+alias -g PP="| perl $PERL_OPTION -aplE"
+alias -g P0="| perl $PERL_OPTION -an0lE"
+alias -g P="| perl $PERL_OPTION -anlE"
 alias ..=".."
 
 #標準出力をクリップボードにコピー
@@ -335,7 +339,7 @@ alias ea='emacsclient -nw -a ""'
 alias en='emacsclient -n'
 alias e='emacsclient -t'
 alias d='emacsclient -t .'
-alias p='perl -E'
+alias p="perl $PERL_OPTION -E"
 alias pp='perl -plE'
 alias pn='perl -nlE'
 alias c="cdr"
@@ -430,3 +434,4 @@ for(@ARGV){while(1){
 ### Python Code
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
+
