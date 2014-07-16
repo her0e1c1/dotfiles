@@ -275,7 +275,7 @@ sphinx_auto_build(){
 }
 
 ### Perl for one liner
-PERL_MODULES=(File::Spec::Functions File::Basename)
+PERL_MODULES=('"File::Spec::Functions qw(:ALL)"' '"File::Basename"')
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
 
 #--------------------------------------------------
