@@ -159,7 +159,7 @@ cdls(){
 	if [ ${#1} -eq 0 ]; then
 	   cd && ls
 	else
-       \cd "$*" && ls
+       \cd "$*" && ls -G
 	fi
 }
 
@@ -428,4 +428,5 @@ for(@ARGV){while(1){
 '''
 
 ### Python Code
-alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
+alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
+alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'

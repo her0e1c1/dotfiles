@@ -29,6 +29,7 @@ lb = log --color always -b .
 
 # diff
 d = diff --color always .
+ds = diff --color always --stat 
 db = diff --color always -r "min(branch(.)):."
 dt = diff --color always -r ".:max(branch(.))"
 do = diff --color always -r "max(branch('$1')):."
@@ -46,6 +47,7 @@ qstatus = status --rev qparent:qtip
 qs = qstatus
 qa = qfinish -a
 qg = qgoto
+qi = qimport -r 
 
 # qrefresh
 qr = qrefresh -s
