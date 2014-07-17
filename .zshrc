@@ -279,6 +279,8 @@ PERL_MODULES=(
     '"File::Spec::Functions qw(:ALL)"'
     '"File::Basename"'
     '"List::Util qw(first max maxstr min minstr reduce shuffle sum)"'
+    '"MIME::Base64"'
+    '"Digest::MD5  qw(md5 md5_hex md5_base64)"'
 )
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
 
