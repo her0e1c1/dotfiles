@@ -275,7 +275,11 @@ sphinx_auto_build(){
 }
 
 ### Perl for one liner
-PERL_MODULES=('"File::Spec::Functions qw(:ALL)"' '"File::Basename"')
+PERL_MODULES=(
+    '"File::Spec::Functions qw(:ALL)"'
+    '"File::Basename"'
+    '"List::Util qw(first max maxstr min minstr reduce shuffle sum)"'
+)
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
 
 #--------------------------------------------------
