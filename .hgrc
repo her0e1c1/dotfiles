@@ -13,7 +13,7 @@ ca = ci --amend
 prev = diff -c -1
 b = branches
 bb = branch
-s = status .
+s = status 
 so = st --rev "max(branch('$1')):."
 
 # merge
@@ -28,7 +28,7 @@ l = log -b . --limit 5
 lb = log --color always -b .
 
 # diff
-d = diff --color always .
+d = diff --color always 
 ds = diff --color always --stat 
 db = diff --color always -r "min(branch(.)):."
 dt = diff --color always -r ".:max(branch(.))"
@@ -87,7 +87,7 @@ mpush = push --mq
 [pager]
 pager = LESS='-R' less
 quiet = True
-attend = help, diff, log, glog, qdiff, lb, qd, prev, db, dt, do, md
+attend = help, diff, log, glog, qdiff, lb, qd, prev, db, dt, do, md d 
 
 [extensions]
 pager =

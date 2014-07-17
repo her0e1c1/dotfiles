@@ -344,6 +344,8 @@ alias en='emacsclient -n'
 alias e='emacsclient -t'
 alias d='emacsclient -t .'
 alias p="perl $PERL_OPTION -E"
+alias pn="perl $PERL_OPTION -nalE"
+alias pp="perl $PERL_OPTION -palE"
 alias pp='perl -plE'
 alias pn='perl -nlE'
 alias c="cdr"
@@ -434,6 +436,7 @@ for(@ARGV){while(1){
   unless(-e $o){say $cmd; system $cmd; last};$c++;
 }}
 '''
+alias rm="prm"
 
 ### Python Code
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
