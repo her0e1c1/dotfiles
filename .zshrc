@@ -344,6 +344,7 @@ alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
 alias ea='emacsclient -nw -a ""'
 alias en='emacsclient -n'
 alias e='emacsclient -t'
+alias ee='emacsclient -e'
 alias d='emacsclient -t .'
 alias p="perl $PERL_OPTION -E"
 alias pn="perl $PERL_OPTION -nalE"
