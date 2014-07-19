@@ -447,3 +447,4 @@ alias rm="prm"
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
 
+export PATH="$PATH:$HOME/.cask/bin"
