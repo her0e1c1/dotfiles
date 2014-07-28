@@ -116,8 +116,11 @@ setopt nobeep
 autoload predict-on
 #predict-on
 
+# 直前の履歴を重複させない
 setopt hist_ignore_dups
 setopt hist_ignore_space
+# 履歴を重複させない
+setopt hist_ignore_all_dups
 setopt hist_reduce_blanks         # スペース排除
 
 #複数のzshのプロセスで履歴を共有
