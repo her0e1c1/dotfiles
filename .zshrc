@@ -453,3 +453,47 @@ alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.ar
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
 
 export PATH="$PATH:$HOME/.cask/bin"
+alias pyrm='python3 -c ''
+from os.path import *
+from shutil import *
+import os
+import argparse
+p = argparse.ArgumentParser()
+p.add_argument("-r")
+p.add_argument("paths", nargs="+")
+args = p.parse_args()
+trash = join(os.environ["HOME"], ".trash")
+for p in args.paths:
+    counter = 0
+    while True:
+        if not exists(p):
+            print("Not exists: {}".format(p))
+            break
+        b = basename(p)
+        if counter > 0:
+            b += "_{}".format(counter)
+        dst = join(trash, b)
+        if not exists(dst):
+            print("move {p} {dst}".format(**locals()))
+            move(p, dst)
+            break
+        counter += 1
+'''
+
+alias pytrash='python3 -c ''
+from os.path import *
+from shutil import *
+import os
+import argparse
+p = argparse.ArgumentParser()
+p.add_argument("-r", action="store_true")
+args = p.parse_args()
+trash = join(os.environ["HOME"], ".trash")
+if not isdir(trash):
+    os.makedirs(trash)
+if args.r:
+    rmtree(trash)
+else:
+    for t in os.listdir(trash):
+        print(t)
+'''
