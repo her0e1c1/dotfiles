@@ -452,6 +452,14 @@ alias rm="prm"
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
 
+PYALIAS_PYTHON='python3 -c'
+PYALIAS_IMPORT='
+from os.path import isdir, exists
+from sys import exit
+from shutil import copy, rmtree
+from argparse import ArgumentParser
+'
+
 export PATH="$PATH:$HOME/.cask/bin"
 alias pyrm='python3 -c ''
 from os.path import *
@@ -497,3 +505,15 @@ else:
     for t in os.listdir(trash):
         print(t)
 '''
+
+alias pyswap="$PYALIAS_PYTHON \"
+$PYALIAS_IMPORT
+p = ArgumentParser()
+p.add_argument('paths', nargs=2)
+args = p.parse_args()
+for p in args.paths:
+    if not exists(p):
+        print('No {} exists'.format(p))
+        exit()
+\""
+
