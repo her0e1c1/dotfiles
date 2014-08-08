@@ -8,6 +8,7 @@ merge = internal:merge
 cdiff = -q
  
 [alias]
+r = record
 rl = resolve -l
 ca = ci --amend
 prev = diff -c -1
