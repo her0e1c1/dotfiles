@@ -532,3 +532,11 @@ if exists percol; then
     zle -N percol_select_history
     bindkey '^R' percol_select_history
 fi
+
+function insert_quote {
+    BUFFER=$(echo "$BUFFER''")
+    CURSOR=$(($#BUFFER -1))
+    zle -R -c
+}
+zle -N insert_quote
+bindkey "'" insert_quote
