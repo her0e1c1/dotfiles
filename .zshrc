@@ -540,3 +540,4 @@ function insert_quote {
 }
 zle -N insert_quote
 bindkey "'" insert_quote
+
