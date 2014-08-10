@@ -1,3 +1,5 @@
+typeset -U path PATH
+
 #--------------------------------------------------
 #prompt
 #--------------------------------------------------
@@ -534,10 +536,25 @@ if exists percol; then
 fi
 
 function insert_quote {
-    BUFFER=$(echo "$BUFFER''")
+    local rbuff
+    rbuff="$RBUFFER"
+    BUFFER=$(echo "$LBUFFER''")
     CURSOR=$(($#BUFFER -1))
+    BUFFER=$(echo "${BUFFER}$rbuff")
     zle -R -c
 }
 zle -N insert_quote
 bindkey "'" insert_quote
 
+
+function echo_variable {
+    local s
+    s="$1"
+    # echo ${{s}}
+    echo ${path}
+}
+alias o=echo_variable
+
+## 実行したプロセスの消費時間が3秒以上かかったら
+## 自動的に消費時間の統計情報を表示する。
+REPORTTIME=3
