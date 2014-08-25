@@ -558,3 +558,7 @@ alias o=echo_variable
 ## 実行したプロセスの消費時間が3秒以上かかったら
 ## 自動的に消費時間の統計情報を表示する。
 REPORTTIME=3
+
+function cl (){
+	clang++ -I. $1 && ./a.out
+}
