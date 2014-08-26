@@ -562,3 +562,6 @@ REPORTTIME=3
 function cl (){
 	clang++ -I. $1 && ./a.out
 }
+function clc (){
+	clang -I. $1 && ./a.out
+}
