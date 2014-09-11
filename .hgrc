@@ -10,6 +10,7 @@ cdiff = -q
 [alias]
 r = record
 rl = resolve -l
+rlm = resolve -m
 ca = ci --amend
 prev = diff -c -1
 b = branches
