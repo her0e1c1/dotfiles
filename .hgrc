@@ -38,6 +38,7 @@ do = diff --color always -r "max(branch('$1')):."
 branchdiff = diff -r "max(ancestors('$1') and branch(default)):'$1'"
 di = diff
 qd = qdiff --color always
+qds = qdiff --stat
 vim = vimdiff
 bm = bookmarks
 
