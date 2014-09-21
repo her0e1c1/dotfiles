@@ -560,7 +560,7 @@ alias o=echo_variable
 REPORTTIME=3
 
 function cl (){
-	clang++ -I. $1 && ./a.out
+	clang++ -I. $1 -std=c++11 && ./a.out
 }
 function clc (){
 	clang -I. $1 && ./a.out
