@@ -8,7 +8,7 @@ merge = internal:merge
 cdiff = -q
  
 [alias]
-r = record
+rc = record
 rl = resolve -l
 rlm = resolve -m
 ca = ci --amend
