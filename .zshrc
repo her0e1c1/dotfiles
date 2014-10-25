@@ -20,7 +20,7 @@ HISTSIZE=10000000
 SAVEHIST=10000000
 
 #dirsの履歴
-DIRSTACKSIZE=100
+DIRSTACKSIZE=10000000
 
 # カレントディレクトリ中にサブディレクトリが無い場合に cd が検索するディレクトリのリスト
 cdpath=($HOME)
@@ -282,6 +282,7 @@ sphinx_auto_build(){
 ### Perl for one liner
 PERL_MODULES=(
     '"File::Spec::Functions qw(:ALL)"'
+    '"Cwd qw(chdir abs_path cwd fastcwd fast_abs_path realpath)"'
     '"File::Basename"'
     '"List::Util qw(first max maxstr min minstr reduce shuffle sum)"'
     '"MIME::Base64"'
@@ -535,6 +536,17 @@ if exists percol; then
     bindkey '^R' percol_select_history
 fi
 
+function percol_cd() {
+    local p
+    p=$(cdr -l | perl -nlE 'say glob +(split /\s+/)[1]'| percol)
+    if [ -n $p ]; then
+        \cd $p
+        pwd && ls
+    fi
+}
+zle -N percol_cd
+bindkey "^[f" percol_cd
+
 function insert_quote {
     local rbuff
     rbuff="$RBUFFER"
@@ -566,57 +578,4 @@ function clc (){
 	clang -I. $1 && ./a.out
 }
 
-
-
-alias pycsv='python3 -c ''
-import csv
-import sys
-import argparse
-
-p = argparse.ArgumentParser()
-p.add_argument("-w", dest="overwrite", action="store_true")
-p.add_argument("-l", dest="lstrip", action="store_true")
-p.add_argument("-d", dest="delimiter", type=str, default=",", help="Delimiter splits the input csv file")
-p.add_argument("filename")
-args = p.parse_args()
-
-lines = []
-with open(args.filename) as f:
-    lines = [l for l in csv.reader(f, delimiter=args.delimiter)]
-
-try:
-    header = lines[0]
-except IndexError:
-    print("The {filename} has no header".format(filename=args.filename))
-    sys.exit()
-
-max_column_lengths = []
-for col in range(len(header)):
-    mlength = max([
-        len(lines[row][col])
-        for row in range(len(lines))
-    ])
-    max_column_lengths.append(mlength)
-
-rows = []
-for row in range(len(lines)):
-    b = []
-    for col in range(len(header)):
-        cell = lines[row][col]
-        if args.lstrip:
-            cell = cell.strip()
-            format_ = "%s"
-        else:
-            format_ = "%{l}s".format(l=max_column_lengths[col])
-        b.append(format_ % cell)
-    rows.append(b)
-
-if args.overwrite:
-    with open(args.filename, "w") as f:
-        writer = csv.writer(f, delimiter=args.delimiter)
-        for r in rows:
-            writer.writerow(r)
-else:
-    for r in rows:
-        print (args.delimiter.join(r))
-'''
+export PATH="$PATH:$HOME/github/home/lib/"
