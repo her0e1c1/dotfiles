@@ -49,7 +49,7 @@ chpwd_functions+=chpwd_recent_dirs
 ## ディレクトリが変わったらディレクトリスタックを表示。
 chpwd_functions=($chpwd_functions dirs)
 
-zstyle ":chpwd:*" recent-dirs-max 50
+zstyle ":chpwd:*" recent-dirs-max 100000
 #zstyle ":chpwd:*" recent-dirs-default true
 zstyle ":completion:*" recent-dirs-insert always
 
