@@ -344,6 +344,7 @@ alias po='popd'
 alias ds='dirs -v'
 alias j="jobs"
 alias i="ipython3"
+alias g="git"
 #alias r='echo $?'
 #alias rm="rm -i"
 alias cp="cp -i"

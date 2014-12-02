@@ -3,14 +3,17 @@
 	email = her0e1c1@gmail.com
 [alias]
 	co = checkout
-	br = branch
+	l = log -n 5
+	lp = log -p
+	b = branch -av
 	ci = commit
-	s = status
+	s = status -uno
 	st = status
 	rt = remote
     d = diff
     dc = "diff --cached"
-    dic = "diff --cached"
+	au = add -u
+	com = checkout master
 [color]
 	ui = true
 [core]
