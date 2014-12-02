@@ -3,17 +3,27 @@
 	email = her0e1c1@gmail.com
 [alias]
 	co = checkout
-	l = log -n 5
-	lp = log -p
-	b = branch -av
 	ci = commit
 	s = status -uno
 	st = status
 	rt = remote
-    d = diff
-    dc = "diff --cached"
 	au = add -u
 	com = checkout master
+
+    # diff
+    d = diff
+    dc = "diff --cached"
+
+    # log
+	l = log -n 5
+	lp = log -p
+    ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
+
+    # branch
+	b = branch -av
+    bm = branch --merged
+    bn = branch --no-merged
+
 [color]
 	ui = true
 [core]
