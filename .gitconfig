@@ -2,32 +2,57 @@
 	name = her0e1c1
 	email = her0e1c1@gmail.com
 [alias]
-	co = checkout
-	ci = commit
-	s = status -uno
-	st = status
 	rt = remote
 	au = add -u
-	com = checkout master
+
+	# commit
+	ci = commit
+	civ = commit -v
+	cam = commit -am
+
+	# status
+	s = status -uno
+	st = status
+
+    # checkout
+    com = checkout master
+	co = checkout
+	cob = checkout -b
 
     # diff
     d = diff
+    domh = diff origin/master..HEAD
+    dhom = diff HEAD..origin/master
+    df = diff ..FETCH_HEAD
     dc = "diff --cached"
+    dw = diff --word-diff
+    dcw = "diff --cached" --word-diff
 
     # log
 	l = log -n 5
+	lm = log master
 	lp = log -p
     ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
 
     # branch
-	b = branch -av
+	b = branch -avv
     bm = branch --merged
     bn = branch --no-merged
 
+    # reset
+	r = reset
+    rsm = reset --merge
+    ro = reset ORIG_HEAD --hard
+
+	# merge
+	mf = merge FETCH_HEAD
+
 [color]
 	ui = true
+
 [core]
 	editor = vim
 	excludesfile = ~/.gitignore
+
 [push]
     default = matching
