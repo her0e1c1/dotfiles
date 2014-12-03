@@ -5,10 +5,14 @@
 	rt = remote
 	au = add -u
 
+	# fetch
+	f = fetch
+
 	# commit
 	ci = commit
 	civ = commit -v
-	cam = commit -am
+	cia = commit -va
+	ciam = commit -am
 
 	# status
 	s = status -uno
@@ -21,6 +25,7 @@
 
     # diff
     d = diff
+    dm = diff master..
     domh = diff origin/master..HEAD
     dhom = diff HEAD..origin/master
     df = diff ..FETCH_HEAD
@@ -36,6 +41,7 @@
 
     # branch
 	b = branch -avv
+	br = branch
     bm = branch --merged
     bn = branch --no-merged
 
