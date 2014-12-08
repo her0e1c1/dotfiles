@@ -132,3 +132,7 @@ qseries.missing = red bold
 cmd.vimdiff =
 
 %include ~/lib/hgrc
+
+[trusted]
+users = jenkins
+groups = jenkins
