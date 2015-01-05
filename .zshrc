@@ -534,7 +534,8 @@ if exists percol; then
     }
 
     zle -N percol_select_history
-    bindkey '^[r' percol_select_history
+    # bindkey '^[r' percol_select_history
+    bindkey '^r' percol_select_history
 fi
 
 function percol_cd() {
