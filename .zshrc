@@ -362,6 +362,7 @@ alias pn="perl $PERL_OPTION -nalE"
 alias pp="perl $PERL_OPTION -palE"
 alias pp='perl -plE'
 alias pn='perl -nlE'
+alias fah='fab -f ~/fabfile'
 alias c="cdr"
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 alias sudo="sudo "  # sudo時にアリアス有効
