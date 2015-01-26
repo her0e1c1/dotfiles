@@ -419,7 +419,7 @@ compctl -g '*.(bz2)' bunzip2
 # alias racket="/Applications/Racket\ v5.3.6/bin/racket"
 # export PATH=$PATH:~/gae/google_appengine
 
-eval `ssh-agent` > /dev/null && ssh-add ~/.ssh/git_id_rsa 2> /dev/null
+eval `ssh-agent` > /dev/null && ssh-add ~/.ssh/id_rsa_git 2> /dev/null
 
 if [[ "$TERM" == "dumb" ]]
 then
