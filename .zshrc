@@ -263,6 +263,9 @@ export MINEDB=~/Dropbox/mine.db
 export SPHINX_PATH=~/github/sphinx_document:~/Dropbox/private/sphinx
 export PYTHONSTARTUP=~/.pythonrc
 
+# lib
+LIB_PERL=~/lib/perl
+
 sphinx_auto_build(){
     OLD_PATH=`pwd`;
     for p in ${(s/:/)SPHINX_PATH};do
@@ -289,8 +292,10 @@ PERL_MODULES=(
     '"Digest::MD5  qw(md5 md5_hex md5_base64)"'
     '"File::Copy qw(cp mv)"'
     '"POSIX"'
+    '"My::Utils qw(ss)"'
 )
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
+PERL_OPTION="$PERL_OPTION -I $LIB_PERL"
 
 #--------------------------------------------------
 #alias
@@ -407,13 +412,12 @@ compctl -g '*.(bz2)' bunzip2
 #each settings
 #--------------------------------------------------
 
-if uname -a | grep -q "FreeBSD"
-then
-    setxkbmap -rules xorg -model jp106 -layout jp
-fi
-
-alias racket="/Applications/Racket\ v5.3.6/bin/racket"
-export PATH=$PATH:~/gae/google_appengine
+# if uname -a | grep -q "FreeBSD"
+# then
+#     setxkbmap -rules xorg -model jp106 -layout jp
+# fi
+# alias racket="/Applications/Racket\ v5.3.6/bin/racket"
+# export PATH=$PATH:~/gae/google_appengine
 
 eval `ssh-agent` > /dev/null && ssh-add ~/.ssh/git_id_rsa 2> /dev/null
 
