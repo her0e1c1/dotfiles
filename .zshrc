@@ -292,7 +292,7 @@ PERL_MODULES=(
     '"Digest::MD5  qw(md5 md5_hex md5_base64)"'
     '"File::Copy qw(cp mv)"'
     '"POSIX"'
-    '"My::Utils qw(ss)"'
+    '"My::Utils qw(:ALL)"'
 )
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
 PERL_OPTION="$PERL_OPTION -I $LIB_PERL"

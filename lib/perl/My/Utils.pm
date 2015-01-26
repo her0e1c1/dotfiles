@@ -1,6 +1,8 @@
 # This file contains utility functions which
 # makes it typeless for you to execute oneliners
 
+@EXPORT = qw(ss p);
+
 
 # Alias substr
 sub ss {
@@ -12,6 +14,10 @@ sub ss {
     } else {
         $a;
     }
+};
+
+sub p {
+    print "@_\n";
 };
 
 1
