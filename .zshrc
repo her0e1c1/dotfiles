@@ -285,47 +285,6 @@ PERL_MODULES=(
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
 PERL_OPTION="$PERL_OPTION -I $LIB_PERL"
 
-#--------------------------------------------------
-#alias
-#--------------------------------------------------
-
-if uname -a | grep -q 'Ubuntu'
-then
- alias ls="ls --color"
-
-elif uname -a |grep -q "air"
-then
- alias ls="ls -G"
- alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
- alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-else
- alias ls="ls -G"
-fi
-
-#alias -g
-alias -g L="| less -SR"
-alias -g G='| grep'
-alias -g X='| xargs'
-alias -g N1='1>/dev/null'
-alias -g N2='2>/dev/null'
-alias -g N21='2>&1'
-alias -g PP="| perl $PERL_OPTION -aplE"
-alias -g P0="| perl $PERL_OPTION -an0lE"
-alias -g P="| perl $PERL_OPTION -anlE"
-alias ..=".."
-
-#標準出力をクリップボードにコピー
-if which pbcopy >/dev/null 2>&1 ; then 
-    # Mac  
-    alias -g C='| pbcopy'
-elif which xsel >/dev/null 2>&1 ; then 
-    # Linux
-    alias -g C='| xsel --input --clipboard'
-elif which putclip >/dev/null 2>&1 ; then 
-    # Cygwin 
-    alias -g C='| putclip'
-fi
-
 ysql_execute (){
     mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
 }
@@ -381,102 +340,6 @@ then
   unfunction preexec
   PS1='$ '
 fi
-
-# for zenburn-emacs
-export TERM=xterm-256color
-
-
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
-
-### python password manager
-export PW_URL="sqlite:///~/.mine.db"
-
-alias prm='perl -E ''
-use File::Basename;
-use File::Spec;
-$d="$ENV{HOME}/.trash";
-mkdir $d unless -d $d; $c=1;
-for(@ARGV){while(1){
-  unless(-e){say "no $_ exists"; last};
-  $base = basename $_;
-  $base .= "_$c" if($c !=1);
-  $o = File::Spec->catfile($d, $base);
-  $cmd = "mv $_ $o";
-  unless(-e $o){say $cmd; system $cmd; last};$c++;
-}}
-'''
-alias rm="prm"
-
-### Python Code
-alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
-alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
-
-PYALIAS_PYTHON='python3 -c'
-PYALIAS_IMPORT='
-from os.path import isdir, exists
-from sys import exit
-from shutil import copy, rmtree
-from argparse import ArgumentParser
-'
-
-export PATH="$PATH:$HOME/.cask/bin"
-alias pyrm='python3 -c ''
-from os.path import *
-from shutil import *
-import os
-import argparse
-p = argparse.ArgumentParser()
-p.add_argument("-r")
-p.add_argument("paths", nargs="+")
-args = p.parse_args()
-trash = join(os.environ["HOME"], ".trash")
-for p in args.paths:
-    counter = 0
-    while True:
-        if not exists(p):
-            print("Not exists: {}".format(p))
-            break
-        b = basename(p)
-        if counter > 0:
-            b += "_{}".format(counter)
-        dst = join(trash, b)
-        if not exists(dst):
-            print("move {p} {dst}".format(**locals()))
-            move(p, dst)
-            break
-        counter += 1
-'''
-
-alias pytrash='python3 -c ''
-from os.path import *
-from shutil import *
-import os
-import argparse
-p = argparse.ArgumentParser()
-p.add_argument("-r", action="store_true")
-args = p.parse_args()
-trash = join(os.environ["HOME"], ".trash")
-if not isdir(trash):
-    os.makedirs(trash)
-if args.r:
-    rmtree(trash)
-else:
-    for t in os.listdir(trash):
-        print(t)
-'''
-
-alias pyswap="$PYALIAS_PYTHON \"
-$PYALIAS_IMPORT
-p = ArgumentParser()
-p.add_argument('paths', nargs=2)
-args = p.parse_args()
-for p in args.paths:
-    if not exists(p):
-        print('No {} exists'.format(p))
-        exit()
-\""
-
 
 function exists { which $1 &> /dev/null }
 
@@ -535,8 +398,6 @@ function cl (){
 function clc (){
 	clang -I. $1 && ./a.out
 }
-
-export PATH="$PATH:$HOME/github/home/lib/"
 
 # pip zsh completion start
 function _pip_completion {
