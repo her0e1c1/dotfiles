@@ -10,10 +10,6 @@ PS1="[${USER}]%(!.#.$) "
 #RPROMPT="%T"
 RPROMPT='%B%F{yellow}[%f%b %B%F{yellow}%~]%f%b'
 
-# lsに色づけ
-export CLICOLOR=1
-export LSCOLORS=DxGxcxdxCxegedabagacad
-
 #ディレクトリの区切りである/も含める
 #C-wでディレクトリの一部のみ削除
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
@@ -258,7 +254,10 @@ zle -N insert-last-word smart-insert-last-word
 #exprot
 #--------------------------------------------------
 
-export LSCOLORS=exfxcxdxbxegedabagacad
+
+export CLICOLOR=1  # lsに色づけ
+export LSCOLORS=DxGxcxdxCxegedabagacad
+# export LSCOLORS=exfxcxdxbxegedabagacad
 export LANG=ja_JP.UTF-8
 export EDITOR=vi
 export PAGER=less
