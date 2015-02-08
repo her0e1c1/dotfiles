@@ -250,25 +250,10 @@ zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 zle -N insert-last-word smart-insert-last-word
 
+LIB_PERL=~/lib/perl
 #--------------------------------------------------
 #exprot
 #--------------------------------------------------
-
-
-export CLICOLOR=1  # lsに色づけ
-export LSCOLORS=DxGxcxdxCxegedabagacad
-# export LSCOLORS=exfxcxdxbxegedabagacad
-export LANG=ja_JP.UTF-8
-export EDITOR=vi
-export PAGER=less
-export DROPBOX_PATH=~/Dropbox
-export MINEDB=~/Dropbox/mine.db
-export SPHINX_PATH=~/github/sphinx_document:~/Dropbox/private/sphinx
-export PYTHONSTARTUP=~/.pythonrc
-
-# lib
-LIB_PERL=~/lib/perl
-
 sphinx_auto_build(){
     OLD_PATH=`pwd`;
     for p in ${(s/:/)SPHINX_PATH};do
@@ -341,44 +326,7 @@ elif which putclip >/dev/null 2>&1 ; then
     alias -g C='| putclip'
 fi
 
-#alias
-alias h=history
-alias cd=cdls
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls'
-alias pd='pushd'
-alias po='popd'
-alias ds='dirs -v'
-alias j="jobs"
-alias i="ipython3"
-alias g="git"
-#alias r='echo $?'
-#alias rm="rm -i"
-alias cp="cp -i"
-alias mv="mv -i"
-alias sl='ls -CF'
-alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
-alias ea='emacsclient -nw -a ""'
-alias en='emacsclient -n'
-alias e='emacsclient -t'
-alias ee='emacsclient -e'
-alias d='emacsclient -t .'
-alias r='ruby -e'
-alias p="perl $PERL_OPTION -E"
-alias pn="perl $PERL_OPTION -nalE"
-alias pp="perl $PERL_OPTION -palE"
-alias pp='perl -plE'
-alias pn='perl -nlE'
-alias f='fab -f ~/fabfile'
-alias c="cdr"
-alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
-alias sudo="sudo "  # sudo時にアリアス有効
-alias v="view"
-export MYSQL_USER="mytest"
-export MYSQL_DATABASE="mytest"
-alias m=mysql_execute
-mysql_execute (){
+ysql_execute (){
     mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
 }
 alias my=mysql_execute
@@ -404,12 +352,12 @@ compctl -g '*.(bz2)' bunzip2
 #--------------------------------------------------
 #load setting files
 #--------------------------------------------------
-
+[ -f ./sh/alias ] && source ./sh/alias
+[ -f ~/sh/export ] && source ~/sh/export
 [ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
 [ -f ~/.sh.d/export ] && source ~/.sh.d/export
 [ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
 [ -f ~/.shell_local ] && source ~/.shell_local # 各マシンローカルごとの設定ファイル
-
 
 #--------------------------------------------------
 #each settings
