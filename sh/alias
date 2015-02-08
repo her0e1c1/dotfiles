@@ -1,3 +1,4 @@
+alias sshX="ssh -c blowfish -2 -C -Y"
 alias h=history
 alias cd=cdls
 alias ll='ls -alF'
