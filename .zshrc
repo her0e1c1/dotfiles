@@ -71,8 +71,7 @@ setopt pushd_ignore_dups
 #ディレクトリの名前だけでcdできる
 setopt auto_cd
 
-# ファイルがある場合のリダイレクト(>)の防止
-# したい場合は>!を使う
+# ファイルがある場合のリダイレクト(>)の防止。上書きは>!を使う
 setopt noclobber
 
 #色を使う
@@ -142,6 +141,9 @@ unsetopt caseglob    # ファイルグロブで大文字小文字を区別しな
 
 setopt long_list_jobs
 setopt rc_quotes
+
+limit coredumpsize 0  # coreファイルを作らない
+
 #--------------------------------------------------
 #key binds
 #--------------------------------------------------
@@ -155,56 +157,6 @@ bindkey "^[/" undo
 bindkey "^[?" redo
 bindkey "^[H" run-help
 
-#--------------------------------------------------
-#function
-#--------------------------------------------------
-
-#cdの後にls実行
-cdls(){
-	if [ ${#1} -eq 0 ]; then
-	   cd && ls
-	else
-       \cd "$*" && ls -G
-	fi
-}
-
-#emacsのデーモン再起動
-function restart_emacs(){
-    emacsclient -e "(kill-emacs)";
-    emacs --daemon
-}
-
-function kill_emacs(){
-	emacsclient -e "(kill-emacs)";
-}
-
-#圧縮ファイルを名前だけで展開
-function extract() {
-  case $1 in
-    *.tar.gz|*.tgz) tar xzvf $1;;
-    *.tar.xz) tar Jxvf $1;;
-    *.zip) unzip $1;;
-    *.lzh) lha e $1;;
-    *.tar.bz2|*.tbz) tar xjvf $1;;
-    *.tar.Z) tar zxvf $1;;
-    *.gz) gzip -dc $1;;
-    *.bz2) bzip2 -dc $1;;
-    *.Z) uncompress $1;;
-    *.tar) tar xvf $1;;
-    *.arj) unarj $1;;
-  esac
-}
-
-zshaddhistory(){
-    local line=${1%%$'\n'}
-    local cmd=${line%% *}
-
-    [[ ${#line} -ge 4
-       && ${cmd} != (l[sal])
-       && ${cmd} != (c|cd)
-       && ${cmd} != (m|man)
-    ]]
-}
 
 #--------------------------------------------------
 #zstyle
@@ -254,21 +206,6 @@ LIB_PERL=~/lib/perl
 #--------------------------------------------------
 #exprot
 #--------------------------------------------------
-sphinx_auto_build(){
-    OLD_PATH=`pwd`;
-    for p in ${(s/:/)SPHINX_PATH};do
-        if [ -d $p ];then
-            \cd $p;
-            echo `pwd`
-            if which inotifywait ;then
-                while inotifywait -e modify ./**/*.rst;do make html; done &
-            fi
-       else
-            echo "$pは存在しません";
-        fi
-    done
-    \cd $OLD_PATH;
-}
 
 ### Perl for one liner
 PERL_MODULES=(
@@ -311,12 +248,10 @@ compctl -g '*.(bz2)' bunzip2
 #--------------------------------------------------
 #load setting files
 #--------------------------------------------------
-[ -f ./sh/alias ] && source ./sh/alias
-[ -f ~/sh/export ] && source ~/sh/export
-[ -f ~/.zshrc.include ] && source ~/.zshrc.include # 設定ファイルのinclude
-[ -f ~/.sh.d/export ] && source ~/.sh.d/export
-[ -f ~/.sh.d/alias ] && source ~/.sh.d/alias
-[ -f ~/.shell_local ] && source ~/.shell_local # 各マシンローカルごとの設定ファイル
+
+[ -f ~/sh/function.sh ] && source ~/sh/function.sh
+[ -f ~/sh/alias.sh ] && source ~/sh/alias.sh
+[ -f ~/sh/export.sh ] && source ~/sh/export.sh
 
 #--------------------------------------------------
 #each settings
@@ -341,7 +276,6 @@ then
   PS1='$ '
 fi
 
-function exists { which $1 &> /dev/null }
 
 if exists percol; then
     function percol_select_history() {
@@ -411,3 +345,4 @@ function _pip_completion {
 compctl -K _pip_completion pip
 # pip zsh completion end
 
+echo "finish loading .zshrc"
