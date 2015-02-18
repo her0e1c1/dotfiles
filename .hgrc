@@ -73,8 +73,10 @@ sn = qselect -n
 
 # qpush/qpop
 o = qpop
+of = qpop -f
 oa = qpop -a
 u = qpush
+uf = qpush -f
 ua = qpush -a
 um = qpush --move
 
