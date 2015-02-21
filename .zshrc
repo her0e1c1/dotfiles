@@ -252,6 +252,7 @@ compctl -g '*.(bz2)' bunzip2
 [ -f ~/sh/function.sh ] && source ~/sh/function.sh
 [ -f ~/sh/alias.sh ] && source ~/sh/alias.sh
 [ -f ~/sh/export.sh ] && source ~/sh/export.sh
+[ -f ~/sh/stty.sh ] && source ~/sh/stty.sh
 
 #--------------------------------------------------
 #each settings
