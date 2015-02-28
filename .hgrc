@@ -2,7 +2,8 @@
 #style = compact
 ignore = ~/.hgignore
 merge = internal:merge 
-#merge = vimdiff
+# merge = vimdiff
+# username
 
 [defaults]
 cdiff = -q
