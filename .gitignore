@@ -21,3 +21,6 @@ __pycache__/
 
 
 *.core
+
+# 環境ごとに変更 
+lib/hgrc
