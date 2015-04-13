@@ -3,7 +3,7 @@
 ignore = ~/.hgignore
 merge = internal:merge 
 # merge = vimdiff
-# username
+username = test
 
 [defaults]
 cdiff = -q
