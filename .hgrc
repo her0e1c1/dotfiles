@@ -17,6 +17,7 @@ prev = diff -c -1
 b = branches
 bb = branch
 s = status 
+sm = status -m
 st = status .
 so = st --rev "max(branch('$1')):."
 
