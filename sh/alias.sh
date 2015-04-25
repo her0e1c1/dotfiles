@@ -157,3 +157,19 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
     alias -g C='| putclip'
 fi
+
+_complie_and_run_in_c(){
+    local main source tfile
+    main=$1;
+    source="
+#include <stdio.h>
+#include <unistd.h>
+int main(){
+    $main
+    return 0;
+}"
+    tfile=`mktemp`
+    echo $source | clang -x c - -o $tfile && $tfile
+    rm $tfile
+}
+alias ce=_complie_and_run_in_c
