@@ -179,6 +179,7 @@ _run_in_haskell(){
     main=$1; shift
     source="
 import Data.List
+import Data.Array
 import System.Directory
 import System.Environment
 main = $main
