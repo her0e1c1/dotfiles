@@ -170,6 +170,25 @@ int main(){
 }"
     tfile=`mktemp`
     echo $source | clang -x c - -o $tfile && $tfile
-    rm $tfile
+    \rm $tfile
 }
 alias ce=_complie_and_run_in_c
+
+_run_in_haskell(){
+    local main source tfile
+    main=$1; shift
+    source="
+import Data.List
+import System.Directory
+import System.Environment
+main = $main
+"
+   # 以下の場合は、getArgsが動作しない
+   # echo $source | runhaskell
+    
+   tfile=`mktemp`
+   echo $source >> $tfile
+   runhaskell $tfile "$@"
+   \rm $tfile
+}
+alias he=_run_in_haskell
