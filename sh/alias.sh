@@ -35,6 +35,7 @@ alias sudo="sudo "  # sudo時にアリアス有効
 alias v="view"
 alias m=mysql_execute
 alias tree="pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'"
+alias clang++="clang++ -std=c++11"
 
 alias prm='perl -E ''
 use File::Basename;
