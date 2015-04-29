@@ -161,18 +161,18 @@ fi
 
 _complie_and_run_in_c(){
     local main source tfile
-    main=$1;
+    main=$1; shift;
     source="
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-int main(){
+int main(int argc, char* argv[]){
     $main
     return 0;
 }"
     tfile=`mktemp`
-    echo $source | clang -x c - -o $tfile && $tfile
-    \rm $tfile
+    echo $source | clang -x c - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
 }
 alias ce=_complie_and_run_in_c
 
