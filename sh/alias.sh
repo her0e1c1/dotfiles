@@ -166,6 +166,9 @@ _complie_and_run_in_c(){
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+
+extern char **environ;
 int main(int argc, char* argv[]){
     $main
     return 0;
@@ -195,3 +198,28 @@ main = $main
    \rm $tfile
 }
 alias he=_run_in_haskell
+
+_complie_and_run_in_cpp(){
+    local main source tfile
+    main=$1; shift;
+    [ -z "$main" ] && main='""'
+    source="
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <iostream>
+#define P(x) cout << (x) << endl;
+
+using namespace std;
+int main(int argc, char* argv[]){
+    // cout << $main << endl;
+    $main;
+    return 0;
+}"
+    tfile=`mktemp`
+    echo $source | clang++ -std=c++11 -x c++ - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
+}
+alias cpe=_complie_and_run_in_cpp
