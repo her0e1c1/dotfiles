@@ -249,6 +249,7 @@ __emacs_oneliner(){
     emacsclient -e "(progn $pre $@)";
     
     # close
-    [ -n "$STDIN" ] emacsclient -e '(setq STDIN "")';
+    [ -n "$STDIN" ] && emacsclient -e '(setq STDIN "")';
+    return 0;
 }
 alias ee=__emacs_oneliner
