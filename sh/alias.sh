@@ -244,7 +244,11 @@ __emacs_oneliner(){
         STDIN=`cat -`;
         pre='(setq STDIN "'$STDIN'")';
     fi
-    arr=(echo "$STDIN")  # 区切り文字で分割
+
+    set -- $STDIN
+    for line in $@; do
+        echo $line
+    done
 
     emacsclient -e "(progn $pre $@)";
     
