@@ -20,7 +20,6 @@ alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
 alias ea='emacsclient -nw -a ""'
 alias en='emacsclient -n'
 alias e='emacsclient -t'
-alias ee='emacsclient -e'
 alias d='emacsclient -t .'
 alias r='ruby -e'
 alias p="perl $PERL_OPTION -E"
@@ -223,3 +222,33 @@ int main(int argc, char* argv[]){
     [ -f $tfile ] && \rm $tfile
 }
 alias cpe=_complie_and_run_in_cpp
+
+
+__emacs_oneliner(){
+    local arr Fflag nflag pre STDIN;
+    Fflag="\n"
+    nflag=false
+    pre=""
+    STDIN=""
+    arr=()
+    while getopts n OPT; do
+	    case $OPT in
+	        n) nflag=true
+	           ;;
+            F) Fflag=$OPTIN
+               ;;
+	    esac
+    done
+    shift $((OPTIND - 1))
+    if $nflag; then
+        STDIN=`cat -`;
+        pre='(setq STDIN "'$STDIN'")';
+    fi
+    arr=(echo "$STDIN")  # 区切り文字で分割
+
+    emacsclient -e "(progn $pre $@)";
+    
+    # close
+    [ -n "$STDIN" ] emacsclient -e '(setq STDIN "")';
+}
+alias ee=__emacs_oneliner
