@@ -227,12 +227,17 @@ alias cpe=_complie_and_run_in_cpp
 __emacs_oneliner(){
     local arr Fflag nflag pre STDIN;
     Fflag="\n"
+    # Fflag="$IFS"
     nflag=false
+    dflag=false  # debug
     pre=""
     STDIN=""
     arr=()
-    while getopts n OPT; do
+
+    while getopts nd OPT; do
 	    case $OPT in
+            d) dflag=true
+               ;;
 	        n) nflag=true
 	           ;;
             F) Fflag=$OPTIN
@@ -240,20 +245,25 @@ __emacs_oneliner(){
 	    esac
     done
     shift $((OPTIND - 1))
+
     if $nflag; then
+        # ここでまとめて入力を受け取るので、一つ前のコマンドが完了する必要あり
         STDIN=`cat -`;
         pre='(setq STDIN "'$STDIN'")';
+        $dflag && echo "STDIN=$STDIN"
     fi
 
-    set -- $STDIN
-    for line in $@; do
-        echo $line
+    # set -- $STDIN
+    # zshだと上記でsplitできないのでechoで対応
+    for line in `echo $STDIN`; do
+        pre='(setq LINE "'$line'")';
+        $dflag && echo "(progn $pre $@)"
+        emacsclient -e "(progn $pre $@)";
     done
-
-    emacsclient -e "(progn $pre $@)";
     
     # close
     [ -n "$STDIN" ] && emacsclient -e '(setq STDIN "")';
     return 0;
 }
-alias ee=__emacs_oneliner
+alias eo=__emacs_oneliner
+alias ee="emacsclient -e"
