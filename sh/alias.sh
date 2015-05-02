@@ -35,27 +35,6 @@ alias v="view"
 alias m=mysql_execute
 alias tree="pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'"
 alias clang++="clang++ -std=c++11"
-
-# if uname -a | grep -q 'Ubuntu'
-# then
-#  alias ls="ls --color"
-
-# elif uname -a |grep -q "air"
-# then
-# else
-#  alias ls="ls -G"
-# fi
-
-#alias -g
-alias -g L="| less -SR"
-alias -g G='| grep'
-alias -g X='| xargs'
-alias -g N1='1>/dev/null'
-alias -g N2='2>/dev/null'
-alias -g N21='2>&1'
-alias -g PP="| perl $PERL_OPTION -aplE"
-alias -g P0="| perl $PERL_OPTION -an0lE"
-alias -g P="| perl $PERL_OPTION -anlE"
 alias ..=".."
 
 #標準出力をクリップボードにコピー
