@@ -21,3 +21,4 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 ### python password manager
 export PW_URL="sqlite:///~/.mine.db"
+export PATH="$PATH:$HOME/.cask/bin"

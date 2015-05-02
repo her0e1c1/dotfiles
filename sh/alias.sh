@@ -36,103 +36,15 @@ alias m=mysql_execute
 alias tree="pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'"
 alias clang++="clang++ -std=c++11"
 
-alias prm='perl -E ''
-use File::Basename;
-use File::Spec;
-$d="$ENV{HOME}/.trash";
-mkdir $d unless -d $d; $c=1;
-for(@ARGV){while(1){
-  unless(-e){say "no $_ exists"; last};
-  $base = basename $_;
-  $base .= "_$c" if($c !=1);
-  $o = File::Spec->catfile($d, $base);
-  $cmd = "mv $_ $o";
-  unless(-e $o){say $cmd; system $cmd; last};$c++;
-}}
-'''
-alias rm="prm"
+# if uname -a | grep -q 'Ubuntu'
+# then
+#  alias ls="ls --color"
 
-### Python Code
-alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
-alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
-
-PYALIAS_PYTHON='python3 -c'
-PYALIAS_IMPORT='
-from os.path import isdir, exists
-from sys import exit
-from shutil import copy, rmtree
-from argparse import ArgumentParser
-'
-
-export PATH="$PATH:$HOME/.cask/bin"
-alias pyrm='python3 -c ''
-from os.path import *
-from shutil import *
-import os
-import argparse
-p = argparse.ArgumentParser()
-p.add_argument("-r")
-p.add_argument("paths", nargs="+")
-args = p.parse_args()
-trash = join(os.environ["HOME"], ".trash")
-for p in args.paths:
-    counter = 0
-    while True:
-        if not exists(p):
-            print("Not exists: {}".format(p))
-            break
-        b = basename(p)
-        if counter > 0:
-            b += "_{}".format(counter)
-        dst = join(trash, b)
-        if not exists(dst):
-            print("move {p} {dst}".format(**locals()))
-            move(p, dst)
-            break
-        counter += 1
-'''
-
-alias pytrash='python3 -c ''
-from os.path import *
-from shutil import *
-import os
-import argparse
-p = argparse.ArgumentParser()
-p.add_argument("-r", action="store_true")
-args = p.parse_args()
-trash = join(os.environ["HOME"], ".trash")
-if not isdir(trash):
-    os.makedirs(trash)
-if args.r:
-    rmtree(trash)
-else:
-    for t in os.listdir(trash):
-        print(t)
-'''
-
-alias pyswap="$PYALIAS_PYTHON \"
-$PYALIAS_IMPORT
-p = ArgumentParser()
-p.add_argument('paths', nargs=2)
-args = p.parse_args()
-for p in args.paths:
-    if not exists(p):
-        print('No {} exists'.format(p))
-        exit()
-\""
-
-if uname -a | grep -q 'Ubuntu'
-then
- alias ls="ls --color"
-
-elif uname -a |grep -q "air"
-then
- alias ls="ls -G"
- alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
- alias emacsclient="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
-else
- alias ls="ls -G"
-fi
+# elif uname -a |grep -q "air"
+# then
+# else
+#  alias ls="ls -G"
+# fi
 
 #alias -g
 alias -g L="| less -SR"

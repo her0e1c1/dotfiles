@@ -207,21 +207,6 @@ LIB_PERL=~/lib/perl
 #exprot
 #--------------------------------------------------
 
-### Perl for one liner
-PERL_MODULES=(
-    '"File::Spec::Functions qw(:ALL)"'
-    '"Cwd qw(chdir abs_path cwd fastcwd fast_abs_path realpath)"'
-    '"File::Basename"'
-    '"List::Util qw(first max maxstr min minstr reduce shuffle sum)"'
-    '"MIME::Base64"'
-    '"Digest::MD5  qw(md5 md5_hex md5_base64)"'
-    '"File::Copy qw(cp mv)"'
-    '"POSIX"'
-    '"My::Utils qw(:ALL)"'
-)
-PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} @ARGV' $PERL_MODULES`
-PERL_OPTION="$PERL_OPTION -I $LIB_PERL"
-
 ysql_execute (){
     mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
 }
@@ -249,10 +234,9 @@ compctl -g '*.(bz2)' bunzip2
 #load setting files
 #--------------------------------------------------
 
-[ -f ~/sh/function.sh ] && source ~/sh/function.sh
-[ -f ~/sh/alias.sh ] && source ~/sh/alias.sh
-[ -f ~/sh/export.sh ] && source ~/sh/export.sh
-[ -f ~/sh/stty.sh ] && source ~/sh/stty.sh
+for i in ~/sh/*; do
+    source $i
+done         
 
 #--------------------------------------------------
 #each settings
@@ -344,10 +328,3 @@ function _pip_completion {
              PIP_AUTO_COMPLETE=1 $words[1] ) )
 }
 compctl -K _pip_completion pip
-# pip zsh completion end
-
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-
-
-echo "finish loading .zshrc"
