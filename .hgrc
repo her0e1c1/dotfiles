@@ -111,8 +111,9 @@ mq =
 #mercurial_keyring = 
 #phase =
 hgext.bookmarks =
-hg-git =
+#hg-git =
 #hggit = /usr/local/lib/python2.7/dist-packages/hggit
+hggit = /usr/local/lib/python2.7/site-packages/hggit
 
 #[phases]
 #publish = False
