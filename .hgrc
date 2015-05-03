@@ -110,6 +110,8 @@ graphlog =
 mq =
 #mercurial_keyring = 
 #phase =
+hgext.bookmarks =
+hg-git =
 #hggit = /usr/local/lib/python2.7/dist-packages/hggit
 
 #[phases]
