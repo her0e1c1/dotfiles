@@ -10,3 +10,8 @@ alias emacsclient="/usr/local/bin/emacsclient"
 # パッケージからインストールした場合
 alias emacsp="/Applications/Emacs.app/Contents/MacOS/Emacs"
 alias emacsclientp="/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"
+
+if $ZSH_NAME; then
+    # pbcopy/paste doesn't work on tmux
+    alias -g C='| pbcopy'
+fi
