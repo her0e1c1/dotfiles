@@ -63,3 +63,115 @@ sphinx_auto_build(){
 }
 
 function exists { which $1 &> /dev/null }
+
+__C_INCLUDED_HEADERS="
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+"
+
+_complie_and_run_in_c(){
+    local main source tfile
+    main=$1; shift;
+    source="
+$__C_INCLUDED_HEADERS
+extern char **environ;
+int main(int argc, char* argv[]){
+    $main
+    return 0;
+}"
+    tfile=`mktemp`
+    echo $source | clang -x c - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
+}
+alias ce=_complie_and_run_in_c
+
+_run_in_haskell(){
+    local main source tfile
+    main=$1; shift
+    source="
+import Data.List
+import Data.Array
+import System.Directory
+import System.Environment
+main = $main
+"
+   # 以下の場合は、getArgsが動作しない
+   # echo $source | runhaskell
+    
+   tfile=`mktemp`
+   echo $source >> $tfile
+   runhaskell $tfile "$@"
+   \rm $tfile
+}
+alias he=_run_in_haskell
+
+_complie_and_run_in_cpp(){
+    local main source tfile
+    main=$1; shift;
+    [ -z "$main" ] && main='""'
+    source="
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <iostream>
+#define P(x) cout << (x) << endl;
+
+using namespace std;
+int main(int argc, char* argv[]){
+    // cout << $main << endl;
+    $main;
+    return 0;
+}"
+    tfile=`mktemp`
+    echo $source | clang++ -std=c++11 -x c++ - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
+}
+alias cpe=_complie_and_run_in_cpp
+
+
+__emacs_oneliner(){
+    local arr Fflag nflag pre STDIN;
+    Fflag="\n"
+    # Fflag="$IFS"
+    nflag=false
+    dflag=false  # debug
+    pre=""
+    STDIN=""
+
+    while getopts nd OPT; do
+	    case $OPT in
+            d) dflag=true
+               ;;
+	        n) nflag=true
+	           ;;
+            F) Fflag=$OPTIN
+               ;;
+	    esac
+    done
+    shift $((OPTIND - 1))
+
+    if $nflag; then
+        # ここでまとめて入力を受け取るので、一つ前のコマンドが完了する必要あり
+        STDIN=`cat -`;
+        pre='(setq STDIN "'$STDIN'")';
+        $dflag && echo "STDIN=$STDIN"
+    fi
+
+    # set -- $STDIN
+    # zshだと上記でsplitできないのでechoで対応
+    for line in `echo $STDIN`; do
+        pre='(setq LINE "'$line'")';
+        $dflag && echo "(progn $pre $@)"
+        emacsclient -e "(progn $pre $@)";
+    done
+    
+    # close
+    [ -n "$STDIN" ] && emacsclient -e '(setq STDIN "")';
+    return 0;
+}
