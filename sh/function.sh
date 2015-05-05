@@ -138,13 +138,11 @@ alias cpe=_complie_and_run_in_cpp
 __emacs_oneliner(){
     local arr Fflag nflag pre STDIN;
     Fflag="\n"
-    # Fflag="$IFS"
     nflag=false
     dflag=false  # debug
     pre=""
     STDIN=""
-
-    while getopts nd OPT; do
+    while getopts ndF: OPT; do
 	    case $OPT in
             d) dflag=true
                ;;
@@ -163,14 +161,14 @@ __emacs_oneliner(){
         $dflag && echo "STDIN=$STDIN"
     fi
 
-    # set -- $STDIN
-    # zshだと上記でsplitできないのでechoで対応
-    for line in `echo $STDIN`; do
-        pre='(setq LINE "'$line'")';
-        $dflag && echo "(progn $pre $@)"
-        emacsclient -e "(progn $pre $@)";
-    done
-    
+    if $nflag; then
+        args=`echo '(--map ' "$@" '(s-split "' "$Flag"' " STDIN))'`
+    else
+        args="$@"
+    fi
+    $dflag && echo $args
+    emacsclient -e "(progn $pre $args)"
+
     # close
     [ -n "$STDIN" ] && emacsclient -e '(setq STDIN "")';
     return 0;
