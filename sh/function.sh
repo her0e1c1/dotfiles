@@ -125,10 +125,7 @@ _complie_and_run_in_cpp(){
     main=$1; shift;
     [ -z "$main" ] && main='""'
     source="
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+$__C_INCLUDED_HEADERS
 
 #include <iostream>
 #define P(x) cout << (x) << endl;
