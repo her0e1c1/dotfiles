@@ -65,12 +65,23 @@ sphinx_auto_build(){
 function exists { which $1 &> /dev/null }
 
 __C_INCLUDED_HEADERS="
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/acl.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <fcntl.h>
-#include <sys/stat.h>
+#include <grp.h>
+#include <limits.h>
+#include <paths.h>
+#include <err.h>
 "
 
 _complie_and_run_in_c(){
