@@ -1,5 +1,6 @@
 alias sshX="ssh -c blowfish -2 -C -Y"
 alias h=history
+alias w=which
 alias vm=VBoxManage
 alias cd=cdls
 alias ll='ls -alF'

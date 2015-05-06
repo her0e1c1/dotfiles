@@ -2,38 +2,37 @@
 
 PYALIAS_PYTHON='python3 -c'
 PYALIAS_IMPORT='
-from os.path import isdir, exists
+from os.path import isdir, exists, join, basename
+from os import environ
 from sys import exit
-from shutil import copy, rmtree
+from shutil import copy, rmtree, move
 from argparse import ArgumentParser
 '
 
-alias pyrm='python3 -c ''
-from os.path import *
-from shutil import *
-import os
-import argparse
-p = argparse.ArgumentParser()
-p.add_argument("-r")
-p.add_argument("paths", nargs="+")
+alias rm="python -c \"
+$PYALIAS_IMPORT
+p = ArgumentParser()
+p.add_argument('-v', dest='verbose', action='store_true')
+p.add_argument('paths', nargs='+')
 args = p.parse_args()
-trash = join(os.environ["HOME"], ".trash")
+trash = join(environ['HOME'], '.trash')
 for p in args.paths:
     counter = 0
     while True:
         if not exists(p):
-            print("Not exists: {}".format(p))
+            print('Not exists: {}'.format(p))
             break
         b = basename(p)
         if counter > 0:
-            b += "_{}".format(counter)
+            b += '_{}'.format(counter)
         dst = join(trash, b)
         if not exists(dst):
-            print("move {p} {dst}".format(**locals()))
+            if args.verbose:
+                print('move {p} {dst}'.format(**locals()))
             move(p, dst)
             break
         counter += 1
-'''
+\""
 
 alias pytrash='python3 -c ''
 from os.path import *

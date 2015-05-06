@@ -27,5 +27,3 @@ for(@ARGV){while(1){
   unless(-e $o){say $cmd; system $cmd; last};$c++;
 }}
 '''
-
-alias rm="prm"
