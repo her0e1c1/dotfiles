@@ -1,0 +1,18 @@
+_run_in_haskell(){
+    local main source tfile
+    main=$1; shift
+    source="
+import Data.List
+import Data.Array
+import System.Directory
+import System.Environment
+main = $main
+"
+   # 以下の場合は、getArgsが動作しない
+   # echo $source | runhaskell
+    
+   tfile=`mktemp`
+   echo $source >> $tfile
+   runhaskell $tfile "$@"
+   \rm $tfile
+}

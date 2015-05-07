@@ -1,0 +1,20 @@
+_complie_and_run_in_cpp(){
+    local main source tfile
+    main=$1; shift;
+    [ -z "$main" ] && main='""'
+    source="
+$__C_INCLUDED_HEADERS
+
+#include <iostream>
+#define P(x) cout << (x) << endl;
+
+using namespace std;
+int main(int argc, char* argv[]){
+    // cout << $main << endl;
+    $main;
+    return 0;
+}"
+    tfile=`mktemp`
+    echo $source | clang++ -std=c++11 -x c++ - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
+}
