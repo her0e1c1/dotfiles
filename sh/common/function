@@ -62,4 +62,3 @@ sphinx_auto_build(){
     \cd $OLD_PATH;
 }
 
-function exists { which $1 &> /dev/null }
