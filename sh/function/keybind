@@ -1,0 +1,8 @@
+function insert_quote {
+    local rbuff
+    rbuff="$RBUFFER"
+    BUFFER=$(echo "$LBUFFER''")
+    CURSOR=$(($#BUFFER -1))
+    BUFFER=$(echo "${BUFFER}$rbuff")
+    zle -R -c
+}

@@ -1,0 +1,3 @@
+mysql_execute (){
+    mysql -u $MYSQL_USER $MYSQL_DATABASE -e "$1";
+}

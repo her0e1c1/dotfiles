@@ -1,0 +1,10 @@
+function exists(){
+    which $1 &> /dev/null
+}
+
+function repeat(){
+    # do arg2 command `arg1` times
+    if [ $# = 2 ]; then
+        for i in {1..$1}; do $2;done;
+    fi
+}
