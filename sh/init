@@ -9,15 +9,15 @@ HERE=$(dirname $(readlink -f $0))
 for i in ~/sh/languages/*; do . $i; done
 
 # Change loading scripts depending on each environment
-if uname -a | grep -qv Darwin; then
+if uname -a | grep -q Darwin; then
     . ~/sh/mac/alias
    if [ -n "$ZSH_NAME" ]; then
        . ~/sh/mac/zsh
    fi
-elif uname -a | grep -qv Ubuntu; then
+elif uname -a | grep -q Ubuntu; then
     . ~/sh/ubuntu/alias
    if [ -n "$ZSH_NAME" ]; then
-       . ~/sh/ubuntu/zsh
+       #. ~/sh/ubuntu/zsh
    fi
 fi   
 
