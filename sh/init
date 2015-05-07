@@ -1,0 +1,33 @@
+HERE=$(dirname $(readlink -f $0))
+
+# First of all, initialize
+. ~/sh/function/f
+. ~/sh/function/keybind
+. ~/sh/function/percol
+. ~/sh/function/pip
+
+for i in ~/sh/languages/*; do . $i; done
+
+# Change loading scripts depending on each environment
+if uname -a | grep -qv Darwin; then
+    . ~/sh/mac/alias
+   if [ -n "$ZSH_NAME" ]; then
+       . ~/sh/mac/zsh
+   fi
+elif uname -a | grep -qv Ubuntu; then
+    . ~/sh/ubuntu/alias
+   if [ -n "$ZSH_NAME" ]; then
+       . ~/sh/ubuntu/zsh
+   fi
+fi   
+
+if [ -n "$ZSH_NAME" ]; then
+    for i in ~/sh/zsh/*; do . $i; done
+fi
+
+for i in ~/sh/common/*; do . $i; done
+
+# should be last
+for i in ~/sh/zsh/*; do . $i; done
+
+# stty stop undef
