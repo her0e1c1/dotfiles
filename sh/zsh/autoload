@@ -1,0 +1,11 @@
+# history 操作まわり
+autoload history-search-end
+autoload smart-insert-last-word
+autoload -U colors
+
+colors
+
+#cd ~/d/ => ~/desctopのように補完
+#c C-p/C-nでcから始まるコマンドのみの履歴を表示
+autoload -U compinit
+compinit -u
