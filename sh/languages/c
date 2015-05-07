@@ -12,3 +12,7 @@ int main(int argc, char* argv[]){
     echo $source | clang -x c - -o $tfile && $tfile "$@"
     [ -f $tfile ] && \rm $tfile
 }
+
+cl (){
+	clang++ -I. $1 -std=c++11 && ./a.out
+}
