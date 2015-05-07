@@ -38,3 +38,8 @@ alias en='emacsclient -n'
 alias e='emacsclient -t'
 alias d='emacsclient -t .'
 alias ..=".."
+
+
+alias ce=_complie_and_run_in_c
+alias he=_run_in_haskell
+alias cpe=_complie_and_run_in_cpp
