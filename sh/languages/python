@@ -24,7 +24,7 @@ for p in args.paths:
             break
         b = basename(p)
         if counter > 0:
-            b += '_{}'.format(counter)
+            b += '_{0}'.format(counter)
         dst = join(trash, b)
         if not exists(dst):
             if args.verbose:
