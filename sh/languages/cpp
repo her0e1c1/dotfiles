@@ -6,6 +6,8 @@ _complie_and_run_in_cpp(){
 $__C_INCLUDED_HEADERS
 
 #include <iostream>
+#include <vector>
+#include <map>
 #define P(x) cout << (x) << endl;
 
 using namespace std;
