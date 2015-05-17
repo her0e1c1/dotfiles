@@ -1,14 +1,20 @@
+
 _complie_and_run_in_cpp(){
     local main source tfile
     main=$1; shift;
     [ -z "$main" ] && main='""'
     source="
 $__C_INCLUDED_HEADERS
+$__CPP_INCLUDED_HEADERS
 
-#include <iostream>
-#include <vector>
-#include <map>
 #define P(x) cout << (x) << endl;
+
+#define PC(x) \
+  cout << #x << \" = \"; \
+  for (int i = 0 ; i < (x).size(); i++){ \
+    cout << (x)[i] << \", \"; \
+  }  cout << endl;
+
 
 using namespace std;
 int main(int argc, char* argv[]){
