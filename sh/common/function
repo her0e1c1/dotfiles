@@ -62,3 +62,8 @@ sphinx_auto_build(){
     \cd $OLD_PATH;
 }
 
+
+startvm () {
+   # startvm "仮想マシン名"
+   VBoxmanage startvm "$1" -type headless
+}
