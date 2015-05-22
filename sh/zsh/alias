@@ -6,6 +6,7 @@ alias -g N2='2>/dev/null'
 alias -g N21='2>&1'
 alias -g PP="| perl $PERL_OPTION -aplE"
 alias -g P0="| perl $PERL_OPTION -an0lE"
+alias -g PE="| perl $PERL_OPTION -E"
 alias -g P="| perl $PERL_OPTION -anlE"
 alias -g PD='| perl -nlE "system \$_"'
 

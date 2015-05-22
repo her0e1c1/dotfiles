@@ -27,3 +27,6 @@ for(@ARGV){while(1){
   unless(-e $o){say $cmd; system $cmd; last};$c++;
 }}
 '''
+
+
+# $a1 $a2 $2 .. に引数

@@ -1,0 +1,5 @@
+
+__mysql_dump_csv(){
+    local table_name=$1; shift
+     
+}
