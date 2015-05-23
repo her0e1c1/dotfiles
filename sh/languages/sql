@@ -5,6 +5,14 @@ __mysql_dump_csv(){
 }
 
 sql (){
+    # usage
+    # setup user and database
+    # $ sql -u USER DATABASE
+    # setup table
+    # $ sql t TABLE
+    # insert data
+    # $ sql in NUBER:VALUE[:s] ...
+
     # make "mysql -u USER DATABASE" typeless
     if [ -z "$__MYSQL_USER" -o -z "$__MYSQL_DATABASE" ]; then
         if [ $# -eq 3 ]; then
@@ -24,26 +32,32 @@ sql (){
         fi
     fi
 
-    # local precmd="mysql -u $__MYSQL_USER $__MYSQL_DATABASE"
     local columns
-    # frequently used
+
     if [ "$1" = "t" ]; then
         if [ $# -eq 2 ]; then
-            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse "show full columns from $2"
+            __MYSQL_TABLE=$2
+            echo "change table to $__MYSQL_TABLE"
         else
             mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse 'show tables'
         fi
     elif [ "$1" = "tc" ]; then
-        if [ $# -eq 2 ]; then
-            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -se "show create table $2" |perl -plE 's/\\n/\n/g'
-        else
-            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse 'show tables'
-        fi
-    elif true; then
-        columns=`mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse "show full columns from $2" |perl -anlE '$c++; END{say $c}'`
-        echo $columns;
-        #"insert into $2 values();"
+        mysql -u $__MYSQL_USER $__MYSQL_DATABASE -se "show create table $__MYSQL_TABLE" |perl -plE 's/\\n/\n/g'
+    elif [ "$1" = "c" ]; then
+         mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse "show full columns from $__MYSQL_TABLE"
+    elif [ "$1" = "s" ]; then
+        mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse "select * from $__MYSQL_TABLE"
+    elif [ "$1" = "in" ]; then
+        columns=`mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bs -e "show full columns from $__MYSQL_TABLE" | perl -anlE '$c++; END{say $c-1}'`
+        columns=`perl -E '
+                $num=shift;
+                for(@ARGV){
+                    @a=(split ":", $_); $b[$a[0]]=($a[2] eq "s" ? "''$a[1]''" : $a[1])
+                };
+                $b[$_]//="NULL" for 0..$num;
+                say join ", ", @b' $columns $@`
+        mysql -u $__MYSQL_USER $__MYSQL_DATABASE -e "insert into $__MYSQL_TABLE values($columns);"
     else
-         mysql -u $__MYSQL_USER $__MYSQL_DATABASE $@
+        mysql -u $__MYSQL_USER $__MYSQL_DATABASE $@
     fi
 }
