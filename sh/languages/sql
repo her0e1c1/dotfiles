@@ -24,16 +24,26 @@ sql (){
         fi
     fi
 
-    local precmd="mysql -u $__MYSQL_USER $__MYSQL_DATABASE"
-
+    # local precmd="mysql -u $__MYSQL_USER $__MYSQL_DATABASE"
+    local columns
     # frequently used
     if [ "$1" = "t" ]; then
         if [ $# -eq 2 ]; then
-            eval "$precmd -Bse 'show full columns from $2'"
+            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse "show full columns from $2"
         else
-            eval "$precmd -Bse 'show tables'"
+            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse 'show tables'
         fi
+    elif [ "$1" = "tc" ]; then
+        if [ $# -eq 2 ]; then
+            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -se "show create table $2" |perl -plE 's/\\n/\n/g'
+        else
+            mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse 'show tables'
+        fi
+    elif true; then
+        columns=`mysql -u $__MYSQL_USER $__MYSQL_DATABASE -Bse "show full columns from $2" |perl -anlE '$c++; END{say $c}'`
+        echo $columns;
+        #"insert into $2 values();"
     else
-         eval "$precmd $@"
+         mysql -u $__MYSQL_USER $__MYSQL_DATABASE $@
     fi
 }
