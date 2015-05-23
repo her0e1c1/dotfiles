@@ -3,3 +3,13 @@ __mysql_dump_csv(){
     local table_name=$1; shift
      
 }
+
+ysql (){
+    if [ $# -eq 2 ]; then
+        local us=$1; shift
+        local db=$1; shift
+        __MYSQL_USER=$us
+        __MYSQL_DATABASE=$db
+    fi
+    mysql -u $__MYSQL_USER $__MYSQL_DATABASE $@
+}
