@@ -1,0 +1,6 @@
+debug (){
+    # debug like set -x ; $CMD ; set +x
+    set -x
+    $@
+    set +x
+}
