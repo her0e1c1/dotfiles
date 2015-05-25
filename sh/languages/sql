@@ -4,6 +4,7 @@ __mysql_dump_csv(){
      
 }
 
+# TOTO: insert用の形式で出力
 sql (){
     # usage
     # setup user and database
