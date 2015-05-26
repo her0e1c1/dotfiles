@@ -10,4 +10,5 @@ set ruler
 set showcmd
 set mouse=a
 set wildmenu
+set foldmethod=marker
 noremap <CR> o<ESC>
