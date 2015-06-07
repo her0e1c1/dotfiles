@@ -67,3 +67,24 @@ startvm () {
    # startvm "仮想マシン名"
    VBoxmanage startvm "$1" -type headless
 }
+
+
+watch () {
+    local number=1;
+    while getopts n: OPT; do
+        case $OPT in
+        n) number=$OPTARG
+        ;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+    if [ "$#" != 1 ]; then
+        echo "No command"; exit 1
+    fi
+    local cmd=$1; shift
+    
+    while true; do
+        clear; $cmd; sleep $number
+    done;
+}
