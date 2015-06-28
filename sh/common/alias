@@ -43,3 +43,8 @@ alias my=mysql_execute
 alias ce=_complie_and_run_in_c
 alias he=_run_in_haskell
 alias cpe=_complie_and_run_in_cpp
+
+_(){
+    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
+}
+alias color255=_
