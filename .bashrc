@@ -21,4 +21,4 @@ export HISTIGNORE="fg*:bg*:history:cd*:ls*"
 #ヒストリのサイズを増やす
 export HISTSIZE=100000
 
-for i in ~/sh/*; source $i; done
+for i in ~/sh/*;do [ -r $i ] && source $i; done
