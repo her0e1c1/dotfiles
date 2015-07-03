@@ -31,3 +31,9 @@ for i in ~/sh/common/*; do . $i; done
 for i in ~/sh/zsh/*; do . $i; done
 
 # stty stop undef
+
+# ssh
+eval `ssh-agent` 2> /dev/null 1> /dev/null
+for key in ~/.ssh/*.pem; do
+    ssh-add $key 2> /dev/null 1> /dev/null;
+done
