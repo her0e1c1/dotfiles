@@ -20,8 +20,6 @@ LIB_PERL=~/lib/perl
 
 . ~/sh/init
 
-eval `ssh-agent` > /dev/null && ssh-add ~/.ssh/id_rsa_git 2> /dev/null
-
 if [[ "$TERM" == "dumb" ]]
 then
   unsetopt zle
