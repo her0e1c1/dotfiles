@@ -40,3 +40,4 @@ for key in ~/.ssh/*.pem; do
 done
 # WARNING
 # you must not eval `ssh-agent` again because it resets the old ssh keys
+# eval `ssh-agent` && ssh-add ~/.ssh/*.pem
