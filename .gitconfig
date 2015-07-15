@@ -43,6 +43,8 @@
 
     # graph log    
 	gl = log --graph
+    gg =  log --graph --name-status --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"
+    gf = log --graph --oneline --decorate=full  
 
     # branch
 	b = branch -avv
