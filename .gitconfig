@@ -41,6 +41,9 @@
 	lp = log -p
     ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
 
+    # graph log    
+	gl = log --graph
+
     # branch
 	b = branch -avv
 	br = branch
