@@ -108,6 +108,7 @@ hgext.convert =
 color =
 graphlog =
 mq =
+shelve =
 #mercurial_keyring = 
 #phase =
 hgext.bookmarks =
