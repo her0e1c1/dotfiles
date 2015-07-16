@@ -1,0 +1,5 @@
+:set -XMultiParamTypeClasses
+:set -XFunctionalDependencies
+:set -XFlexibleContexts
+:set -XUndecidableInstances 
+:set -XExistentialQuantification
