@@ -60,6 +60,11 @@
 	# merge
 	mf = merge FETCH_HEAD
 
+    # stash
+    sh = stash
+    shl = stash list
+    sha = stash apply
+
 [color]
 	ui = true
 
