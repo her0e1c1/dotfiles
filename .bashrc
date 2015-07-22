@@ -5,6 +5,7 @@
 # 両方
 # ignorespace+ignoredups = ignoreboth
 export HISTCONTROL=ignoreboth
+export PS1="\u@\h$ "
 
 #履歴の共有
 function share_history {  # 以下の内容を関数として定義
