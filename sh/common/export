@@ -4,7 +4,6 @@ export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
 # export LSCOLORS=exfxcxdxbxegedabagacad
 export LANG=ja_JP.UTF-8
-export EDITOR=vi
 export PAGER=less
 export DROPBOX_PATH=~/Dropbox
 export PYTHONSTARTUP=~/.pythonrc
@@ -22,3 +21,10 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 # haskell
 export PATH="$PATH:$HOME/.cabal/bin"
+
+
+if [ -n "$(which vim)" ]; then
+    export EDITOR=vim
+else
+    export EDITOR=vi
+fi
