@@ -44,13 +44,16 @@ alias ce=_complie_and_run_in_c
 alias he=_run_in_haskell
 alias cpe=_complie_and_run_in_cpp
 
-_(){
+# function
+color255(){
     perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
 }
-alias color255=_
-
-_(){
+less(){
     local file=$1; shift
     pygmentize -O style=monokai -f console256 -g $file |less -R $@
 }
-alias less=_
+
+ff(){
+    [ $# -eq 1 ] && find . -type f | xargs grep $1
+    [ $# -eq 2 ] && find $1 -type f | xargs grep $2
+}
