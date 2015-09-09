@@ -39,6 +39,7 @@ alias e='emacsclient -t'
 alias d='emacsclient -t .'
 alias ..=".."
 alias my=mysql_execute
+alias s=snippets
 
 alias ce=_complie_and_run_in_c
 alias he=_run_in_haskell

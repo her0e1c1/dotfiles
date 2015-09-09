@@ -3,17 +3,25 @@
 	email = her0e1c1@gmail.com
 [alias]
 	rt = remote
+
+    # rebase
+	rb = rebase
+    rba = rebase --abort
+    rbc = rebase --continue
+    rbs = rebase --skip
+
+    # add
 	au = add -u
+    ap = add -p
 
 	# fetch
 	f = fetch
 	fm = fetch origin master
 
 	# commit
-	ci = commit
-	ca = commit --amend
-	civ = commit -v
-	cia = commit -va
+	ci = commit -v
+	cad = commit -v --amend
+	ca = commit -va
 	ciam = commit -am
 
 	# status
@@ -37,8 +45,10 @@
 
     # log
 	l = log -n 5
-	lm = log master
 	lp = log -p
+	lg = log -g
+	l1 = log --oneline
+	lm = log master
     ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
 
     # graph log    
@@ -54,6 +64,7 @@
 
     # reset
 	r = reset
+	r1 = reset HEAD~
     rsm = reset --merge
     ro = reset ORIG_HEAD --hard
 
