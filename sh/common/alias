@@ -48,10 +48,17 @@ alias cpe=_complie_and_run_in_cpp
 color255(){
     perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
 }
-less(){
-    local file=$1; shift
-    pygmentize -O style=monokai -f console256 -g $file |less -R $@
+
+les(){
+    if [ $# -eq 0 ]; then
+        local file=/dev/stdin
+    else
+        local file=$1; shift;
+    fi
+    pygmentize -O style=monokai -f console256 -g "$file" | /usr/bin/less -R $@
 }
+alias c='pygmentize -O style=monokai -f console256 -g'
+
 
 ff(){
     [ $# -eq 1 ] && find . -type f | xargs grep $1
