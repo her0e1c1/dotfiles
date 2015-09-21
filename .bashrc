@@ -1,10 +1,15 @@
+
 # 空白から始めたコマンドを無視
 # export HISTCONTROL=ignorespace
+
 # 重複履歴を無視
 # export HISTCONTROL=ignoredups
+
 # 両方
 # ignorespace+ignoredups = ignoreboth
 export HISTCONTROL=ignoreboth
+
+# プロンプトの表示変更
 export PS1="\u@\h$ "
 
 #履歴の共有
@@ -22,6 +27,4 @@ export HISTIGNORE="fg*:bg*:history:cd*:ls*"
 #ヒストリのサイズを増やす
 export HISTSIZE=100000
 
-for i in ~/sh/*;do
-    [ -f $i ] && source $i 2>/dev/null 1>/dev/null;
-done
+source ~/sh/init
