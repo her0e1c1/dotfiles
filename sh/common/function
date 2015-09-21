@@ -9,17 +9,17 @@ cdls(){
 }
 
 #emacsのデーモン再起動
-function restart_emacs(){
+restart_emacs(){
     emacsclient -e "(kill-emacs)";
     emacs --daemon
 }
 
-function kill_emacs(){
+kill_emacs(){
 	emacsclient -e "(kill-emacs)";
 }
 
 #圧縮ファイルを名前だけで展開
-function extract() {
+extract() {
   case $1 in
     *.tar.gz|*.tgz) tar xzvf $1;;
     *.tar.xz) tar Jxvf $1;;
@@ -33,17 +33,6 @@ function extract() {
     *.tar) tar xvf $1;;
     *.arj) unarj $1;;
   esac
-}
-
-zshaddhistory(){
-    local line=${1%%$'\n'}
-    local cmd=${line%% *}
-
-    [[ ${#line} -ge 4
-       && ${cmd} != (l[sal])
-       && ${cmd} != (c|cd)
-       && ${cmd} != (m|man)
-    ]]
 }
 
 sphinx_auto_build(){
