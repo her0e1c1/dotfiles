@@ -1,10 +1,8 @@
-HERE=$(dirname $(readlink -f $0))
+HERE=$(dirname "$(readlink -f $0)")
 
 # First of all, initialize
+for i in ~/sh/common/*; do . $i; done
 . ~/sh/function/f
-. ~/sh/function/keybind
-. ~/sh/function/percol
-. ~/sh/function/pip
 
 for i in ~/sh/languages/*; do . $i; done
 
@@ -16,19 +14,18 @@ if uname -a | grep -q Darwin; then
    fi
 elif uname -a | grep -q Ubuntu; then
     . ~/sh/ubuntu/alias
-   if [ -n "$ZSH_NAME" ]; then
-       #. ~/sh/ubuntu/zsh
-   fi
+   # if [ -n "$ZSH_NAME" ]; then
+   #     . ~/sh/ubuntu/zsh
+   # fi
 fi   
 
-if [ -n "$ZSH_NAME" ]; then
+# Decide which shell is used
+if [ -n "$BASH_VERSION" ] && [ "${BASH##*/}" = "bash" ]; then
+    for i in ~/sh/bash/*; do . $i; done
+elif [ -n "$ZSH_NAME" ]; then
+    # should be last
     for i in ~/sh/zsh/*; do . $i; done
 fi
-
-for i in ~/sh/common/*; do . $i; done
-
-# should be last
-for i in ~/sh/zsh/*; do . $i; done
 
 # stty stop undef
 
