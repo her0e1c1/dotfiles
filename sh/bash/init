@@ -9,3 +9,14 @@ _pip_completion()
 }
 complete -o default -F _pip_completion pip
 # pip bash completion end
+
+
+# click
+_snippets_completion() {
+    COMPREPLY=( $( env COMP_WORDS="${COMP_WORDS[*]}" \
+                       COMP_CWORD=$COMP_CWORD \
+                       _SNIPPETS_COMPLETE=complete $1 ) )
+    return 0
+}
+
+complete -F _snippets_completion -o default snippets;

@@ -5,5 +5,5 @@ compctl -/ cd chdir dirs pushd
 #補完候補を.bz2にする
 compctl -g '*.(bz2)' bunzip2
 
-# 
 compctl -K _pip_completion pip
+compctl -K _click_snippets_completion snippets
