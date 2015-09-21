@@ -1,3 +1,4 @@
+
 function insert_quote {
     local rbuff
     rbuff="$RBUFFER"
