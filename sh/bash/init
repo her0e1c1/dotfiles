@@ -1,4 +1,4 @@
-PS1='\[\e[1;33m\]\w \n\[\e[1;36m\]\u@\h \$\[\e[m\] '
+PS1='\[\e[1;33m\]\w \n\[\e[1;36m\][\u@\h]\$\[\e[m\] '
 
 # pip bash completion start
 _pip_completion()
