@@ -1,5 +1,7 @@
 imap jk <Esc>
 imap <c-j> <Esc>
+noremap <C-j> <esc>
+noremap! <C-j> <esc>
 syntax on
 set number
 set tabstop=4
