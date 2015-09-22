@@ -6,4 +6,6 @@ compctl -/ cd chdir dirs pushd
 compctl -g '*.(bz2)' bunzip2
 
 compctl -K _pip_completion pip
-compctl -K _click_snippets_completion snippets
+
+# ファイルパスを補完してくれなくなるからuncomment
+# compctl -K _click_snippets_completion snippets

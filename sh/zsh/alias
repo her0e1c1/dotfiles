@@ -13,3 +13,4 @@ alias -g PD='| perl -nlE "system \$_"'
 alias -g UNCOLOR='| sed -r "s/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g"'
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
 alias -g AP='| cat <<<'
+alias -g R="| xargs cat| less -SR"
