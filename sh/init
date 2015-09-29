@@ -2,7 +2,6 @@ HERE=$(dirname "$(readlink -f $0)")
 
 # First of all, initialize
 for i in ~/sh/common/*; do . $i; done
-. ~/sh/function/f
 
 for i in ~/sh/languages/*; do . $i; done
 
