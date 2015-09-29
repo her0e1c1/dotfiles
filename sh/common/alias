@@ -63,8 +63,14 @@ alias c='pygmentize -O style=monokai -f console256 -g'
 
 
 ff(){
-    [ $# -eq 1 ] && find . -type f | xargs grep -n $1
-    [ $# -eq 2 ] && find $1 -type f | xargs grep -n $2
+    if [ $# -eq 1 ]; then
+        dir="."
+        word=$1
+    elif [ $# -eq 2 ]; then
+        dir=$1
+        word=$2
+    fi
+    [ -n "$word" ] && find $dir -type f -print0 | xargs -0 grep -n $word
 }
 
 
