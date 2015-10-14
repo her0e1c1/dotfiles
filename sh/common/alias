@@ -1,4 +1,5 @@
 alias pgrep="ps aux | grep"
+alias gosh="rlwrap gosh"
 alias el="emacs -Q --script"
 alias sshX="ssh -c blowfish -2 -C -Y"
 alias h=history
