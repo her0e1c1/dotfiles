@@ -14,5 +14,5 @@ int main(int argc, char* argv[]){
 }
 
 cl (){
-	clang++ -I. $1 -std=c++11 && ./a.out
+	clang -I. $1 && ./a.out
 }
