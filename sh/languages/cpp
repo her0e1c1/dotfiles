@@ -6,15 +6,7 @@ _complie_and_run_in_cpp(){
     source="
 $__C_INCLUDED_HEADERS
 $__CPP_INCLUDED_HEADERS
-
-#define P(x) cout << (x) << endl;
-
-#define PC(x) \
-  cout << #x << \" = \"; \
-  for (int i = 0 ; i < (x).size(); i++){ \
-    cout << (x)[i] << \", \"; \
-  }  cout << endl;
-
+#include \"myutils.h\"
 
 using namespace std;
 int main(int argc, char* argv[]){
@@ -23,10 +15,10 @@ int main(int argc, char* argv[]){
     return 0;
 }"
     tfile=`mktemp`
-    echo $source | clang++ -std=c++11 -x c++ - -o $tfile && $tfile "$@"
+    echo $source | clang++ -std=c++11 -I ~/lib/cpp/ -x c++ - -o $tfile && $tfile "$@"
     [ -f $tfile ] && \rm $tfile
 }
 
 clc (){
-	clang++ -std=c++11 -I. $1 && ./a.out
+	clang++ -std=c++11 -I. -I ~/lib/cpp/ $1 && ./a.out
 }
