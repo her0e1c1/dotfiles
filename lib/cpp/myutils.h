@@ -85,4 +85,27 @@ typedef map<int, string> MIS;
 typedef map<int, int> MII;
 typedef map<string, string> MSS;
 
+
+// Data Structure
+class LinkedList {
+
+public:
+  LinkedList* left;
+  LinkedList* right;
+  LinkedList* parent;
+  int value;
+
+  LinkedList(int value, LinkedList* l = NULL, LinkedList* r = NULL, LinkedList* p = NULL) {
+    this->value = value;
+    left = l;
+    right = r;
+    parent = p;
+
+    if (left)
+      left->parent = this;
+    if (right)
+      right->parent = this;
+  }
+};
+
 #endif
