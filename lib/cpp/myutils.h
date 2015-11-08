@@ -59,6 +59,14 @@ const long long MOD =   1000000009;
   } \
     cout << endl;}  // 対応関係を明確に！
 
+#define PE2(x)                                  \
+  {for (int i = 0 ; i < (x).size(); i++){         \
+      for (int j = 0 ; j < (x)[i].size(); j++){    \
+        cout << (x)[i][j] << ", ";                 \
+      }                                            \
+      cout << endl;}                               \
+  }
+
 #define PC(x)  \
   cout << #x << " = "; \
   for (int i = 0 ; i < (x).size(); i++){                          \
