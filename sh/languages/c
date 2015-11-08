@@ -14,5 +14,12 @@ int main(int argc, char* argv[]){
 }
 
 cl (){
-	clang -I. $1 && ./a.out
+    if [ $# -eq 2 ]; then
+        lopt=$1; shift;
+        local root=~/github/sample/share
+        clang -I. -I "$root/include" -L "$root/lib" -l $lopt  $1
+        env LD_LIBRARY_PATH="$root/lib:$LD_LIBRARY_PATH" ./a.out
+    else
+   	    clang -I. $1 && ./a.out
+    fi
 }
