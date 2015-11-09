@@ -23,6 +23,9 @@
 #include <cstring>
 #include <ctime>
 
+#include <stdio.h>
+#include <assert.h>
+
 using namespace std;
 
 #define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
