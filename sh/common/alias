@@ -42,7 +42,7 @@ alias e='emacsclient -t'
 alias d='emacsclient -t .'
 alias ..=".."
 alias my=mysql_execute
-alias s=snippets
+# alias s=snippets
 alias ce=_complie_and_run_in_c
 alias he=_run_in_haskell
 alias cpe=_complie_and_run_in_cpp
@@ -80,3 +80,9 @@ runjava() {
     javac $1.java
     java $1
 }
+
+oneliner_gosh(){
+    gosh -l ~/lib/scheme/init.scm  -e $1 -E exit
+}
+alias s=oneliner_gosh
+alias sl="gosh -l ~/lib/scheme/init.scm"
