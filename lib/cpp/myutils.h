@@ -111,4 +111,25 @@ public:
   }
 };
 
+class BinaryTree {
+
+public:
+  BinaryTree* left;
+  BinaryTree* right;
+  BinaryTree* parent;
+  int value;
+
+  BinaryTree(int value, BinaryTree* l = NULL, BinaryTree* r = NULL, BinaryTree* p = NULL) {
+    this->value = value;
+    left = l;
+    right = r;
+    parent = p;
+
+    if (left)
+      left->parent = this;
+    if (right)
+      right->parent = this;
+  }
+};
+
 #endif
