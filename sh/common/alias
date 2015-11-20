@@ -83,7 +83,7 @@ runjava() {
 }
 
 oneliner_gosh(){
-    gosh -l ~/lib/scheme/init.scm  -e $1 -E exit
+    gosh -l ~/lib/scheme/init.scm  -e "(print $1)" -E exit
 }
 alias s=oneliner_gosh
 alias sl="gosh -l ~/lib/scheme/init.scm"
