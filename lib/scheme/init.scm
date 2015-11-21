@@ -6,18 +6,28 @@
 
 (use util.stream)
 (use util.list)
+(use util.match)
+
 (use text.tr)
 (use file.util)
+
 (use gauche.process)
+(use gauche.parseopt)
+(use gauche.parameter)
 
 ; s '($ p $ + 1 2 3)' => 6
 (define p print)
-(define l lambda)
-(define pp (pa$ print))
+(define l lambda)  ; ^
+(define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
+(define m1 macroexpand-1)
+; (define pp (pa$ print))
 (define pos process-output->string)
 (define IN (standard-input-port))
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
+
+(define (path p)
+  (string-append (home-directory) p))
 
 ; s '(p (string-slices "abcd" 2))' => (ab cd)
 (define (string-slices str len)
@@ -28,19 +38,43 @@
   `(let ((it ,pred))
      (if it ,t ,@f)))
 
-(define-syntax if-let1
-  (syntax-rules ()
-    ((_ var test then else)
-          (or (and-let* ((var test)) then) else))))
-; (aif (+ 1 2 3) (* it 10) 1)
-; (if-let1 it (+ 1 2 3) (* it 10) 1)  ; 60
-
 ; combinator
 (define (~$ . selectors)
   (cut apply ~ <> selectors))
+; ((~$ 1) "abc")  "b"
 
 (define (slot-ref*$ . selectors)
   (cut apply slot-ref* <> selectors))
 
 (define (flip f x y) (f y x))
+; ((pa$ flip map) (iota 10) print)
 
+
+;; path
+(define (path-normalize . paths)
+  ; (resolve-path)
+   (expand-path
+    (string-join paths "/")))
+(define path-n path-normalize)
+
+; build-pathがあった
+; s '(p(build-path "~a" "b"))' => "~a/b"
+(define (path-join . ls)
+  (let loop ((path ls)
+             (acc '()))
+    (let* ((n (null? path))
+           (p (and (not n) (car path)))
+           (next (and (not n) (cdr path)))
+           (p0 (and p (not (string-null? p)) (char=? #\/ (~ p 0))))
+           )
+      (cond (n (apply path-normalize (reverse acc)))
+            (p0 (loop next (list (string-append "/" (string-trim p #\/)))))
+            (else (loop next (cons p acc)))
+            ))))
+
+; TODO: lazy let*
+; (llet* ((a 1) (b 2)) (if #t a b))  ; 必要になってから評価
+
+; 正規化あった
+; (sys-normalize-pathname "~//a/./d/b" :expand #t :absolute #t :canonicalize #t)
+; "/home/me/a/d/b"
