@@ -1,3 +1,4 @@
+(use srfi-1)
 (use srfi-13)  ; string-null? string-every
 (use srfi-14)  ; char-set:whitespace
 
@@ -14,9 +15,18 @@
 (use gauche.process)
 (use gauche.parseopt)
 (use gauche.parameter)
+(use gauche.cgen)
+; (use gauche.internal)
+
+(define-macro (import-only module . syms)
+  `(begin
+     ,@(map (lambda (sym) `(define ,sym (with-module ,module ,sym))) syms)))
+
+(import-only gauche.internal extended-pair? extended-cons pair-attribute-get pair-attribute-set! pair-attributes)
 
 ; s '($ p $ + 1 2 3)' => 6
 (define p print)
+(define b begin)
 (define l lambda)  ; ^
 (define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
 (define m1 macroexpand-1)
