@@ -120,3 +120,35 @@
       (if (pair? form)
           `(let1 it ,x (,(car form) ,@(cdr form)))
           `(,form ,x))))
+
+(define-macro (-?> x form . more)
+  (let1 v (gensym)
+        (if (pair? more)
+            `(if-let1 ,v (-?> ,x ,form) (-?> ,v ,@more ) #f )
+            (if (pair? form)
+                `(,(car form) ,x ,@(cdr form))
+                `(,form ,x)))))
+
+(define-macro (-?>> x form . more)
+  (let1 v (gensym)
+        (if (pair? more)
+            `(if-let1 ,v (-?>> ,x ,form) (-?>> ,v ,@more ) #f )
+            (if (pair? form)
+                `(,(car form) ,@(cdr form) ,x)
+                            `(,form ,x)))))
+
+(use srfi-13)
+(define-reader-directive 'hd
+  (^(sym port ctx)
+    (let1 delimiter (string-trim-both (read-line port))
+          (do ((line (read-line port) (read-line port))
+               (document '() (cons line document)))
+              ((string=? line delimiter)
+               (string-concatenate-reverse (intersperse "\n" document)))))))
+#|
+(display #!hd END
+aa
+bb
+END 
+)
+|#
