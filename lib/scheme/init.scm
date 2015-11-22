@@ -12,10 +12,11 @@
 (use text.tr)
 (use file.util)
 
+(use gauche.cgen)
 (use gauche.process)
 (use gauche.parseopt)
 (use gauche.parameter)
-(use gauche.cgen)
+(use gauche.termios)
 ; (use gauche.internal)
 
 (define-macro (import-only module . syms)
@@ -26,8 +27,9 @@
 
 ; s '($ p $ + 1 2 3)' => 6
 (define p print)
+(define f format)
 (define b begin)
-(define l lambda)  ; ^
+; (define l lambda)  ; ^
 (define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
 (define m1 macroexpand-1)
 ; (define pp (pa$ print))
@@ -35,6 +37,10 @@
 (define IN (standard-input-port))
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
+
+; sliceを作る
+; (~ a 1)
+; (~ a 1 2)
 
 (define (path p)
   (string-append (home-directory) p))
@@ -88,3 +94,29 @@
 ; 正規化あった
 ; (sys-normalize-pathname "~//a/./d/b" :expand #t :absolute #t :canonicalize #t)
 ; "/home/me/a/d/b"
+
+(define rr regexp-replace-all)
+
+(define-macro (it! value)
+  `(set! it ,value))
+
+(define-macro (-> x form . more)
+  (if (pair? more)
+      `(-> (-> ,x ,form) ,@more )
+      (if (pair? form)
+          `(,(car form) ,x ,@(cdr form))
+          `(,form ,x))))
+
+(define-macro (->> x form . more)
+  (if (pair? more)
+      `(->> (->> ,x ,form) ,@more )
+      (if (pair? form)
+          `(,(car form) ,@(cdr form) ,x)
+                    `(,form ,x))))
+
+(define-macro (--> x form . more)
+  (if (pair? more)
+      `(--> (--> ,x ,form) ,@more)
+      (if (pair? form)
+          `(let1 it ,x (,(car form) ,@(cdr form)))
+          `(,form ,x))))
