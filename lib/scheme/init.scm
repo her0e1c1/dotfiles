@@ -162,3 +162,9 @@ END
             ((char=? #\" ch) (list->string (reverse str))))
         (error "\" is needed"))))
 ; s '(rr #/(\w*)/ "abc" #!r"\0 ~1")'
+
+
+; (clear)
+(define clear
+  (let1 c (process-output->string '("clear"))
+        (lambda () (display c))))
