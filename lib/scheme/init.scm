@@ -152,3 +152,13 @@ bb
 END 
 )
 |#
+
+; "\\0" => #!r"\0"
+(define-reader-directive 'r
+  (^(sym port ctx)
+    (if (char=? #\" (read-char port))
+        (do ((ch (read-char port) (read-char port))
+             (str '() (cons ch str)))
+            ((char=? #\" ch) (list->string (reverse str))))
+        (error "\" is needed"))))
+; s '(rr #/(\w*)/ "abc" #!r"\0 ~1")'
