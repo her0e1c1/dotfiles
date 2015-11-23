@@ -17,6 +17,8 @@
 (use gauche.parseopt)
 (use gauche.parameter)
 (use gauche.termios)
+(use gauche.sequence)
+; (use gauche.cgen)
 ; (use gauche.internal)
 
 (define-macro (import-only module . syms)
@@ -29,6 +31,7 @@
 (define p print)
 (define f format)
 (define b begin)
+(define i iota)
 ; (define l lambda)  ; ^
 (define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
 (define m1 macroexpand-1)
@@ -95,7 +98,14 @@
 ; (sys-normalize-pathname "~//a/./d/b" :expand #t :absolute #t :canonicalize #t)
 ; "/home/me/a/d/b"
 
-(define rr regexp-replace-all)
+(define rra regexp-replace-all)
+(define rr regexp-replace)
+(define-macro  (rl regex s vars . body)
+  `(rxmatch-let (rxmatch ,regex ,s)
+                ,vars
+                ,@body))
+; ((rxmatch) 1) ; => aに束縛とかよさげ?
+; #"~a~b"
 
 (define-macro (it! value)
   `(set! it ,value))
@@ -154,6 +164,7 @@ END
 |#
 
 ; "\\0" => #!r"\0"
+; #!""がいいせめて
 (define-reader-directive 'r
   (^(sym port ctx)
     (if (char=? #\" (read-char port))
@@ -168,3 +179,69 @@ END
 (define clear
   (let1 c (process-output->string '("clear"))
         (lambda () (display c))))
+
+(define orig~ ~)
+(define-macro (~ . body)
+  (case (length body)
+    ((0) '())
+    ((1) (car body))
+    ((2) `(orig~ ,(car body) ,(cadr body)))
+    ((3) `(subseq ,(car body) ,(cadr body) ,(caddr body)))
+    ))
+
+
+(define (canonicalize-argdecl argdecls)
+  (define (rec args)
+    (match (canonicalize-vardecl args)
+      [() '()]
+      [((var ':: type) . rest) `((,var . ,type) ,@(rec rest))]
+      [(var . rest) `((,var . ScmObj) ,@(rec rest))]))
+  (rec argdecls))
+
+(define (canonicalize-vardecl vardecls)
+  (define (expand-type elt seed)
+    (cond
+     [(keyword? elt)  ;; The case of (var ::type)
+      (rxmatch-case (keyword->string elt)
+        [#/^:(.+)$/ (_ t) `(:: ,(string->symbol t) ,@seed)]
+        [else (cons elt seed)])]
+     [(symbol? elt)
+      (rxmatch-case (symbol->string elt)
+        [#/^(.+)::$/ (_ v) `(,(string->symbol v) :: ,@seed)]
+        [#/^(.+)::(.+)$/ (_ v t)
+            `(,(string->symbol v) :: ,(string->symbol t) ,@seed)]
+        [else (cons elt seed)])]
+     [else (cons elt seed)]))
+
+  (define (err decl) (error "invlaid variable declaration:" decl))
+
+  (define (scan in r)
+    (match in
+      [() (reverse r)]
+      [([? symbol? var] ':: type . rest)
+       (scan rest `((,var :: ,type) ,@r))]
+      [([? symbol? var] . rest)
+       (scan rest `((,var :: ScmObj) ,@r))]
+      [(([? symbol? v] [? symbol? t] . args) . rest)
+       (scan rest `(,(expand-type v (expand-type t args)) ,@r))]
+      [(([? symbol? vt] . args) . rest)
+       (scan rest `(,(expand-type vt args) ,@r))]
+      [(xx . rest) (err xx)]))
+
+  (scan (fold-right expand-type '() vardecls) '()))
+
+
+  (define (expand-type elt seed)
+    (cond
+     [(keyword? elt)  ;; The case of (var ::type)
+      (rxmatch-case (keyword->string elt)
+        [#/^:(.+)$/ (_ t) `(:: ,(string->symbol t) ,@seed)]
+        [else (cons elt seed)])]
+     [(symbol? elt)
+      (rxmatch-case (symbol->string elt)
+        [#/^(.+)::$/ (_ v) `(,(string->symbol v) :: ,@seed)]
+        [#/^(.+)::(.+)$/ (_ v t)
+            `(,(string->symbol v) :: ,(string->symbol t) ,@seed)]
+        [else (cons elt seed)])]
+     ; seedに結果が累積
+     [else (cons elt seed)]))
