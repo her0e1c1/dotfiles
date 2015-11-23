@@ -149,7 +149,7 @@
 
 (define-macro (awhile pred . body)
   `(do ((it ,pred ,pred))
-       ((or (not it) (eof-object? it)))
+       ((or (not it) (eof-object? it)) it)
      ,@body))
 
 (use srfi-13)
