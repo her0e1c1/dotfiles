@@ -147,6 +147,11 @@
                 `(,(car form) ,@(cdr form) ,x)
                             `(,form ,x)))))
 
+(define-macro (awhile pred . body)
+  `(do ((it ,pred ,pred))
+       ((or (not it) (eof-object? it)))
+     ,@body))
+
 (use srfi-13)
 (define-reader-directive 'hd
   (^(sym port ctx)
@@ -245,3 +250,5 @@ END
         [else (cons elt seed)])]
      ; seedに結果が累積
      [else (cons elt seed)]))
+
+
