@@ -1,6 +1,8 @@
 #ifndef MYVECTOR
 #define MYVECTOR
 
+// Dynamic Array
+
 #include "myutils.h"
 
 struct _vector {

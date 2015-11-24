@@ -3,6 +3,7 @@
 
 #include "myutils.h"
 
+// unsorted list
 struct _list {
   int data;
   struct _list *next;
@@ -79,6 +80,16 @@ void display(list_t* head){
 }
 
 // O(n)
+list_t *search(list_t *head, int data) {
+  while (head) {
+    if (head->data == data)
+      return head;
+    head = head->next;
+  }
+  return NULL;
+}
+
+// O(n)
 // get the nth item from the head of list
 list_t* indexAt(list_t* head, int index) {
 #define INDEX_ERROR {       \
@@ -120,10 +131,37 @@ void deleteThis(list_t* node) {
 // O(1) (on the other hand, vector needs O(n))
 // insert an item to the next of the node
 // but you can't insert to the PREVIOUS one
-void insertNext(list_t* node, int data) {
+void insertNext(list_t *node, int data) {
   list_t* n = init(data);
   n->next = node->next;
   node->next = n;
 }
+
+// M(n)
+list_t *reverse(list_t* node) {
+  list_t *head = NULL;
+  while (node) {
+    list_t *n = init(node->data);
+    n->next = head;
+    head = n;
+    node = node->next;
+  }
+  return head;
+}
+
+// M(1)
+list_t *reverseX(list_t *node) {
+  list_t *head = NULL;
+  while (node) {
+    list_t *next = node->next;
+    node->next = head;
+    head = node;
+    node = next;
+  }
+  return head;
+}
+
+// duplicates(X)
+// delete(X)
 
 #endif
