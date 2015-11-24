@@ -2,6 +2,7 @@
 #define MYSORT
 
 // トポロジカルソート
+// まず、size/2 左側/右側 で左に小さいのを集める(この時点で、右と左は独立)
 
 int shellSort(int arr[], int n)
 {

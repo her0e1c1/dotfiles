@@ -4,6 +4,9 @@
 #include "myutils.h"
 #define data_type char*
 
+// also see linear probing
+// data size is limited. (if collision occurs, then next pointer is checked (rehash))
+
 /*
  * if there are more than one entries having the same hash value (I mean collision),
  * they become linked list like below. (x is entry, _ is NULL)

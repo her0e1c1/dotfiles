@@ -1,6 +1,9 @@
 #ifndef MYLIST
 #define MYLIST
 
+// search/insert/update/delete/next/previous/
+// min/max/append/
+
 #include "myutils.h"
 
 // unsorted list
