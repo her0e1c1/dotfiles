@@ -13,14 +13,17 @@ typedef struct _vector vector_t;
 vector_t *init(size_t size) {
   vector_t* n = (vector_t *)malloc(sizeof(vector_t));
   int *data = (int *)malloc(sizeof(int) * size);
-  if (n == NULL || data == NULL)
+  if (n == NULL || data == NULL) {
+    printf("Out of memory");
     exit(1);
-  n->size = size;
+  }
   n->data = data; 
+  n->size = size;
   return n;
 }
 
 vector_t *inits(size_t size, ...) {
+  // O(n)
   vector_t *n = init(size);
   va_list list;
   va_start(list, size);
@@ -100,5 +103,19 @@ void deleteAt(vector_t *head, int index) {
   // WARN: Don't free memories but head->data
   // free(head->data + (head->size - 1));
   head->size--;
+}
+
+vector_t *append(vector_t *h1, vector_t *h2) {
+  // O(n + m) M(n + m)
+  if (h1 == NULL || h2 == NULL) {
+    printf("Can't append");
+    exit(1);
+  }
+  // At first you need the size of h1 + h2 to get memory
+  size_t s = h1->size + h2->size;
+  vector_t *n = init(s);
+  memcpy(n->data, h1->data, sizeof(int) * h1->size);
+  memcpy(n->data + h1->size, h2->data, sizeof(int) * h2->size);
+  return n;
 }
 #endif
