@@ -5,7 +5,7 @@
 #define data_type char*
 
 /*
- * if there are more than one entries having the same hash value,
+ * if there are more than one entries having the same hash value (I mean collision),
  * they become linked list like below. (x is entry, _ is NULL)
  * _ x _ x _ 
  *   _   x

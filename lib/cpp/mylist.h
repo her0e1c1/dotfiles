@@ -14,7 +14,6 @@ typedef struct _list list_t;
 list_t* init(int data){
   list_t* newNode = (list_t*) malloc(sizeof(list_t));
   if (newNode == NULL) {
-    // TODO: stderr
     exit(1);
   }
   newNode->data = data;
