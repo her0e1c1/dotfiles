@@ -61,6 +61,7 @@ void upHeap(data_type *a, int last) {
   }
 }
 
+// O(nlog2n)
 data_type *heapSort(data_type *array, int size) {
   for (int i = 0; i < size; i++)
     upHeap(array, i);
