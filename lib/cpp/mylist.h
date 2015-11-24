@@ -163,5 +163,6 @@ list_t *reverseX(list_t *node) {
 
 // duplicates(X)
 // delete(X)
+// find loop
 
 #endif

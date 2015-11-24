@@ -36,6 +36,10 @@
 ; (define l lambda)  ; ^
 (define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
 (define m1 macroexpand-1)
+; hash
+(define hm make-hash-table)
+(define hp hash-table-put!)
+(define hg hash-table-get)
 ; (define pp (pa$ print))
 (define pos process-output->string)
 (define IN (standard-input-port))
