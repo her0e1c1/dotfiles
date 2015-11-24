@@ -61,39 +61,51 @@ bst_t *bst_search(bst_t *tree, data_type data) {
 
 // if tree has 2 children, find the child of the min data at the side of right
 // TODO: hot to delete root?
-bst_t *bst_delete(bst_t *tree, data_type data) {
-  if (tree == NULL) {
-    return NULL;
-  } else if (tree->data > data) {
-    // return the same node which doesn't have data
-    tree->left = bst_delete(tree->left, data);
-  } else if (tree->data < data) {
-    tree->right = bst_delete(tree->right, data);
-  } else {
-    // data is found
-    bst_t *deleted = tree;
-    if (tree->left == NULL) {
-      tree = tree->right;  // it is ok whether right is NULL or not
-    } else if (tree->right == NULL) {
+void bst_delete(bst_t **bst, data_type data) {
+  bst_t *tree = *bst;
+  // which side is connected with parent
+  // left == 1 or right == -1 or root == 0
+  int left = 0;
+  while (1) {
+    if (tree == NULL) {
+      break;  // NOT FOUND
+    } else if (tree->data > data) {
+      left = 1;
       tree = tree->left;
+    } else if (tree->data < data) { 
+      left = -1;
+      tree = tree->right;
     } else {
-      // have 2 children
-      // get the succesor tree, which is the min data
-      bst_t *next = tree->right;
-      while (next->left)
-        next = next->left;
-      tree->data = next->data;
-      printf("del, min = %d, %d\n", data, next->data);
-      
-      /* bst_delete(next, next->data); */
-      tree->right = bst_delete(tree->right, next->data);
-      /* next->parent->left = next->right; */
-      /* deleted = next; */
-      return tree;
+      // data is found
+      bst_t *next = NULL;
+      if (tree->left == NULL) {
+        next = tree->right;  // it is ok whether right is NULL or not
+      } else if (tree->right == NULL) {
+        next = tree->left;
+      } else {
+        // the current tree has 2 children
+        // so get the succesor tree, which is the min data
+        bst_t *tmp = tree;
+        left = tree->right->left ? 1 : -1;
+        tree = tree->right;
+        while (tree->left)
+          tree = tree->left;
+        tmp->data = tree->data;
+        next = tree->right;
+      }
+      if (left == 1) {
+        tree->parent->left = next;
+      } else if (left == -1) {
+        tree->parent->right = next;
+      } else {
+        *bst = next; // root which doesn't have both of the 2 children
+      }
+      if (next)
+        next->parent = tree->parent;
+      free(tree);
+      break;
     }
-    free(deleted);
   }
-  return tree;
 }
 
 // TODO: display as tree structure (not liner list)
@@ -101,11 +113,9 @@ bst_t *bst_delete(bst_t *tree, data_type data) {
 void bst_display(bst_t *tree) {
   if (tree) {
     // in order
-    if (tree->left)
-      bst_display(tree->left);
+    bst_display(tree->left);
     printf("%d, ", tree->data);
-    if (tree->right)
-      bst_display(tree->right);
+    bst_display(tree->right);
   }
 }
 
