@@ -1,6 +1,7 @@
 #ifndef MYUTILS
 #define MYUTILS
 
+// c++ header
 #include <vector>
 #include <list>
 #include <map>
@@ -23,7 +24,9 @@
 #include <cstring>
 #include <ctime>
 
+// c header
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 using namespace std;
@@ -131,5 +134,8 @@ public:
       right->parent = this;
   }
 };
+
+// my header
+#include "myvector.h"
 
 #endif

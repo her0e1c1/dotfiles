@@ -4,6 +4,7 @@
 
 (use srfi-27)  ; random
 (use srfi-42)  ; range
+(use srfi-43)  ; vector-*
 
 (use util.stream)
 (use util.list)

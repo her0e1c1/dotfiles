@@ -3,7 +3,14 @@ _complie_and_run_in_c(){
     main=$1; shift;
     source="
 $__C_INCLUDED_HEADERS
+#include <limits.h>
+
 extern char **environ;
+
+#define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
+#define REP(k,a) FOR(k,0,a)
+#define o(s) printf(\"%s\", (char*)s);
+
 int main(int argc, char* argv[]){
     $main
     return 0;
