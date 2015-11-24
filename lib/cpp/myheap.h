@@ -2,7 +2,7 @@
 // root is the larget number
 
 /*
- * M(1)
+ * M(1) in place
  *
  * 0 => 1, 2
  * WARN: PARENT(0) == 0
