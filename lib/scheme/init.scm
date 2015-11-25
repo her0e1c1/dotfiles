@@ -117,6 +117,31 @@
                 ,@body))
 ; ((rxmatch) 1) ; => aに束縛とかよさげ?
 ; #"~a~b"
+; (#/REGEX/ "strng")
+(define (rm rxp str)
+  (if-let1 m (rxmatch rxp str)
+       (list
+        (m 0)
+        (m 'before 0)
+        (m 'after 0)
+
+        (rxmatch-num-matches m)
+        (rxmatch-named-groups m)
+        (rxmatch-start m)
+        (rxmatch-end m)
+        (rxmatch-substring m)
+        (rxmatch-substrings m)
+        (rxmatch-positions m)
+        (rxmatch-before m)
+        (rxmatch-after m)
+
+        (regexp->string rxp)
+        (regexp-num-groups rxp)
+        (regexp-named-groups rxp)
+
+        (rxmatch->string rxp str)
+        )
+       #f))
 
 (define-macro (it! value)
   `(set! it ,value))
