@@ -50,6 +50,10 @@
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
 
+; use as it is
+; time
+; sys-sleep
+
 ; sliceを作る
 ; (~ a 1)
 ; (~ a 1 2)
@@ -211,12 +215,18 @@ END
     ))
 
 
+
+; commands
+; ls/find/which/grep/xargs/csv/cat
+; peco(anything)
+
 (define (--ls . dirs)
   (let* ((keys (filter keyword? dirs))
          (opt-abs (memq :abs keys))
          (opt-c (not (memq :c keys)))
          (opt-e (not (memq :e keys)))
          (opt-a (not (memq :a keys)))
+         (opt-all (not (memq :all keys)))
          (sdirs (filter string? dirs))
          (sdirs (if (null? sdirs) (list "./") sdirs)))
     (let1 lists (map (^x (--> x
@@ -244,3 +254,12 @@ END
                                         p))
                           (string-split (sys-getenv "PATH") ":"))
         (if (null? found) #f (car found))))
+
+
+; (list->string (to #\あ #\ん))
+(define (to a b)
+  (let ((an (x->number a))
+        (bn (x->number b)))
+    (if (> an bn) (error "a < b"))
+    (map integer->char (iota (+ 1 (- bn an)) an))))
+        
