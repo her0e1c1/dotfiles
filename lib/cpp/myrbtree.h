@@ -117,6 +117,30 @@ void rbtree_balance(rbtree_t **root, rbtree_t *tree) {
   }
 }
 
+// reduce cases from 6 to 4
+// you need to bottom up a tree to root althoug coloring only a current tree BLACK
+/* void rbtree_balance(rbtree_t **root, rbtree_t *tree) { */
+/*   rbtree_t *p, *u;  // parent, uncle */
+/*   while ((p = tree->parent) && p->color == RED && p->parent) { */
+/*     if (LEFT_CHILD(p)) { */
+/*       if (RIGHT_CHILD(tree)) { */
+/*         tree = p; */
+/*         rotateL(root, tree); */
+/*       } */
+/*       tree->color = BLACK; */
+/*       rotateR(root, tree->parent->parent); */
+/*     } else { */
+/*       if (LEFT_CHILD(tree)) { */
+/*         tree = p; */
+/*         rotateR(root, tree); */
+/*       } */
+/*       tree->color = BLACK; */
+/*       rotateL(root, tree->parent->parent); */
+/*     } */
+/*     tree = tree->parent; */
+/*   } */
+/* } */
+
 void rbtree_insert(rbtree_t **root, rbtree_data_type data) {
   rbtree_t *node = (rbtree_t *)malloc(sizeof(rbtree_t));
   if (node == NULL) {
