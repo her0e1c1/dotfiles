@@ -30,6 +30,8 @@
 (import-only gauche.internal extended-pair? extended-cons pair-attribute-get pair-attribute-set! pair-attributes)
 
 ; s '($ p $ + 1 2 3)' => 6
+; d describe
+(define df define)
 (define p print)
 (define f format)
 (define b begin)
@@ -295,3 +297,8 @@ END
     (map integer->char (iota (+ 1 (- bn an)) an))))
         
 
+(define (-find a)
+  (map -find (--ls a)))
+
+
+(df a (lcons* 1 2 3 4 5))
