@@ -188,4 +188,3 @@ void rbtree_display(rbtree_t *root) {
     rbtree_display(root->right);
   }
 }
-
