@@ -158,6 +158,12 @@
        ((or (not it) (eof-object? it)) it)
      ,@body))
 
+(define-macro (amap f ls)
+  `(map (lambda (it) ,f) ,ls))
+
+(define-macro (afilter f ls)
+  `(filter (lambda (it) ,f) ,ls))
+
 (use srfi-13)
 (define-reader-directive 'hd
   (^(sym port ctx)
@@ -222,3 +228,4 @@ END
   `(--ls ,@(map (^x (if (and (not (keyword? x)) (symbol? x))
                               (symbol->string x)
                               x)) dirs)))
+
