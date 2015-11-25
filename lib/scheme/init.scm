@@ -33,9 +33,12 @@
 (define f format)
 (define b begin)
 (define i iota)
+(define s subseq)
 ; (define l lambda)  ; ^
 (define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
 (define m1 macroexpand-1)
+(define-macro (m2 . body)
+  (macroexpand `(quote ,body)))
 ; hash
 (define hm make-hash-table)
 (define hp hash-table-put!)
@@ -81,8 +84,6 @@
     (string-join paths "/")))
 (define path-n path-normalize)
 
-; build-pathがあった
-; s '(p(build-path "~a" "b"))' => "~a/b"
 (define (path-join . ls)
   (let loop ((path ls)
              (acc '()))
@@ -200,60 +201,24 @@ END
     ))
 
 
-(define (canonicalize-argdecl argdecls)
-  (define (rec args)
-    (match (canonicalize-vardecl args)
-      [() '()]
-      [((var ':: type) . rest) `((,var . ,type) ,@(rec rest))]
-      [(var . rest) `((,var . ScmObj) ,@(rec rest))]))
-  (rec argdecls))
+(define (--ls . dirs)
+  (let* ((keys (filter keyword? dirs))
+         (opt-abs (memq :abs keys))
+         (opt-c (not (memq :c keys)))
+         (opt-e (not (memq :e keys)))
+         (opt-a (not (memq :a keys)))
+         (sdirs (filter string? dirs))
+         (sdirs (if (null? sdirs) (list "./") sdirs)))
+    (let1 lists (map (^x (--> x
+                         (sys-normalize-pathname it :absolute opt-abs :canonicalize opt-c :expand opt-e)
+                         (build-path it "*")
+                         (glob it)
+                         ))
+                     sdirs)
+          (if opt-a (apply append lists) lists))))
 
-(define (canonicalize-vardecl vardecls)
-  (define (expand-type elt seed)
-    (cond
-     [(keyword? elt)  ;; The case of (var ::type)
-      (rxmatch-case (keyword->string elt)
-        [#/^:(.+)$/ (_ t) `(:: ,(string->symbol t) ,@seed)]
-        [else (cons elt seed)])]
-     [(symbol? elt)
-      (rxmatch-case (symbol->string elt)
-        [#/^(.+)::$/ (_ v) `(,(string->symbol v) :: ,@seed)]
-        [#/^(.+)::(.+)$/ (_ v t)
-            `(,(string->symbol v) :: ,(string->symbol t) ,@seed)]
-        [else (cons elt seed)])]
-     [else (cons elt seed)]))
-
-  (define (err decl) (error "invlaid variable declaration:" decl))
-
-  (define (scan in r)
-    (match in
-      [() (reverse r)]
-      [([? symbol? var] ':: type . rest)
-       (scan rest `((,var :: ,type) ,@r))]
-      [([? symbol? var] . rest)
-       (scan rest `((,var :: ScmObj) ,@r))]
-      [(([? symbol? v] [? symbol? t] . args) . rest)
-       (scan rest `(,(expand-type v (expand-type t args)) ,@r))]
-      [(([? symbol? vt] . args) . rest)
-       (scan rest `(,(expand-type vt args) ,@r))]
-      [(xx . rest) (err xx)]))
-
-  (scan (fold-right expand-type '() vardecls) '()))
-
-
-  (define (expand-type elt seed)
-    (cond
-     [(keyword? elt)  ;; The case of (var ::type)
-      (rxmatch-case (keyword->string elt)
-        [#/^:(.+)$/ (_ t) `(:: ,(string->symbol t) ,@seed)]
-        [else (cons elt seed)])]
-     [(symbol? elt)
-      (rxmatch-case (symbol->string elt)
-        [#/^(.+)::$/ (_ v) `(,(string->symbol v) :: ,@seed)]
-        [#/^(.+)::(.+)$/ (_ v t)
-            `(,(string->symbol v) :: ,(string->symbol t) ,@seed)]
-        [else (cons elt seed)])]
-     ; seedに結果が累積
-     [else (cons elt seed)]))
-
-
+; (ls ~/.emacs.d :abs :e)
+(define-macro (ls . dirs)
+  `(--ls ,@(map (^x (if (and (not (keyword? x)) (symbol? x))
+                              (symbol->string x)
+                              x)) dirs)))
