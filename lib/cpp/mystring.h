@@ -4,17 +4,13 @@
 // KMP/BM
 
 // find
-// ref
 // unique
 // last but k
-// reverse
 // reverse words
 // split
 // join
-// lower
 // format
 // replace
-// strip
 
 char *s_reverse(char *str) {
   if (*str == '\0')
