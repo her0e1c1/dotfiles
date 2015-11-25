@@ -40,7 +40,16 @@ char *s_reverse_word(char *str) {
 }
 
 char *s_strip(char *str) {
-  
+  while (*str == ' ')
+    str++;
+  char *last = str;
+  while (*last)
+    last++;
+  last--;
+  while (*last == ' ')
+    last--;
+  *(++last) = '\0';
+  return str;
 }
 
 char *s_join(char *str, char delim) {
