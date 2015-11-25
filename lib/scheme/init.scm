@@ -237,3 +237,10 @@ END
 (define-macro (! . args)
   (let1 args (map x->string args)
         (sys-system (string-join args " "))))
+
+(define (which cmd)
+  (let1 found (filter-map (^x (and-let* ((p (build-path x cmd))
+                                         (q (file-is-executable? p)))
+                                        p))
+                          (string-split (sys-getenv "PATH") ":"))
+        (if (null? found) #f (car found))))
