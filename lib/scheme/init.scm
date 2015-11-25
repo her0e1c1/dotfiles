@@ -256,7 +256,12 @@ END
         (if (null? found) #f (car found))))
 
 
+(define type-equals '(number? string? char? char-set?))
+(define (same? a b) 1)
+
 ; (list->string (to #\あ #\ん))
+; (char-set->list #[a-z])
+; (char-set->list #[あ-ん])
 (define (to a b)
   (let ((an (x->number a))
         (bn (x->number b)))
