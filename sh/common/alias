@@ -103,7 +103,7 @@ oneliner_gosh(){
     shift $((OPTIND - 1))
 
     if $nflag; then
-        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each $1 read-line)" -E exit
+        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) (--> it $1)) read-line)" -E exit
     elif $pflag; then
         gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) $1 (print it)) read-line)" -E exit
     else

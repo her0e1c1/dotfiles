@@ -12,6 +12,7 @@
 
 (use text.tr)
 (use file.util)
+(use parser.peg)  ; parsec
 
 (use gauche.cgen)
 (use gauche.process)
@@ -293,3 +294,4 @@ END
     (if (> an bn) (error "a < b"))
     (map integer->char (iota (+ 1 (- bn an)) an))))
         
+
