@@ -35,10 +35,11 @@
 (define i iota)
 (define s subseq)
 ; (define l lambda)  ; ^
-(define m macroexpand)  ; TODO: quoteなくしたい (m (aif 1 it))
 (define m1 macroexpand-1)
-(define-macro (m2 . body)
-  (macroexpand `(quote ,body)))
+(define-macro (m . body)  ; (m MACRO)
+  `(macroexpand (quote ,body)))
+(define-macro (m- body) ; (m (MACRO))
+  `(macroexpand (quote ,body)))
 ; hash
 (define hm make-hash-table)
 (define hp hash-table-put!)
@@ -164,6 +165,9 @@
 (define-macro (afilter f ls)
   `(filter (lambda (it) ,f) ,ls))
 
+(define-macro (aeach f ls)
+  `(for-each (lambda (it) ,f) ,ls))
+
 (use srfi-13)
 (define-reader-directive 'hd
   (^(sym port ctx)
@@ -225,7 +229,11 @@ END
 
 ; (ls ~/.emacs.d :abs :e)
 (define-macro (ls . dirs)
-  `(--ls ,@(map (^x (if (and (not (keyword? x)) (symbol? x))
-                              (symbol->string x)
-                              x)) dirs)))
+  `(--ls ,@(map x->string-without-keyword dirs)))
 
+(define (x->string-without-keyword x)
+  (if (keyword? x) x (x->string x)))
+
+(define-macro (! . args)
+  (let1 args (map x->string args)
+        (sys-system (string-join args " "))))
