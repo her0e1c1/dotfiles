@@ -31,6 +31,7 @@
 
 ; s '($ p $ + 1 2 3)' => 6
 ; d describe
+; sys-lstat
 (define df define)
 (define p print)
 (define f format)
@@ -48,11 +49,15 @@
 (define hp hash-table-put!)
 (define hg hash-table-get)
 ; (define pp (pa$ print))
-(define pos process-output->string)
+(define exec process-output->string)
+(define execl process-output->string-list)
 (define IN (standard-input-port))
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
 
+(define s-join string-join)
+
+(define f? file-exists?)
 ; use as it is
 ; time
 ; sys-sleep
@@ -301,4 +306,10 @@ END
   (map -find (--ls a)))
 
 
-(df a (lcons* 1 2 3 4 5))
+; (df a (lcons* 1 2 3 (sys-sleep 10) 5))
+; size-of
+;; (define (len obj)
+;;   (cond
+;;    ((string? obj) (string-length obj))
+;;    ((pair? obj) (length obj))
+;;    (else 0)))
