@@ -154,6 +154,14 @@
 (define-macro (it! value)
   `(set! it ,value))
 
+; (guard (var cond) cddr)
+; (guard (exc) 1)
+; (guard (exc) (/ 1 0))
+; (guard (exc (else 0)) (/ 1 0))
+;; (define-macro (null! x)
+;;   (guard (_ (else `(define ,x '())))
+;;           x `(set! ,x '())))
+
 (define-macro (-> x form . more)
   (if (pair? more)
       `(-> (-> ,x ,form) ,@more )
