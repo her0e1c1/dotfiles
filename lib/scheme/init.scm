@@ -15,12 +15,14 @@
 (use parser.peg)  ; parsec
 
 (use gauche.cgen)
+(use gauche.generator)
 (use gauche.process)
 (use gauche.parseopt)
 (use gauche.parameter)
-(use gauche.termios)
 (use gauche.sequence)
-; (use gauche.cgen)
+(use gauche.termios)
+(use gauche.test)
+
 ; (use gauche.internal)
 
 (define-macro (import-only module . syms)
@@ -49,6 +51,7 @@
 (define hp hash-table-put!)
 (define hg hash-table-get)
 ; (define pp (pa$ print))
+(define rv receive)
 (define exec process-output->string)
 (define execl process-output->string-list)
 (define IN (standard-input-port))
@@ -154,10 +157,14 @@
 (define-macro (it! value)
   `(set! it ,value))
 
+; ... は 0 個を含む任意個の式 (,@の代わりっぽい)
+
 ; (guard (var cond) cddr)
 ; (guard (exc) 1)
 ; (guard (exc) (/ 1 0))
 ; (guard (exc (else 0)) (/ 1 0))
+
+; 関数にすると、ローカル変数に代入する意味のないものになる
 ;; (define-macro (null! x)
 ;;   (guard (_ (else `(define ,x '())))
 ;;           x `(set! ,x '())))
@@ -321,3 +328,74 @@ END
 ;;    ((string? obj) (string-length obj))
 ;;    ((pair? obj) (length obj))
 ;;    (else 0)))
+
+
+;; (p (peg-parse-string ($string "abc") "abc"))
+;; (p (peg-parse-string ($char #\a) "abc"))
+;; (p (peg-parse-string ($one-of #[a-z]) "cd"))
+;; (p (peg-parse-string ($none-of #[a-z]) "A"))
+; (p (peg-parse-string anychar "a"))
+; (p (peg-parse-string digit "123"))
+
+(define (%compare test-type accessors)
+  (^[e o] (and (test-type o)
+               (every equal? e (map (cut <> o) accessors)))))
+
+(define-syntax test-succ
+  (syntax-rules ()
+    [(_ label expect parse input)
+     (test* #"~label (success)" expect
+            (peg-parse-string parse input))]))
+
+(define-syntax test-fail
+  (syntax-rules ()
+    [(_ label expect parse input)
+     (test* #"~label (failure)" expect
+            (guard (e [(<parse-error> e)
+                       (list (ref e 'position) (ref e 'objects))]
+                      [else e])
+                   (peg-parse-string parse input)
+                   (error "test-fail failed")))]))
+(define-syntax test-char
+  (syntax-rules ()
+    ((_ parse expin unexpin message)
+     (begin
+       (test-succ (symbol->string 'parse)
+                  (string-ref expin 0)
+                  parse expin)
+       (test-fail (symbol->string 'parse)
+                  '(0 message)
+                  parse unexpin)))))
+
+(define pps peg-parse-string)
+(define (P a b)
+  (p (peg-parse-string a b)))
+; (p (peg-parse-string anychar "a"))
+; (p (peg-parse-string digit "123"))
+; (p (peg-parse-string eof ""))
+; (p (peg-parse-string anychar ""))
+;; (P ($or ($string "abc")
+;;          ($string "efg"))
+;;     ; "abc"))
+;;     "efg")
+;; (p(equal? "bar"
+;;             (pps
+;;  ($try ($seq ($string "foo") ($string "bar")))
+;;  "foobar")))
+
+; 消費しない?
+;; (P ($or ($string "abc")
+;;         ($string "aef")
+;;         )
+;;    "aef")
+
+; (pps ($do [x ($string "a")] [y ($string "b")] ($return (cons x y)) ) "ab")
+;(pps ($lift cons ($string "a") ($string "b")) "ab")
+
+; #[^a-b]
+; (char-set-complement #[a-b])
+
+;; (define-macro (rva a)
+;;   `(recieve ret ,a ret))
+
+; (define-values (a b . c) (values 1 2 3 4))

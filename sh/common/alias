@@ -102,13 +102,14 @@ oneliner_gosh(){
 	    esac
     done
     shift $((OPTIND - 1))
+    local code=$1; shift;
 
     if $nflag; then
-        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) (--> it $1)) read-line)" -E exit
+        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) (--> it $code)) read-line)" -E exit
     elif $pflag; then
-        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) $1 (print it)) read-line)" -E exit
+        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) $code (print it)) read-line)" -E exit
     else
-        gosh -l ~/lib/scheme/init.scm  -e "(print $1)" -E exit
+        gosh -l ~/lib/scheme/init.scm  -e "(print $code)" "$@" -E exit
     fi
 }
 alias s=oneliner_gosh
