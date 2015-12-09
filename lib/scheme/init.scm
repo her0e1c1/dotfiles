@@ -23,6 +23,7 @@
 (use gauche.termios)
 (use gauche.test)
 
+(use rfc.json)
 ; (use gauche.internal)
 
 (define-macro (import-only module . syms)
@@ -52,6 +53,7 @@
 (define hg hash-table-get)
 ; (define pp (pa$ print))
 (define rv receive)
+(define id identity)
 (define exec process-output->string)
 (define execl process-output->string-list)
 (define IN (standard-input-port))
@@ -390,6 +392,7 @@ END
 ;;    "aef")
 
 ; (pps ($do [x ($string "a")] [y ($string "b")] ($return (cons x y)) ) "ab")
+; $lift は、パースの結果を使って、結果を新たに返す
 ;(pps ($lift cons ($string "a") ($string "b")) "ab")
 
 ; #[^a-b]
@@ -399,3 +402,24 @@ END
 ;;   `(recieve ret ,a ret))
 
 ; (define-values (a b . c) (values 1 2 3 4))
+
+(define %ws ($skip-many ($one-of #[ \t\r\n])))
+; lazyしないと、内側で定義している%pがないと、言われる
+(define %w ($lazy ($lift (^[v _] v) ($or %p %ws) %ws)))
+(define %p ($lift id ($between ($char #\{) %w ($char #\}))))
+;; (df a (let* ((p ($or ($do (_ ($char #\{))
+;;                           (c p)
+;;                           (_ ($char #\}))
+;;                           (begin
+;;                             (print "a" c)
+;;                             ($return c)
+;;                             (values "" "" 1)))
+;;                      ($char #\space)
+;;                      )
+                     
+;;                  ))
+;;   p))
+;; (p (pps %p "{ }"))
+; (p (pps a "{ }"))
+;; ($seq ($char #\{) p ($char #\}))
+;; ($char #\space)
