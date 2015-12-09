@@ -385,11 +385,21 @@ END
 ;;  ($try ($seq ($string "foo") ($string "bar")))
 ;;  "foobar")))
 
-; 消費しない?
+; $stringは、完全一致しないと、消費しない?
 ;; (P ($or ($string "abc")
 ;;         ($string "aef")
 ;;         )
 ;;    "aef")
+;; (P ($or ($seq ($char #\a) ($char #\b))
+;;         ($seq ($char #\a) ($char #\c))
+;;         )
+;;    "ab")
+   ; "ac")  ; error
+
+;; (P ($or ($try ($seq ($char #\a) ($char #\b)))
+;;         ($seq ($char #\a) ($char #\c))
+;;         )
+;;    "ac")
 
 ; (pps ($do [x ($string "a")] [y ($string "b")] ($return (cons x y)) ) "ab")
 ; $lift は、パースの結果を使って、結果を新たに返す
@@ -405,8 +415,10 @@ END
 
 (define %ws ($skip-many ($one-of #[ \t\r\n])))
 ; lazyしないと、内側で定義している%pがないと、言われる
-(define %w ($lazy ($lift (^[v _] v) ($or %p %ws) %ws)))
-(define %p ($lift id ($between ($char #\{) %w ($char #\}))))
+; (define %w ($lazy ($lift (^[v _] v) ($or %p %ws) %ws)))
+; $liftは、引数そろえないと！($lift (^(a b c) Pa Pb Pc))
+(define %w ($lazy ($lift (^[v] v) ($or %p %ws))))
+(define %p ($lift (^(x) (rope-finalize x)) ($between ($char #\{) %w ($char #\}))))
 ;; (df a (let* ((p ($or ($do (_ ($char #\{))
 ;;                           (c p)
 ;;                           (_ ($char #\}))
@@ -416,10 +428,9 @@ END
 ;;                             (values "" "" 1)))
 ;;                      ($char #\space)
 ;;                      )
-                     
 ;;                  ))
 ;;   p))
-;; (p (pps %p "{ }"))
+;; (p (rv a (pps %p "{{{ }}}") a))
 ; (p (pps a "{ }"))
 ;; ($seq ($char #\{) p ($char #\}))
 ;; ($char #\space)
