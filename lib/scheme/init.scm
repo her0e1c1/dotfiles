@@ -16,6 +16,7 @@
 
 (use gauche.cgen)
 (use gauche.generator)
+(use gauche.interactive)
 (use gauche.process)
 (use gauche.parseopt)
 (use gauche.parameter)
@@ -35,6 +36,7 @@
 ; s '($ p $ + 1 2 3)' => 6
 ; d describe
 ; sys-lstat
+(define d describe)
 (define df define)
 (define p print)
 (define f format)
@@ -54,14 +56,26 @@
 ; (define pp (pa$ print))
 (define rv receive)
 (define id identity)
+(define pps peg-parse-string)
 (define exec process-output->string)
 (define execl process-output->string-list)
 (define IN (standard-input-port))
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
 
-(define s-join string-join)
+;(define open call-with-input-file)
+(define rl read-line)
+; anaforic-read-lines
+(define (rls filepath f)
+  (call-with-input-file filepath
+    (lambda (in)
+      (let loop ((line (read-line in)))
+        (if (eof-object? line)
+            (undefined)
+            (begin (f line)
+                   (loop (read-line in))))))))
 
+(define s-join string-join)
 (define f? file-exists?)
 ; use as it is
 ; time
@@ -222,7 +236,6 @@
 (define-macro (aeach f ls)
   `(for-each (lambda (it) ,f) ,ls))
 
-(use srfi-13)
 (define-reader-directive 'hd
   (^(sym port ctx)
     (let1 delimiter (string-trim-both (read-line port))
@@ -291,6 +304,10 @@ END
 (define-macro (ls . dirs)
   `(--ls ,@(map x->string-without-keyword dirs)))
 
+; 結果違う
+; (list->string (quote (#\a #\b)))
+; (x->string (quote (#\a #\b)))
+
 (define (x->string-without-keyword x)
   (if (keyword? x) x (x->string x)))
 
@@ -339,37 +356,6 @@ END
 ; (p (peg-parse-string anychar "a"))
 ; (p (peg-parse-string digit "123"))
 
-(define (%compare test-type accessors)
-  (^[e o] (and (test-type o)
-               (every equal? e (map (cut <> o) accessors)))))
-
-(define-syntax test-succ
-  (syntax-rules ()
-    [(_ label expect parse input)
-     (test* #"~label (success)" expect
-            (peg-parse-string parse input))]))
-
-(define-syntax test-fail
-  (syntax-rules ()
-    [(_ label expect parse input)
-     (test* #"~label (failure)" expect
-            (guard (e [(<parse-error> e)
-                       (list (ref e 'position) (ref e 'objects))]
-                      [else e])
-                   (peg-parse-string parse input)
-                   (error "test-fail failed")))]))
-(define-syntax test-char
-  (syntax-rules ()
-    ((_ parse expin unexpin message)
-     (begin
-       (test-succ (symbol->string 'parse)
-                  (string-ref expin 0)
-                  parse expin)
-       (test-fail (symbol->string 'parse)
-                  '(0 message)
-                  parse unexpin)))))
-
-(define pps peg-parse-string)
 (define (P a b)
   (p (peg-parse-string a b)))
 ; (p (peg-parse-string anychar "a"))
@@ -417,20 +403,34 @@ END
 ; lazyしないと、内側で定義している%pがないと、言われる
 ; (define %w ($lazy ($lift (^[v _] v) ($or %p %ws) %ws)))
 ; $liftは、引数そろえないと！($lift (^(a b c) Pa Pb Pc))
-(define %w ($lazy ($lift (^[v] v) ($or %p %ws))))
-(define %p ($lift (^(x) (rope-finalize x)) ($between ($char #\{) %w ($char #\}))))
-;; (df a (let* ((p ($or ($do (_ ($char #\{))
-;;                           (c p)
-;;                           (_ ($char #\}))
-;;                           (begin
-;;                             (print "a" c)
-;;                             ($return c)
-;;                             (values "" "" 1)))
-;;                      ($char #\space)
-;;                      )
-;;                  ))
-;;   p))
-;; (p (rv a (pps %p "{{{ }}}") a))
-; (p (pps a "{ }"))
-;; ($seq ($char #\{) p ($char #\}))
-;; ($char #\space)
+; (define %w ($lazy ($lift (^[v] v) ($or %p %ws))))
+; (define %w ($lazy ($lift (^[v] v) ($or %p))))
+
+(define %s ($lift list->string ($many ($one-of #[^{}]))))
+(define %c-f-body ($lazy ($lift string-append
+                                   ($lift x->string ($char #\{))
+                                   ($or ($try ($lift string-append %s %c-f-body %s)) %s)
+                                   ($lift x->string ($char #\})))))
+(define %name ($lift list->string ($many1 ($none-of #[*, (){}]))))
+(define %c-type ($lift (^[t p] (list t p)) %name ($try ($optional ($seq %ws ($char #\*))))))
+(define %c-signature ($lift
+                      (^x (format "(~a)" (list->string x)))
+                      ($between ($char #\()
+                                ($many ($none-of #[()]))
+                                        ; ($lift (^x (d x) (x->string x)) ($sep-by %name ($char #\,)))
+                                ($char #\)))))
+(define %c ($do
+            %ws
+            (type %c-type)
+            %ws
+            (name %name)
+            %ws
+            (sgnt %c-signature)
+            %ws
+            (body %c-f-body)
+            %ws
+            ($return `((name . ,name)
+                       (type . ,type)
+                       (sgnt . ,sgnt)
+                       (body . ,body)))))
+; (p (pps %c "type_t *fname (a  , b ) {aA{b{AB} c}d}"))
