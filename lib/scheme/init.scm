@@ -63,9 +63,14 @@
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
 
+;; call- in/outを受け取る
+;; with- current-portを変更
+
 ;(define open call-with-input-file)
 (define rl read-line)
+
 ; anaforic-read-lines
+; (file->string "PATH")
 (define (rls filepath f)
   (call-with-input-file filepath
     (lambda (in)
@@ -74,6 +79,9 @@
             (undefined)
             (begin (f line)
                    (loop (read-line in))))))))
+
+; s '(filter ($ not $ even? $) (i 10))'
+; s '(filter (.$ not even?) (i 10))'
 
 (define s-join string-join)
 (define f? file-exists?)
@@ -106,6 +114,7 @@
   (cut apply slot-ref* <> selectors))
 
 (define (flip f x y) (f y x))
+(define (flip$ f) (pa$ flip f))
 ; ((pa$ flip map) (iota 10) print)
 
 
@@ -185,6 +194,7 @@
 ;;   (guard (_ (else `(define ,x '())))
 ;;           x `(set! ,x '())))
 
+; (lambda (it) BODY) => (--^ BODY)
 (define-macro (-> x form . more)
   (if (pair? more)
       `(-> (-> ,x ,form) ,@more )
@@ -409,16 +419,28 @@ END
 (define %s ($lift list->string ($many ($one-of #[^{}]))))
 (define %c-f-body ($lazy ($lift string-append
                                    ($lift x->string ($char #\{))
-                                   ($or ($try ($lift string-append %s %c-f-body %s)) %s)
+                                   ; ($or ($try ($lift string-append %s ($many %c-f-body %s))) %s)
+                                   ($lift (^(x xs) (string-append x (x->string xs)))
+                                          %s
+                                          ($lift (^x (apply string-append x)) ($many ($lift string-append %c-f-body %s))))
                                    ($lift x->string ($char #\})))))
 (define %name ($lift list->string ($many1 ($none-of #[*, (){}]))))
-(define %c-type ($lift (^[t p] (list t p)) %name ($try ($optional ($seq %ws ($char #\*))))))
+(define %c-types ($or
+                  ($string "vector_t")
+                  ($string "list_t")
+                  ($string "void")
+                  ))
+(define %c-type ($lift (^[t p] (let1 ts (rope->string t) (if p #"~ts *" #"~ts ")))
+                       %c-types ($optional ($try ($seq %ws ($char #\*))))))
+
 (define %c-signature ($lift
                       (^x (format "(~a)" (list->string x)))
                       ($between ($char #\()
                                 ($many ($none-of #[()]))
-                                        ; ($lift (^x (d x) (x->string x)) ($sep-by %name ($char #\,)))
                                 ($char #\)))))
+; (p (pps ($seq %c-f-body) "{a{b}c{d}e}"))
+
+
 (define %c ($do
             %ws
             (type %c-type)
@@ -433,4 +455,37 @@ END
                        (type . ,type)
                        (sgnt . ,sgnt)
                        (body . ,body)))))
-; (p (pps %c "type_t *fname (a  , b ) {aA{b{AB} c}d}"))
+
+(define %cc ($lift ($ filter (.$ not null?) $)
+                   ($many ($or ($try %c)
+                               ($lift (^x '()) anychar)))))
+(-->
+ (call-with-input-file "./mylist.h"
+  (lambda (in)
+    (generator->list (peg-parser->generator %cc in))))
+ ; p
+ ((flip$ map) (car it)
+  (^(alist)
+    (let* ((name (assoc-ref alist 'name))
+           (type (assoc-ref alist 'type))
+           (sgnt (assoc-ref alist 'sgnt))
+           (body (assoc-ref alist 'body))
+           )
+    (with-output-to-file #"vector/~|name|.c"
+      (lambda ()
+        (p (f #"~|type|~|name|~sgnt ~body"))
+        )))))
+ )
+
+;; 標準出力を文字列に
+;; (p (call-with-output-string
+;;   (lambda (out) (write "HOGE" out))))
+
+;; fileのportを受け取る
+;; (call-with-output-file "./test.txt"
+;;   (lambda (out) (write "this is a test" out)))
+
+(define wof with-output-to-file)
+(define cof call-with-output-file)
+;; (with-output-to-file "./test.txt"
+;;   (lambda () (print "this is a test")))
