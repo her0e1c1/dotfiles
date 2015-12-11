@@ -1,5 +1,5 @@
 alias pgrep="ps aux | grep"
-alias gosh="rlwrap gosh -l ~/lib/scheme/init.scm"
+alias gosh="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 alias el="emacs -Q --script"
 alias sshX="ssh -c blowfish -2 -C -Y"
 alias h=history
@@ -106,6 +106,8 @@ oneliner_gosh(){
         gosh -l ~/lib/scheme/init.scm  -e "" -E exit
         return;
     fi
+
+    # gosh <<O (define (main args) $code) O がよさげ
 
     local code=$1; shift;
     if $nflag; then
