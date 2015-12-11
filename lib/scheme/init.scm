@@ -529,29 +529,40 @@ END
                                   ((= end -1) #"~|start|-")
                                   (else #"~|start|-~|end|")))
                    )
-;;        (acons 'literalinclude
-;;               #"
-;; .. literalinclude:: ~|sphinx-abspath|
-;;    :language: c
-;;    :lines: ~lines"
-;;               alist)
        alist)
      )))
 
-(define (sphinx-block s)
+(define (sphinx-block s :key (code-block #f) (block #f))
   (define indented (s-indent s))
-  "code-block" "c"
-#"
+  (cond
+   ((string-null? indented) "")
+   (block #"
+
 ::
 
-~s
+~indented
 ")
+   (code-block #"
+
+.. code-block:: ~|code-block|
+
+~indented
+")
+;; .. literalinclude:: ~|sphinx-abspath|
+;;    :language: c
+;;    :lines: ~lines"
+   )
+)
 
 (define (s-indent s :key (indent "    "))
   (if (null? s) ""
   (let1 slist (if (pair? s) s (string-split s "\n"))
         (string-join (map (^x (string-append indent x)) slist) "\n")
         )))
+
+(define (cmd-c path . args)
+  (let1 sa (string-join (map x->string args) " ")
+        #"clang ~path && ./a.out ~sa"))
 
 (define (run-c path . args)
   (define sa (string-join (map x->string args) " "))
