@@ -1,3 +1,6 @@
+# Expand aliases in non-interactive shells
+setopt aliases
+
 #右側まで入力がきたら時間を消す
 setopt transient_rprompt          
 setopt prompt_subst               # 便利なプロント
