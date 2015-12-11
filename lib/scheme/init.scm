@@ -24,6 +24,7 @@
 (use gauche.sequence)
 (use gauche.termios)
 (use gauche.test)
+(use gauche.time)
 
 (use rfc.json)
 ; (use gauche.internal)
@@ -57,7 +58,7 @@
 (define b begin)
 (define i iota)
 (define s subseq)
-; (define l lambda)  ; ^
+(define (t . body) (lambda () body))
 ; when unless if
 (define-macro (fi a b :optional c)
   `(if ,a ,c ,b))
@@ -528,24 +529,34 @@ END
                                   ((= end -1) #"~|start|-")
                                   (else #"~|start|-~|end|")))
                    )
-       
-       (acons 'literalinclude
-              #"
-.. literalinclude:: ~|sphinx-abspath|
-   :language: c
-   :lines: ~lines"
-              alist))
+;;        (acons 'literalinclude
+;;               #"
+;; .. literalinclude:: ~|sphinx-abspath|
+;;    :language: c
+;;    :lines: ~lines"
+;;               alist)
+       alist)
      )))
 
+(define (sphinx-block s)
+  (define indented (s-indent s))
+  "code-block" "c"
+#"
+::
+
+~s
+")
 
 (define (s-indent s :key (indent "    "))
+  (if (null? s) ""
   (let1 slist (if (pair? s) s (string-split s "\n"))
         (string-join (map (^x (string-append indent x)) slist) "\n")
-        ))
+        )))
 
-(define (run-c path)
+(define (run-c path . args)
+  (define sa (string-join (map x->string args) " "))
   (if (file-exists? path)
-      (process-output->string-list #"clang ~path && ./a.out")
+      (process-output->string-list #"clang ~path && ./a.out ~sa")
       ""))
 
 (define (run-scheme path)
@@ -576,3 +587,8 @@ test result ::
 
 ~result
 "))
+
+(define (get-time thunk)
+  (let1 t (make <real-time-counter>)
+        (with-time-counter t (thunk))
+        (time-counter-value t)))
