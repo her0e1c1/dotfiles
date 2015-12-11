@@ -1,4 +1,5 @@
 (use srfi-1)
+(use srfi-11)
 (use srfi-13)  ; string-null? string-every
 (use srfi-14)  ; char-set:whitespace
 
@@ -429,6 +430,7 @@ END
                   ($string "vector_t")
                   ($string "list_t")
                   ($string "void")
+                  ($string "int")
                   ))
 (define %c-type ($lift (^[t p] (let1 ts (rope->string t) (if p #"~ts *" #"~ts ")))
                        %c-types ($optional ($try ($seq %ws ($char #\*))))))
@@ -459,33 +461,55 @@ END
 (define %cc ($lift ($ filter (.$ not null?) $)
                    ($many ($or ($try %c)
                                ($lift (^x '()) anychar)))))
-(-->
- (call-with-input-file "./mylist.h"
-  (lambda (in)
-    (generator->list (peg-parser->generator %cc in))))
- ; p
- ((flip$ map) (car it)
-  (^(alist)
-    (let* ((name (assoc-ref alist 'name))
-           (type (assoc-ref alist 'type))
-           (sgnt (assoc-ref alist 'sgnt))
-           (body (assoc-ref alist 'body))
-           )
-    (with-output-to-file #"vector/~|name|.c"
-      (lambda ()
-        (p (f #"~|type|~|name|~sgnt ~body"))
-        )))))
- )
+
+(define (lineno-at index string-list)
+  (let loop ((no 0) (count 0) (lines string-list))
+    (cond ((null? lines) -1)
+          ((<= index count) no)
+          (else
+           (loop (+ no 1)
+                 (+ count (string-length (car lines)))
+                 (cdr lines))))))
+
+(define (string-line-range container string)
+  (if-let1 index (string-contains container string)
+           (let1 s-list (string-split container "\n")
+                 (values (lineno-at index s-list)
+                         (lineno-at (+ index (string-length string)) s-list)))
+           (values -1 -1))) 
+
+(define (generator-from-file filepath %grammer proc)
+  (let1 gen (call-with-input-file filepath
+              (lambda (in)
+                (generator->list (peg-parser->generator %grammer in))))
+        ((flip$ map) (car gen) proc)))
+
+(define (sphinx filepath :key (grammer %cc))
+  (define file-string (file->string filepath))
+  ((pa$ generator-from-file filepath grammer)
+   (^[alist]
+     (let*-values (((body) (assoc-ref alist 'body))
+                   ((start end) (string-line-range file-string body))
+                   ((lines) (cond ((= start -1) "")
+                                  ((= end -1) #"~|start|-")
+                                  (else #"~|start|-~|end|")))
+                   )
+       (acons 'literalinclude
+              #"
+.. literalinclude:: ../../src/c/~|filepath|
+   :language: c
+   :lines: ~lines"
+              alist))
+     )))
 
 ;; 標準出力を文字列に
 ;; (p (call-with-output-string
 ;;   (lambda (out) (write "HOGE" out))))
-
 ;; fileのportを受け取る
 ;; (call-with-output-file "./test.txt"
 ;;   (lambda (out) (write "this is a test" out)))
+;; (with-output-to-file "./test.txt"
+;;   (lambda () (print "this is a test")))
 
 (define wof with-output-to-file)
 (define cof call-with-output-file)
-;; (with-output-to-file "./test.txt"
-;;   (lambda () (print "this is a test")))
