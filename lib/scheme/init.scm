@@ -59,6 +59,8 @@
 (define s subseq)
 ; (define l lambda)  ; ^
 ; when unless if
+(define-macro (fi a b :optional c)
+  `(if ,a ,c ,b))
 (define m1 macroexpand-1)
 (define-macro (m . body)  ; (m MACRO)
   `(macroexpand (quote ,body)))
