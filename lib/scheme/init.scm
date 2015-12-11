@@ -460,6 +460,7 @@ END
                   ($string "list_t")
                   ($string "void")
                   ($string "int")
+                  ($string "char")
                   ))
 (define %c-type ($lift (^[t p] (let1 ts (rope->string t) (if p #"~ts *" #"~ts ")))
                        %c-types ($optional ($try ($seq %ws ($char #\*))))))
@@ -582,20 +583,14 @@ END
 
 (define (shinx-section-test path :key (language "scheme"))
   (and-let* ((ok (file-exists? path))
-             (file (s-indent (file->string path)))
+             (file (sphinx-block (file->string path) :code-block language))
              (content ((get-run-process language) path))
-             (result (s-indent content))
+             (result (sphinx-block content :block #t))
              )
    #"
 test
 ----
-
-.. code-block:: ~language
-
 ~file
-
-test result ::
-
 ~result
 "))
 
