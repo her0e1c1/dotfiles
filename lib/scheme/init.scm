@@ -34,9 +34,22 @@
 
 (import-only gauche.internal extended-pair? extended-cons pair-attribute-get pair-attribute-set! pair-attributes)
 
+;; 標準出力を文字列に
+;; (p (call-with-output-string
+;;   (lambda (out) (write "HOGE" out))))
+;; fileのportを受け取る
+;; (call-with-output-file "./test.txt"
+;;   (lambda (out) (write "this is a test" out)))
+;; (with-output-to-file "./test.txt"
+;;   (lambda () (print "this is a test")))
+
+(define wof with-output-to-file)
+(define cof call-with-output-file)
+
 ; s '($ p $ + 1 2 3)' => 6
 ; d describe
 ; sys-lstat
+(define pwd current-directory)
 (define d describe)
 (define df define)
 (define p print)
@@ -45,6 +58,7 @@
 (define i iota)
 (define s subseq)
 ; (define l lambda)  ; ^
+; when unless if
 (define m1 macroexpand-1)
 (define-macro (m . body)  ; (m MACRO)
   `(macroexpand (quote ,body)))
@@ -63,7 +77,15 @@
 (define IN (standard-input-port))
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
-
+(define (false? x)
+  (or (eq? x '())
+      (eq? x #f)
+      (equal? x "")
+      (undefined? x)
+      (eof-object? x)
+      (= x 0)  ; last
+      ))
+(define (x->empty-string x))
 ;; call- in/outを受け取る
 ;; with- current-portを変更
 
@@ -288,6 +310,10 @@ END
     ((3) `(subseq ,(car body) ,(cadr body) ,(caddr body)))
     ))
 
+(define (f-join . paths)
+  (let1 p (apply build-path
+                 (map (^p (sys-normalize-pathname p :absolute #f :canonicalize #t :expand #t)) paths))
+        (sys-normalize-pathname p :absolute #t)))
 
 
 ; commands
@@ -456,7 +482,9 @@ END
             ($return `((name . ,name)
                        (type . ,type)
                        (sgnt . ,sgnt)
-                       (body . ,body)))))
+                       (body . ,body)
+                       (func . ,#"~|type|~|name|~|sgnt| ~body")
+                       ))))
 
 (define %cc ($lift ($ filter (.$ not null?) $)
                    ($many ($or ($try %c)
@@ -484,32 +512,65 @@ END
                 (generator->list (peg-parser->generator %grammer in))))
         ((flip$ map) (car gen) proc)))
 
-(define (sphinx filepath :key (grammer %cc))
+(define (sphinx sphinx-abspath :key (grammer %cc) (cd (current-directory)))
+  (define filepath (if (#/^\// sphinx-abspath)
+                       #"~|cd|~sphinx-abspath"
+                       (f-join cd sphinx-abspath)))
   (define file-string (file->string filepath))
   ((pa$ generator-from-file filepath grammer)
    (^[alist]
      (let*-values (((body) (assoc-ref alist 'body))
                    ((start end) (string-line-range file-string body))
+                   ((start) (- start 1))
                    ((lines) (cond ((= start -1) "")
                                   ((= end -1) #"~|start|-")
                                   (else #"~|start|-~|end|")))
                    )
+       
        (acons 'literalinclude
               #"
-.. literalinclude:: ../../src/c/~|filepath|
+.. literalinclude:: ~|sphinx-abspath|
    :language: c
    :lines: ~lines"
               alist))
      )))
 
-;; 標準出力を文字列に
-;; (p (call-with-output-string
-;;   (lambda (out) (write "HOGE" out))))
-;; fileのportを受け取る
-;; (call-with-output-file "./test.txt"
-;;   (lambda (out) (write "this is a test" out)))
-;; (with-output-to-file "./test.txt"
-;;   (lambda () (print "this is a test")))
 
-(define wof with-output-to-file)
-(define cof call-with-output-file)
+(define (s-indent s :key (indent "    "))
+  (let1 slist (if (pair? s) s (string-split s "\n"))
+        (string-join (map (^x (string-append indent x)) slist) "\n")
+        ))
+
+(define (run-c path)
+  (if (file-exists? path)
+      (process-output->string-list #"clang ~path && ./a.out")
+      ""))
+
+(define (run-scheme path)
+  (if (file-exists? path)
+      (process-output->string-list #"gosh ~path")
+      ""))
+
+(define (get-run-process language)
+  (cond ((equal? language "scheme") run-scheme)
+        ((equal? language "c") run-c)
+  ))
+
+(define (shinx-section-test path :key (language "scheme"))
+  (and-let* ((ok (file-exists? path))
+             (file (s-indent (file->string path)))
+             (content ((get-run-process language) path))
+             (result (s-indent content))
+             )
+   #"
+test
+----
+
+.. code-block:: ~language
+
+~file
+
+test result ::
+
+~result
+"))
