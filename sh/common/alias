@@ -83,13 +83,20 @@ runjava() {
     java $1
 }
 
+# メリット
+# 記号が少ない($使わないので、メタプロしやすい)
+# マクロで自分の好きな構文を作りよりタイプ量を減らせる
 oneliner_gosh(){
     local Fflag="\n"
     local nflag=false
-    local lflag=false
+    local lflag=false  # TODO
     local pflag=false
+    local Lflag=""
+    local zeroflag=false
     local dflag=false  # debug
-    while getopts lnpdF: OPT; do
+    local iflag=false  # TODO
+
+    while getopts lnpdF:L: OPT; do
 	    case $OPT in
             d) dflag=true
                ;;
@@ -97,18 +104,31 @@ oneliner_gosh(){
 	           ;;
             p) pflag=true
 	           ;;
-            F) Fflag=$OPTIN
+            F) Fflag=$OPTARG
                ;;
 	    esac
     done
     shift $((OPTIND - 1))
+
     if [ $# -eq 0 ]; then
-        gosh -l ~/lib/scheme/init.scm  -e "" -E exit
+        gosh -l ~/lib/scheme/init.scm
         return;
     fi
-
+    
+    # TODO: split by regexp
+    local F=$(cat <<EOS
+(define F (string-split line "$Fflag"))
+EOS
+)
     local tmpfile=`mktemp`
     local code=$1; shift;
+    if $nflag; then
+        code="(port-for-each (lambda (line) $F (--> line $code)) read-line)"
+    elif $pflag; then
+        code="(port-for-each (lambda (line) $F (--> line $code (print it))) read-line)"
+    fi
+
+    # TODO: BEGIN/END block
     cat <<EOF >! $tmpfile
 (define (main args)
  (let1 r $code
@@ -116,14 +136,16 @@ oneliner_gosh(){
  0)
 EOF
 
-    if $nflag; then
-        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) (--> it $code)) read-line)" -E exit
-    elif $pflag; then
-        gosh -l ~/lib/scheme/init.scm  -e "(port-for-each (lambda (it) $code (print it)) read-line)" -E exit
-    elif [ -n "$code" ]; then
-        gosh -l ~/lib/scheme/init.scm $tmpfile $@
+    if [ -n "$code" ]; then
+        if $dflag; then
+            cat $tmpfile
+        else
+            gosh -l ~/lib/scheme/init.scm $tmpfile $@
+        fi
     else
         gosh -l ~/lib/scheme/init.scm  -e "" -E exit
     fi
+
+    rm $tmpfile
 }
 alias s=oneliner_gosh

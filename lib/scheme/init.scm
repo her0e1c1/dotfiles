@@ -57,7 +57,7 @@
 (define f format)
 (define b begin)
 (define i iota)
-(define s subseq)
+(define sq subseq)
 (define (t . body) (lambda () body))
 ; when unless if
 (define-macro (fi a b :optional c)
@@ -598,3 +598,21 @@ test
   (let1 t (make <real-time-counter>)
         (with-time-counter t (thunk))
         (time-counter-value t)))
+
+(define-macro (s regexp replaced :optional (options :))
+  (let* ((chars (string->list (keyword->string options)))
+         (regexp (if (symbol? regexp) (symbol->string regexp) regexp))
+         (g (if (memq #\g chars) regexp-replace-all regexp-replace))
+         (p (memq #\p chars))
+         )
+    (if p
+        `(lambda (s) (,g ,regexp s ,replaced))
+        `(,g ,regexp it ,replaced))))
+    
+
+;; TODO: generator
+;(define A1 (x->generator (car *argv*)))
+; (define-macro (A2) `(if #t (car *argv*)))
+;; (define A2 (cadr *argv*))
+;; (define A3 (caddr *argv*))
+;; (define A4 (cadddr *argv*))
