@@ -6,6 +6,7 @@
 (use srfi-27)  ; random
 (use srfi-42)  ; range
 (use srfi-43)  ; vector-*
+(use srfi-98)  ; get-environment-variables
 
 (use util.stream)
 (use util.list)
@@ -46,7 +47,7 @@
 
 (define wof with-output-to-file)
 (define cof call-with-output-file)
-
+(define envs (get-environment-variables))
 ; s '($ p $ + 1 2 3)' => 6
 ; d describe
 ; sys-lstat
@@ -609,10 +610,11 @@ test
         `(lambda (s) (,g ,regexp s ,replaced))
         `(,g ,regexp it ,replaced))))
     
+(define-macro (ignore body :optional default)
+  `(guard (_ (else ,default)) ,body))
 
-;; TODO: generator
-;(define A1 (x->generator (car *argv*)))
-; (define-macro (A2) `(if #t (car *argv*)))
-;; (define A2 (cadr *argv*))
-;; (define A3 (caddr *argv*))
-;; (define A4 (cadddr *argv*))
+(define A0 (ignore *program-name*))
+(define A1 (ignore (car *argv*)))
+(define A2 (ignore (cadr *argv*)))
+(define A3 (ignore (caddr *argv*)))
+(define A4 (ignore (cadddr *argv*)))
