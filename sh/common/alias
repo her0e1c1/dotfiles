@@ -86,6 +86,7 @@ runjava() {
 # メリット
 # 記号が少ない($使わないので、メタプロしやすい)
 # マクロで自分の好きな構文を作りよりタイプ量を減らせる
+# 自分の開発環境なら何でもいいはず
 oneliner_gosh(){
     local Fflag="\n"
     local nflag=false
