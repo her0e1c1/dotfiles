@@ -468,15 +468,22 @@ END
         ((equal? language "c") run-c)
   ))
 
+(define (sphinx-section name :key (ch #\=))
+  (let* ((bar (make-string (string-length name) ch)))
+    #"
+~name
+~underscore
+"))
+
 (define (shinx-section-test path :key (language "scheme"))
   (and-let* ((ok (file-exists? path))
+             (section (sphinx-section "test" :ch #\-))
              (file (sphinx-block (file->string path) :code-block language))
              (content ((get-run-process language) path))
              (result (sphinx-block content :block #t))
              )
    #"
-test
-----
+~section
 ~file
 ~result
 "))
