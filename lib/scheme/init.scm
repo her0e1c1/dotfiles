@@ -30,41 +30,6 @@
 (use rfc.json)
 ; (use gauche.internal)
 
-(define wof with-output-to-file)
-(define cof call-with-output-file)
-(define envs (get-environment-variables))
-; d describe
-; sys-lstat
-(define pwd current-directory)
-(define d describe)
-(define df define)
-(define p print)
-(define f format)
-(define b begin)
-(define i iota)
-(define sq subseq)
-(define (t . body) (lambda () body))
-; when unless if
-(define-macro (fi a b :optional c)
-  `(if ,a ,c ,b))
-(define m1 macroexpand-1)
-(define-macro (m . body)  ; (m MACRO)
-  `(macroexpand (quote ,body)))
-(define-macro (m- body) ; (m (MACRO))
-  `(macroexpand (quote ,body)))
-; hash
-(define hm make-hash-table)
-(define hp hash-table-put!)
-(define hg hash-table-get)
-; (define pp (pa$ print))
-(define rv receive)
-(define id identity)
-(define pps peg-parse-string)
-(define exec process-output->string)
-(define execl process-output->string-list)
-(define IN (standard-input-port))
-(define OUT (standard-output-port))
-(define ERR (standard-error-port))
 (define (false? x)
   (or (eq? x '())
       (eq? x #f)
@@ -90,12 +55,7 @@
             (begin (f line)
                    (loop (read-line in))))))))
 
-
 (define s-join string-join)
-(define f? file-exists?)
-; use as it is
-; time
-; sys-sleep
 
 ; sliceを作る
 ; (~ a 1)
@@ -107,11 +67,6 @@
 ; s '(p (string-slices "abcd" 2))' => (ab cd)
 (define (string-slices str len)
     (map list->string (slices (string->list str) len)))
-
-;; anaforic
-(define-macro (aif pred t . f)
-  `(let ((it ,pred))
-     (if it ,t ,@f)))
 
 ; combinator
 (define (~$ . selectors)
@@ -174,60 +129,6 @@
         (rxmatch->string rxp str)
         )
        #f))
-
-(define-macro (it! value)
-  `(set! it ,value))
-
-(define-macro (-> x form . more)
-  (if (pair? more)
-      `(-> (-> ,x ,form) ,@more )
-      (if (pair? form)
-          `(,(car form) ,x ,@(cdr form))
-          `(,form ,x))))
-
-(define-macro (->> x form . more)
-  (if (pair? more)
-      `(->> (->> ,x ,form) ,@more )
-      (if (pair? form)
-          `(,(car form) ,@(cdr form) ,x)
-                    `(,form ,x))))
-
-(define-macro (--> x form . more)
-  (if (pair? more)
-      `(--> (--> ,x ,form) ,@more)
-      (if (pair? form)
-          `(let1 it ,x (,(car form) ,@(cdr form)))
-          `(,form ,x))))
-
-(define-macro (-?> x form . more)
-  (let1 v (gensym)
-        (if (pair? more)
-            `(if-let1 ,v (-?> ,x ,form) (-?> ,v ,@more ) #f )
-            (if (pair? form)
-                `(,(car form) ,x ,@(cdr form))
-                `(,form ,x)))))
-
-(define-macro (-?>> x form . more)
-  (let1 v (gensym)
-        (if (pair? more)
-            `(if-let1 ,v (-?>> ,x ,form) (-?>> ,v ,@more ) #f )
-            (if (pair? form)
-                `(,(car form) ,@(cdr form) ,x)
-                            `(,form ,x)))))
-
-(define-macro (awhile pred . body)
-  `(do ((it ,pred ,pred))
-       ((or (not it) (eof-object? it)) it)
-     ,@body))
-
-(define-macro (amap f ls)
-  `(map (lambda (it) ,f) ,ls))
-
-(define-macro (afilter f ls)
-  `(filter (lambda (it) ,f) ,ls))
-
-(define-macro (aeach f ls)
-  `(for-each (lambda (it) ,f) ,ls))
 
 (define-reader-directive 'hd
   (^(sym port ctx)
@@ -305,8 +206,8 @@ END
   (if (keyword? x) x (x->string x)))
 
 (define-macro (! . args)
-  (let1 args (map x->string args)
-        (sys-system (string-join args " "))))
+  (let1 ss (map x->string args)
+        `(sys-system (string-join (map x->string (list ,@ss)) " "))))
 
 (define (which cmd)
   (let1 found (filter-map (^x (and-let* ((p (build-path x cmd))
@@ -403,45 +304,6 @@ END
                 (generator->list (peg-parser->generator %grammer in))))
         ((flip$ map) (car gen) proc)))
 
-(define (sphinx sphinx-abspath :key (grammer %cc) (cd (current-directory)))
-  (define filepath (if (#/^\// sphinx-abspath)
-                       #"~|cd|~sphinx-abspath"
-                       (f-join cd sphinx-abspath)))
-  (define file-string (file->string filepath))
-  ((pa$ generator-from-file filepath grammer)
-   (^[alist]
-     (let*-values (((body) (assoc-ref alist 'body))
-                   ((start end) (string-line-range file-string body))
-                   ((start) (- start 1))
-                   ((lines) (cond ((= start -1) "")
-                                  ((= end -1) #"~|start|-")
-                                  (else #"~|start|-~|end|")))
-                   )
-       alist)
-     )))
-
-(define (sphinx-block s :key (code-block #f) (block #f))
-  (define indented (s-indent s))
-  (cond
-   ((string-null? indented) "")
-   (block #"
-
-::
-
-~indented
-")
-   (code-block #"
-
-.. code-block:: ~|code-block|
-
-~indented
-")
-;; .. literalinclude:: ~|sphinx-abspath|
-;;    :language: c
-;;    :lines: ~lines"
-   )
-)
-
 (define (s-indent s :key (indent "    "))
   (if (null? s) ""
   (let1 slist (if (pair? s) s (string-split s "\n"))
@@ -468,26 +330,6 @@ END
         ((equal? language "c") run-c)
   ))
 
-(define (sphinx-section name :key (ch #\=))
-  (let* ((bar (make-string (string-length name) ch)))
-    #"
-~name
-~underscore
-"))
-
-(define (shinx-section-test path :key (language "scheme"))
-  (and-let* ((ok (file-exists? path))
-             (section (sphinx-section "test" :ch #\-))
-             (file (sphinx-block (file->string path) :code-block language))
-             (content ((get-run-process language) path))
-             (result (sphinx-block content :block #t))
-             )
-   #"
-~section
-~file
-~result
-"))
-
 (define (get-time thunk)
   (let1 t (make <real-time-counter>)
         (with-time-counter t (thunk))
@@ -506,10 +348,7 @@ END
 (define-macro (ignore body :optional default)
   `(guard (_ (else ,default)) ,body))
 
-(define A0 (ignore *program-name*))
-(define A1 (ignore (car *argv*)))
-(define A2 (ignore (cadr *argv*)))
-(define A3 (ignore (caddr *argv*)))
-(define A4 (ignore (cadddr *argv*)))
-
-(define (pp x) (if (false? x) "" (print x)))
+(add-load-path "." :relative)
+(load "anaforic.scm")
+(load "sphinx.scm")
+(load "abbrebiation.scm")
