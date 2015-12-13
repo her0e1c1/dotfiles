@@ -1,3 +1,4 @@
+; mv
 
 ; commands
 ; ls/find/which/grep/xargs/csv/cat
@@ -40,6 +41,8 @@
 (define (-find a)
   (map -find (--ls a)))
 
+(define (!find path :key (max #f) (min #f) (type #f))
+  )
 
 (define (cmd-c path . args)
   (let1 sa (string-join (map x->string args) " ")
