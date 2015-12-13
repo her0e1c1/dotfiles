@@ -30,25 +30,9 @@
 (use rfc.json)
 ; (use gauche.internal)
 
-(define-macro (import-only module . syms)
-  `(begin
-     ,@(map (lambda (sym) `(define ,sym (with-module ,module ,sym))) syms)))
-
-(import-only gauche.internal extended-pair? extended-cons pair-attribute-get pair-attribute-set! pair-attributes)
-
-;; 標準出力を文字列に
-;; (p (call-with-output-string
-;;   (lambda (out) (write "HOGE" out))))
-;; fileのportを受け取る
-;; (call-with-output-file "./test.txt"
-;;   (lambda (out) (write "this is a test" out)))
-;; (with-output-to-file "./test.txt"
-;;   (lambda () (print "this is a test")))
-
 (define wof with-output-to-file)
 (define cof call-with-output-file)
 (define envs (get-environment-variables))
-; s '($ p $ + 1 2 3)' => 6
 ; d describe
 ; sys-lstat
 (define pwd current-directory)
@@ -87,13 +71,12 @@
       (equal? x "")
       (undefined? x)
       (eof-object? x)
-      (= x 0)  ; last
+      (and (number? x) (= x 0))
       ))
 (define (x->empty-string x))
 ;; call- in/outを受け取る
 ;; with- current-portを変更
 
-;(define open call-with-input-file)
 (define rl read-line)
 
 ; anaforic-read-lines
@@ -107,8 +90,6 @@
             (begin (f line)
                    (loop (read-line in))))))))
 
-; s '(filter ($ not $ even? $) (i 10))'
-; s '(filter (.$ not even?) (i 10))'
 
 (define s-join string-join)
 (define f? file-exists?)
@@ -142,7 +123,6 @@
 
 (define (flip f x y) (f y x))
 (define (flip$ f) (pa$ flip f))
-; ((pa$ flip map) (iota 10) print)
 
 
 ;; path
@@ -165,22 +145,11 @@
             (else (loop next (cons p acc)))
             ))))
 
-; TODO: lazy let*
-; (llet* ((a 1) (b 2)) (if #t a b))  ; 必要になってから評価
-
-; 正規化あった
-; (sys-normalize-pathname "~//a/./d/b" :expand #t :absolute #t :canonicalize #t)
-; "/home/me/a/d/b"
-
-(define rra regexp-replace-all)
-(define rr regexp-replace)
 (define-macro  (rl regex s vars . body)
   `(rxmatch-let (rxmatch ,regex ,s)
                 ,vars
                 ,@body))
-; ((rxmatch) 1) ; => aに束縛とかよさげ?
-; #"~a~b"
-; (#/REGEX/ "strng")
+
 (define (rm rxp str)
   (if-let1 m (rxmatch rxp str)
        (list
@@ -209,19 +178,6 @@
 (define-macro (it! value)
   `(set! it ,value))
 
-; ... は 0 個を含む任意個の式 (,@の代わりっぽい)
-
-; (guard (var cond) cddr)
-; (guard (exc) 1)
-; (guard (exc) (/ 1 0))
-; (guard (exc (else 0)) (/ 1 0))
-
-; 関数にすると、ローカル変数に代入する意味のないものになる
-;; (define-macro (null! x)
-;;   (guard (_ (else `(define ,x '())))
-;;           x `(set! ,x '())))
-
-; (lambda (it) BODY) => (--^ BODY)
 (define-macro (-> x form . more)
   (if (pair? more)
       `(-> (-> ,x ,form) ,@more )
@@ -345,10 +301,6 @@ END
 (define-macro (ls . dirs)
   `(--ls ,@(map x->string-without-keyword dirs)))
 
-; 結果違う
-; (list->string (quote (#\a #\b)))
-; (x->string (quote (#\a #\b)))
-
 (define (x->string-without-keyword x)
   (if (keyword? x) x (x->string x)))
 
@@ -367,9 +319,6 @@ END
 (define type-equals '(number? string? char? char-set?))
 (define (same? a b) 1)
 
-; (list->string (to #\あ #\ん))
-; (char-set->list #[a-z])
-; (char-set->list #[あ-ん])
 (define (to a b)
   (let ((an (x->number a))
         (bn (x->number b)))
@@ -381,71 +330,10 @@ END
   (map -find (--ls a)))
 
 
-; (df a (lcons* 1 2 3 (sys-sleep 10) 5))
-; size-of
-;; (define (len obj)
-;;   (cond
-;;    ((string? obj) (string-length obj))
-;;    ((pair? obj) (length obj))
-;;    (else 0)))
-
-
-;; (p (peg-parse-string ($string "abc") "abc"))
-;; (p (peg-parse-string ($char #\a) "abc"))
-;; (p (peg-parse-string ($one-of #[a-z]) "cd"))
-;; (p (peg-parse-string ($none-of #[a-z]) "A"))
-; (p (peg-parse-string anychar "a"))
-; (p (peg-parse-string digit "123"))
-
 (define (P a b)
   (p (peg-parse-string a b)))
-; (p (peg-parse-string anychar "a"))
-; (p (peg-parse-string digit "123"))
-; (p (peg-parse-string eof ""))
-; (p (peg-parse-string anychar ""))
-;; (P ($or ($string "abc")
-;;          ($string "efg"))
-;;     ; "abc"))
-;;     "efg")
-;; (p(equal? "bar"
-;;             (pps
-;;  ($try ($seq ($string "foo") ($string "bar")))
-;;  "foobar")))
-
-; $stringは、完全一致しないと、消費しない?
-;; (P ($or ($string "abc")
-;;         ($string "aef")
-;;         )
-;;    "aef")
-;; (P ($or ($seq ($char #\a) ($char #\b))
-;;         ($seq ($char #\a) ($char #\c))
-;;         )
-;;    "ab")
-   ; "ac")  ; error
-
-;; (P ($or ($try ($seq ($char #\a) ($char #\b)))
-;;         ($seq ($char #\a) ($char #\c))
-;;         )
-;;    "ac")
-
-; (pps ($do [x ($string "a")] [y ($string "b")] ($return (cons x y)) ) "ab")
-; $lift は、パースの結果を使って、結果を新たに返す
-;(pps ($lift cons ($string "a") ($string "b")) "ab")
-
-; #[^a-b]
-; (char-set-complement #[a-b])
-
-;; (define-macro (rva a)
-;;   `(recieve ret ,a ret))
-
-; (define-values (a b . c) (values 1 2 3 4))
 
 (define %ws ($skip-many ($one-of #[ \t\r\n])))
-; lazyしないと、内側で定義している%pがないと、言われる
-; (define %w ($lazy ($lift (^[v _] v) ($or %p %ws) %ws)))
-; $liftは、引数そろえないと！($lift (^(a b c) Pa Pb Pc))
-; (define %w ($lazy ($lift (^[v] v) ($or %p %ws))))
-; (define %w ($lazy ($lift (^[v] v) ($or %p))))
 
 (define %s ($lift list->string ($many ($one-of #[^{}]))))
 (define %c-f-body ($lazy ($lift string-append
@@ -471,8 +359,6 @@ END
                       ($between ($char #\()
                                 ($many ($none-of #[()]))
                                 ($char #\)))))
-; (p (pps ($seq %c-f-body) "{a{b}c{d}e}"))
-
 
 (define %c ($do
             %ws
@@ -618,3 +504,5 @@ test
 (define A2 (ignore (cadr *argv*)))
 (define A3 (ignore (caddr *argv*)))
 (define A4 (ignore (cadddr *argv*)))
+
+(define (pp x) (if (false? x) "" (print x)))
