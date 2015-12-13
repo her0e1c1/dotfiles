@@ -1,34 +1,10 @@
-(use srfi-1)
-(use srfi-11)
-(use srfi-13)  ; string-null? string-every
-(use srfi-14)  ; char-set:whitespace
+(add-load-path "." :relative)
+(load "load.scm")
+(load "fp.scm")
+(load "anaforic.scm")
+(load "abbrebiation.scm")
+(load "string.scm")
 
-(use srfi-27)  ; random
-(use srfi-42)  ; range
-(use srfi-43)  ; vector-*
-(use srfi-98)  ; get-environment-variables
-
-(use util.stream)
-(use util.list)
-(use util.match)
-
-(use text.tr)
-(use file.util)
-(use parser.peg)  ; parsec
-
-(use gauche.cgen)
-(use gauche.generator)
-(use gauche.interactive)
-(use gauche.process)
-(use gauche.parseopt)
-(use gauche.parameter)
-(use gauche.sequence)
-(use gauche.termios)
-(use gauche.test)
-(use gauche.time)
-
-(use rfc.json)
-; (use gauche.internal)
 
 (define (false? x)
   (or (eq? x '())
@@ -55,37 +31,20 @@
             (begin (f line)
                    (loop (read-line in))))))))
 
-(define s-join string-join)
-
 ; sliceを作る
 ; (~ a 1)
 ; (~ a 1 2)
 
 (define (path p)
   (string-append (home-directory) p))
+(define path-n path-normalize)
 
 ; s '(p (string-slices "abcd" 2))' => (ab cd)
-(define (string-slices str len)
-    (map list->string (slices (string->list str) len)))
-
-; combinator
-(define (~$ . selectors)
-  (cut apply ~ <> selectors))
-; ((~$ 1) "abc")  "b"
-
-(define (slot-ref*$ . selectors)
-  (cut apply slot-ref* <> selectors))
-
-(define (flip f x y) (f y x))
-(define (flip$ f) (pa$ flip f))
-
-
 ;; path
 (define (path-normalize . paths)
   ; (resolve-path)
    (expand-path
     (string-join paths "/")))
-(define path-n path-normalize)
 
 (define (path-join . ls)
   (let loop ((path ls)
@@ -177,45 +136,8 @@ END
         (sys-normalize-pathname p :absolute #t)))
 
 
-; commands
-; ls/find/which/grep/xargs/csv/cat
-; peco(anything)
-
-(define (--ls . dirs)
-  (let* ((keys (filter keyword? dirs))
-         (opt-abs (memq :abs keys))
-         (opt-c (not (memq :c keys)))
-         (opt-e (not (memq :e keys)))
-         (opt-a (not (memq :a keys)))
-         (opt-all (not (memq :all keys)))
-         (sdirs (filter string? dirs))
-         (sdirs (if (null? sdirs) (list "./") sdirs)))
-    (let1 lists (map (^x (--> x
-                         (sys-normalize-pathname it :absolute opt-abs :canonicalize opt-c :expand opt-e)
-                         (build-path it "*")
-                         (glob it)
-                         ))
-                     sdirs)
-          (if opt-a (apply append lists) lists))))
-
-; (ls ~/.emacs.d :abs :e)
-(define-macro (ls . dirs)
-  `(--ls ,@(map x->string-without-keyword dirs)))
-
 (define (x->string-without-keyword x)
   (if (keyword? x) x (x->string x)))
-
-(define-macro (! . args)
-  (let1 ss (map x->string args)
-        `(sys-system (string-join (map x->string (list ,@ss)) " "))))
-
-(define (which cmd)
-  (let1 found (filter-map (^x (and-let* ((p (build-path x cmd))
-                                         (q (file-is-executable? p)))
-                                        p))
-                          (string-split (sys-getenv "PATH") ":"))
-        (if (null? found) #f (car found))))
-
 
 (define type-equals '(number? string? char? char-set?))
 (define (same? a b) 1)
@@ -226,10 +148,6 @@ END
     (if (> an bn) (error "a < b"))
     (map integer->char (iota (+ 1 (- bn an)) an))))
         
-
-(define (-find a)
-  (map -find (--ls a)))
-
 
 (define (P a b)
   (p (peg-parse-string a b)))
@@ -348,7 +266,5 @@ END
 (define-macro (ignore body :optional default)
   `(guard (_ (else ,default)) ,body))
 
-(add-load-path "." :relative)
-(load "anaforic.scm")
 (load "sphinx.scm")
-(load "abbrebiation.scm")
+(load "cmd.scm")
