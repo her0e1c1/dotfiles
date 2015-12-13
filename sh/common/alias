@@ -93,10 +93,12 @@ oneliner_gosh(){
     local lflag=false  # TODO
     local pflag=false
     local Lflag=""
+    # -0 -0777 -0
     local zeroflag=false
     local dflag=false  # debug
     local iflag=false  # TODO
 
+    # TODO: -x -f -d オプションによるファイルパス識別
     while getopts lnpdF:L: OPT; do
 	    case $OPT in
             d) dflag=true
@@ -123,18 +125,31 @@ EOS
 )
     local tmpfile=`mktemp`
     local code=$1; shift;
-    if $nflag; then
-        code="(port-for-each (lambda (line) $F (--> line $code)) read-line)"
-    elif $pflag; then
+    # if $nflag; then
+    #     code="(port-for-each (lambda (line) $F (--> line $code)) read-line)"
+    if $pflag; then
         code="(port-for-each (lambda (line) $F (--> line $code (print it))) read-line)"
     fi
 
     # TODO: BEGIN/END block
     cat <<EOF >! $tmpfile
+(use util.match)
 (define (main args)
- (let1 r $code
-  (if (undefined? r) #f (print r)))
- 0)
+  (let1 ret
+     (match args
+        [() 1]
+        [(_)  $code]
+        ; かつ -p or -n
+        [(_ . filepath-list)
+         (dolist (filepath filepath-list)
+                 (with-input-from-file filepath
+                   (lambda () (let loop ((line (read-line))) $code
+                                (if (not (eof-object? line))
+                                    (loop (read-line)))))))
+                   ])
+   
+   (if (not (undefined? ret)) (print ret)))
+  0)
 EOF
 
     if [ -n "$code" ]; then
