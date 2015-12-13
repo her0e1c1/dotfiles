@@ -200,58 +200,11 @@ END
                    ($many ($or ($try %c)
                                ($lift (^x '()) anychar)))))
 
-(define (lineno-at index string-list)
-  (let loop ((no 0) (count 0) (lines string-list))
-    (cond ((null? lines) -1)
-          ((<= index count) no)
-          (else
-           (loop (+ no 1)
-                 (+ count (string-length (car lines)))
-                 (cdr lines))))))
-
-(define (string-line-range container string)
-  (if-let1 index (string-contains container string)
-           (let1 s-list (string-split container "\n")
-                 (values (lineno-at index s-list)
-                         (lineno-at (+ index (string-length string)) s-list)))
-           (values -1 -1))) 
-
 (define (generator-from-file filepath %grammer proc)
   (let1 gen (call-with-input-file filepath
               (lambda (in)
                 (generator->list (peg-parser->generator %grammer in))))
         ((flip$ map) (car gen) proc)))
-
-(define (s-indent s :key (indent "    "))
-  (if (null? s) ""
-  (let1 slist (if (pair? s) s (string-split s "\n"))
-        (string-join (map (^x (string-append indent x)) slist) "\n")
-        )))
-
-(define (cmd-c path . args)
-  (let1 sa (string-join (map x->string args) " ")
-        #"clang ~path && ./a.out ~sa"))
-
-(define (run-c path . args)
-  (define sa (string-join (map x->string args) " "))
-  (if (file-exists? path)
-      (process-output->string-list #"clang ~path && ./a.out ~sa")
-      ""))
-
-(define (run-scheme path)
-  (if (file-exists? path)
-      (process-output->string-list #"gosh ~path")
-      ""))
-
-(define (get-run-process language)
-  (cond ((equal? language "scheme") run-scheme)
-        ((equal? language "c") run-c)
-  ))
-
-(define (get-time thunk)
-  (let1 t (make <real-time-counter>)
-        (with-time-counter t (thunk))
-        (time-counter-value t)))
 
 (define-macro (s regexp replaced :optional (options :))
   (let* ((chars (string->list (keyword->string options)))

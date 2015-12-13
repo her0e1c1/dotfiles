@@ -39,3 +39,29 @@
 
 (define (-find a)
   (map -find (--ls a)))
+
+
+(define (cmd-c path . args)
+  (let1 sa (string-join (map x->string args) " ")
+        #"clang ~path && ./a.out ~sa"))
+
+(define (run-c path . args)
+  (define sa (string-join (map x->string args) " "))
+  (if (file-exists? path)
+      (process-output->string-list #"clang ~path && ./a.out ~sa")
+      ""))
+
+(define (run-scheme path)
+  (if (file-exists? path)
+      (process-output->string-list #"gosh ~path")
+      ""))
+
+(define (get-run-process language)
+  (cond ((equal? language "scheme") run-scheme)
+        ((equal? language "c") run-c)
+  ))
+
+(define (get-time thunk)
+  (let1 t (make <real-time-counter>)
+        (with-time-counter t (thunk))
+        (time-counter-value t)))
