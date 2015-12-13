@@ -1,7 +1,4 @@
 
-
-(define s-join string-join)
-
 (define (string-slices str len)
     (map list->string (slices (string->list str) len)))
 
@@ -27,3 +24,6 @@
   (let1 slist (if (pair? s) s (string-split s "\n"))
         (string-join (map (^x (string-append indent x)) slist) "\n")
         )))
+
+(define (string-width s)
+  (string-fold (lambda (c acc) (+ acc (if (char-set-contains? char-set:ascii c) 1 2))) 0 s))

@@ -3,7 +3,6 @@
   `(let ((it ,pred))
      (if it ,t ,@f)))
 
-
 (define-macro (it! value)
   `(set! it ,value))
 
@@ -57,3 +56,7 @@
 
 (define-macro (aeach f ls)
   `(for-each (lambda (it) ,f) ,ls))
+
+; when unless if
+(define-macro (fi a b :optional c)
+  `(if ,a ,c ,b))

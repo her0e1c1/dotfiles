@@ -3,12 +3,6 @@
 (define-macro (ignore body :optional default)
   `(guard (_ (else ,default)) ,body))
 
-(define (path-normalize . paths)
-  ; (resolve-path)
-   (expand-path
-    (string-join paths "/")))
-
-
 (load "load.scm")
 (load "fp.scm")
 (load "anaforic.scm")
@@ -47,7 +41,6 @@
 
 (define (path p)
   (string-append (home-directory) p))
-(define path-n path-normalize)
 
 ; s '(p (string-slices "abcd" 2))' => (ab cd)
 ;; path
