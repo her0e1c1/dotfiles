@@ -22,12 +22,13 @@
 ~result
 "))
 
-(define (sphinx-block-path path)
+(define (sphinx-block-path path :key (linenos #f))
   (let1 code (path-extension path)
-        (sphinx-block (file->string path) :code-block code)))
+        (sphinx-block (file->string path) :code-block code :linenos linenos)))
 
-(define (sphinx-block s :key (code-block #f) (block #f))
+(define (sphinx-block s :key (code-block #f) (block #f) (linenos #f))
   (define indented (s-indent s))
+  (define arg-linenos (if linenos ":linenos:" ""))
   (cond
    ((string-null? indented) "")
    (block #"
@@ -39,6 +40,7 @@
    (code-block #"
 
 .. code-block:: ~|code-block|
+   ~arg-linenos
 
 ~indented
 ")
