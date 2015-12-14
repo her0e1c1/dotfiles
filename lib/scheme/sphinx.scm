@@ -8,7 +8,8 @@
 ~bar
 "))
 
-(define (shinx-section-test path :key (language "scheme"))
+(define (sphinx-section-test path :key (language #f))
+  (define language (if (not language) language (path-extension path)))
   (and-let* ((ok (file-exists? path))
              (section (sphinx-section "test" :ch #\-))
              (file (sphinx-block (file->string path) :code-block language))
@@ -21,6 +22,9 @@
 ~result
 "))
 
+(define (sphinx-block-path path)
+  (let1 code (path-extension path)
+        (sphinx-block (file->string path) :code-block code)))
 
 (define (sphinx-block s :key (code-block #f) (block #f))
   (define indented (s-indent s))

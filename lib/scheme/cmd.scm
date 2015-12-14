@@ -60,11 +60,17 @@
       ""))
 
 (define (get-run-process language)
-  (cond ((equal? language "scheme") run-scheme)
+  (cond ((member language '("scheme" "scm")) run-scheme)
         ((equal? language "c") run-c)
-  ))
+        (else (error "No language " language)))
+  )
 
 (define (get-time thunk)
   (let1 t (make <real-time-counter>)
         (with-time-counter t (thunk))
         (time-counter-value t)))
+
+(define (run-ce cmd)
+  (let* ((s (shell-escape-string cmd))
+         (cmd (list 'sh '-ic #"ce ~s")))
+    (process-output->string cmd)))
