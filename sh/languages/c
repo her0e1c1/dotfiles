@@ -4,12 +4,20 @@ _complie_and_run_in_c(){
     source="
 $__C_INCLUDED_HEADERS
 #include <limits.h>
+#include <stdarg.h>
 
 extern char **environ;
 
 #define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
 #define REP(k,a) FOR(k,0,a)
 #define o(s) printf(\"%s\", (char*)s);
+
+void p(char *fmt, ...) {
+    va_list list;
+    va_start(list, fmt);
+    vprintf(fmt, list);
+    va_end(list);
+}
 
 int main(int argc, char* argv[]){
     $main
