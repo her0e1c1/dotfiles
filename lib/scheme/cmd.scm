@@ -70,7 +70,12 @@
         (with-time-counter t (thunk))
         (time-counter-value t)))
 
+(define (process-output-with-error->string cmd)
+  (port->string
+   (process-output 
+    (run-process cmd :redirects '((>& 2 1) (> 1 stdout)) :wait #t))))
+
 (define (run-ce cmd)
   (let* ((s (shell-escape-string cmd))
-         (cmd (list 'sh '-ic #"ce ~s")))
-    (process-output->string cmd)))
+         (cmd (list 'zsh '-ic #"ce ~s")))
+    (process-output-with-error->string cmd)))
