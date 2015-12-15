@@ -22,28 +22,42 @@
 ~result
 "))
 
+(define (sphinx-warn msg)
+  (let* ((indented (string-indent msg)))
+  #"
+.. warning::
+
+~indented
+"))
+
 (define (sphinx-block-path path :key (linenos #f))
   (let1 code (path-extension path)
         (sphinx-block (file->string path) :code-block code :linenos linenos)))
 
-(define (sphinx-block s :key (code-block #f) (block #f) (linenos #f))
+(define (sphinx-block s :key (code-block #f) (block #f) (linenos #f) (toctree #f) (maxdepth #f))
   (define indented (s-indent s))
   (define arg-linenos (if linenos ":linenos:" ""))
   (cond
    ((string-null? indented) "")
    (block #"
-
 ::
 
 ~indented
 ")
    (code-block #"
-
 .. code-block:: ~|code-block|
    ~arg-linenos
 
 ~indented
 ")
+   (toctree (let* ((m (if maxdepth #":maxdepth: ~maxdepth" "")))
+              #"
+.. toctree::
+    ~m
+
+~indented
+"))
+
 ;; .. literalinclude:: ~|sphinx-abspath|
 ;;    :language: c
 ;;    :lines: ~lines"
@@ -66,3 +80,40 @@
                    )
        alist)
      )))
+
+(define (sphinx-run-path-ruby path)
+  (let* ((file (sphinx-block-path path))
+         (rslt (sphinx-block (run-ruby path) :block #t)))
+    #"~file \n~path => ~rslt"))
+
+       ;(sphinx-toctree :glob
+(define (sphinx-toctree :key (maxdepth #f) (glob #f) (pattern #f))
+  (cond (glob #"
+.. toctree::
+    :glob:
+
+    ~glob
+")
+        (else (error "No"))))
+;;   (let* ((m (if maxdepth #":maxdepth: ~maxdepth" "")))
+;;     #"
+;; .. toctree::
+;;     ~m
+
+;; ~indented
+;; "))
+
+  ;; ((flip$ filter-map) (ls "langs")
+  ;;  (^x (and-let* ((_ (file-exists? #"~|x|/index.rst"))
+  ;;                 (p #"~|x|/index"))
+  ;;                p)))
+
+;;    (sphinx-block (string-join it "\n") :toctree #t :maxdepth 1)
+
+;; ;;    (toctree (let* ((m (if maxdepth #":maxdepth: ~maxdepth" "")))
+;;               #"
+;; .. toctree::
+;;     ~m
+
+;; ~indented
+;; "))

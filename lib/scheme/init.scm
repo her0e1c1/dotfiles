@@ -169,3 +169,23 @@ END
 (load "parser.scm")
 (load "sphinx.scm")
 (load "cmd.scm")
+
+
+(define-macro (e . body)
+  `(list ,@(map x->string body)))
+
+;; (define-reader-directive 'hd
+;;   (^(sym port ctx)
+;;     (let1 delimiter (string-trim-both (read-line port))
+;;           (do ((line (read-line port) (read-line port))
+;;                (document '() (cons line document)))
+;;               ((string=? line delimiter)
+;;                (string-concatenate-reverse (intersperse "\n" document)))))))
+#|
+#!!perl -E '""'! => perl -E ""
+(display #!hd END
+aa
+bb
+END 
+)
+|#

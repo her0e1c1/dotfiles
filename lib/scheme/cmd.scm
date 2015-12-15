@@ -41,8 +41,12 @@
 (define (-find a)
   (map -find (--ls a)))
 
+; directory-fold path proc seed
 (define (!find path :key (max #f) (min #f) (type #f))
-  )
+  (fold (lambda (x acc) (if (file-is-directory? x)
+                            (append (cons x (!find x)) acc)
+                            (cons x acc)))
+        '() (--ls path)))
 
 (define (cmd-c path . args)
   (let1 sa (string-join (map x->string args) " ")
@@ -59,11 +63,14 @@
       (process-output->string-list #"gosh ~path")
       ""))
 
+(define (run-ruby path)
+  (process-output-with-error->string `(ruby ,path)))
+
+
 (define (get-run-process language)
   (cond ((member language '("scheme" "scm")) run-scheme)
         ((equal? language "c") run-c)
-        (else (error "No language " language)))
-  )
+        (else (error "No language " language))))
 
 (define (get-time thunk)
   (let1 t (make <real-time-counter>)
@@ -75,7 +82,24 @@
    (process-output 
     (run-process cmd :redirects '((>& 2 1) (> 1 stdout)) :wait #t))))
 
-(define (run-ce cmd)
-  (let* ((s (shell-escape-string cmd))
-         (cmd (list 'zsh '-ic #"ce ~s")))
-    (process-output-with-error->string cmd)))
+; sh doesn't work if there are more than one process
+(define (oneliner-wrap-shell cmd)
+  (let1 c (shell-escape-string cmd)
+        `(sh -c ,#". ~~/.shrc \n ~cmd")))
+
+(define (oneliner-run cmd)
+  (process-output-with-error->string (oneliner-wrap-shell cmd)))
+
+(define (oneliner-c cmd) #"ce '~cmd'")
+(define (oneliner-elisp cmd) #"emacs --batch --execute '(message ~cmd)'")
+
+; TODO: make macro and use args as string
+(define (run-ce cmd . args)
+  (let* ((s (string-join (map x->string args) " "))
+         (wrap (oneliner-c cmd))
+         (cmd+args #"~wrap ~s")) 
+    (process-output-with-error->string #?=(oneliner-wrap-shell cmd+args))))
+
+(define (oneliner-simple-run-print cmd)
+  (let1 ret (oneliner-run cmd)
+        (p (sphinx-block #"~cmd\n~ret" :code-block "sh"))))
