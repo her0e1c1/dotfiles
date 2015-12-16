@@ -38,7 +38,7 @@ alias tree="pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*
 alias clang++="clang++ -std=c++11"
 alias clg="clang `gauche-config -I` `gauche-config -L` `gauche-config -l`"
 alias eo=__emacs_oneliner
-alias ee="emacsclient -e"
+#alias ee="emacsclient -e"
 alias ea='emacsclient -nw -a ""'
 alias en='emacsclient -n'
 alias e='emacsclient -t'
@@ -166,3 +166,4 @@ EOF
     rm $tmpfile
 }
 alias s=oneliner_gosh
+alias ee="emacs --batch --execute '(message $code)'"

@@ -139,8 +139,9 @@
 ; sphinx-load-from-current-dirctory (p section)
 (define-macro (load-from-current-dirctory path)
   `(begin
-     (add-load-path "." :relative)
+     (add-load-path "../.." :relative)
      (add-load-path ".." :relative)
+     (add-load-path "." :relative)
      (load ,path)))
 
 (define (debug-source-info obj)

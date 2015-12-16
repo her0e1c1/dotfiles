@@ -18,6 +18,12 @@ void p(char *fmt, ...) {
     vprintf(fmt, list);
     va_end(list);
 }
+void ps(char *s) {
+    printf(\"%s\", s);
+}
+void pd(int s) {
+    printf(\"%d\", s);
+}
 
 int main(int argc, char* argv[]){
     $main

@@ -22,7 +22,8 @@ alias g='egrep -i'
 alias go="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 
 goshe(){
-    gosh -l ~/lib/scheme/init.scm -e "$@" -Eexit
+    local main=$1; shift;
+    gosh -l ~/lib/scheme/init.scm -e "(begin $main)" "$@" -Eexit
 }
 
  
@@ -104,3 +105,12 @@ EOS
 }
 
 alias ce=_complie_and_run_in_c
+
+
+# run_c_from_string '#include <stdio.h> ^M int main(){printf("hoge");}'
+run_c_from_string() {
+    local source=$1; shift;
+    tfile=`mktemp`
+    echo "$source" | clang -x c - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
+}
