@@ -36,6 +36,17 @@
 (define-macro (m . body)  ; (m MACRO)
   `(macroexpand (quote ,body)))
 
+; join method
+(define (f-join . paths)
+  (let1 p (apply build-path
+                 (map (^p (sys-normalize-pathname p :absolute #f :canonicalize #t :expand #t)) paths))
+        (sys-normalize-pathname p :absolute #t)))
+
+(define-method abs ((x <string>))
+  (sys-normalize-pathname x :absolute #t :canonicalize #t :expand #t))
+(define-method rltv ((x <string>))
+  (sys-normalize-pathname x :absolute #f :canonicalize #t :expand #t))
+
 ; hash
 (define hm make-hash-table)
 (define hp hash-table-put!)

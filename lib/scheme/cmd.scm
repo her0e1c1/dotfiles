@@ -106,3 +106,6 @@
 
 (define (run-c-from-string str)
   (oneliner-run #"run_c_from_string '~str'"))
+
+(define (run-cpp-from-string str)
+  (oneliner-run #"run_cpp_from_string '~str'"))

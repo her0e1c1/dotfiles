@@ -119,3 +119,5 @@
 ;; "))
 
 ; TODO: create a c file if it is necessary
+
+(define (sphinx-todo s) #".. todo:: ~s")

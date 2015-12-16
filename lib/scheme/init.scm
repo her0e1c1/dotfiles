@@ -86,15 +86,6 @@
         (rxmatch->string rxp str)
         )
        #f))
-
-(define-reader-directive 'HEREDOCUMENT
-  (^(sym port ctx)
-    (let1 delimiter (string-trim-both (read-line port))
-          (do ((line (read-line port) (read-line port))
-               (document '() (cons line document)))
-              ((string=? line delimiter)
-               (string-concatenate-reverse (intersperse "\n" document)))))))
-
 ; "\\0" => #!r"\0"
 ; #!""がいいせめて
 (define-reader-directive 'r
@@ -114,11 +105,6 @@
     ((2) `(orig~ ,(car body) ,(cadr body)))
     ((3) `(subseq ,(car body) ,(cadr body) ,(caddr body)))
     ))
-
-(define (f-join . paths)
-  (let1 p (apply build-path
-                 (map (^p (sys-normalize-pathname p :absolute #f :canonicalize #t :expand #t)) paths))
-        (sys-normalize-pathname p :absolute #t)))
 
 
 (define (x->string-without-keyword x)
@@ -148,6 +134,7 @@
 (load "sphinx.scm")
 (load "cmd.scm")
 (load "oneliner.scm")
+(load "reader.scm")
 
 ; sphinx-load-from-current-dirctory (p section)
 (define-macro (load-from-current-dirctory path)
