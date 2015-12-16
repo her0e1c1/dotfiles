@@ -48,16 +48,6 @@
                             (cons x acc)))
         '() (--ls path)))
 
-(define (cmd-c path . args)
-  (let1 sa (string-join (map x->string args) " ")
-        #"clang ~path && ./a.out ~sa"))
-
-(define (run-c path . args)
-  (define sa (string-join (map x->string args) " "))
-  (if (file-exists? path)
-      (process-output->string-list #"clang ~path && ./a.out ~sa")
-      ""))
-
 (define (run-scheme path)
   (if (file-exists? path)
       (process-output->string-list #"gosh ~path")
@@ -98,8 +88,21 @@
   (let* ((s (string-join (map x->string args) " "))
          (wrap (oneliner-c cmd))
          (cmd+args #"~wrap ~s")) 
-    (process-output-with-error->string #?=(oneliner-wrap-shell cmd+args))))
+    (process-output-with-error->string (oneliner-wrap-shell cmd+args))))
 
 (define (oneliner-simple-run-print cmd)
   (let1 ret (oneliner-run cmd)
         (p (sphinx-block #"~cmd\n~ret" :code-block "sh"))))
+
+(define (cmd-c path . args)
+  (let1 sa (string-join (map x->string args) " ")
+        #"clang ~path && ./a.out ~sa"))
+
+(define (run-c path . args)
+  (define sa (string-join (map x->string args) " "))
+  (if (file-exists? path)
+      (process-output->string-list #"clang ~path && ./a.out ~sa")
+      ""))
+
+(define (run-c-from-string str)
+  (oneliner-run #"run_c_from_string '~str'"))

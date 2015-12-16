@@ -39,8 +39,8 @@
 ; (~ a 1)
 ; (~ a 1 2)
 
-(define (path p)
-  (string-append (home-directory) p))
+;; (define (path p)
+;;   (string-append (home-directory) p))
 
 ; s '(p (string-slices "abcd" 2))' => (ab cd)
 ;; path
@@ -87,20 +87,13 @@
         )
        #f))
 
-(define-reader-directive 'hd
+(define-reader-directive 'HEREDOCUMENT
   (^(sym port ctx)
     (let1 delimiter (string-trim-both (read-line port))
           (do ((line (read-line port) (read-line port))
                (document '() (cons line document)))
               ((string=? line delimiter)
                (string-concatenate-reverse (intersperse "\n" document)))))))
-#|
-(display #!hd END
-aa
-bb
-END 
-)
-|#
 
 ; "\\0" => #!r"\0"
 ; #!""がいいせめて
@@ -112,12 +105,6 @@ END
             ((char=? #\" ch) (list->string (reverse str))))
         (error "\" is needed"))))
 ; s '(rr #/(\w*)/ "abc" #!r"\0 ~1")'
-
-
-; (clear)
-(define clear
-  (let1 c (process-output->string '("clear"))
-        (lambda () (display c))))
 
 (define orig~ ~)
 (define-macro (~ . body)
@@ -155,37 +142,24 @@ END
               (lambda (in)
                 (generator->list (peg-parser->generator %grammer in))))
         ((flip$ map) (car gen) proc)))
-
-(define-macro (s regexp replaced :optional (options :))
-  (let* ((chars (string->list (keyword->string options)))
-         (regexp (if (symbol? regexp) (symbol->string regexp) regexp))
-         (g (if (memq #\g chars) regexp-replace-all regexp-replace))
-         (p (memq #\p chars))
-         )
-    (if p
-        `(lambda (s) (,g ,regexp s ,replaced))
-        `(,g ,regexp it ,replaced))))
     
+(load "utils.scm")
 (load "parser.scm")
 (load "sphinx.scm")
 (load "cmd.scm")
+(load "oneliner.scm")
 
+; sphinx-load-from-current-dirctory (p section)
+(define-macro (load-from-current-dirctory path)
+  `(begin
+     (add-load-path "." :relative)
+     (add-load-path ".." :relative)
+     (load ,path)))
 
-(define-macro (e . body)
-  `(list ,@(map x->string body)))
-
-;; (define-reader-directive 'hd
-;;   (^(sym port ctx)
-;;     (let1 delimiter (string-trim-both (read-line port))
-;;           (do ((line (read-line port) (read-line port))
-;;                (document '() (cons line document)))
-;;               ((string=? line delimiter)
-;;                (string-concatenate-reverse (intersperse "\n" document)))))))
-#|
-#!!perl -E '""'! => perl -E ""
-(display #!hd END
-aa
-bb
-END 
-)
-|#
+(define (debug-source-info obj)
+  (and-let* ([ (pair? obj) ]
+             [info ((with-module gauche.internal pair-attribute-get)
+                    obj 'source-info #f)]
+             [ (pair? info) ]
+             [ (pair? (cdr info)) ])
+            info))

@@ -12,7 +12,8 @@
 (define OUT (standard-output-port))
 (define ERR (standard-error-port))
 
-
+(define rr regexp-replace)
+(define rra regexp-replace-all)
 (define (pp x) (if (false? x) "" (print x)))
 
 
