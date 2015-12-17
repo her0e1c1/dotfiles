@@ -87,13 +87,20 @@
     #"~file \n~path => ~rslt"))
 
        ;(sphinx-toctree :glob
-(define (sphinx-toctree :key (maxdepth #f) (glob #f) (pattern #f))
+(define (sphinx-toctree :key (maxdepth #f) (glob #f) (pattern #f) (path #f))
   (cond (glob #"
 .. toctree::
     :glob:
 
     ~glob
 ")
+        (path (let1 p (string-join (map string-indent (if (pair? path) path (list path)))
+                                   "\n")
+                    #"
+.. toctree::
+
+~p
+"))
         (else (error "No"))))
 ;;   (let* ((m (if maxdepth #":maxdepth: ~maxdepth" "")))
 ;;     #"
@@ -126,3 +133,15 @@
     #".. contents::
 ~d
 "))
+
+; [Filepath] -> IO String
+(define (sphinx-include-scm-list scm-path-list)
+  (for-each sphinx-scm->rst scm-path-list)
+  (sphinx-toctree :path scm-path-list))
+
+(define (sphinx-scm->rst path.scm)
+  (if (not (file-exists? path.scm))
+      (error #"~path.scm doesn't exist")
+   (let1 rst (regexp-replace #/\.scm/ path.scm ".rst")
+         (with-output-to-file rst
+           (^() (load path.scm))))))
