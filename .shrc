@@ -23,7 +23,7 @@ alias go="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 
 goshe(){
     local main=$1; shift;
-    gosh -l ~/lib/scheme/init.scm -e "(begin $main)" "$@" -Eexit
+    gosh -l ~/lib/scheme/init.scm -e "(--> (begin $main) (if (not (undefined? it)) (print it)))" "$@" -Eexit
 }
 
  

@@ -121,3 +121,8 @@
 ; TODO: create a c file if it is necessary
 
 (define (sphinx-todo s) #".. todo:: ~s")
+(define (sphinx-contents :key (depth #f) (label #f))
+  (let* ((d (if (number? depth) (string-indent #":depth: ~|depth|") "")))
+    #".. contents::
+~d
+"))

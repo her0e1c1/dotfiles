@@ -144,6 +144,9 @@
      (add-load-path "." :relative)
      (load ,path)))
 
+(define-macro (load-list path-list)
+  `(for-each (lambda (x) (load x)) ,path-list))
+
 (define (debug-source-info obj)
   (and-let* ([ (pair? obj) ]
              [info ((with-module gauche.internal pair-attribute-get)
