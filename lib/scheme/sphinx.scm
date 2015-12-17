@@ -142,8 +142,8 @@
   (for-each sphinx-scm->rst scm-path-list)
   (sphinx-toctree :path (map sphinx-ext-scm->rst scm-path-list)))
 
-(define-method sphinx-include-scm-list ((scm-path-list <pair>) (output <string>))
-  (sphinx-scm->rst scm-path-list output)
+(define-method sphinx-include-scm-list ((scm-path-list <pair>) (output <string>) :key header)
+  (sphinx-scm->rst scm-path-list output :header header)
   (sphinx-toctree :path output))
 
 (define-method sphinx-scm->rst ((scm <string>))
@@ -153,6 +153,8 @@
          (with-output-to-file rst
            (^() (load scm))))))
 
-(define-method sphinx-scm->rst ((scm-list <pair>) (output <string>))
+(define-method sphinx-scm->rst ((scm-list <pair>) (output <string>) :key (header ""))
   (with-output-to-file output
-    (^() (for-each (^p (if (file-exists? p) (load p))) scm-list))))
+    (^()
+      (print header)
+      (for-each (^p (if (file-exists? p) (load p))) scm-list))))

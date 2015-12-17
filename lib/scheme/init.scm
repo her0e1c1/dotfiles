@@ -154,3 +154,6 @@
              [ (pair? info) ]
              [ (pair? (cdr info)) ])
             info))
+
+(define (join-line list)
+  (string-join list "\n"))
