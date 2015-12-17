@@ -134,14 +134,25 @@
 ~d
 "))
 
-; [Filepath] -> IO String
-(define (sphinx-include-scm-list scm-path-list)
-  (for-each sphinx-scm->rst scm-path-list)
-  (sphinx-toctree :path scm-path-list))
+(define (sphinx-ext-scm->rst scm)
+  (regexp-replace #/\.scm/ scm ".rst"))
 
-(define (sphinx-scm->rst path.scm)
-  (if (not (file-exists? path.scm))
+; [Filepath] -> IO String
+(define-method sphinx-include-scm-list ((scm-path-list <pair>))
+  (for-each sphinx-scm->rst scm-path-list)
+  (sphinx-toctree :path (map sphinx-ext-scm->rst scm-path-list)))
+
+(define-method sphinx-include-scm-list ((scm-path-list <pair>) (output <string>))
+  (sphinx-scm->rst scm-path-list output)
+  (sphinx-toctree :path output))
+
+(define-method sphinx-scm->rst ((scm <string>))
+  (if (not (file-exists? scm))
       (error #"~path.scm doesn't exist")
-   (let1 rst (regexp-replace #/\.scm/ path.scm ".rst")
+   (let1 rst (sphinx-ext-scm->rst scm)
          (with-output-to-file rst
-           (^() (load path.scm))))))
+           (^() (load scm))))))
+
+(define-method sphinx-scm->rst ((scm-list <pair>) (output <string>))
+  (with-output-to-file output
+    (^() (for-each (^p (if (file-exists? p) (load p))) scm-list))))
