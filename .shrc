@@ -1,37 +1,15 @@
-# file permissions: rwxr-xr-x
-#
-# umask	022
-
-# Enable the builtin emacs(1) command line editor in sh(1),
-# e.g. C-a -> beginning-of-line.
 set -o emacs
-
-# Uncomment this and comment the above to enable the builtin vi(1) command
-# line editor in sh(1), e.g. ESC to go into visual mode.
-# set -o vi
-
 
 # some useful aliases
 alias h='fc -l'
-alias j=jobs
 alias m=$PAGER
-alias ll='ls -laFo'
-alias l='ls -l'
-alias laa='ls -l'
 alias g='egrep -i'
 alias go="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 
 goshe(){
     local main=$1; shift;
-    gosh -l ~/lib/scheme/init.scm -e "(--> (begin $main) (if (not (undefined? it)) (print it)))" "$@" -Eexit
+    gosh -l ~/lib/scheme/init.scm -e "(--> $main (if (not (undefined? it)) (print it)))" "$@" -Eexit
 }
-
- 
-# # be paranoid
-# alias cp='cp -ip'
-# alias mv='mv -i'
-# alias rm='rm -i'
-
 
 # # set prompt: ``username@hostname$ '' 
 # PS1="`whoami`@`hostname | sed 's/\..*//'`"
@@ -43,74 +21,4 @@ goshe(){
 # search path for cd(1)
 # CDPATH=:$HOME
 
-#  ce 'p("1\n");'
-__C_INCLUDED_HEADERS=$(cat <<EOS
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/acl.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-
-#include <limits.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <grp.h>
-#include <limits.h>
-#include <paths.h>
-#include <err.h>
-EOS
-)
-
-_complie_and_run_in_c(){
-    local main source tfile
-    main=$1; shift;
-    source=$(cat <<EOS
-$__C_INCLUDED_HEADERS
-
-extern char **environ;
-
-#define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
-#define REP(k,a) FOR(k,0,a)
-#define o(s) printf("%s", (char*)s);
-
-void p(char *fmt, ...) {
-    va_list list;
-    va_start(list, fmt);
-    vprintf(fmt, list);
-    va_end(list);
-}
-void ps(char *s) {
-    printf("%s", s);
-}
-void pd(int s) {
-    printf("%d", s);
-}
-
-int main(int argc, char* argv[]){
-    $main
-    return 0;
-}
-EOS
-)
-    tfile=`mktemp`
-    echo "$source" | clang -x c - -o $tfile && $tfile "$@"
-    [ -f $tfile ] && \rm $tfile
-}
-
-alias ce=_complie_and_run_in_c
-
-
-# run_c_from_string '#include <stdio.h> ^M int main(){printf("hoge");}'
-run_c_from_string() {
-    local source=$1; shift;
-    tfile=`mktemp`
-    echo "$source" | clang -x c - -o $tfile && $tfile "$@"
-    [ -f $tfile ] && \rm $tfile
-}
+. ~/sh/init
