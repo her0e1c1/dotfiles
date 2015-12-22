@@ -1,3 +1,0 @@
-ge(){
-    gosh -e $@ -E exit
-}

@@ -1,39 +1,3 @@
-_complie_and_run_in_c(){
-    local main source tfile
-    main=$1; shift;
-    source="
-$__C_INCLUDED_HEADERS
-#include <limits.h>
-#include <stdarg.h>
-
-extern char **environ;
-
-#define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
-#define REP(k,a) FOR(k,0,a)
-#define o(s) printf(\"%s\", (char*)s);
-
-void p(char *fmt, ...) {
-    va_list list;
-    va_start(list, fmt);
-    vprintf(fmt, list);
-    va_end(list);
-}
-void ps(char *s) {
-    printf(\"%s\", s);
-}
-void pd(int s) {
-    printf(\"%d\", s);
-}
-
-int main(int argc, char* argv[]){
-    $main
-    return 0;
-}"
-    tfile=`mktemp`
-    echo $source | clang -x c - -o $tfile && $tfile "$@"
-    [ -f $tfile ] && \rm $tfile
-}
-
 cl (){
     if [ $# -eq 2 ]; then
         lopt=$1; shift;
@@ -43,4 +7,48 @@ cl (){
     else
    	    clang -I. $1 && ./a.out
     fi
+}
+
+_complie_and_run_in_c(){
+    local main source tfile
+    main=$1; shift;
+    source=$(cat <<EOS
+$__C_INCLUDED_HEADERS
+
+extern char **environ;
+
+#define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
+#define REP(k,a) FOR(k,0,a)
+#define o(s) printf("%s", (char*)s);
+
+void p(char *fmt, ...) {
+    va_list list;
+    va_start(list, fmt);
+    vprintf(fmt, list);
+    va_end(list);
+}
+void ps(char *s) {
+    printf("%s", s);
+}
+void pd(int s) {
+    printf("%d", s);
+}
+
+int main(int argc, char* argv[]){
+    $main
+    return 0;
+}
+EOS
+)
+    tfile=`mktemp`
+    echo "$source" | clang -x c - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
+}
+
+# run_c_from_string '#include <stdio.h> ^M int main(){printf("hoge");}'
+run_c_from_string() {
+    local source=$1; shift;
+    tfile=`mktemp`
+    echo "$source" | clang -x c - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
 }

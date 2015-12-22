@@ -1,24 +1,32 @@
 
+clc (){
+	clang++ -std=c++11 -I. -I ~/lib/cpp/ $1 && ./a.out
+}
+
 _complie_and_run_in_cpp(){
     local main source tfile
     main=$1; shift;
-    [ -z "$main" ] && main='""'
-    source="
+    source=$(cat <<EOS
 $__C_INCLUDED_HEADERS
 $__CPP_INCLUDED_HEADERS
-#include \"myutils.h\"
+#include "myutils.h"
 
-using namespace std;
+
 int main(int argc, char* argv[]){
-    // cout << $main << endl;
-    $main;
+    $main
     return 0;
-}"
+}
+EOS
+)
     tfile=`mktemp`
-    echo $source | clang++ -std=c++11 -I ~/lib/cpp/ -x c++ - -o $tfile && $tfile "$@"
+    # ""の場合は改行が展開
+    echo "$source" | clang++ -std=c++11 -I ~/lib/cpp/ -x c++ - -o $tfile && $tfile "$@"
     [ -f $tfile ] && \rm $tfile
 }
 
-clc (){
-	clang++ -std=c++11 -I. -I ~/lib/cpp/ $1 && ./a.out
+run_cpp_from_string() {
+    local source=$1; shift;
+    tfile=`mktemp`
+    echo "$source" | clang++ -std=c++11 -I ~/lib/cpp/ -x c++ - -o $tfile && $tfile "$@"
+    [ -f $tfile ] && \rm $tfile
 }

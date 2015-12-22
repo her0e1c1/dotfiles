@@ -84,10 +84,6 @@ runjava() {
     java $1
 }
 
-# メリット
-# 記号が少ない($使わないので、メタプロしやすい)
-# マクロで自分の好きな構文を作りよりタイプ量を減らせる
-# 自分の開発環境なら何でもいいはず
 oneliner_gosh(){
     local Fflag="\n"
     local nflag=false
@@ -133,7 +129,9 @@ EOS
     fi
 
     # TODO: BEGIN/END block
-    cat <<EOF >! $tmpfile
+    # (BEGIN body)として、(set! block (lambda () body)) として展開させればよさそう？
+    # zsh >!直す
+    cat <<EOF >> $tmpfile
 (use util.match)
 (define (main args)
   (let1 ret
@@ -167,3 +165,4 @@ EOF
 }
 alias s=oneliner_gosh
 alias ee="emacs --batch --execute '(message $code)'"
+alias ce=_complie_and_run_in_c

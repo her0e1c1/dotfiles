@@ -1,7 +1,9 @@
 HERE=$(dirname "$(readlink -f $0)")
 
 # First of all, initialize
-for i in ~/sh/common/*; do . $i; done
+. ~/sh/common/valiables
+. ~/sh/common/export
+. ~/sh/common/function
 
 for i in ~/sh/languages/*; do . $i; done
 
@@ -26,6 +28,9 @@ elif [ -n "$ZSH_NAME" ]; then
     for i in ~/sh/zsh/*; do . $i; done
 fi
 
+# import last
+. ~/sh/common/alias
+
 # stty stop undef
 
 # ssh
@@ -34,6 +39,7 @@ eval `ssh-agent` 2> /dev/null 1> /dev/null
 for key in ~/.ssh/*.pem; do
     ssh-add $key 2> /dev/null 1> /dev/null;
 done
+
 # WARNING
 # you must not eval `ssh-agent` again because it resets the old ssh keys
 # eval `ssh-agent` && ssh-add ~/.ssh/*.pem
