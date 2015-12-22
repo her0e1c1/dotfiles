@@ -157,3 +157,10 @@
 
 (define (join-line list)
   (string-join list "\n"))
+
+(define-macro (eval-env s)
+  `(eval ,s (interaction-environment)))
+
+; (null-environment 5)
+(define-macro (eval-null s)
+  `(eval ,s '()))

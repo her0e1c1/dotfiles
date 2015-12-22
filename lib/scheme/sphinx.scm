@@ -86,10 +86,22 @@
          (rslt (sphinx-block (run-ruby path) :block #t)))
     #"~file \n~path => ~rslt"))
 
+; この関数は2回目以降有効っぽいは(１回目ではrstファイルが生成されてない)
+(define (sphinx-toctree-directory dir)
+  (--> 
+   ((flip$ filter-map) (--ls dir)
+    (^x (and-let* ((_ (file-exists? #"~|x|/index.rst"))
+                   (p #"~|x|/index"))
+                  p)))
+   (sort it)
+   (sphinx-block (string-join it "\n") :toctree #t :maxdepth 1)))
+
        ;(sphinx-toctree :glob
 (define (sphinx-toctree :key (maxdepth #f) (glob #f) (pattern #f) (path #f))
+  (set! maxdepth (if maxdepth (string-indent #":maxdepth: ~maxdepth") ""))
   (cond (glob #"
 .. toctree::
+~maxdepth
     :glob:
 
     ~glob
@@ -98,6 +110,7 @@
                                    "\n")
                     #"
 .. toctree::
+~maxdepth
 
 ~p
 "))
@@ -146,15 +159,32 @@
   (sphinx-scm->rst scm-path-list output :header header)
   (sphinx-toctree :path output))
 
+(define (sphinx-load path)
+  (guard (e (else (print #"ERROR: ~path => ~e")))
+         (load path)))
+
 (define-method sphinx-scm->rst ((scm <string>))
   (if (not (file-exists? scm))
       (error #"~path.scm doesn't exist")
    (let1 rst (sphinx-ext-scm->rst scm)
          (with-output-to-file rst
-           (^() (load scm))))))
+           (^() (sphinx-load scm))))))
 
 (define-method sphinx-scm->rst ((scm-list <pair>) (output <string>) :key (header ""))
   (with-output-to-file output
     (^()
       (print header)
-      (for-each (^p (if (file-exists? p) (load p))) scm-list))))
+      (for-each (^p (if (file-exists? p) (sphinx-load p))) scm-list))))
+
+;; (define (sphinx-result-string expression result)
+;;   #"~|expression|\n~|result|")
+
+(define (sphinx-import-directory x :key (dir "s"))
+  (let* ((it (join-line (list (sphinx-section x :up #t) (sphinx-contents :depth 2))))
+         (files (glob #"./~|dir|/~|x|/*.scm")))
+    (if (not (null? files))
+        (print (sphinx-include-scm-list (sort files) #"~|x|.rst" :header it)))))
+
+(define (sphinx-import-each-directory dir)
+  (let1 dirs (map ($ sys-basename $) (glob #"~|dir|/*"))
+        (for-each (^x (sphinx-import-directory x :dir dir)) dirs)))

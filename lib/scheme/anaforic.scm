@@ -60,3 +60,7 @@
 ; when unless if
 (define-macro (fi a b :optional c)
   `(if ,a ,c ,b))
+
+(define-macro (awhen test . body)
+  `(let ((it ,test))
+     (if it (begin ,@body))))

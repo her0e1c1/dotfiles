@@ -73,12 +73,16 @@
     (run-process cmd :redirects '((>& 2 1) (> 1 stdout)) :wait #t))))
 
 ; sh doesn't work if there are more than one process
-(define (oneliner-wrap-shell cmd)
+(define (oneliner-wrap-shell cmd :key (sh 'sh))
   (let1 c (shell-escape-string cmd)
-        `(sh -c ,#". ~~/.shrc \n ~cmd")))
+        `(,sh -c ,#". ~~/.shrc \n ~cmd")))
 
-(define (oneliner-run cmd)
-  (process-output-with-error->string (oneliner-wrap-shell cmd)))
+;; (define (oneliner-run cmd :key (sh 'sh))
+;;   (process-output-with-error->string (oneliner-wrap-shell cmd :sh sh)))
+
+(define (oneliner-run cmd :key (sh 'sh))
+  (let1 s (oneliner-wrap-shell cmd :sh sh)
+        (process-output-with-error->string s)))
 
 (define (oneliner-c cmd) #"ce '~cmd'")
 (define (oneliner-elisp cmd) #"emacs --batch --execute '(message ~cmd)'")
@@ -104,8 +108,37 @@
       (process-output->string-list #"clang ~path && ./a.out ~sa")
       ""))
 
+
+;;; run from string
 (define (run-c-from-string str)
   (oneliner-run #"run_c_from_string '~str'"))
 
 (define (run-cpp-from-string str)
   (oneliner-run #"run_cpp_from_string '~str'"))
+
+(define (run-gauche-from-string str)
+  (let1 s #"gosh << EOS
+(print (format \"~~s\" ~str))
+EOS"
+(oneliner-run s)))
+
+
+;;; quote
+(define (escape-single-quote str)
+  (regexp-replace-all #/'/ str "'\\\\''"))
+
+(define (quote-single->double str)
+  (regexp-replace-all #/'/ str "\""))
+
+(define (quote-expression-with-single cmd)
+  (let1 e (escape-single-quote cmd)
+        #"'~e'"))
+
+(define (quote-expression-with-dobule cmd)
+  (let1 e cmd
+        #"\"~e\""))
+
+(define (quote-expression cmd :key (quote #\'))
+  (if (eq? quote #\')
+      (quote-expression-with-single cmd)
+      (quote-expression-with-dobule cmd)))
