@@ -93,7 +93,7 @@ runjava() {
 }
 
 ne() {
-    node -e "console.log($1)"
+    node -e "function P(msg){console.log(msg)}; $1;"
 }
 
 oneliner_gosh(){
