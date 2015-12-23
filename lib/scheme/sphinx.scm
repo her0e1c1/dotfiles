@@ -104,7 +104,7 @@
     #"~file \n~path => ~rslt"))
 
 ; この関数は2回目以降有効っぽいは(１回目ではrstファイルが生成されてない)
-(define (sphinx-toctree-directory :key (dir "."))
+(define (sphinx-toctree-directory :optional (dir "."))
   (--> 
    ((flip$ filter-map) (--ls dir)
     (^x (and-let* ((_ (file-exists? #"~|x|/index.rst"))
@@ -181,7 +181,7 @@
         (if (not (file-exists? abspath))
             (error #"ERROR: ~abspath doesn't exist")
             (guard (e (else (format (standard-error-port) #"ERROR: ~abspath => ~e")))
-                   (print (sphinx-section (sys-basename path) :up #t))
+                   (print (sphinx-section (sys-basename path)))
                    (load abspath)))))
 
 (define-method sphinx-scm->rst ((scm <string>))
@@ -194,9 +194,6 @@
     (^()
       (print header)
       (for-each sphinx-load scm-list))))
-
-;; (define (sphinx-result-string expression result)
-;;   #"~|expression|\n~|result|")
 
 (define (sphinx-import-directory x :key (dir "s"))
   (let* ((it (join-line (list (sphinx-section x :up #t) (sphinx-contents :depth 2))))
@@ -219,20 +216,32 @@
          ("cpp" "cpe")
          ("c" "ce")
          ("node" "ne")
-         ("perl" "perl")
+         ("perl" "perl -E")
+         ("php" "php -r")
+         ("ruby" "ruby -e")
+         ("python" "python -c")
          ))
 
 (define (code->cmd code :key quote language)
-  (let* ((quoted #"~|quote|~|code|~|quote|")
+  (let* ((esc (if (eq? quote #\')
+                  (escape-single-quote code)
+                  ; double quote でカコッた場合を記述
+                  code))
+         (quoted #"~|quote|~|esc|~|quote|")
          (cmd (language->command language)))
     #"~cmd ~quoted"))
 
-(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (print #t))
-  (let* ((cmd (if language (code->cmd cmd :quote quote :language language) cmd))
-         (rt (oneliner-run cmd)))
-    (if msg (p msg))
-    (if warn (p (sphinx-warn msg)))
-    (p (sphinx-block #"$ ~cmd\n~rt" :code-block "sh"))))
+(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (display #t) (file #f) (str #f))
+  (let1 rt
+        (cond (str (run-from-string cmd language))
+              (else (oneliner-run (if language (code->cmd cmd :quote quote :language language) cmd))))
+        (if msg (print msg))
+        (if warn (print (sphinx-warn msg)))
+        (print (if str
+                   (format "~a~a"
+                           (sphinx-block #"~cmd" :code-block language)
+                           (sphinx-block #"~rt" :code-block "sh"))
+                   (sphinx-block #"$ ~|cmd|\n~rt" :code-block "sh")))))
 
 ; for typeless
 (define ptodo ($ print $ sphinx-todo $))
@@ -240,6 +249,8 @@
 (define pw ($ print $ sphinx-warn $))
 (define run oneliner-run+)
 
-(define (cpp code . rest) (apply run code :language "cpp" rest))
-(define (node code . rest) (apply run code :language "node" rest))
-(define (perl code . rest) (apply run code :language "perl" rest))
+(define-macro (sphinx-setup-function name)
+  `(define (,name code . rest) (apply run code :language ',name rest)))
+
+(let1 langs '(c cpp node perl php ruby py)
+      (eval-null `(begin ,@(map (^x `(sphinx-setup-function ,x)) langs))))

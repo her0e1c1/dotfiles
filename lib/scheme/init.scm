@@ -3,6 +3,13 @@
 (define-macro (ignore body :optional default)
   `(guard (_ (else ,default)) ,body))
 
+(define-macro (eval-env s)
+  `(eval ,s (interaction-environment)))
+
+; (null-environment 5)
+(define-macro (eval-null s)
+  `(eval ,s '()))
+
 (load "load.scm")
 (load "fp.scm")
 (load "anaforic.scm")
@@ -157,10 +164,3 @@
 
 (define (join-line list)
   (string-join list "\n"))
-
-(define-macro (eval-env s)
-  `(eval ,s (interaction-environment)))
-
-; (null-environment 5)
-(define-macro (eval-null s)
-  `(eval ,s '()))

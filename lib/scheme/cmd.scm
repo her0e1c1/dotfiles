@@ -48,19 +48,6 @@
                             (cons x acc)))
         '() (--ls path)))
 
-(define (run-scheme path)
-  (if (file-exists? path)
-      (process-output->string-list #"gosh ~path")
-      ""))
-
-(define (run-ruby path)
-  (process-output-with-error->string `(ruby ,path)))
-
-
-(define (get-run-process language)
-  (cond ((member language '("scheme" "scm")) run-scheme)
-        ((equal? language "c") run-c)
-        (else (error "No language " language))))
 
 (define (get-time thunk)
   (let1 t (make <real-time-counter>)
@@ -76,9 +63,6 @@
 (define (oneliner-wrap-shell cmd :key (sh 'sh))
   (let1 c (shell-escape-string cmd)
         `(,sh -c ,#". ~~/.shrc \n ~cmd")))
-
-;; (define (oneliner-run cmd :key (sh 'sh))
-;;   (process-output-with-error->string (oneliner-wrap-shell cmd :sh sh)))
 
 (define (oneliner-run cmd :key (sh 'sh))
   (let1 s (oneliner-wrap-shell cmd :sh sh)
@@ -110,25 +94,24 @@
 
 
 ;;; run from string
-(define (run-c-from-string str)
-  (oneliner-run #"run_c_from_string '~str'"))
-
-(define (run-cpp-from-string str)
-  (oneliner-run #"run_cpp_from_string '~str'"))
-
+(define (run-c-from-string str) #"run_c_from_string '~str'")
+(define (run-cpp-from-string str) #"run_cpp_from_string '~str'")
 (define (run-gauche-from-string str)
-  (let1 s #"gosh << EOS
-(print (format \"~~s\" ~str))
-EOS"
-(oneliner-run s)))
+  #"gosh << EOS
+(let1 r (print (format \"~~s\" ~str)) (if (not (undefined? r)) r))
+EOS")
+(define (run-ruby-from-string str)
+  #"ruby << EOS
+~str
+EOS")
 
+(define (run-from-string str lang)
+  (let1 proc (eval-null (string->symbol (format "run-~a-from-string" lang)))
+        (oneliner-run (proc str))))
 
 ;;; quote
 (define (escape-single-quote str)
   (regexp-replace-all #/'/ str "'\\\\''"))
-
-(define (quote-single->double str)
-  (regexp-replace-all #/'/ str "\""))
 
 (define (quote-expression-with-single cmd)
   (let1 e (escape-single-quote cmd)
