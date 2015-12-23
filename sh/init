@@ -36,6 +36,8 @@ fi
 # stty stop undef
 
 # ssh
+# every time (z)sh is launced, you can prevent ssh-agent from being duplicated
+pkill ssh-agent
 # you should do "ssh-add -l" to check if the command works
 eval `ssh-agent` 2> /dev/null 1> /dev/null
 for key in ~/.ssh/*.pem; do
