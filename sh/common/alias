@@ -49,6 +49,14 @@ alias my=mysql_execute
 alias ce=_complie_and_run_in_c
 alias he=_run_in_haskell
 alias cpe=_complie_and_run_in_cpp
+alias grep='egrep -i'
+alias hist='fc -l'
+# alias go="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
+
+goshe(){
+    local main=$1; shift;
+    gosh -l ~/lib/scheme/init.scm -e "(--> $main (if (not (undefined? it)) (print it)))" "$@" -Eexit
+}
 
 # function
 fg255(){

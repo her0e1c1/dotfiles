@@ -1,5 +1,7 @@
 HERE=$(dirname "$(readlink -f $0)")
 
+set -o emacs
+
 # First of all, initialize
 . ~/sh/common/valiables
 . ~/sh/common/export
