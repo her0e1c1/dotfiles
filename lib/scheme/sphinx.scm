@@ -231,17 +231,22 @@
          (cmd (language->command language)))
     #"~cmd ~quoted"))
 
-(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (display #t) (file #f) (str #f))
-  (let1 rt
-        (cond (str (run-from-string cmd language))
-              (else (oneliner-run (if language (code->cmd cmd :quote quote :language language) cmd))))
-        (if msg (print msg))
-        (if warn (print (sphinx-warn msg)))
-        (print (if str
-                   (format "~a~a"
-                           (sphinx-block #"~cmd" :code-block language)
-                           (sphinx-block #"~rt" :code-block "sh"))
-                   (sphinx-block #"$ ~|cmd|\n~rt" :code-block "sh")))))
+(define (oneliner-run-str cmd :key language)
+  (let1 ret (run-from-string cmd language)
+        (format "~a~a"
+                (sphinx-block #"~cmd" :code-block language)
+                (sphinx-block #"~ret" :code-block "sh"))))
+
+(define (oneliner-run-line cmd :key language quote)
+  (let* ((line (if language (code->cmd cmd :quote quote :language language) cmd))
+         (ret (oneliner-run line)))
+    (sphinx-block #"$ ~line\n~ret" :code-block "sh")))
+  
+(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (file #f) (str #f))
+  (if msg (print msg))
+  (if warn (print (sphinx-warn msg)))
+  (print (cond (str (oneliner-run-str cmd :language language))
+               (else (oneliner-run-line cmd :language language :quote quote)))))
 
 ; for typeless
 (define ptodo ($ print $ sphinx-todo $))
