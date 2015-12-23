@@ -84,6 +84,10 @@ runjava() {
     java $1
 }
 
+ne() {
+    node -e "console.log($1)"
+}
+
 oneliner_gosh(){
     local Fflag="\n"
     local nflag=false
