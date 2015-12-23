@@ -13,7 +13,7 @@
              ((char=? #\Q ch) (finish acc))
              (else (loop (read-char port) chacc)))))))
 
-(define-reader-directive 'HEREDOCUMENT
+(define-reader-directive 'DOC
   (^(sym port ctx)
     (let1 delimiter (string-trim-both (read-line port))
           (do ((line (read-line port) (read-line port))

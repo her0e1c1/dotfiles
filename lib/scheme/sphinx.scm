@@ -1,3 +1,20 @@
+; カテゴリ 言語、型、処理
+; 処理が同じでも、言語によって、名前が違う(length, string-length)
+; ただ、polymorphismにして、データに対して同じ処理名を記述すればよいね!
+
+; psを自動付加
+; psにインクルード文追加
+; (ps "msg" :inlucde)
+
+; (group みたにして囲むべきかな(階層))
+; warnを全てに設定するのはよいが、全てに出力したくないね (dataとしては持っていてよいのか)
+; (run "" :msg :quote :warn :tags :zsh :dummy :language :args :stdin :file)
+
+; file(aliasなし)/multi line(HEREDOC?) (改行があった場合とか)/oneliner/alias onliner
+
+; /perl/node/py/gosh/c/cpp/ghc/java/ruby/sh
+
+; (links 'ghc 'list)
 
 (define (sphinx-section name :key (ch #\=) (up #f))
   (let* ((bar (make-string (string-length name) ch))
@@ -87,7 +104,7 @@
     #"~file \n~path => ~rslt"))
 
 ; この関数は2回目以降有効っぽいは(１回目ではrstファイルが生成されてない)
-(define (sphinx-toctree-directory dir)
+(define (sphinx-toctree-directory :key (dir "."))
   (--> 
    ((flip$ filter-map) (--ls dir)
     (^x (and-let* ((_ (file-exists? #"~|x|/index.rst"))
@@ -160,21 +177,23 @@
   (sphinx-toctree :path output))
 
 (define (sphinx-load path)
-  (guard (e (else (print #"ERROR: ~path => ~e")))
-         (load path)))
+  (let1 abspath (abs path)
+        (if (not (file-exists? abspath))
+            (error #"ERROR: ~abspath doesn't exist")
+            (guard (e (else (format (standard-error-port) #"ERROR: ~abspath => ~e")))
+                   (print (sphinx-section (sys-basename path) :up #t))
+                   (load abspath)))))
 
 (define-method sphinx-scm->rst ((scm <string>))
-  (if (not (file-exists? scm))
-      (error #"~path.scm doesn't exist")
-   (let1 rst (sphinx-ext-scm->rst scm)
+  (let1 rst (sphinx-ext-scm->rst scm)
          (with-output-to-file rst
-           (^() (sphinx-load scm))))))
+           (^() (sphinx-load scm)))))
 
 (define-method sphinx-scm->rst ((scm-list <pair>) (output <string>) :key (header ""))
   (with-output-to-file output
     (^()
       (print header)
-      (for-each (^p (if (file-exists? p) (sphinx-load p))) scm-list))))
+      (for-each sphinx-load scm-list))))
 
 ;; (define (sphinx-result-string expression result)
 ;;   #"~|expression|\n~|result|")
@@ -188,3 +207,39 @@
 (define (sphinx-import-each-directory dir)
   (let1 dirs (map ($ sys-basename $) (glob #"~|dir|/*"))
         (for-each (^x (sphinx-import-directory x :dir dir)) dirs)))
+
+(define (template$ str)
+  (pa$ regexp-replace #/REPLACE/ str))
+
+(define (template-map proc list template)
+  (map (^x (proc ((template$ template) x))) list))
+
+(define (language->command lang)
+  (match (x->string lang)
+         ("cpp" "cpe")
+         ("c" "ce")
+         ("node" "ne")
+         ("perl" "perl")
+         ))
+
+(define (code->cmd code :key quote language)
+  (let* ((quoted #"~|quote|~|code|~|quote|")
+         (cmd (language->command language)))
+    #"~cmd ~quoted"))
+
+(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (print #t))
+  (let* ((cmd (if language (code->cmd cmd :quote quote :language language) cmd))
+         (rt (oneliner-run cmd)))
+    (if msg (p msg))
+    (if warn (p (sphinx-warn msg)))
+    (p (sphinx-block #"$ ~cmd\n~rt" :code-block "sh"))))
+
+; for typeless
+(define ptodo ($ print $ sphinx-todo $))
+(define ps ($ print $ sphinx-section $))
+(define pw ($ print $ sphinx-warn $))
+(define run oneliner-run+)
+
+(define (cpp code . rest) (apply run code :language "cpp" rest))
+(define (node code . rest) (apply run code :language "node" rest))
+(define (perl code . rest) (apply run code :language "perl" rest))
