@@ -93,7 +93,28 @@ runjava() {
 }
 
 ne() {
-    node -e "function P(msg){console.log(msg)}; $1;"
+    node -e "
+function P(msg){console.log(msg)};
+var _ = require('underscore');
+var jsdom = require('jsdom');
+var window = jsdom.jsdom().defaultView
+var \$ = require('jquery')(window);
+$1;
+"
+}
+
+py() {
+    python -c "
+from os.path import isdir, exists, join, basename
+from os import environ, makedirs
+from re import match, search
+from sys import exit
+from shutil import copy, rmtree, move
+from argparse import ArgumentParser
+def P(msg):
+    print(msg)
+$1
+"
 }
 
 oneliner_gosh(){

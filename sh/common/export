@@ -28,3 +28,6 @@ if [ -n "$(which vim)" ]; then
 else
     export EDITOR=vi
 fi
+
+# when using node -e "", you can use libraries
+export NODE_PATH=/usr/local/lib/node_modules/
