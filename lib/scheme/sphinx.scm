@@ -216,37 +216,43 @@
          ("cpp" "cpe")
          ("c" "ce")
          ("node" "ne")
+         ("py" "py")
+
          ("perl" "perl -E")
          ("php" "php -r")
          ("ruby" "ruby -e")
-         ("python" "python -c")
+         ("ghc" "ghc -e")
+         ("sh" "sh -c")
+         ("zsh" "zsh -c")
          ))
 
-(define (code->cmd code :key quote language)
+(define (code->cmd code :key quote language argv)
   (let* ((esc (if (eq? quote #\')
                   (escape-single-quote code)
                   ; double quote でカコッた場合を記述
                   code))
          (quoted #"~|quote|~|esc|~|quote|")
          (cmd (language->command language)))
-    #"~cmd ~quoted"))
+    #"~cmd ~quoted ~argv"))
 
-(define (oneliner-run-str cmd :key language)
-  (let1 ret (run-from-string cmd language)
+(define (oneliner-run-str cmd :key language argv)
+  (let1 ret (run-from-string cmd language argv)
         (format "~a~a"
                 (sphinx-block #"~cmd" :code-block language)
                 (sphinx-block #"~ret" :code-block "sh"))))
 
-(define (oneliner-run-line cmd :key language quote)
-  (let* ((line (if language (code->cmd cmd :quote quote :language language) cmd))
+(define (oneliner-run-line cmd :key language quote argv)
+  (let* ((line (if language (code->cmd cmd :quote quote :language language :argv argv) cmd))
          (ret (oneliner-run line)))
     (sphinx-block #"$ ~line\n~ret" :code-block "sh")))
-  
-(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (file #f) (str #f))
+
+; TODO: quoteを自動識別  
+; TODO: expected追加
+(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (file #f) (str #f) (argv ""))
   (if msg (print msg))
-  (if warn (print (sphinx-warn msg)))
-  (print (cond (str (oneliner-run-str cmd :language language))
-               (else (oneliner-run-line cmd :language language :quote quote)))))
+  (if warn (print (sphinx-warn warn)))
+  (print (cond (str (oneliner-run-str cmd :language language :argv argv))
+               (else (oneliner-run-line cmd :language language :quote quote :argv argv)))))
 
 ; for typeless
 (define ptodo ($ print $ sphinx-todo $))
@@ -257,5 +263,5 @@
 (define-macro (sphinx-setup-function name)
   `(define (,name code . rest) (apply run code :language ',name rest)))
 
-(let1 langs '(c cpp node perl php ruby py)
+(let1 langs '(c cpp node perl php ruby py ghc sh zsh)
       (eval-null `(begin ,@(map (^x `(sphinx-setup-function ,x)) langs))))

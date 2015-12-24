@@ -94,20 +94,25 @@
 
 
 ;;; run from string
-(define (run-c-from-string str) #"run_c_from_string '~str'")
-(define (run-cpp-from-string str) #"run_cpp_from_string '~str'")
-(define (run-gauche-from-string str)
+;;; ignore argv for now
+(define (run-c-from-string str argv) #"run_c_from_string '~str'")
+(define (run-cpp-from-string str argv) #"run_cpp_from_string '~str'")
+(define (run-gauche-from-string str argv)
   #"gosh << EOS
 (let1 r (print (format \"~~s\" ~str)) (if (not (undefined? r)) r))
 EOS")
-(define (run-ruby-from-string str)
+(define (run-ruby-from-string str argv)
   #"ruby << EOS
 ~str
 EOS")
+(define (run-sh-from-string str argv)
+  #"sh << EOS
+~str
+EOS")
 
-(define (run-from-string str lang)
+(define (run-from-string str lang argv)
   (let1 proc (eval-null (string->symbol (format "run-~a-from-string" lang)))
-        (oneliner-run (proc str))))
+        (oneliner-run (proc str argv))))
 
 ;;; quote
 (define (escape-single-quote str)
