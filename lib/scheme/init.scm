@@ -32,7 +32,6 @@
 (define rl read-line)
 
 ; anaforic-read-lines
-; (file->string "PATH")
 (define (rls filepath f)
   (call-with-input-file filepath
     (lambda (in)
@@ -64,11 +63,6 @@
             (else (loop next (cons p acc)))
             ))))
 
-(define-macro  (rl regex s vars . body)
-  `(rxmatch-let (rxmatch ,regex ,s)
-                ,vars
-                ,@body))
-
 (define (rm rxp str)
   (if-let1 m (rxmatch rxp str)
        (list
@@ -93,6 +87,7 @@
         (rxmatch->string rxp str)
         )
        #f))
+
 ; "\\0" => #!r"\0"
 ; #!""がいいせめて
 (define-reader-directive 'r

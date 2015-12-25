@@ -64,3 +64,8 @@
 (define-macro (awhen test . body)
   `(let ((it ,test))
      (if it (begin ,@body))))
+
+
+;; (define-macro (alambda args . body)
+;;   `(letrec ((self ,args ,@body))
+;;      self))

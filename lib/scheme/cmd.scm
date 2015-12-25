@@ -71,27 +71,9 @@
 (define (oneliner-c cmd) #"ce '~cmd'")
 (define (oneliner-elisp cmd) #"emacs --batch --execute '(message ~cmd)'")
 
-; TODO: make macro and use args as string
-(define (run-ce cmd . args)
-  (let* ((s (string-join (map x->string args) " "))
-         (wrap (oneliner-c cmd))
-         (cmd+args #"~wrap ~s")) 
-    (process-output-with-error->string (oneliner-wrap-shell cmd+args))))
-
 (define (oneliner-simple-run-print cmd)
   (let1 ret (oneliner-run cmd)
         (p (sphinx-block #"~cmd\n~ret" :code-block "sh"))))
-
-(define (cmd-c path . args)
-  (let1 sa (string-join (map x->string args) " ")
-        #"clang ~path && ./a.out ~sa"))
-
-(define (run-c path . args)
-  (define sa (string-join (map x->string args) " "))
-  (if (file-exists? path)
-      (process-output->string-list #"clang ~path && ./a.out ~sa")
-      ""))
-
 
 ;;; run from string
 ;;; ignore argv for now
@@ -105,8 +87,16 @@ EOS")
   #"ruby << EOS
 ~str
 EOS")
+(define (run-node-from-string str argv)
+  #"node << EOS
+~str
+EOS")
 (define (run-sh-from-string str argv)
   #"sh << EOS
+~str
+EOS")
+(define (run-zsh-from-string str argv)
+  #"zsh << EOS
 ~str
 EOS")
 

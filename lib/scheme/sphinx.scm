@@ -1,19 +1,4 @@
-; カテゴリ 言語、型、処理
-; 処理が同じでも、言語によって、名前が違う(length, string-length)
-; ただ、polymorphismにして、データに対して同じ処理名を記述すればよいね!
-
-; psを自動付加
-; psにインクルード文追加
-; (ps "msg" :inlucde)
-
 ; (group みたにして囲むべきかな(階層))
-; warnを全てに設定するのはよいが、全てに出力したくないね (dataとしては持っていてよいのか)
-; (run "" :msg :quote :warn :tags :zsh :dummy :language :args :stdin :file)
-
-; file(aliasなし)/multi line(HEREDOC?) (改行があった場合とか)/oneliner/alias onliner
-
-; /perl/node/py/gosh/c/cpp/ghc/java/ruby/sh
-
 ; (links 'ghc 'list)
 
 (define (sphinx-section name :key (ch #\=) (up #f))
@@ -24,6 +9,8 @@
 ~name
 ~bar
 "))
+
+(define (sphinx-list ls) 0)
 
 (define (sphinx-section-test path :key (language #f))
   (define language (if (not language) language (path-extension path)))
@@ -132,30 +119,6 @@
 ~p
 "))
         (else (error "No"))))
-;;   (let* ((m (if maxdepth #":maxdepth: ~maxdepth" "")))
-;;     #"
-;; .. toctree::
-;;     ~m
-
-;; ~indented
-;; "))
-
-  ;; ((flip$ filter-map) (ls "langs")
-  ;;  (^x (and-let* ((_ (file-exists? #"~|x|/index.rst"))
-  ;;                 (p #"~|x|/index"))
-  ;;                p)))
-
-;;    (sphinx-block (string-join it "\n") :toctree #t :maxdepth 1)
-
-;; ;;    (toctree (let* ((m (if maxdepth #":maxdepth: ~maxdepth" "")))
-;;               #"
-;; .. toctree::
-;;     ~m
-
-;; ~indented
-;; "))
-
-; TODO: create a c file if it is necessary
 
 (define (sphinx-todo s) #".. todo:: ~s")
 (define (sphinx-contents :key (depth #f) (label #f))
@@ -217,6 +180,7 @@
          ("c" "ce")
          ("node" "ne")
          ("py" "py")
+         ("gosh" "s")
 
          ("perl" "perl -E")
          ("php" "php -r")
@@ -246,12 +210,19 @@
          (ret (oneliner-run line)))
     (sphinx-block #"$ ~line\n~ret" :code-block "sh")))
 
+(define (oneliner-run-path cmd :key language path)
+  (let* ((ret (oneliner-run cmd)))
+    (format "~a~a"
+            (sphinx-block (file->string path) :code-block language)
+            (sphinx-block #"~cmd\n~ret" :code-block "sh"))))
+
 ; TODO: quoteを自動識別  
 ; TODO: expected追加
-(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (file #f) (str #f) (argv ""))
+(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (path #f) (str #f) (argv ""))
   (if msg (print msg))
   (if warn (print (sphinx-warn warn)))
   (print (cond (str (oneliner-run-str cmd :language language :argv argv))
+               (path (oneliner-run-path cmd :language language :path path))
                (else (oneliner-run-line cmd :language language :quote quote :argv argv)))))
 
 ; for typeless
@@ -265,3 +236,7 @@
 
 (let1 langs '(c cpp node perl php ruby py ghc sh zsh)
       (eval-null `(begin ,@(map (^x `(sphinx-setup-function ,x)) langs))))
+
+(define-macro (gosh cmd . rest)
+  (let1 c (format "~s" cmd)
+   `(apply run ,c :language "gosh" ',rest)))

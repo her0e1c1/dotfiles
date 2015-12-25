@@ -64,3 +64,15 @@
 ; sys-sleep
 
 (define s-join string-join)
+
+
+; for regex
+; TODO: ($M a b) くらいの記述量にする
+(define-macro ($a :optional match)
+  (if (undefined? match)
+      `(it 'after)
+      `(,match 'after)))
+(define-macro ($b :optional match)
+  (if (undefined? match)
+      `(it 'before)
+      `(,match 'before)))
