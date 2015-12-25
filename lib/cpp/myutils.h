@@ -73,6 +73,9 @@ const long long MOD =   1000000009;
       cout << endl;}                               \
   }
 
+#define EACHP(x)                                \
+  EACH(i, x) P(*i);
+
 #define PIT(b, e)                                               \
   cout << #b << " ~ " << #e << " => ";                          \
   if (b <= e) {                                                 \
