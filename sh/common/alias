@@ -1,3 +1,4 @@
+alias tac="tail -r"
 alias si="sh -i"
 alias pgrep="ps aux | grep"
 alias gosh="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
@@ -93,109 +94,35 @@ runjava() {
 }
 
 ne() {
+    local main=$1; shift;
     node -e "
 function P(msg){console.log(msg)};
 var _ = require('underscore');
 var jsdom = require('jsdom');
 var window = jsdom.jsdom().defaultView
 var \$ = require('jquery')(window);
-$1;
-"
+var JD = require('jquery-deferred');
+$main
+" $@
 }
 
 py() {
+    local main=$1; shift;
     python -c "
 from os.path import isdir, exists, join, basename
 from os import environ, makedirs
-from re import match, search
-from sys import exit
+from re import match, search, X, split
+from sys import exit, argv
 from shutil import copy, rmtree, move
 from argparse import ArgumentParser
 def P(msg):
     print(msg)
-$1
-"
+$main
+" $@
 }
 
-oneliner_gosh(){
-    local Fflag="\n"
-    local nflag=false
-    local lflag=false  # TODO
-    local pflag=false
-    local Lflag=""
-    # -0 -0777 -0
-    local zeroflag=false
-    local dflag=false  # debug
-    local iflag=false  # TODO
-
-    # TODO: -x -f -d オプションによるファイルパス識別
-    while getopts lnpdF:L: OPT; do
-	    case $OPT in
-            d) dflag=true
-               ;;
-	        n) nflag=true
-	           ;;
-            p) pflag=true
-	           ;;
-            F) Fflag=$OPTARG
-               ;;
-	    esac
-    done
-    shift $((OPTIND - 1))
-
-    if [ $# -eq 0 ]; then
-        gosh -l ~/lib/scheme/init.scm
-        return;
-    fi
-    
-    # TODO: split by regexp
-    local F=$(cat <<EOS
-(define F (string-split line "$Fflag"))
-EOS
-)
-    local tmpfile=`mktemp`
-    local code=$1; shift;
-    # if $nflag; then
-    #     code="(port-for-each (lambda (line) $F (--> line $code)) read-line)"
-    if $pflag; then
-        code="(port-for-each (lambda (line) $F (--> line $code (print it))) read-line)"
-    fi
-
-    # TODO: BEGIN/END block
-    # (BEGIN body)として、(set! block (lambda () body)) として展開させればよさそう？
-    # zsh >!直す
-    cat <<EOF >> $tmpfile
-(use util.match)
-(define (main args)
-  (let1 ret
-     (match args
-        [() 1]
-        [(_)  $code]
-        ; かつ -p or -n
-        [(_ . filepath-list)
-         (dolist (filepath filepath-list)
-                 (with-input-from-file filepath
-                   (lambda () (let loop ((line (read-line))) $code
-                                (if (not (eof-object? line))
-                                    (loop (read-line)))))))
-                   ])
-   
-   (if (not (undefined? ret)) (print ret)))
-  0)
-EOF
-
-    if [ -n "$code" ]; then
-        if $dflag; then
-            cat $tmpfile
-        else
-            gosh -l ~/lib/scheme/init.scm $tmpfile $@
-        fi
-    else
-        gosh -l ~/lib/scheme/init.scm  -e "" -E exit
-    fi
-
-    rm $tmpfile
-}
-alias s=oneliner_gosh
+alias s="\gosh -l ~/lib/scheme/init.scm ~/github/onelinerForGauche/main.scm"
+alias ss="\gosh ~/github/onelinerForGauche/main.scm"
+alias sl="\gosh -l ~/lib/scheme/init.scm -e '' -Eexit"
 alias ee="emacs --batch --execute '(message $code)'"
 alias ce=_complie_and_run_in_c
