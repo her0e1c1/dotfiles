@@ -38,6 +38,30 @@
   (let1 code (path-extension path)
         (sphinx-block (file->string path) :code-block code :linenos linenos)))
 
+(define (sphinx-block-js code id :key (onload #f))
+  (let1 block (sphinx-block code :code-block "javascript")
+  #"
+~block
+
+.. raw:: html
+
+   <button id='~|id|'>RUN</button>
+   <script>
+     $('#~|id|').on('click', function(){ ~code });
+   </script> 
+"))
+
+(define (sphinx-block-html code)
+  (let* ((block (sphinx-block code :code-block "html"))
+         (indented (string-indent code)))
+  #"
+~block
+
+.. raw:: html
+
+~indented
+"))
+
 (define (sphinx-block s :key (code-block #f) (block #f) (linenos #f) (toctree #f) (maxdepth #f))
   (define indented (s-indent s))
   (define arg-linenos (if linenos ":linenos:" ""))
@@ -240,3 +264,15 @@
 (define-macro (gosh cmd . rest)
   (let1 c (format "~s" cmd)
    `(apply run ,c :language "gosh" ',rest)))
+
+(define (js cmd :key (id #f) (onload #f) (msg #f) (warn #f))
+  (let* ((id (if id id (x->string (gensym)))))
+    (if msg (print msg))
+    (if warn (print (sphinx-warn warn)))
+    (print (sphinx-block-js cmd id :onload onload))))
+
+(define (html cmd :key (id #f) (onload #f) (msg #f) (warn #f))
+  (let* ((id (if id id (x->string (gensym)))))
+    (if msg (print msg))
+    (if warn (print (sphinx-warn warn)))
+    (print (sphinx-block-html cmd))))
