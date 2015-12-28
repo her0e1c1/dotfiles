@@ -99,6 +99,10 @@ EOS")
   #"zsh << EOS
 ~str
 EOS")
+(define (run-gosh-from-string str argv)
+  #"gosh << EOS
+~str
+EOS")
 
 (define (run-from-string str lang argv)
   (let1 proc (eval-null (string->symbol (format "run-~a-from-string" lang)))
