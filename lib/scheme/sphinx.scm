@@ -205,6 +205,7 @@
          ("node" "ne")
          ("py" "py")
          ("gosh" "s")
+         ("emacs" "ee")
 
          ("perl" "perl -E")
          ("php" "php -r")
@@ -261,9 +262,13 @@
 (let1 langs '(c cpp node perl php ruby py ghc sh zsh)
       (eval-null `(begin ,@(map (^x `(sphinx-setup-function ,x)) langs))))
 
-(define-macro (gosh cmd :key (str #f) :rest rest)
+(define-macro (gosh cmd :key (str #f) (msg #f) (warn #f) :rest rest)
   (let1 c (if str cmd (format "~s" cmd))
    `(apply run ,c :language "gosh" :str ,str ',rest)))
+
+(define-macro (emacs cmd :key (str #f) (msg #f) (warn #f) :rest rest)
+  (let1 c (if str cmd (format "~s" cmd))
+   `(apply run ,c :language "emacs" :str ,str ',rest)))
 
 (define (js cmd :key (id #f) (onload #f) (msg #f) (warn #f))
   (let* ((id (if id id (x->string (gensym)))))
