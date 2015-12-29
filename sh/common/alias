@@ -124,5 +124,19 @@ $main
 alias s="\gosh -l ~/lib/scheme/init.scm ~/github/onelinerForGauche/main.scm"
 alias ss="\gosh ~/github/onelinerForGauche/main.scm"
 alias sl="\gosh -l ~/lib/scheme/init.scm -e '' -Eexit"
-alias ee="emacs --batch --execute '(message $code)'"
+# alias ee="emacs --batch --execute '(message $code)'"
 alias ce=_complie_and_run_in_c
+
+
+ee() {
+    emacs --batch --execute "
+(progn
+ (require 'cl)
+ ; caskをパスを指定してロードすれば、
+ ; 合わせて以下のモジュールをロードしたことになる
+ ; '(s dash f commander git epl shut-up cl-lib package-build)
+ (require 'cask \"~/.cask/cask.el\")
+ (princ $1)
+)
+"
+}
