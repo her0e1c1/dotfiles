@@ -158,3 +158,11 @@
              [ (pair? info) ]
              [ (pair? (cdr info)) ])
             info))
+
+(define (at* alist . body))
+(define (at alist index :optional (fallback #f))
+  (let* ((len (length alist))
+         (i (if (>= index 0) index (+ len index))))
+    (if (<= 0 i (- len 1))
+        (list-ref alist i)
+        fallback)))
