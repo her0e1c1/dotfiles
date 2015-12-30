@@ -16,6 +16,8 @@
 (load "abbrebiation.scm")
 (load "string.scm")
 
+(define SEED (x->integer (current-second)))
+(set! (random-data-seed) SEED)
 
 (define (false? x)
   (or (eq? x '())
@@ -156,6 +158,3 @@
              [ (pair? info) ]
              [ (pair? (cdr info)) ])
             info))
-
-(define (join-line list)
-  (string-join list "\n"))

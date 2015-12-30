@@ -29,3 +29,7 @@
 
 (define (string-width s)
   (string-fold (lambda (c acc) (+ acc (if (char-set-contains? char-set:ascii c) 1 2))) 0 s))
+
+
+(define (join-line list) (string-join list "\n"))
+(define string-join-line join-line)

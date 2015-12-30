@@ -16,6 +16,8 @@
 (use file.util)
 (use parser.peg)  ; parsec
 
+(use scheme.time)
+
 (use gauche.cgen)
 (use gauche.generator)
 (use gauche.interactive)
@@ -26,6 +28,8 @@
 (use gauche.termios)
 (use gauche.test)
 (use gauche.time)
+
+(use data.random)
 
 (use rfc.json)
 ; (use gauche.internal)

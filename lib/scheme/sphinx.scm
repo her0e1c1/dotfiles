@@ -109,10 +109,15 @@
        alist)
      )))
 
-(define (sphinx-run-path-ruby path)
-  (let* ((file (sphinx-block-path path))
-         (rslt (sphinx-block (run-ruby path) :block #t)))
-    #"~file \n~path => ~rslt"))
+; (define (sphinx-toctree-directory. :optional (dir "."))
+(define-method sphinx-toctree-directory. (:optional (dir "."))
+  (if (not (file-is-directory? dir))
+      ""
+  (let1 rsts (glob (build-path dir "*.rst"))
+        (sphinx-block (string-join rsts "\n") :toctree #t :maxdepth 1))))
+
+(define-method sphinx-toctree-directory. ((dirs <list>))
+  (string-join-line (map sphinx-toctree-directory. dirs)))
 
 ; この関数は2回目以降有効っぽいは(１回目ではrstファイルが生成されてない)
 (define (sphinx-toctree-directory :optional (dir "."))
@@ -124,7 +129,6 @@
    (sort it)
    (sphinx-block (string-join it "\n") :toctree #t :maxdepth 1)))
 
-       ;(sphinx-toctree :glob
 (define (sphinx-toctree :key (maxdepth #f) (glob #f) (pattern #f) (path #f))
   (set! maxdepth (if maxdepth (string-indent #":maxdepth: ~maxdepth") ""))
   (cond (glob #"
@@ -166,15 +170,13 @@
 (define (sphinx-load path)
   (let1 abspath (abs path)
         (if (not (file-exists? abspath))
-            (error #"ERROR: ~abspath doesn't exist")
-            (guard (e (else (format (standard-error-port) #"ERROR: ~abspath => ~e")))
+            (error #"ERROR: ~abspath doesn't exist\n")
+            (guard (e (else (format (standard-error-port) #"ERROR: ~abspath => ~e\n")))
                    (print (sphinx-section (sys-basename path)))
                    (load abspath)))))
 
-(define-method sphinx-scm->rst ((scm <string>))
-  (let1 rst (sphinx-ext-scm->rst scm)
-         (with-output-to-file rst
-           (^() (sphinx-load scm)))))
+(define-method sphinx-scm->rst ((scm <string>) :key (header ""))
+  (sphinx-scm->rst (list scm) (sphinx-ext-scm->rst scm) :header header))
 
 (define-method sphinx-scm->rst ((scm-list <pair>) (output <string>) :key (header ""))
   (with-output-to-file output
@@ -182,15 +184,18 @@
       (print header)
       (for-each sphinx-load scm-list))))
 
-(define (sphinx-import-directory x :key (dir "s"))
-  (let* ((it (join-line (list (sphinx-section x :up #t) (sphinx-contents :depth 2))))
-         (files (glob #"./~|dir|/~|x|/*.scm")))
-    (if (not (null? files))
-        (print (sphinx-include-scm-list (sort files) #"~|x|.rst" :header it)))))
+; create index.rst file in the dir
+(define-method sphinx-create-index-in-directory ((dir <string>))
+  (if (file-is-directory? dir)
+  (let* ((header (string-join-line (list (sphinx-section dir :up #t) (sphinx-contents :depth 2))))
+         (index #"~|dir|/index.rst")
+         (files (glob #"~|dir|/*.scm")))
+    (cond ((file-exists? index) (format (standard-error-port) #"SKIP: ~|index| already exists\n"))
+          ((null? files) (format (standard-error-port) #"EMPTY: ~dir\n"))
+          (else (sphinx-include-scm-list (sort files) index :header header))))))
 
-(define (sphinx-import-each-directory dir)
-  (let1 dirs (map ($ sys-basename $) (glob #"~|dir|/*"))
-        (for-each (^x (sphinx-import-directory x :dir dir)) dirs)))
+(define-method sphinx-create-index-in-directory ((dirs <list>))
+  (map sphinx-create-index-in-directory dirs))
 
 (define (template$ str)
   (pa$ regexp-replace #/REPLACE/ str))
