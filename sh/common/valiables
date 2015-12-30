@@ -21,6 +21,7 @@ EOS
 )
 
 __CPP_INCLUDED_HEADERS=$(cat <<EOF
+#include <typeinfo>
 #include <vector>
 #include <list>
 #include <map>
