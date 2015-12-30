@@ -2,7 +2,7 @@
 ; (links 'ghc 'list)
 
 (define (sphinx-section name :key (ch #\=) (up #f))
-  (let* ((bar (make-string (string-length name) ch))
+  (let* ((bar (make-string (* 3 (string-length name)) ch))
          (upbar (if up bar "")))
     #"
 ~upbar
@@ -257,7 +257,7 @@
 
 ; for typeless
 (define ptodo ($ print $ sphinx-todo $))
-(define ps ($ print $ sphinx-section $))
+(define (ps msg) (print (sphinx-section msg :ch #\-)))
 (define pw ($ print $ sphinx-warn $))
 (define run oneliner-run+)
 
@@ -286,3 +286,28 @@
     (if msg (print msg))
     (if warn (print (sphinx-warn warn)))
     (print (sphinx-block-html cmd))))
+
+(define (sphinx-math-escape s)
+  (-->
+   s
+   (regexp-replace-all #/\n/ it "\n$$")
+   (regexp-replace-all #/\$/ it "\\")
+  ))
+
+;; TODO: 以下の拡張も追加できるようにする
+;; \\newcommand{\\argmax}{\\mathop{\\rm arg~max}\\limits}
+;; \\newcommand{\\argmin}{\\mathop{\\rm arg~min}\\limits}
+
+(define (sphinx-block-math s)
+  (let1 indented (string-indent (sphinx-math-escape s))
+#"
+.. math::
+    :nowrap:
+
+    \\begin{eqnarray}
+    ~indented
+    \\end{eqnarray}
+"))
+
+(define (math s)
+  (print (sphinx-block-math s)))
