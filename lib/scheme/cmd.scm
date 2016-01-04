@@ -99,10 +99,24 @@ EOS")
   #"zsh << EOS
 ~str
 EOS")
+(define (run-py-from-string str argv)
+  #"python << EOS
+#coding: utf-8
+~str
+EOS")
 (define (run-gosh-from-string str argv)
   #"gosh << EOS
 ~str
 EOS")
+(define (run-java-from-string str argv)
+  #"
+cd `mktemp -d`
+cat << EOS > Main.java
+~str
+EOS
+javac Main.java
+java Main
+")
 
 (define (run-from-string str lang argv)
   (let1 proc (eval-null (string->symbol (format "run-~a-from-string" lang)))

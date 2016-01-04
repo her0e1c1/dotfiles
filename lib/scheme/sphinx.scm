@@ -211,6 +211,7 @@
          ("py" "py")
          ("gosh" "s")
          ("emacs" "ee")
+         ("java" "je")
 
          ("perl" "perl -E")
          ("php" "php -r")
@@ -229,11 +230,13 @@
          (cmd (language->command language)))
     #"~cmd ~quoted ~argv"))
 
-(define (oneliner-run-str cmd :key language argv)
-  (let1 ret (run-from-string cmd language argv)
-        (format "~a~a"
-                (sphinx-block #"~cmd" :code-block language)
-                (sphinx-block #"~ret" :code-block "sh"))))
+(define (oneliner-run-str cmd :key language argv result-only)
+  (let* ((ret (run-from-string cmd language argv))
+         (bcmd (sphinx-block #"~cmd" :code-block language))
+         (bret (sphinx-block #"~ret" :code-block "sh")))
+    (if result-only
+        bret
+        (format "~a~a" bcmd bret))))
 
 (define (oneliner-run-line cmd :key language quote argv)
   (let* ((line (if language (code->cmd cmd :quote quote :language language :argv argv) cmd))
@@ -248,10 +251,11 @@
 
 ; TODO: quoteを自動識別  
 ; TODO: expected追加
-(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (path #f) (str #f) (argv ""))
+(define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (path #f) (str #f) (argv "")
+                       (result-only #f))
   (if msg (print msg))
   (if warn (print (sphinx-warn warn)))
-  (print (cond (str (oneliner-run-str cmd :language language :argv argv))
+  (print (cond (str (oneliner-run-str cmd :language language :argv argv :result-only result-only))
                (path (oneliner-run-path cmd :language language :path path))
                (else (oneliner-run-line cmd :language language :quote quote :argv argv)))))
 
@@ -264,7 +268,7 @@
 (define-macro (sphinx-setup-function name)
   `(define (,name code . rest) (apply run code :language ',name rest)))
 
-(let1 langs '(c cpp node perl php ruby py ghc sh zsh)
+(let1 langs '(c cpp node perl php ruby py ghc sh zsh java)
       (eval-null `(begin ,@(map (^x `(sphinx-setup-function ,x)) langs))))
 
 (define-macro (gosh cmd :key (str #f) (msg #f) (warn #f) :rest rest)
@@ -311,3 +315,5 @@
 
 (define (math s)
   (print (sphinx-block-math s)))
+
+; TODO: (group . body) (ps . body)みたいにして、グループ化する

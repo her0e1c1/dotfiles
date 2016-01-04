@@ -112,6 +112,7 @@ py() {
 from os.path import isdir, exists, join, basename
 from os import environ, makedirs
 from re import match, search, X, split
+import re
 from sys import exit, argv
 from shutil import copy, rmtree, move
 from argparse import ArgumentParser
@@ -133,11 +134,34 @@ ee() {
     emacs --batch --execute "
 (progn
  (require 'cl)
+ (require 'comint)
+  (defmacro let1 (var expr &rest body)
+    \`(let ((,var ,expr))
+        ,@body))
  ; caskをパスを指定してロードすれば、
  ; 合わせて以下のモジュールをロードしたことになる
  ; '(s dash f commander git epl shut-up cl-lib package-build)
  (require 'cask \"~/.cask/cask.el\")
- (princ $1)
+ (print (progn $1))
 )
 "
 }
+
+java_oneliner() {
+    source=$(cat <<EOF
+import java.util.*;
+public class Oneliner {
+    static void P(Object o) { System.out.println(o); }
+    public static void main (String[] args) {
+        $1
+    }
+}
+EOF
+)
+    echo $source > Oneliner.java
+    javac Oneliner.java
+    java Oneliner
+    rm Oneliner.java
+    rm Oneliner.class
+}
+alias je=java_oneliner
