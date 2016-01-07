@@ -173,7 +173,14 @@
             (error #"ERROR: ~abspath doesn't exist\n")
             (guard (e (else (format (standard-error-port) #"ERROR: ~abspath => ~e\n")))
                    (print (sphinx-section (sys-basename path)))
-                   (load abspath)))))
+
+  ; TODO: use macro
+  ;; (let1 old-path (current-directory)
+  ;;       (current-directory (sys-dirname abspath))
+        (load abspath)
+         ;; (current-directory old-path))
+
+            ))))
 
 (define-method sphinx-scm->rst ((scm <string>) :key (header ""))
   (sphinx-scm->rst (list scm) (sphinx-ext-scm->rst scm) :header header))
@@ -317,3 +324,11 @@
   (print (sphinx-block-math s)))
 
 ; TODO: (group . body) (ps . body)みたいにして、グループ化する
+
+(define (sphinx-run-from-path path :key (language #f) (argv #f))
+  (set! language (if language language (path-extension path)))
+  (let1 ret (run-from-path path :language language :argv argv)
+        (print (sphinx-section (sys-basename path)))
+        (print (format "~a~a"
+                       (sphinx-block (file->string path) :code-block language)
+                       (sphinx-block #"~ret" :code-block "sh")))))

@@ -1,5 +1,7 @@
 (add-load-path "." :relative)
 
+(define nil '())
+
 (define-macro (ignore body :optional default)
   `(guard (_ (else ,default)) ,body))
 

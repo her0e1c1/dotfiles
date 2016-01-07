@@ -4,6 +4,12 @@
 ; ls/find/which/grep/xargs/csv/cat
 ; peco(anything)
 
+(define-macro (with-current-directory path . body)
+  `(let1 old-path (current-directory)
+         (current-directory ,path)
+         ,@body
+         (current-directory old-path)))
+
 (define (--ls . dirs)
   (let* ((keys (filter keyword? dirs))
          (opt-abs (memq :abs keys))
@@ -77,7 +83,10 @@
 
 ;;; run from string
 ;;; ignore argv for now
-(define (run-c-from-string str argv) #"run_c_from_string '~str'")
+(define (run-c-from-string str argv)
+  #"run_c_from_string '~str'")
+  ;; (let1 e (quote-expression str)
+  ;;       #"run_c_from_string '~e'"))
 (define (run-cpp-from-string str argv) #"run_cpp_from_string '~str'")
 (define (run-gauche-from-string str argv)
   #"gosh << EOS
@@ -117,6 +126,17 @@ EOS
 javac Main.java
 java Main
 ")
+(define (run-ghc-from-string str argv)
+  #"
+t=`mktemp`
+o=$t.hs
+mv $t $o
+cat << EOS > $o
+~str
+EOS
+runhaskell $o
+rm $o
+")
 
 (define (run-from-string str lang argv)
   (let1 proc (eval-null (string->symbol (format "run-~a-from-string" lang)))
@@ -138,3 +158,17 @@ java Main
   (if (eq? quote #\')
       (quote-expression-with-single cmd)
       (quote-expression-with-dobule cmd)))
+
+(define (run-py-from-path path argv) #"python ~path")
+(define (run-java-from-path path argv)
+  (let* ((d (sys-dirname path))
+         (b (sys-basename path)))
+    #"o=`pwd` && javac ~path && \cd ~d > /dev/null && java ~(path-swap-extension b #f) && cd $o > /dev/null"))
+
+(define (run-from-path path :key (language #f) (argv #f))
+  (set! language (if language language (path-extension path)))
+  (let1 proc (eval-null (string->symbol (format "run-~a-from-path" language)))
+        (oneliner-run (proc path argv))))
+
+(define-macro (here path)
+  (build-path (sys-dirname *program-name*) path))
