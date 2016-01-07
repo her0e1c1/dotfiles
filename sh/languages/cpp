@@ -27,6 +27,6 @@ EOS
 run_cpp_from_string() {
     local source=$1; shift;
     tfile=`mktemp`
-    echo "$source" | clang++ -std=c++11 -I ~/lib/cpp/ -x c++ - -o $tfile && $tfile "$@"
+    echo "$source" | clang++ -std=c++11 -I $C_HEADER_STRUCT -I ~/lib/cpp/ -x c++ - -o $tfile && $tfile "$@"
     [ -f $tfile ] && \rm $tfile
 }
