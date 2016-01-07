@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <assert.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <grp.h>
@@ -25,6 +26,8 @@ extern char **environ;
 #define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
 #define REP(k,a) FOR(k,0,a)
 #define SIZE(x) (sizeof(x)/sizeof((x)[0]))
+#define TRUE 1
+#define FALSE 0
 
 void p(char *fmt, ...) {
     va_list list;

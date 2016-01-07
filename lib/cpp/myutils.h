@@ -31,6 +31,8 @@
 
 using namespace std;
 
+#define TRUE 1
+#define FALSE 0
 #define FOR(k,a,b) for(__typeof(a) k=(a); k < (b); k++)
 #define REP(k,a) FOR(k,0,a)
 #define ALL(c) (c).begin(), (c).end()  
