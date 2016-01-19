@@ -115,5 +115,34 @@ typedef map<int, string> MIS;
 typedef map<int, int> MII;
 typedef map<string, string> MSS;
 
+class Graph {
+public:
+  int N;
+  vector<vector<int>>E;
+  Graph(vector<int> x, vector<int> y, int n, bool directed=false) {
+    N = n;
+    E.resize(N);
+    for(int i = 0; i < x.size(); i++) {
+      E[x[i]].push_back(y[i]);
+      if (directed)
+        E[y[i]].push_back(x[i]);
+    }
+  }
+  vector<int> nodes() {
+    vector<int> n;
+    for(int i = 0; i < N; i++)
+      n.push_back(i);
+    return n;
+  }
+  friend ostream& operator<<(ostream& os, Graph& g) {
+    for (int p: g.nodes()) {
+      os << p << " => ";
+      for (int node: g.E[p])
+        os << node << ", ";
+      os << endl;
+    }
+    return os;
+  }
+};
 
 #endif
