@@ -48,7 +48,6 @@ alias ..=".."
 alias my=mysql_execute
 # alias s=snippets
 alias ce=_complie_and_run_in_c
-alias he=_run_in_haskell
 alias cpe=_complie_and_run_in_cpp
 alias grep='egrep -i'
 alias hist='fc -l'
@@ -114,6 +113,8 @@ from os import environ, makedirs
 from re import match, search, X, split
 import re
 import sys
+import itertools
+import functools
 from sys import exit, argv
 from shutil import copy, rmtree, move
 from argparse import ArgumentParser
@@ -166,3 +167,22 @@ EOF
     rm Oneliner.class
 }
 alias je=java_oneliner
+
+haskell_oneliner() {
+    local main=$1; shift
+    source=$(cat <<EOF
+import Control.Applicative
+import Control.Monad
+import Data.List
+import Data.Array
+import System.Directory
+import System.Environment
+main = print ($main)
+EOF
+)
+   tfile=`mktemp`
+   echo "$source" >> $tfile
+   runhaskell $tfile "$@"
+   \rm $tfile
+}
+alias he=haskell_oneliner
