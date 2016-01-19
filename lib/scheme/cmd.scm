@@ -102,7 +102,7 @@ EOS")
 EOS")
 (define (run-sh-from-string str argv)
   #"sh << EOS
-~str
+~(escape-dollar str)
 EOS")
 (define (run-zsh-from-string str argv)
   #"zsh << EOS
@@ -141,6 +141,9 @@ rm $o
 (define (run-from-string str lang argv)
   (let1 proc (eval-null (string->symbol (format "run-~a-from-string" lang)))
         (oneliner-run (proc str argv))))
+
+(define (escape-dollar str)
+  (regexp-replace-all #/\$/ str "\\\\$"))
 
 ;;; quote
 (define (escape-single-quote str)

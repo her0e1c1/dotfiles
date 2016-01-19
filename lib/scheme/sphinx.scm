@@ -223,7 +223,7 @@
          ("perl" "perl -E")
          ("php" "php -r")
          ("ruby" "ruby -e")
-         ("ghc" "ghc -e")
+         ("ghc" "he")
          ("sh" "sh -c")
          ("zsh" "zsh -c")
          ))
@@ -301,6 +301,8 @@
 (define (sphinx-math-escape s)
   (-->
    s
+   (regexp-replace-all #/S.T./ it " $quad s.t. $quad ")
+   (regexp-replace-all #/IF/ it "$mbox{if} $quad ")
    (regexp-replace-all #/\n/ it "\n$$")
    (regexp-replace-all #/\$/ it "\\")
   ))
