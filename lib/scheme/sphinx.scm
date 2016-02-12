@@ -260,6 +260,7 @@
 ; TODO: expected追加
 (define (oneliner-run+ cmd :key (msg #f) (warn #f) (quote #\') (language #f) (path #f) (str #f) (argv "")
                        (result-only #f))
+  (if (#/^\n/ cmd) (set! str #t))  ; 改行から始まっている場合は、マルチラインコードとして認識
   (if msg (print msg))
   (if warn (print (sphinx-warn warn)))
   (print (cond (str (oneliner-run-str cmd :language language :argv argv :result-only result-only))
@@ -302,7 +303,7 @@
   (-->
    s
    (regexp-replace-all #/S.T./ it " $quad s.t. $quad ")
-   (regexp-replace-all #/IF/ it "$mbox{if} $quad ")
+   (regexp-replace-all #/IF/ it "$mbox{if} ")
    (regexp-replace-all #/\n/ it "\n$$")
    (regexp-replace-all #/\$/ it "\\")
   ))
@@ -311,9 +312,11 @@
 ;; \\newcommand{\\argmax}{\\mathop{\\rm arg~max}\\limits}
 ;; \\newcommand{\\argmin}{\\mathop{\\rm arg~min}\\limits}
 
-(define (sphinx-block-math s)
+(define (sphinx-block-math s :key msg)
   (let1 indented (string-indent (sphinx-math-escape s))
 #"
+~msg
+
 .. math::
     :nowrap:
 
@@ -322,8 +325,8 @@
     \\end{eqnarray}
 "))
 
-(define (math s)
-  (print (sphinx-block-math s)))
+(define (math s :key (msg ""))
+  (print (sphinx-block-math s :msg msg)))
 
 ; TODO: (group . body) (ps . body)みたいにして、グループ化する
 
