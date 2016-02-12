@@ -175,3 +175,6 @@ rm $o
 
 (define-macro (here path)
   (build-path (sys-dirname *program-name*) path))
+
+; :str #tではなく、改行が１つでもあれば、こっちのパターンを使うようにする!
+; go file.cで拡張子から実行するようにする
