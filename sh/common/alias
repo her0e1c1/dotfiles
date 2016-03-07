@@ -186,3 +186,11 @@ EOF
    \rm $tfile
 }
 alias he=haskell_oneliner
+
+emacs_daemon() {
+    if [ -n "`emacs -Q --batch --execute "(progn (require 'server) (princ (server-running-p)))"| grep nil`" ]; then
+        emacs --daemon
+    else
+        echo "emacs is already launched"
+    fi
+}
