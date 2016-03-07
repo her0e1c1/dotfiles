@@ -37,12 +37,12 @@ fi
 
 # ssh
 # every time (z)sh is launced, you can prevent ssh-agent from being duplicated
-pkill ssh-agent
-# you should do "ssh-add -l" to check if the command works
-eval `ssh-agent` 2> /dev/null 1> /dev/null
-for key in ~/.ssh/*.pem; do
-    ssh-add $key 2> /dev/null 1> /dev/null;
-done
+# pkill ssh-agent
+# # you should do "ssh-add -l" to check if the command works
+# eval `ssh-agent` 2> /dev/null 1> /dev/null
+# for key in ~/.ssh/*.pem; do
+#     ssh-add $key 2> /dev/null 1> /dev/null;
+# done
 
 # WARNING
 # you must not eval `ssh-agent` again because it resets the old ssh keys

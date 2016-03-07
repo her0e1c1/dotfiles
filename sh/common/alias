@@ -37,7 +37,7 @@ alias v="view"
 alias m=mysql_execute
 alias tree="pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'"
 alias clang++="clang++ -std=c++11"
-alias clg="clang `gauche-config -I` `gauche-config -L` `gauche-config -l`"
+# alias clg="clang `gauche-config -I` `gauche-config -L` `gauche-config -l`"
 alias eo=__emacs_oneliner
 #alias ee="emacsclient -e"
 alias ea='emacsclient -nw -a ""'
