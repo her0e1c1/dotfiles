@@ -194,3 +194,8 @@ emacs_daemon() {
         echo "emacs is already launched"
     fi
 }
+
+start() {
+    emacs_daemon
+    tmux new \; splitw -h \; neww
+};
