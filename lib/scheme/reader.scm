@@ -1,6 +1,5 @@
 
-; (print #!Q   hofg  ggg )
-; (let ((a #!Q"hoge"Q)) a)
+; #!Q ~ Qまでを文字列とみなす
 (define-reader-directive 'Q
   (^(sym port ctx)
     (define (finish l) (string-trim-both (list->string (reverse l))))
@@ -8,11 +7,10 @@
                (acc '()))
       (let1 chacc (cons ch acc)
             (cond
-             ;((char=? #\) (peek-char port)) (finish chacc))
-             ;((char=? #\newline ch) (finish acc))
              ((char=? #\Q ch) (finish acc))
              (else (loop (read-char port) chacc)))))))
 
+; #!DOC STR ~ STRまでを文字列とみなす
 (define-reader-directive 'DOC
   (^(sym port ctx)
     (let1 delimiter (string-trim-both (read-line port))
