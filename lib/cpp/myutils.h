@@ -8,6 +8,7 @@
 #include <set>
 #include <deque>
 #include <stack>
+#include <queue>
 #include <bitset>
 #include <algorithm>
 #include <functional>
