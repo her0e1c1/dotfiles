@@ -205,9 +205,9 @@ update_ansible() {
     local cwd=/vagrant/kickstart
     local user=`whoami`
 
-    cd $cwd
+    \cd $cwd
     git pull
     ansible-playbook -c local -i "$user," site.yml
-    cd $old
+    \cd $old
 }
 alias up=update_ansible
