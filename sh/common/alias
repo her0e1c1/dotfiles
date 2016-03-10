@@ -1,4 +1,5 @@
-alias tac="tail -r"
+# linux don't have -r option
+# alias tac="tail -r"
 alias si="sh -i"
 alias pgrep="ps aux | grep"
 alias gosh="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
