@@ -205,6 +205,13 @@ update_ansible() {
     local cwd=/vagrant/kickstart
     local user=`whoami`
 
+    while getopts u: OPT; do
+        case $OPT in
+        u) user=$OPTARG
+        ;;
+        esac
+    done
+
     \cd $cwd
     git pull
     ansible-playbook -c local -i "$user," site.yml
