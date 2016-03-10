@@ -199,3 +199,15 @@ start() {
     emacs_daemon
     tmux new \; splitw -h \; neww
 };
+
+update_ansible() {
+    local old=`pwd`
+    local cwd=/vagrant/kickstart
+    local user=`whoami`
+
+    cd $cwd
+    git pull
+    ansible-playbook -c local -i "$user," site.yml
+    cd $old
+}
+alias up=update_ansible
