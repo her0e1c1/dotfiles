@@ -219,3 +219,17 @@ update_ansible() {
     \cd $old
 }
 alias up=update_ansible
+
+docker_backup() {
+    local data=$1
+    local dir=$2
+    docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox tar cvf /backup/backup.tar "$dir"
+}
+
+docker_restore() {
+    # TODO: debug
+    local data=$1
+    local dir=$2
+    docker create -v /data --name "$data" busybox true
+    docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox tar xvf /backup/backup.tar -C /data
+}
