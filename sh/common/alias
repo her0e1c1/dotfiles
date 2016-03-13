@@ -220,17 +220,21 @@ update_ansible() {
 }
 alias up=update_ansible
 
+
+# docker alias
+# 以下のコマンドで、バックアップしたvolumeをマウントできる
+# docker run -d -v "$name":/var/lib/mysql mysql 
 docker_backup() {
     local data=$1
     local dir=$2
-    docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox tar cvf /backup/backup.tar "$dir"
+    docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox sh -c "cd $dir && tar cvf /backup/backup.tar ."
 }
 
 docker_restore() {
     local name=$1
     local backup=$2
     docker volume create --name "$name"
-    docker run --rm -v "$name:/volume" -v `pwd`:/backup centos tar xvf "/backup/$backup" -C /
+    docker run --rm -v "$name:/volume" -v `pwd`:/backup centos tar xvf "/backup/$backup" -C /volume
 }
 
 docker_volume() {
