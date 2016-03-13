@@ -227,9 +227,13 @@ docker_backup() {
 }
 
 docker_restore() {
-    # TODO: debug
-    local data=$1
-    local dir=$2
-    docker create -v /data --name "$data" busybox true
-    docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox tar xvf /backup/backup.tar -C /data
+    local name=$1
+    local backup=$2
+    docker volume create --name "$name"
+    docker run --rm -v "$name:/volume" -v `pwd`:/backup centos tar xvf "/backup/$backup" -C /
+}
+
+docker_volume() {
+    local name=$1
+    docker run --rm -itv "$name:/volume" busybox sh
 }
