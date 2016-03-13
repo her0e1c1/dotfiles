@@ -241,3 +241,22 @@ docker_volume() {
     local name=$1
     docker run --rm -itv "$name:/volume" busybox sh
 }
+
+
+docker_cp() {
+    local src=$1
+    local dir=$2
+    local dst=$3
+    docker volume create --name "$dst"
+    # -Tは、既存のディレクトリにコピー(GNU)
+    docker run --rm --volumes-from "$src" -v "$dst":/backup centos sh -c "cp -r $dir -T /backup"
+}
+
+docker_copy_volume() {
+    # src/dst is a volume not a container.
+    local src=$1
+    local dst=$2
+    docker volume create --name "$dst"
+    # -Tは、既存のディレクトリにコピー(GNU)
+    docker run --rm -v "$src":/src -v "$dst":/dst centos sh -c "cp -r /src -T /dst"
+}
