@@ -264,5 +264,6 @@ docker_copy_volume() {
 
 alias d="docker"
 alias dv="docker volume"
-alias dr="docker run"
-alias de="docker exec"
+alias dr="docker run --detach-keys ctrl-q,q"
+alias de="docker exec --detach-keys ctrl-q,q"
+alias wrap="rlwrap -pRed -a"
