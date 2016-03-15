@@ -264,6 +264,12 @@ docker_copy_volume() {
 
 alias d="docker"
 alias dv="docker volume"
-alias dr="docker run --detach-keys ctrl-q,q"
 alias de="docker exec --detach-keys ctrl-q,q"
 alias wrap="rlwrap -pRed -a"
+
+docker_run() { 
+    [ $# != 1 ] && echo "need name as argument" && exit
+    local name=$1
+    docker run --rm --detach-keys ctrl-q,q -it $name bash
+}
+alias dr=docker_run
