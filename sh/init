@@ -2,6 +2,9 @@ HERE=$(dirname "$(readlink -f $0)")
 
 set -o emacs
 
+# For debian
+export LC_ALL=en_US.UTF-8
+
 # First of all, initialize
 . ~/sh/common/valiables
 . ~/sh/common/export
