@@ -54,6 +54,9 @@ alias grep='egrep -i'
 alias hist='fc -l'
 # alias go="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 
+alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
+alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
+
 goshe(){
     local main=$1; shift;
     gosh -l ~/lib/scheme/init.scm -e "(--> $main (if (not (undefined? it)) (print it)))" "$@" -Eexit
