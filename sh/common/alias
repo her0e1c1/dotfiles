@@ -240,12 +240,6 @@ docker_restore() {
     docker run --rm -v "$name:/volume" -v `pwd`:/backup centos tar xvf "/backup/$backup" -C /volume
 }
 
-docker_volume() {
-    local name=$1
-    docker run --rm -itv "$name:/volume" busybox sh
-}
-
-
 docker_cp() {
     local src=$1  # container
     local dir=$2
@@ -255,17 +249,7 @@ docker_cp() {
     docker run --rm --volumes-from "$src" -v "$dst":/backup centos sh -c "cp -r $dir -T /backup"
 }
 
-docker_copy_volume() {
-    # src/dst is a volume not a container.
-    local src=$1
-    local dst=$2
-    docker volume create --name "$dst"
-    # -Tは、既存のディレクトリにコピー(GNU)
-    docker run --rm -v "$src":/src -v "$dst":/dst centos sh -c "cp -r /src -T /dst"
-}
-
 alias d="docker"
-alias dv="docker volume"
 alias de="docker exec --detach-keys ctrl-q,q"
 alias wrap="rlwrap -pRed -a"
 
@@ -280,3 +264,43 @@ docker_run() {
     fi
 }
 alias dr=docker_run
+
+docker_volume() {
+    local remove=false
+    while getopts r OPT; do
+        case $OPT in
+        r) remove=true;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if $remove; then
+        for volume in $@; do
+            echo "remove $volume volume"
+            docker volume rm $volume
+        done
+        return 0
+    fi
+
+    if [ $# -eq 0 ]; then
+        docker volume ls
+    else
+        if ! docker volume inspect $1 >/dev/null 2>&1; then
+            echo "$1 volume doesn't exist"
+            return 1
+        fi
+        if [ $# -eq 2 ]; then
+            local src=$1 dst=$2
+            echo "copy $src $dst"
+            docker volume create --name "$dst"
+            # -Tは、既存のディレクトリにコピー(GNU)
+            docker run --rm -v "$src":/src -v "$dst":/dst centos sh -c "cp -r /src -T /dst"
+        else
+            local name=$1 dest=/volume
+            docker volume inspect $name
+            echo "mount $name $dest"
+            docker run --rm -itv "$name:$dest" --workdir "$dest" busybox sh
+        fi
+    fi
+}
+alias dv=docker_volume
