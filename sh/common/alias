@@ -273,6 +273,6 @@ alias wrap="rlwrap -pRed -a"
 docker_run() { 
     [ $# != 1 ] && echo "need name as argument" && exit
     local name=$1
-    docker run --rm --detach-keys ctrl-q,q -it $name bash
+    docker run --rm -v /:/docker --detach-keys ctrl-q,q -it $name bash
 }
 alias dr=docker_run
