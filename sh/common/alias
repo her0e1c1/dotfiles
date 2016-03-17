@@ -264,15 +264,19 @@ docker_copy_volume() {
     docker run --rm -v "$src":/src -v "$dst":/dst centos sh -c "cp -r /src -T /dst"
 }
 
-
 alias d="docker"
 alias dv="docker volume"
 alias de="docker exec --detach-keys ctrl-q,q"
 alias wrap="rlwrap -pRed -a"
 
 docker_run() { 
-    # [ $# != 1 ] && echo "need name as argument" && exit
-    local name=$1; shift
-    docker run --rm -v /Users/mbp:/Users/mbp --detach-keys ctrl-q,q -it $name bash $@
+    if [ $# -eq 0 ]; then
+        docker images
+    elif [ $# -eq 1 ]; then
+        docker run --rm -v /Users/mbp:/Users/mbp --detach-keys ctrl-q,q -it $1 bash
+    else
+        local name=$1; shift
+        docker run --rm -v /Users/mbp:/Users/mbp --detach-keys ctrl-q,q -it $name $@
+    fi
 }
 alias dr=docker_run
