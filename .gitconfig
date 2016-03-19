@@ -50,6 +50,7 @@
 	l1 = log --oneline
 	lm = log master
     ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
+    today = log --since=midnight --author='$(git config user.name)' --oneline
 
     # graph log    
 	gl = log --graph
