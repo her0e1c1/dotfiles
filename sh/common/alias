@@ -1,5 +1,9 @@
+HERE=$(dirname "$(readlink -f $0)")
+
 # linux don't have -r option
 # alias tac="tail -r"
+alias d="docker"
+alias wrap="rlwrap -pRed -a"
 alias si="sh -i"
 alias pgrep="ps aux | grep"
 alias gosh="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
@@ -44,7 +48,7 @@ alias eo=__emacs_oneliner
 alias ea='emacsclient -nw -a ""'
 alias en='emacsclient -n'
 alias e='emacsclient -t'
-alias d='emacsclient -t .'
+# alias d='emacsclient -t .'
 alias ..=".."
 alias my=mysql_execute
 # alias s=snippets
@@ -223,84 +227,4 @@ update_ansible() {
 }
 alias up=update_ansible
 
-
-# docker alias
-# 以下のコマンドで、バックアップしたvolumeをマウントできる
-# docker run -d -v "$name":/var/lib/mysql mysql 
-docker_backup() {
-    local data=$1
-    local dir=$2
-    docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox sh -c "cd $dir && tar cvf /backup/backup.tar ."
-}
-
-docker_restore() {
-    local name=$1
-    local backup=$2
-    docker volume create --name "$name"
-    docker run --rm -v "$name:/volume" -v `pwd`:/backup centos tar xvf "/backup/$backup" -C /volume
-}
-
-docker_cp() {
-    local src=$1  # container
-    local dir=$2
-    local dst=$3
-    docker volume create --name "$dst"
-    # -Tは、既存のディレクトリにコピー(GNU)
-    docker run --rm --volumes-from "$src" -v "$dst":/backup centos sh -c "cp -r $dir -T /backup"
-}
-
-alias d="docker"
-alias de="docker exec --detach-keys ctrl-q,q"
-alias wrap="rlwrap -pRed -a"
-
-docker_run() { 
-    if [ $# -eq 0 ]; then
-        docker images
-    elif [ $# -eq 1 ]; then
-        docker run --rm -v /Users/mbp:/Users/mbp --detach-keys ctrl-q,q -it $1 bash
-    else
-        local name=$1; shift
-        docker run --rm -v /Users/mbp:/Users/mbp --detach-keys ctrl-q,q -it $name $@
-    fi
-}
-alias dr=docker_run
-
-docker_volume() {
-    local remove=false
-    while getopts r OPT; do
-        case $OPT in
-        r) remove=true;;
-        esac
-    done
-    shift $((OPTIND - 1))
-
-    if $remove; then
-        for volume in $@; do
-            echo "remove $volume volume"
-            docker volume rm $volume
-        done
-        return 0
-    fi
-
-    if [ $# -eq 0 ]; then
-        docker volume ls
-    else
-        if ! docker volume inspect $1 >/dev/null 2>&1; then
-            echo "$1 volume doesn't exist"
-            return 1
-        fi
-        if [ $# -eq 2 ]; then
-            local src=$1 dst=$2
-            echo "copy $src $dst"
-            docker volume create --name "$dst"
-            # -Tは、既存のディレクトリにコピー(GNU)
-            docker run --rm -v "$src":/src -v "$dst":/dst centos sh -c "cp -r /src -T /dst"
-        else
-            local name=$1 dest=/volume
-            docker volume inspect $name
-            echo "mount $name $dest"
-            docker run --rm -itv "$name:$dest" --workdir "$dest" busybox sh
-        fi
-    fi
-}
-alias dv=docker_volume
+. $HERE/docker.sh
