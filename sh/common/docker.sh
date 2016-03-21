@@ -51,6 +51,12 @@ docker_process_exists() {
     fi
 }
 
+docker_process_remove() {
+    for p in `docker ps -q`; do
+        docker rm -f $p
+    done
+}
+
 docker_cp() {
     local src=$1  # container
     local dir=$2
