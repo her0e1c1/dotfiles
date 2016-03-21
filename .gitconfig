@@ -6,6 +6,7 @@
 
     # rebase
 	rb = rebase
+	rbi = rebase -i
     rba = rebase --abort
     rbc = rebase --continue
     rbs = rebase --skip
@@ -35,13 +36,14 @@
 
     # diff
     d = diff
-    dm = diff master..
-    domh = diff origin/master..HEAD
-    dhom = diff HEAD..origin/master
-    df = diff ..FETCH_HEAD
-    dc = "diff --cached"
-    dw = diff --word-diff
-    dcw = "diff --cached" --word-diff
+    df = diff
+    dfm = diff master..
+    dfomh = diff origin/master..HEAD
+    dfhom = diff HEAD..origin/master
+    dff = diff ..FETCH_HEAD
+    dfc = "diff --cached"
+    dfw = diff --word-diff
+    dfcw = "diff --cached" --word-diff
 
     # log
 	l = log -n 5
@@ -53,21 +55,23 @@
     today = log --since=midnight --author='$(git config user.name)' --oneline
 
     # graph log    
+	g = log --graph
 	gl = log --graph
-    gg =  log --graph --name-status --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"
     gf = log --graph --oneline --decorate=full  
+    gb = log --graph --branches --pretty=format:"%d [%h] \"%s\""
+    gg = log --graph --name-status --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"
 
     # branch
 	b = branch -avv
 	br = branch
-    bm = branch --merged
-    bn = branch --no-merged
+    brm = branch --merged
+    brn = branch --no-merged
 
     # reset
-	r = reset
-	r1 = reset HEAD~
+	rs = reset
+	rs1 = reset HEAD~
     rsm = reset --merge
-    ro = reset ORIG_HEAD --hard
+    rso = reset ORIG_HEAD --hard
 
 	# merge
 	mf = merge FETCH_HEAD
