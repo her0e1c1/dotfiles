@@ -78,9 +78,10 @@
 	mf = merge FETCH_HEAD
 
     # stash
-    sh = stash
-    shl = stash list
-    sha = stash apply
+    sa = stash
+    sal = stash list
+    sap = stash pop
+    saa = stash apply
 
 [color]
 	ui = true
