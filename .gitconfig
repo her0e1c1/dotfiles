@@ -5,11 +5,12 @@
 	rt = remote
 
     # rebase
-	rb = rebase
-	rbi = rebase -i
-    rba = rebase --abort
-    rbc = rebase --continue
-    rbs = rebase --skip
+    rb   = rebase
+    rbi  = rebase -i --autosquash
+    rbm  = rebase -i --autosquash master
+    rba  = rebase --abort
+    rbc  = rebase --continue
+    rbs  = rebase --skip
 
     # add
 	au = add -u
@@ -54,10 +55,10 @@
     ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
     today = log --since=midnight --author='$(git config user.name)' --oneline
 
-    # graph log    
+    # graph log
 	g = log --graph
 	gl = log --graph
-    gf = log --graph --oneline --decorate=full  
+    gf = log --graph --oneline --decorate=full
     gb = log --graph --branches --pretty=format:"%d [%h] \"%s\""
     gg = log --graph --name-status --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"
 
