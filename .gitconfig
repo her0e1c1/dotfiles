@@ -83,6 +83,7 @@
     sal = stash list
     sap = stash pop
     saa = stash apply
+    sas = stash show -p
 
 [color]
 	ui = true
