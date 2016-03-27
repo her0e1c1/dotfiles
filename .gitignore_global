@@ -1,0 +1,4 @@
+__pycache__
+
+# for py.test
+.cache
