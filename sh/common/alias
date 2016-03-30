@@ -230,6 +230,6 @@ alias up=update_ansible
 . $HERE/docker.sh
 
 # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
-alias curl_json='curl -v -H "Accept: application/json" -H "Content-type: application/json"'
+alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
 
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master"
