@@ -73,6 +73,8 @@
     # reset
 	rs = reset
 	rs1 = reset HEAD~
+    rsh = reset --hard
+    rss = reset --soft
     rsm = reset --merge
     rso = reset ORIG_HEAD --hard
 
