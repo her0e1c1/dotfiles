@@ -37,7 +37,7 @@
 
     # diff
     d = diff
-    df = diff
+    df = "diff --cached"
     dfm = diff master..
     dfomh = diff origin/master..HEAD
     dfhom = diff HEAD..origin/master
