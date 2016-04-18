@@ -93,7 +93,7 @@
 
 [core]
 	editor = vim
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.gitignore_global
     #️ git stなど、日本語の文字化け対応
     quotepath = false
 
