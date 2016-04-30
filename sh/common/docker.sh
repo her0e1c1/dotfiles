@@ -73,7 +73,7 @@ docker_run() {
         local name=$1; shift
         local cmd=/bin/bash
         [ $# -ne 0 ] && cmd=$@
-        sh -c "docker run --rm -v /Users/mbp:/Users/mbp --detach-keys ctrl-q,q -it $name $cmd"
+        sh -c "docker run --rm -v /Users/mbp:/Users/mbp -w /Users/mbp --detach-keys ctrl-q,q -it $name $cmd"
     fi
 }
 alias dr=docker_run
