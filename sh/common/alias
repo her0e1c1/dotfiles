@@ -228,6 +228,7 @@ update_ansible() {
 alias up=update_ansible
 
 . $HERE/docker.sh
+. $HERE/oneliner.sh
 
 # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
