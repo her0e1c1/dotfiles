@@ -137,3 +137,21 @@ docker_exec() {
     fi
 }
 alias de=docker_exec
+
+docker-compose-update() {
+    local file=docker-compose.yml
+    local project=docker
+    local down=false
+    while getopts df:p: OPT; do
+        case $OPT in
+            d) down=true;;
+            f) file=$OPTARG;;
+            p) project=$OPTARG;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    docker-compose -f $file -p $project down -v
+    $down && return 0
+    docker-compose -f $file -p $project up -d
+}
