@@ -62,11 +62,9 @@ startvm () {
 
 watch () {
     local number=1
-    local cmd
     while getopts n: OPT; do
         case $OPT in
-        n) number=$OPTARG
-        ;;
+        n) number=$OPTARG;;
         esac
     done
     shift $((OPTIND - 1))
@@ -75,7 +73,7 @@ watch () {
         echo "No command"; return 1
     fi
 
-    cmd="$@"
+    local cmd="$@"
     while true; do
         clear;
         sh -c "$cmd"
@@ -83,9 +81,8 @@ watch () {
     done;
 }
 
-exists() {
-    which $1 &> /dev/null
-}
+# Check whether a command exists or not
+exists(){ test -e "$(which $1)" }
 
 repeat_commands () {
     if [ $# -ge 2 ]; then
@@ -94,7 +91,6 @@ repeat_commands () {
     else
         echo "repeat needs more than one arguments"
     fi
-    
 }
 
 debug (){
@@ -103,3 +99,10 @@ debug (){
     $@
     set +x
 }
+
+# Serve static files
+# python -c 'import bottle as b; b.route("<f:path>")(lambda f: b.static_file(f, root=".")); b.run(host="0.0.0.0", port=8000)'
+
+py_show_json() { python -mjson.tool }
+f_tree() { pwd; find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'}
+f_watch() {while true ; do clear ; df -h ; sleep 5 ; done}
