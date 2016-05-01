@@ -137,6 +137,7 @@ docker_exec() {
     fi
 }
 alias de=docker_exec
+alias dei="docker exec -i"
 
 docker-compose-update() {
     local file=docker-compose.yml

@@ -1,3 +1,9 @@
+# 汎用性の高いコマンド(exisits)
+# FILEPATHをとるもの
+# STRING/REGEX
+# DB COMMAND
+# NETA
+
 # chomp(@a=<stdin>)
 
 # NETA
@@ -46,3 +52,8 @@ perl_insert_first_line() { xargs perl -i -plE "say qq/$1/ if 1..1; \$.=0 if eof"
 
 db_filter_insert_into() { perl -nlE 'say if /^INSERT INTO/' }
 db_psql_dump_url() {docker run --rm -it postgres:9.5 pg_dump --data-only --column-inserts -d $1}
+db_psql_dump_to_docker_mysql() {
+    # cmd URL CONTAINER mysql DBNAME
+    local url=$1; shift
+    db_psql_dump_url $url | db_filter_insert_into | docker exec -i $@
+}
