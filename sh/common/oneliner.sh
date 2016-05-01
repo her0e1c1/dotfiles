@@ -58,3 +58,5 @@ db_psql_dump_to_docker_mysql() {
     local url=$1; shift
     db_psql_dump_url $url | db_filter_insert_into | docker exec -i $@
 }
+
+add_ssh_key() { eval `ssh-agent` && ssh-add $1 }
