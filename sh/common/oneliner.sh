@@ -22,10 +22,8 @@ perl_color() {perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'}
 perl_duplicated_words() {perl -0777 -ne 'print qq/$.: $_/ while /\b(\w+)\b\s+\b\1\b/gi'}
 
 perl_filter_line() {
-    # のファイルについて、.jsを含む行をファイル名と合わせて表示. なお、$ARGVでファイル名表示"
-    local s='say qq/$ARGV $_/'
-    s="$s if /$1/"
-    xargs perl -nlE "'$s'"
+    # 正規表現にマッチした行を表示. ($ARGVは、ファイル名)"
+    xargs perl -nlE "say qq/\$ARGV \$_/ if /$1/"
 }
 
 # Show all variables in mysql. Trim each line
@@ -44,8 +42,7 @@ perl_parse_single_quote() {
     perl -nlE "while(m/'(.*?)'/g){say $+;}"
 }
 
-# FILEPATH
-perl_insert_first_line() { xargs perl -i -plE "say qq/$1/ if 1..1; \$.=0 if eof" }
+perl_filepath_insert_first_line() { xargs perl -i -plE "say qq/$1/ if 1..1; \$.=0 if eof" }
 
 # sync selected directories in the two directories
 # ; perl -E 'for ("css", "fonts", "js"){ system "rsync -avz --delete src/html/$_ dest/public/" }'
@@ -59,4 +56,8 @@ db_psql_dump_to_docker_mysql() {
     db_psql_dump_url $url | db_filter_insert_into | docker exec -i $@
 }
 
+# db_show_tables () { echo "'show tables;'" }
+
 add_ssh_key() { eval `ssh-agent` && ssh-add $1 }
+
+perl_string_readable() { perl -plE 's/\\n/\n/g' }
