@@ -156,3 +156,5 @@ docker-compose-update() {
     $down && return 0
     docker-compose -f $file -p $project up -d
 }
+
+docker-rm-all() { docker rm -f `docker ps -qa`}
