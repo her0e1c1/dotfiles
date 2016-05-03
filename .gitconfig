@@ -98,4 +98,4 @@
     quotepath = false
 
 [push]
-    default = matching
+	default = current
