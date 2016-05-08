@@ -61,3 +61,8 @@ db_psql_dump_to_docker_mysql() {
 add_ssh_key() { eval `ssh-agent` && ssh-add $1 }
 
 perl_string_readable() { perl -plE 's/\\n/\n/g' }
+
+db_HOGEHOGE='-e "drop database db; create database db"'
+
+# use export
+# A=1 && export B=2 && perl -E 'say qq/$ENV{A} = $ENV{B}/'
