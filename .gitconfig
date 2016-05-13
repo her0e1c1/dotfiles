@@ -80,13 +80,19 @@
 
 	# merge
 	mf = merge FETCH_HEAD
+    merge-ours = merge -Xours
+    merge-their = merge -Xtheir
 
     # stash
-    sa = stash
+    sa  = stash
+    sav = stash save --include-untracked
     sal = stash list
     sap = stash pop
     saa = stash apply
     sas = stash show -p
+
+    # revert
+    revertc = revert --continue  
 
 [color]
 	ui = true

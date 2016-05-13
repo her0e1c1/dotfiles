@@ -3,6 +3,7 @@ HERE=$(dirname "$(readlink -f $0)")
 # linux don't have -r option
 # alias tac="tail -r"
 alias d="docker"
+alias less="less -S"
 alias wrap="rlwrap -pRed -a"
 alias si="sh -i"
 alias pgrep="ps aux | grep"
