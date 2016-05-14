@@ -106,3 +106,9 @@ debug (){
 py_show_json() { python -mjson.tool }
 f_tree() { pwd; find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'}
 f_watch() {while true ; do clear ; df -h ; sleep 5 ; done}
+
+## REGEX
+f_basename() { echo ${1##*/} }       # 左からマッチしたものを除外(greedy)
+f_ext() { echo ${1#*.} }             # 左からマッチしたものを除外(non greedy)
+f_without_ext() { echo ${1%%.*} }    # 右からマッチしたものを除外(greedy)
+f_dirname() { echo ${1%/*} }         # 右からマッチしたものを除外(non greedy)
