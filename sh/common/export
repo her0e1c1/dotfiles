@@ -36,5 +36,7 @@ export NODE_PATH=/usr/local/lib/node_modules/
 export DOCKER_TLS_VERIFY="1"
 # export DOCKER_HOST="tcp://192.168.99.100:2376"
 # export DOCKER_CERT_PATH="/Users/mbp/.docker/machine/machines/default"
-export DOCKER_HOST="tcp://192.168.99.101:2376"
+export DOCKER_HOST="tcp://192.168.99.100:2376"
+# if ip adder is changed, update certification files
+# docker-machine regenerate-certs dinghy
 export DOCKER_CERT_PATH=/Users/mbp/.docker/machine/machines/dinghy
