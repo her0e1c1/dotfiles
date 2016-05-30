@@ -39,6 +39,7 @@
     d = diff
     df = "diff --cached"
     dfm = diff master..
+    dfp = diff upstream/production..
     dfomh = diff origin/master..HEAD
     dfhom = diff HEAD..origin/master
     dff = diff ..FETCH_HEAD
