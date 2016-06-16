@@ -4,8 +4,6 @@
 # DB COMMAND
 # NETA
 
-# chomp(@a=<stdin>)
-
 # NETA
 # 
 # fizz buzz
@@ -66,3 +64,11 @@ db_HOGEHOGE='-e "drop database db; create database db"'
 
 # use export
 # A=1 && export B=2 && perl -E 'say qq/$ENV{A} = $ENV{B}/'
+
+perl_branch_name() { perl -E '$_=$ARGV[0]; s#&#and#; s# #_#g and say ' $1 }
+
+perl_join() { perl -E 'chomp(@a=<stdin>); say "@a"' }
+
+# perl_one_of() {}
+
+curl_status_code() { curl -Ss -w '%{http_code}' $1 -o /dev/null }

@@ -158,3 +158,5 @@ docker-compose-update() {
 }
 
 docker-rm-all() { docker rm -f `docker ps -qa`}
+
+docker-rename-image() { docker tag $1 $2; docker rmi $1 }
