@@ -69,6 +69,6 @@ perl_branch_name() { perl -E '$_=$ARGV[0]; s#&#and#; s# #_#g and say ' $1 }
 
 perl_join() { perl -E 'chomp(@a=<stdin>); say "@a"' }
 
-# perl_one_of() {}
+perl_one_of() { perl -E '@a=split /\s+/, $ARGV[0]; say $a[int(rand() * ($#a+1))]' $1 }
 
 curl_status_code() { curl -Ss -w '%{http_code}' $1 -o /dev/null }
