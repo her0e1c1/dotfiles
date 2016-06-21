@@ -72,3 +72,17 @@ perl_join() { perl -E 'chomp(@a=<stdin>); say "@a"' }
 perl_one_of() { perl -E '@a=split /\s+/, $ARGV[0]; say $a[int(rand() * ($#a+1))]' $1 }
 
 curl_status_code() { curl -Ss -w '%{http_code}' $1 -o /dev/null }
+
+heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh }
+heoku_run () { local app=$1; shift; heroku run --app $app $@ }  # python -m MODULE cmd
+
+jupyter_initline() {
+cat <<EOF
+%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+EOF
+}
+
+# for stdin
+tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`' }
