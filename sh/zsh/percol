@@ -1,5 +1,5 @@
 
-if exists percol; then
+if [ -e `which percol` ]; then
     percol_select_history() {
         local tac
         exists gtac && tac="gtac" || { exists tac && tac="tac" || { tac="tail -r" } }

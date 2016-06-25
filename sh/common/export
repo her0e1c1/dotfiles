@@ -2,13 +2,10 @@
 # export MYSQL_DATABASE="mytest"
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
-# export LSCOLORS=exfxcxdxbxegedabagacad
 export LANG=ja_JP.UTF-8
 export PAGER=less
-export DROPBOX_PATH=~/Dropbox
 export PYTHONSTARTUP=~/.pythonrc
 export PATH="$PATH:$HOME/.cask/bin"
-# export PATH="$PATH:$HOME/github/home/lib/"
 export PATH="$PATH:$HOME/lib/"
 
 # for zenburn-emacs
@@ -21,7 +18,6 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 # haskell
 export PATH="$PATH:$HOME/.cabal/bin"
-
 
 if [ -n "$(which vim)" ]; then
     export EDITOR=vim

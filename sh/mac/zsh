@@ -1,3 +1,0 @@
-
-# pbcopy/paste doesn't work on tmux
-alias -g C='| pbcopy'

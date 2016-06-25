@@ -45,5 +45,3 @@ __CPP_INCLUDED_HEADERS=$(cat <<EOF
 #include <ctime>
 EOF
 )
-
-C_HEADER_STRUCT=~/github/her0e1c1.github.io/.rst/snippets/algo/struct/c

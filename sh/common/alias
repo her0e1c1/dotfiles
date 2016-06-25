@@ -59,21 +59,9 @@ alias grep='egrep -i'
 alias hist='fc -l'
 # alias go="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 
-alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
-alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
-
 goshe(){
     local main=$1; shift;
     gosh -l ~/lib/scheme/init.scm -e "(--> $main (if (not (undefined? it)) (print it)))" "$@" -Eexit
-}
-
-# function
-fg255(){
-    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
-}
-
-bg255(){
-    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
 }
 
 les(){
@@ -141,23 +129,6 @@ alias sl="\gosh -l ~/lib/scheme/init.scm -e '' -Eexit"
 alias ce=_complie_and_run_in_c
 
 
-ee() {
-    emacs --batch --execute "
-(progn
- (require 'cl)
- (require 'comint)
-  (defmacro let1 (var expr &rest body)
-    \`(let ((,var ,expr))
-        ,@body))
- ; caskをパスを指定してロードすれば、
- ; 合わせて以下のモジュールをロードしたことになる
- ; '(s dash f commander git epl shut-up cl-lib package-build)
- (require 'cask \"~/.cask/cask.el\")
- (print (progn $1))
-)
-"
-}
-
 java_oneliner() {
     source=$(cat <<EOF
 import java.util.*;
@@ -196,19 +167,6 @@ EOF
 }
 alias he=haskell_oneliner
 
-emacs_daemon() {
-    if [ -n "`emacs -Q --batch --execute "(progn (require 'server) (princ (server-running-p)))"| grep nil`" ]; then
-        emacs --daemon
-    else
-        echo "emacs is already launched"
-    fi
-}
-
-start() {
-    emacs_daemon
-    tmux new \; splitw -h \; neww
-};
-
 update_ansible() {
     local old=`pwd`
     local cwd=/vagrant/kickstart
@@ -228,11 +186,13 @@ update_ansible() {
 }
 alias up=update_ansible
 
+. $HERE/utils.sh
 . $HERE/docker.sh
 . $HERE/oneliner.sh
 . $HERE/heroku.sh
 . $HERE/emacs.sh
-. $HERE/utils.sh
+. $HERE/perl.sh
+. $HERE/python.sh
 
 # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
