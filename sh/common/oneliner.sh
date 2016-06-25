@@ -15,7 +15,11 @@
 perl_to_upper() {perl -plE "tr/a-z/A-Z/"}
 perl_to_lower() {perl -plE "tr/A-Z/a-z/"}
 perl_get_image_tags() {curl $1 2> /dev/null | perl -nlE 'say $& if /<img.*?(gif|png|jpg).*?>/'}
-perl_color() {perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'}
+perl_color() {
+    echo -e '\e[31mFORMAT\e[m'
+    echo -e '\\e[31mFORMAT\\e[m'
+    perl -E 'print qq/\x1b[38;5;${_}mC$_\x1b[m / for 0..255; say';
+}
 
 perl_duplicated_words() {perl -0777 -ne 'print qq/$.: $_/ while /\b(\w+)\b\s+\b\1\b/gi'}
 
@@ -66,15 +70,10 @@ db_HOGEHOGE='-e "drop database db; create database db"'
 # A=1 && export B=2 && perl -E 'say qq/$ENV{A} = $ENV{B}/'
 
 perl_branch_name() { perl -E '$_=$ARGV[0]; s#&#and#; s# #_#g and say ' $1 }
-
 perl_join() { perl -E 'chomp(@a=<stdin>); say "@a"' }
-
 perl_one_of() { perl -E '@a=split /\s+/, $ARGV[0]; say $a[int(rand() * ($#a+1))]' $1 }
 
 curl_status_code() { curl -Ss -w '%{http_code}' $1 -o /dev/null }
-
-heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh }
-heroku_run () { local app=$1; shift; heroku run --app $app $@ }  # python -m MODULE cmd
 
 jupyter_initline() {
 cat <<EOF
@@ -87,4 +86,13 @@ EOF
 # for stdin
 tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`' }
 mac_copy()   { echo "cat $MAC_COPY | pbcopy" }
-mac_paste() { cat > $MAC_COPY }
+mac_paste() {
+    [ -f "$MAC_COPY" ] && rm "$MAC_COPY"
+    cat > $MAC_COPY
+}
+
+# for redis
+# redis-cli -h HOST -p PORT -a PASSWORD
+
+# CMDを実行後に、通知音を鳴らす
+# CMD && echo ^G
