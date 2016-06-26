@@ -160,3 +160,15 @@ docker-compose-update() {
 docker-rm-all() { docker rm -f `docker ps -qa`}
 
 docker-rename-image() { docker tag $1 $2; docker rmi $1 }
+
+# 1ファイルを指定して、ホスト側で書き換えたのをうわ書き
+docker-edit() {
+    local name=$1;
+    local p=$2;
+    local base=`basename $p`
+    local temp="`mktemp`_$base"
+    local dest="$name:$p"
+    docker cp $dest $temp
+    emacsclient -t $temp
+    docker cp $temp $dest
+}

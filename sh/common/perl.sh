@@ -24,3 +24,8 @@ EOF
 
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} split /\n/, $ARGV[0] ' "$PERL_MODULES"`
 # PERL_OPTION="$PERL_OPTION -I $LIB_PERL"
+
+
+perl_pkill() { ps aux |perl -nlE "@s=split; qx/kill \$s[1]/ if \$s[10] =~ m#$1#" }
+
+   
