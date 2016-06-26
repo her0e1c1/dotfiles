@@ -1,5 +1,12 @@
 HERE=$(dirname "$(readlink -f $0)")
 
+# 文字列のエスケープ
+# printf %q "I'm a man"  # I\'m\ a\ man%
+# クゥオートのエスケープ'\''
+# echo ''\'''  # '
+# ruby -pe '$_.gsub!(/'\''/, %q('"'\\\\\\\\''"'))'
+
+
 # linux don't have -r option
 # alias tac="tail -r"
 alias d="docker"
