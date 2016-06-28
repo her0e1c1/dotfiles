@@ -172,3 +172,13 @@ docker-edit() {
     emacsclient -t $temp
     docker cp $temp $dest
 }
+
+# docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
+# または、cp cpを2回繰り返す!
+docker-sync () {
+    local name=$1;
+    local dir=$2
+    local tmp=`mktemp -d`
+    docker cp "$name:$dir" $tmp
+    watchmedo shell-command -R $tmp -c "docker exec rsync -avz $dir $XXX"  # docker can't find dir on host :(
+}
