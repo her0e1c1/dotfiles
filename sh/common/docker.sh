@@ -179,9 +179,35 @@ docker-edit() {
 # docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
 # または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
 docker-sync () {
-    local name=$1;
-    local dir=$2
-    local tmp=`mktemp -d`
-    docker cp "$name:$dir" $tmp
-    watchmedo shell-command -R $tmp -c "docker exec rsync -avz $dir $XXX"  # docker can't find dir on host :(
+    local name=$1
+    local src=$2
+    # local tmp=`mktemp -d`
+    # docker cp "$name:$dir" $tmp
+    if [ $# -eq 2 ]; then
+         docker exec $name ls $src
+    elif [ $# -eq 3 ]; then
+         local dst=$3
+         local basedir=`basename $src`
+         local sync="$dst/$basedir"
+         local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+         if [ ! -d "$dst" ]; then
+             echo "$dst does not exsit"
+             return 1
+         fi
+         if [ ! -d "$sync" ] && docker cp "$name:$src" $dst
+         watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync/ $trim"
+    fi
+}
+
+
+docker-commit () {
+    local name=$1; shift;
+    local repo=$1; shift;
+    if [ $# -ge 3 ]; then
+        if [ -n `docker images -q $repo` ]; then
+            docker exec $name $@ && docker commit $name $repo
+        else
+            echo "No repositry $repo"
+        fi
+    fi
 }
