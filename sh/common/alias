@@ -82,15 +82,6 @@ les(){
 alias c='pygmentize -O style=monokai -f console256 -g'
 
 
-ff(){
-    if [ $# -eq 1 ]; then
-        find . -type f -print0 | xargs -0 grep -n $1
-    elif [ $# -eq 2 ]; then
-        find . -type f -print0 -name "*$2*" | xargs -0 grep -n $1
-    fi
-}
-
-
 runjava() {
     javac $1.java
     java $1

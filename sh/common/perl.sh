@@ -35,3 +35,10 @@ EOF
 
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} split /\n/, $ARGV[0] ' "$PERL_MODULES"`
 # PERL_OPTION="$PERL_OPTION -I $LIB_PERL"
+
+perl-find() {
+    local dir="."
+    [ $# -eq 2 ] && dir=$2;
+    find $dir -type f -print0 | perl -0nlE 'say if not (-B or /git/)' | xargs perl -nlE "\$a=\$_; say qq#\$ARGV:\$. \$a# if m#$1#"
+}
+alias pf=perl-find
