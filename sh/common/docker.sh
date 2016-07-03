@@ -177,39 +177,31 @@ docker-edit() {
 }
 
 docker-sync-help() {
-    echo "docker-sync NAME SRC             ls src path on docker"
-    echo "docker-sync NAME SRC DST         sync dst on host"
-    echo "docker-sync NAME SRC DST PREFIX  sync dst on host with prefix"
+    echo "docker-sync NAME SRC [watchmedo options]"
 }
 
 # docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
 # または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
 # host側のイベントを取りにいけない...
 docker-sync () {
-    local name=$1
-    local src=$2
-    if [ $# -eq 2 ]; then
-         docker exec $name ls $src
-    elif [ $# -eq 3 -o $# -eq 4 ]; then
-         local dst=$3
-         local prefix_dir=$4
-         local basedir=`basename $src`
-         local sync="$dst/$basedir"
-         local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
-         local sync_d=$sync
-         [ $# -eq 4 ] && sync_d="$prefix_dir/$sync"
-         if [ ! -d "$dst" ]; then
-             echo "$dst does not exsit on host"
-         else
-             [ ! -d "$sync" ] && docker cp "$name:$src" $dst
-             if ! docker exec $name test -d $sync_d; then
-                 echo "$sync_d does not exsit on docker"
-             else
-                 watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync_d/ $trim"
-             fi
-         fi
+    local name=$1; shift
+    local src=$1; shift
+    local sync=`basename $src`
+    local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+    if ! docker exec $name test -d $sync; then
+        echo "copy $sync on host"
+        docker exec $name cp -r $src $sync
     fi
-
+    if docker exec $name test -d $sync; then
+        if [ -d "$sync" ]; then
+           echo "start sync ..."
+           watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync/ $trim" $@
+        else
+            echo "You can't sync on `pwd`. Go to $sync on host"
+        fi
+    else
+        echo "$sync dir is not found on docker."
+    fi
 }
 
 docker-commit () {
