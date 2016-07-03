@@ -1,4 +1,14 @@
+perl-line-drop () {
+    [ $# -eq 1 ] && local l=$1 || local l=10
+    perl -nlE "say if not 1..$l"
+}
 
+perl-pkill() {
+    if [ $# -eq 0 ]; then ps aux;
+    elif [ $# -eq 1 ]; then ps aux | perl -nlE "@s=split; qx/kill -9 \$s[1]/ if \$s[10] =~ m#$1#";
+    elif [ $# -eq 2 -a $2 = "n" ]; then ps aux | perl -nlE "@s=split; say qq/kill -9 \$s[1] \$s[10]/ if \$s[10] =~ m#$1#";
+    fi
+}
 
 # function
 fg255(){
@@ -25,8 +35,6 @@ EOF
 PERL_OPTION=`perl -e 'print sprintf " %s ", join " ", map {"-M$_"} split /\n/, $ARGV[0] ' "$PERL_MODULES"`
 # PERL_OPTION="$PERL_OPTION -I $LIB_PERL"
 
-
-perl_pkill() { ps aux |perl -nlE "@s=split; qx/kill \$s[1]/ if \$s[10] =~ m#$1#" }
 
 # 創作コマンド
 # watchmedo shell-command -R src -c 'f() { docker exec -it ss_ejabberd_1 sh -c '\''ps aux |perl -nlE "@s=split; qx/kill \$s[1]/ if \$s[10] =~ m#^/usr/lib/erlang/erts-7.3/bin/beam#" && rsync -avz ./sourcesage-ejabberd/ /docker/sourcesage-ejabberd/ && cd /docker/sourcesage-ejabberd/ && make && EJABBERD_CONFIG_PATH=docker/ejabberd.yml erl -pa ebin -pa deps/*/ebin -pa test -pa deps/elixir/lib/*/ebin/ -s ejabberd;'\''; }; f'

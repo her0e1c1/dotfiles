@@ -176,6 +176,12 @@ docker-edit() {
     docker cp $temp $dest
 }
 
+docker-sync-help() {
+    echo "docker-sync NAME SRC             ls src path on docker"
+    echo "docker-sync NAME SRC DST         sync dst on host"
+    echo "docker-sync NAME SRC DST PREFIX  sync dst on host with prefix"
+}
+
 # docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
 # または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
 # host側のイベントを取りにいけない...
@@ -205,7 +211,6 @@ docker-sync () {
     fi
 
 }
-
 
 docker-commit () {
     local name=$1; shift;
