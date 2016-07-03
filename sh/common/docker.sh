@@ -215,3 +215,7 @@ docker-commit () {
         fi
     fi
 }
+
+docker-compose-all() {
+    docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@
+}
