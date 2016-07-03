@@ -178,25 +178,32 @@ docker-edit() {
 
 # docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
 # または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
+# host側のイベントを取りにいけない...
 docker-sync () {
     local name=$1
     local src=$2
-    # local tmp=`mktemp -d`
-    # docker cp "$name:$dir" $tmp
     if [ $# -eq 2 ]; then
          docker exec $name ls $src
-    elif [ $# -eq 3 ]; then
+    elif [ $# -eq 3 -o $# -eq 4 ]; then
          local dst=$3
+         local prefix_dir=$4
          local basedir=`basename $src`
          local sync="$dst/$basedir"
          local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+         local sync_d=$sync
+         [ $# -eq 4 ] && sync_d="$prefix_dir/$sync"
          if [ ! -d "$dst" ]; then
-             echo "$dst does not exsit"
-             return 1
+             echo "$dst does not exsit on host"
+         else
+             [ ! -d "$sync" ] && docker cp "$name:$src" $dst
+             if ! docker exec $name test -d $sync_d; then
+                 echo "$sync_d does not exsit on docker"
+             else
+                 watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync_d/ $trim"
+             fi
          fi
-         if [ ! -d "$sync" ] && docker cp "$name:$src" $dst
-         watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync/ $trim"
     fi
+
 }
 
 

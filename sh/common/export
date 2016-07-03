@@ -38,3 +38,4 @@ export DOCKER_HOST="tcp://192.168.99.100:2376"
 # export DOCKER_CERT_PATH=/Users/mbp/.docker/machine/machines/dinghy
 
 MAC_COPY=/Users/mbp/Desktop/copy
+APT_PYTHON_DEV='python python-dev python-setuptools'
