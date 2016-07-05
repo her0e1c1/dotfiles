@@ -17,19 +17,10 @@ alias pgrep="ps aux | grep"
 alias gosh="rlwrap -b '(){}[],#\";| ' gosh -l ~/lib/scheme/init.scm"
 alias el="emacs -Q --script"
 alias sshX="ssh -c blowfish -2 -C -Y"
-alias h=history
-alias w=which
-alias vm=VBoxManage
-alias rh=runhaskell
 alias cd=cdls
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls'
-alias pd='pushd'
-alias po='popd'
-alias ds='dirs -v'
-alias j="jobs"
-alias i="ipython3"
 alias g="git"
 #alias r='echo $?'
 #alias rm="rm -i"
@@ -37,7 +28,6 @@ alias cp="cp -i"
 alias mv="mv -i"
 alias sl='ls -CF'
 alias gd='dirs -v; echo -n "select number: "; read newdir; pushd +"$newdir"'
-alias r='ruby -e'
 alias p="perl $PERL_OPTION -E"
 alias pn="perl $PERL_OPTION -nalE"
 alias pp="perl $PERL_OPTION -palE"
@@ -46,8 +36,6 @@ alias pn='perl -nlE'
 alias f='fab -f ~/fabfile'
 alias c="cdr"
 alias sudo="sudo "  # sudo時にアリアス有効
-alias v="view"
-alias m=mysql_execute
 alias tree="pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'"
 alias clang++="clang++ -std=c++11"
 # alias clg="clang `gauche-config -I` `gauche-config -L` `gauche-config -l`"
@@ -121,11 +109,6 @@ $main
 }
 
 alias s="\gosh -l ~/lib/scheme/init.scm ~/github/onelinerForGauche/main.scm"
-alias ss="\gosh ~/github/onelinerForGauche/main.scm"
-alias sl="\gosh -l ~/lib/scheme/init.scm -e '' -Eexit"
-# alias ee="emacs --batch --execute '(message $code)'"
-alias ce=_complie_and_run_in_c
-
 
 java_oneliner() {
     source=$(cat <<EOF
@@ -165,25 +148,6 @@ EOF
 }
 alias he=haskell_oneliner
 
-update_ansible() {
-    local old=`pwd`
-    local cwd=/vagrant/kickstart
-    local user=`whoami`
-
-    while getopts u: OPT; do
-        case $OPT in
-        u) user=$OPTARG
-        ;;
-        esac
-    done
-
-    \cd $cwd
-    git pull
-    ansible-playbook -c local -i "$user," site.yml
-    \cd $old
-}
-alias up=update_ansible
-
 . $HERE/utils.sh
 . $HERE/docker.sh
 . $HERE/oneliner.sh
@@ -194,5 +158,6 @@ alias up=update_ansible
 
 # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
+# git_add_stream git@...
 alias git_add_stream="git remote add upstream"
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"

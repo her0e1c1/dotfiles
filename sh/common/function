@@ -1,7 +1,3 @@
-# NOTE: Don't use function
-# This is used for only zsh
-
-#cdの後にls実行
 cdls(){
 	if [ ${#1} -eq 0 ]; then
 	   \cd && ls
@@ -26,26 +22,3 @@ extract() {
     *.arj) unarj $1;;
   esac
 }
-
-sphinx_auto_build(){
-    OLD_PATH=`pwd`;
-    for p in ${(s/:/)SPHINX_PATH};do
-        if [ -d $p ];then
-            \cd $p;
-            echo `pwd`
-            if which inotifywait ;then
-                while inotifywait -e modify ./**/*.rst;do make html; done &
-            fi
-       else
-            echo "$pは存在しません";
-        fi
-    done
-    \cd $OLD_PATH;
-}
-
-
-startvm () {
-   # startvm "仮想マシン名"
-   VBoxmanage startvm "$1" -type headless
-}
-
