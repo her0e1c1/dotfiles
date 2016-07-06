@@ -42,3 +42,5 @@ perl-find() {
     find $dir -type f -print0 | perl -0nlE 'say if not (-B or /git/)' | xargs perl -nlE "\$a=\$_; say qq#\$ARGV:\$. \$a# if m#$1#"
 }
 alias pf=perl-find
+
+perl-broadcast-message() { perl -E "qx/echo $1 > \$_/ for grep {m#\d+\$#} </dev/pts/*>" }

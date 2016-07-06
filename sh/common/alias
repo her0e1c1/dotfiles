@@ -155,6 +155,7 @@ alias he=haskell_oneliner
 . $HERE/emacs.sh
 . $HERE/perl.sh
 . $HERE/python.sh
+. $HERE/tmux.sh
 
 # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'

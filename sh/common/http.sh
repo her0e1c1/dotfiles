@@ -9,3 +9,8 @@ sample_quote() {
 sample_http_stream() {
     urldecode "data:application/octet-stream,field1%2Cfield2%0Afoo%2Cbar%0Agoo%2Cgai%0A"
 }
+
+# pstree, pkill, pgrep
+
+# 便利
+# tmux capture-pane
