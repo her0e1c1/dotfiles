@@ -85,10 +85,10 @@ EOF
 
 # for stdin
 tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`' }
-mac_copy()   { echo "cat $MAC_COPY | pbcopy" }
 mac_paste() {
     [ -f "$MAC_COPY" ] && rm "$MAC_COPY"
     cat > $MAC_COPY
+    echo "cat $MAC_COPY | pbcopy"
 }
 
 # for redis

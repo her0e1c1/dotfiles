@@ -14,3 +14,5 @@ sample_http_stream() {
 
 # 便利
 # tmux capture-pane
+
+show-message () { echo ERROR > /dev/pts/0 }
