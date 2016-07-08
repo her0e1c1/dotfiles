@@ -186,16 +186,25 @@ docker-sync-help() {
 docker-sync () {
     local name=$1; shift
     local src=$1; shift
-    local sync=`basename $src`
+    local sync=".docker-sync/$name/`basename $src`"
     local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+
     if ! docker exec $name test -d $sync; then
         echo "copy $sync on host"
+        local d=`dirname $sync`
+        docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
         docker exec $name cp -r $src $sync
     fi
     if docker exec $name test -d $sync; then
         if [ -d "$sync" ]; then
-           echo "start sync ..."
-           watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync/ $trim" $@
+            local d=~/$sync
+            if [ ! -d $d ]; then
+                mkdir -p `dirname $d`
+                echo "create a symbol link $d"
+                ln -s "$sync" $d
+            fi
+            echo "start sync ..."
+            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync/ $trim" $@
         else
             echo "You can't sync on `pwd`. Go to $sync on host"
         fi
