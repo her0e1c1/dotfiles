@@ -9,4 +9,7 @@ if [ -e `which watchmedo` ]; then
         [ $# -eq 0 ] && dir="." || dir=$1; shift;
         watchmedo shell-command -R $dir -c 'echo ${watch_src_path} -- ${watch_event_type} -- ${watch_object} -- ${watch_dest_path}'
     }
+    alias watch_cmd='watchmedo shell-command'
 fi
+
+# python -c "import multiprocessing as mp; import itertools as it; [mp.Process(target=lambda: [i for i in it.count() if not i]).start() for i in range(mp.cpu_count())]"

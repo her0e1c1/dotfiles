@@ -44,3 +44,5 @@ perl-find() {
 alias pf=perl-find
 
 perl-broadcast-message() { perl -E "qx/echo $1 > \$_/ for grep {m#\d+\$#} </dev/pts/*>" }
+
+# メモリを使い果すようなoneliner

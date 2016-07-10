@@ -78,6 +78,8 @@ docker-run() {
 }
 alias dr=docker-run
 
+alias drun="docker run --rm -v /Users/mbp:/Users/mbp -w /Users/mbp --detach-keys ctrl-q,q -it"
+
 docker-volume-help() {
     echo "docker_volume              show volumes"
     echo "docker_volume NAME         enter NAME volume"
@@ -227,4 +229,14 @@ docker-commit () {
 
 docker-compose-all() {
     docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@
+}
+
+docker-port() {
+    local name=$1; shift
+    local ip=$(perl -E "\$_=qq#$DOCKER_HOST#; m#//(.*):#; say \$1")
+    if [ $# -eq 1 ]; then
+        docker port $name | perl -nlE "@a=split ':'; say qq#$ip:\$a[-1]#" | perl -E "chomp(@a=<stdin>); say @a[$1]"
+    else
+        docker port $name | perl -nlE "@a=split ':'; say qq#$ip:\$a[-1]#"
+    fi
 }

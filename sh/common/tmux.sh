@@ -7,3 +7,5 @@ alias tmux-list-buffers="tmux list-buffers"
 tmux-show-all-buffers() { perl -E 'say `tmux show-buffer -b $_ ` for 1..20' }
 
 # watchmedo shell-command -WR . -p "*.py" -c 'docker exec -it backend py.test tests.py || echo ERROR > /dev/pts/0'
+
+tmux-attach () { tmux new -s $name -t $session }

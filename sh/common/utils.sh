@@ -32,6 +32,7 @@ repeat_commands () {
     fi
 }
 
+# debug-dry-run
 debug (){
     # debug like set -x ; $CMD ; set +x
     set -x
@@ -53,3 +54,14 @@ f_basename() { echo ${1##*/} }       # 左からマッチしたものを除外(g
 f_ext() { echo ${1#*.} }             # 左からマッチしたものを除外(non greedy)
 f_without_ext() { echo ${1%%.*} }    # 右からマッチしたものを除外(greedy)
 f_dirname() { echo ${1%/*} }         # 右からマッチしたものを除外(non greedy)
+
+## OVER LOAD
+check-cpu () {
+    local num=1
+    [ $# -eq 1 ] && num=$1
+    for i in `seq $num`; do yes >> /dev/null & ; done
+}
+# yes | xargs -L 1 -P 8 >> /dev/null
+# perl -e 'while(1) {}'
+# perl -e '$hn=`hostname`; while(1){$i++;$h{$i}=$i . " $hn" . 'x'x4000 }'
+# perl -e 'while(1){$i++;$h{$i}=$i}' 
