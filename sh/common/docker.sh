@@ -275,9 +275,9 @@ docker-mysqldump() {
             echo "mysqldump > $filepath"
             docker run --rm -it "mysql:$v" mysqldump "$db" > $filepath
         fi
-        if ! docker exec -i $name mysql $db; then
+        if ! docker exec $name mysql -e "use $db"; then
             echo "CREATE: $db on $name"
-            docker exec -i $name mysql -e "create database $db;"
+            docker exec $name mysql -e "create database $db;"
         fi
         if ! docker exec -i $name mysql $db < $filepath; then
             echo "ERROR: you can not store $db < $filepath on $name"
