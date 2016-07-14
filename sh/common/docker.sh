@@ -235,8 +235,54 @@ docker-port() {
     local name=$1; shift
     local ip=$(perl -E "\$_=qq#$DOCKER_HOST#; m#//(.*):#; say \$1")
     if [ $# -eq 1 ]; then
-        docker port $name | perl -nlE "@a=split ':'; say qq#$ip:\$a[-1]#" | perl -E "chomp(@a=<stdin>); say @a[$1]"
+        local index=$(perl -E "\$_=qq/$1/; s/p\$//; say")
+        if perl -E "'$1'=~/p\$/ or exit 1"; then
+            docker port $name | perl -nlE "@a=split ':'; say qq#\$a[-1]#" | perl -E "chomp(@a=<stdin>); say @a[$index]"
+        else
+            docker port $name | perl -nlE "@a=split ':'; say qq#$ip:\$a[-1]#" | perl -E "chomp(@a=<stdin>); say @a[$index]"
+        fi
     else
         docker port $name | perl -nlE "@a=split ':'; say qq#$ip:\$a[-1]#"
     fi
+}
+
+docker-mysqldump() {
+    if [ $# -eq 1 ]; then
+        docker exec -it $1 mysql
+        return
+    fi
+    local name=$1; shift
+    local v=$1; shift
+    local dir=~/.docker-mysqldump/$name
+    [ ! -d "$dir" ] && mkdir -p $dir
+
+    # -N skip header, -B remove spaces
+    # for _db in $(echo "$(docker run --rm -it "mysql:$v" mysql -NBe 'show databases')"); do
+        # local db=`perl -E "\\$ARGV[0] =~ /(\w+)/ and say \\$1" $_db`
+        # if [ -z "$db" ]; then
+        #     echo "ERROR : db name is wrong"
+        #     continue
+        # elif [ $db = "information_schema" ]; then
+        #     continue
+        # fi
+    for db in $@; do
+        local filepath="$dir/$db.sql"
+        if [ ! -f "$filepath" ]; then
+            if ! docker run --rm -it "mysql:$v" sh -c 'test -f ~/.my.cnf'; then
+                echo "ERROR: ~/.my.cnf does not exist on $name"
+                return
+            fi
+            echo "mysqldump > $filepath"
+            docker run --rm -it "mysql:$v" mysqldump "$db" > $filepath
+        fi
+        if ! docker exec -i $name mysql $db; then
+            echo "CREATE: $db on $name"
+            docker exec -i $name mysql -e "create database $db;"
+        fi
+        if ! docker exec -i $name mysql $db < $filepath; then
+            echo "ERROR: you can not store $db < $filepath on $name"
+            return
+        fi
+        echo "DONE: $name mysql $db < $filepath"
+    done
 }
