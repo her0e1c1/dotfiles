@@ -1,12 +1,17 @@
 # docker alias
 # 以下のコマンドで、バックアップしたvolumeをマウントできる
 # docker run -d -v "$name":/var/lib/mysql mysql 
-docker-backup() {
+docker-volume-backup() {
     local data=$1 dir=$2
     docker run --rm --volumes-from "$data" -v $(pwd):/backup busybox sh -c "cd $dir && tar cvf /backup/backup.tar ."
 }
 
-docker-restore() {
+docker-volume-dump() {
+    local volume=$1
+    docker run --rm -v $volume:/volume -v $(pwd):/backup busybox sh -c "cd /volume && tar cvf /backup/backup.tar ."
+}
+
+docker-volume-restore() {
     local name=$1 backup=$2
     docker volume create --name "$name"
     docker run --rm -v "$name:/volume" -v `pwd`:/backup centos tar xvf "/backup/$backup" -C /volume
@@ -21,7 +26,7 @@ docker-volume-exists() {
 }
 
 docker-volume-copy() {
-    docker_volume_exists $1 || return 1
+    docker-volume-exists $1 || return 1
     [ $# -eq 2 ] || return 1
     local src=$1 dst=$2
     echo "copy $src $dst"
@@ -97,15 +102,15 @@ docker-volume() {
     done
     shift $((OPTIND - 1))
     if $rflag; then
-        docker_volume_remove $@
+        docker-volume-remove $@
     elif [ $# -eq 0 ]; then
         docker volume ls
     else
-        docker_volume_exists $1 || return 1
+        docker-volume-exists $1 || return 1
         if [ $# -eq 2 ]; then
-            docker_volume_copy $1 $2
+            docker-volume-copy $1 $2
         else
-            docker_volume_mount $1
+            docker-volume-mount $1
         fi
     fi
 }
@@ -192,10 +197,11 @@ docker-sync () {
     local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
 
     if ! docker exec $name test -d $sync; then
-        echo "copy $sync on host"
+        echo "rsync $sync on host"
         local d=`dirname $sync`
         docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
-        docker exec $name cp -r $src $sync
+        # docker exec $name cp -r $src $sync
+        docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
     fi
     if docker exec $name test -d $sync; then
         if [ -d "$sync" ]; then
@@ -206,7 +212,7 @@ docker-sync () {
                 ln -s "$sync" $d
             fi
             echo "start sync ..."
-            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz $sync/ $trim" $@
+            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
         else
             echo "You can't sync on `pwd`. Go to $sync on host"
         fi
@@ -286,3 +292,13 @@ docker-mysqldump() {
         echo "DONE: $name mysql $db < $filepath"
     done
 }
+
+# secure ssh dump command
+
+alias cmd="docker exec -it --detach-keys ctrl-q,q cmd python main.py"
+alias dev="docker exec -it --detach-keys ctrl-q,q dev python curl.py"
+alias algo-erl='docker exec -it --detach-keys ctrl-q,q algo-erl sh run.sh erl'
+alias algo-py="docker exec -it --detach-keys ctrl-q,q algo-py python"
+alias algo-gosh="docker exec -it --detach-keys ctrl-q,q algo-gosh gosh"
+alias algo-js="docker exec -it --detach-keys ctrl-q,q algo-js node"
+alias algo-go="docker exec -it --detach-keys ctrl-q,q algo-go run"

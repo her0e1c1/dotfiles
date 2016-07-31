@@ -148,6 +148,21 @@ EOF
 }
 alias he=haskell_oneliner
 
+# -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
+alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
+# git_add_stream git@...
+alias git_add_stream="git remote add upstream"
+alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
+
+run-erl () {
+    filepath=$1
+    base=${filepath%%.*}
+    module=main
+    erlc $filepath
+    erl +B -s $base $module -s init stop
+}
+run-erl () {; erlc $1; erl +B -s ${$1%%.*} main -s init stop}
+
 . $HERE/utils.sh
 . $HERE/docker.sh
 . $HERE/oneliner.sh
@@ -157,8 +172,3 @@ alias he=haskell_oneliner
 . $HERE/python.sh
 . $HERE/tmux.sh
 
-# -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
-alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
-# git_add_stream git@...
-alias git_add_stream="git remote add upstream"
-alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"

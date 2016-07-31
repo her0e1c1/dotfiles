@@ -1,4 +1,6 @@
 
+perl-string-q2dq() { perl -E '$s=chr 39; $_=$ARGV[0]; s#$s#"#g; say' $1}
+
 perl-line-drop () {
     [ $# -eq 1 ] && local l=$1 || local l=10
     perl -nlE "say if not 1..$l"
@@ -46,3 +48,5 @@ alias pf=perl-find
 perl-broadcast-message() { perl -E "qx/echo $1 > \$_/ for grep {m#\d+\$#} </dev/pts/*>" }
 
 # メモリを使い果すようなoneliner
+
+perl-escape-double-quotes() { perl -E '$_=$ARGV[0]; s#"#\\"#g; say' $1 }

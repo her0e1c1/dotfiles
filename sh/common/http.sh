@@ -1,3 +1,16 @@
+
+sample-for() {
+    for i in 1 2 3; do echo $i; done
+    for i in `seq 1 3`; do echo $i; done
+    for i in `echo 1 2 3`; do echo $i; done
+    for i in `echo "1 2 3"`; do echo $i; done
+}
+
+sample-read() {
+    read -p "Please input your command: " input_command
+    echo $input_command
+}
+
 sample_quote() {
     echo $'It\'s Shell Programming'  # bash/zsh
     echo 'It'\''s Shell Programming'
