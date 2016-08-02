@@ -201,7 +201,8 @@ docker-sync () {
         local d=`dirname $sync`
         docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
         # docker exec $name cp -r $src $sync
-        docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
+        # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
+        docker exec $name rsync -avz $trim/ $sync
     fi
     if docker exec $name test -d $sync; then
         if [ -d "$sync" ]; then
