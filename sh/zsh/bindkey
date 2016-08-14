@@ -1,4 +1,3 @@
-
 bindkey -e
 bindkey '^]' insert-last-word
 bindkey "^P" history-beginning-search-backward-end
@@ -7,6 +6,6 @@ bindkey "^[/" undo
 bindkey "^[?" redo
 bindkey "^[H" run-help
 bindkey "^[f" percol_cd
-bindkey "'" insert_quote
+# bindkey "'" insert_quote
 # bindkey '^[r' percol_select_history
 bindkey '^r' percol_select_history

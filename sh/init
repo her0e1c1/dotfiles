@@ -10,8 +10,6 @@ export LC_ALL=en_US.UTF-8
 . ~/sh/common/export
 . ~/sh/common/function
 
-for i in ~/sh/languages/*; do . $i; done
-
 # Change loading scripts depending on each environment
 if uname -a | grep -q Darwin; then
     . ~/sh/mac/alias

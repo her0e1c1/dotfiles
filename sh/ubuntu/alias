@@ -1,2 +1,0 @@
-alias ls='ls -aF --color'
-alias gr='grep -r . '

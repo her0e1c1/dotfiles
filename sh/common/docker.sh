@@ -57,9 +57,8 @@ docker-process-exists() {
 }
 
 docker-process-remove() {
-    for p in `docker ps -q`; do
-        docker rm -f $p
-    done
+    docker rm `docker ps -aq`
+    # for p in `docker ps -qa`; do docker rm -f $p; done
 }
 
 docker-cp() {
@@ -303,3 +302,21 @@ alias algo-py="docker exec -it --detach-keys ctrl-q,q algo-py python"
 alias algo-gosh="docker exec -it --detach-keys ctrl-q,q algo-gosh gosh"
 alias algo-js="docker exec -it --detach-keys ctrl-q,q algo-js node"
 alias algo-go="docker exec -it --detach-keys ctrl-q,q algo-go run"
+
+PATH_DOCKER_ONELINER="/Users/mbp/workspace/sandbox/dict/data/oneliner"
+
+docker_oneliner () {
+    if [ $# -eq 0 ]; then
+       echo "Need container_name"
+       return 1
+    fi
+    name=$1; shift
+    container_name="oneliner-$name"
+    \cd $PATH_DOCKER_ONELINER
+    if ! docker ps --format "{{.Names}}" | grep $container_name > /dev/null ; then
+        docker-compose up -d $container_name
+    fi
+    docker exec -it --detach-keys ctrl-q,q $container_name bash ./bin/$name $@
+}
+
+alias one=docker_oneliner
