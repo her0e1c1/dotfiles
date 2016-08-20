@@ -190,6 +190,11 @@ docker-sync-help() {
 # または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
 # host側のイベントを取りにいけない...
 docker-sync () {
+    if [ $# -eq 1 ]; then
+        docker exec -it $1 /bin/bash
+        return 0
+    fi
+
     local name=$1; shift
     local src=$1; shift
     local sync=".docker-sync/$name/`basename $src`"
@@ -257,6 +262,15 @@ docker-mysqldump() {
         docker exec -it $1 mysql
         return
     fi
+
+    local force=false
+    while getopts f OPT; do
+        case $OPT in
+            f) force=true;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
     local name=$1; shift
     local v=$1; shift
     local dir=~/.docker-mysqldump/$name
@@ -273,6 +287,9 @@ docker-mysqldump() {
         # fi
     for db in $@; do
         local filepath="$dir/$db.sql"
+        if $force; then
+            rm $filepath
+        fi
         if [ ! -f "$filepath" ]; then
             if ! docker run --rm -it "mysql:$v" sh -c 'test -f ~/.my.cnf'; then
                 echo "ERROR: ~/.my.cnf does not exist on $name"
