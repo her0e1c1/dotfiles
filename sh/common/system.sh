@@ -1,2 +1,0 @@
-
-check-memory() { free -mh }

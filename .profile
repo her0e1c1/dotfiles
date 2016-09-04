@@ -38,15 +38,17 @@ export MYDIRS_HISTORY=~/.mydirs
 ### FUNCTIONS
 
 mydirs_dirs () {
+    # 最近のものを先頭に
     local d=`cat $MYDIRS_HISTORY | peco`
     if [ -d $d ]; then
-      cd $d
+      cdls $d
     fi
 }
 
 mydirs_pushd () {
-    echo $1 >> $MYDIRS_HISTORY
-    cd $1
+    local p=`python -c "import os; print(os.path.abspath('$1'))"`
+    echo $p >> $MYDIRS_HISTORY
+    cd $p
 }
 
 myhistroy () {
@@ -105,7 +107,7 @@ export HISTIGNORE="fg*:bg*:history:cd*:ls*"
 #ヒストリのサイズを増やす
 export HISTSIZE=100000
 
-peco-select-history() {
+peco_select_history() {
     declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
     READLINE_LINE="$l"
     READLINE_POINT=${#l}
@@ -113,5 +115,47 @@ peco-select-history() {
         ${READLINE_LINE}
     fi
 }
-bind -x '"\C-r": peco-select-history'
+bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
+bind -x '"\ef": mydirs_dirs'
+
+emacs_start () { docker run -e "TERM=xterm-256color" -v /Users/mbp:/Users/mbp --name emacs --rm -it emacs sh -c "emacs --daemon && bash -l"; }
+e () {
+    if [ $# -eq 0 ]; then
+        docker exec -it emacs script -q -c '"/bin/bash" -c "emacsclient -t ."' /dev/null
+    else
+        local p="`pwd`/$1";
+        if [ -e $p ]; then
+            docker exec -it emacs script -q -c "'/bin/bash' -c 'emacsclient -t $p'" /dev/null
+        else
+            echo "$p does not exist"
+        fi
+    fi
+}
+
+cdls(){
+	if [ ${#1} -eq 0 ]; then
+	   \cd && ls
+	else
+       \cd "$*" && ls -G
+	fi
+}
+
+#圧縮ファイルを名前だけで展開
+extract() {
+  case $1 in
+    *.tar.gz|*.tgz) tar xzvf $1;;
+    *.tar.xz) tar Jxvf $1;;
+    *.zip) unzip $1;;
+    *.lzh) lha e $1;;
+    *.tar.bz2|*.tbz) tar xjvf $1;;
+    *.tar.Z) tar zxvf $1;;
+    *.gz) gzip -dc $1;;
+    *.bz2) bzip2 -dc $1;;
+    *.Z) uncompress $1;;
+    *.tar) tar xvf $1;;
+    *.arj) unarj $1;;
+  esac
+}
+
+alias cd="cdls"
