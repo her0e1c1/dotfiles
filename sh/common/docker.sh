@@ -199,12 +199,28 @@ docker-sync () {
     local src=$1; shift
     local sync=".docker-sync/$name/`basename $src`"
     local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+    local working=`docker-working $name`
+    
+    echo "cd $working"
+    \cd $working
+
+    # コンテナに必ずしもrsyncがインストールされているとは限らないが必須
+    if ! docker exec $name which rsync; then
+        echo "Install rsync on $name"
+        docker exec $name apt-get update -y;
+        if ! docker exec $name apt-get install -y rsync; then
+            return 1
+        fi
+    fi
 
     if ! docker exec $name test -d $sync; then
-        echo "rsync $sync on host"
         local d=`dirname $sync`
         docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
+
+        # echo "cp $src $sync on host"
         # docker exec $name cp -r $src $sync
+
+        echo "rsync $sync on host"
         # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
         docker exec $name rsync -avz $trim/ $sync
     fi
@@ -224,6 +240,10 @@ docker-sync () {
     else
         echo "$sync dir is not found on docker."
     fi
+}
+
+docker-working() {
+    docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
 }
 
 docker-commit () {
@@ -337,3 +357,12 @@ docker_oneliner () {
 }
 
 alias one=docker_oneliner
+docker-kill() { docker rm -f `docker ps -aq` }
+
+# なんかdocker-composeで環境に入りたい
+# DOCKER_LANGUAGE_PATH="/Users/mbp/workspace/sandbox/algo/"
+# docker-compose-language() {
+#     for p in 
+#         docker-compose up -d $lang
+#     done
+# }
