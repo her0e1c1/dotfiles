@@ -104,3 +104,14 @@ export HISTIGNORE="fg*:bg*:history:cd*:ls*"
 
 #ヒストリのサイズを増やす
 export HISTSIZE=100000
+
+peco-select-history() {
+    declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
+    READLINE_LINE="$l"
+    READLINE_POINT=${#l}
+    if [ `uname` = "Darwin" ]; then
+        ${READLINE_LINE}
+    fi
+}
+bind -x '"\C-r": peco-select-history'
+bind    '"\C-xr": reverse-search-history'
