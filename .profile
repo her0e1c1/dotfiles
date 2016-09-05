@@ -1,9 +1,10 @@
+# set -x
 # For Bash
 
 ### TODO
 # - L, T (pbcopy)
 
-echo hi start
+echo LOADING...
 
 ### EXPORT
 
@@ -11,6 +12,7 @@ echo hi start
 # \t \T 24 12 time
 # \w \W currend dir
 # \u user name
+export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 export PS1="\u@\w\n$ "
 export GOPATH=~/go 
 export PATH="$PATH:$GOPATH/bin"
@@ -61,11 +63,16 @@ myhistroy () {
 # bind -p
 bind -f $INPUTRC
 
-
 ### ALIAS
 
 alias s='rlwrap sh -l'
 alias p='mydirs_pushd'
+alias d="docker"
+alias g="git"
+alias ll='ls -alF'
+alias ls='ls -aCF'
+alias sl=ls
+alias l=ls
 alias sudo="sudo "  # sudo時にアリアス有効
 
 export LANG=ja_JP.UTF-8
@@ -80,32 +87,32 @@ else
     export EDITOR=vi
 fi
 
-export DOCKER_TLS_VERIFY="1"
-export DOCKER_CERT_PATH="/Users/mbp/.docker/machine/machines/default"
-export DOCKER_HOST="tcp://192.168.99.100:2376"
+# export DOCKER_TLS_VERIFY="1"
+# export DOCKER_CERT_PATH="/Users/mbp/.docker/machine/machines/default"
+# export DOCKER_HOST="tcp://192.168.99.100:2376"
 
 
 ### FOR BASH
 
 # export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
 # export HISTCONTROL=ignoredups  # 重複履歴を無視
-export HISTCONTROL=ignoreboth  # 両方
+# export HISTCONTROL=ignoreboth  # 両方
 
 #履歴の共有
-function share_history {  # 以下の内容を関数として定義
-    history -a  # .bash_historyに前回コマンドを1行追記
-    history -c  # 端末ローカルの履歴を一旦消去
-    history -r  # .bash_historyから履歴を読み込み直す
-}
+# function share_history {  # 以下の内容を関数として定義
+#     history -a  # .bash_historyに前回コマンドを1行追記
+#     history -c  # 端末ローカルの履歴を一旦消去
+#     history -r  # .bash_historyから履歴を読み込み直す
+# }
 
-PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
-shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
+# PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
+# shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
 
-#よく使うコマンドは履歴保存対象から外す。
-export HISTIGNORE="fg*:bg*:history:cd*:ls*"
+# #よく使うコマンドは履歴保存対象から外す。
+# export HISTIGNORE="fg*:bg*:history:cd*:ls*"
 
-#ヒストリのサイズを増やす
-export HISTSIZE=100000
+# #ヒストリのサイズを増やす
+# export HISTSIZE=100000
 
 peco_select_history() {
     declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
@@ -159,3 +166,11 @@ extract() {
 }
 
 alias cd="cdls"
+
+docker_rm_all() { docker rm -f `docker ps -qa`; }
+
+docker_compose_all() {
+    docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@
+}
+
+echo "DONE"
