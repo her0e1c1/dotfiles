@@ -120,7 +120,7 @@ peco_select_history() {
     READLINE_LINE="$l"
     READLINE_POINT=${#l}
     if [ `uname` = "Darwin" ]; then
-        echo "${READLINE_LINE}" | pbcopy
+        echo "${READLINE_LINE}" | chomp | pbcopy
     fi
 }
 bind -x '"\C-r": peco_select_history'
@@ -216,7 +216,7 @@ dr() {
 }
 
 # dei db mysql db < FILEPATH.sql
-docker_temp_mysql() { docker run --name db --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7; }
+docker_mysql() { docker run --name mysql --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7; }
 
 # TODO: grep |peco | open file
 
