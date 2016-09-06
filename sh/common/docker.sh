@@ -82,8 +82,6 @@ docker-run() {
 }
 alias dr=docker-run
 
-alias drun="docker run --rm -v /Users/mbp:/Users/mbp -w /Users/mbp --detach-keys ctrl-q,q -it"
-
 docker-volume-help() {
     echo "docker_volume              show volumes"
     echo "docker_volume NAME         enter NAME volume"
@@ -165,8 +163,6 @@ docker-compose-update() {
     $down && return 0
     docker-compose -f $file -p $project up -d
 }
-
-docker-rm-all() { docker rm -f `docker ps -qa`}
 
 docker-rename-image() { docker tag $1 $2; docker rmi $1 }
 
