@@ -40,23 +40,24 @@ export MYCMDS_HISTORY=~/.mycmds
 
 ### FUNCTIONS
 
-mydirs_dirs () {
-    # 最近のものを先頭に
-    local d=`cat $MYDIRS_HISTORY | peco`
-    if [ -d $d ]; then
-      cdls $d
+f () {
+    if [ ! -f $MYDIRS_HISTORY ]; then
+        touch $MYDIRS_HISTORY
     fi
-}
+    if [ $# -eq 0 ]; then
+        local d=`cat $MYDIRS_HISTORY | peco`
+        if [ -d $d ]; then
+            cdls $d
+            update_files $MYDIRS_HISTORY $d
+        fi
+    else
+        local d=`python -c "import os; print(os.path.abspath('$1'))"`
+        update_files $MYDIRS_HISTORY $d
+        cd $d
+    fi
 
-mydirs_pushd () {
-    local p=`python -c "import os; print(os.path.abspath('$1'))"`
-    update_files $MYDIRS_HISTORY $p
-    cd $p
 }
-
-myhistroy () {
-    cat ~/ | peco
-}
+bind -x '"\ef": f'
 
 ### BINDS
 
@@ -67,7 +68,6 @@ bind -f $INPUTRC
 ### ALIAS
 
 alias s='rlwrap sh -l'
-alias p='mydirs_pushd'
 alias d="docker"
 alias g="git"
 alias ll='ls -alF'
@@ -125,11 +125,15 @@ peco_select_history() {
 }
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
-bind -x '"\ef": mydirs_dirs'
 
 export RECENT_FILES=~/.recent_files
 
-emacs_start () { docker run -e "TERM=xterm-256color" -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"; }
+emacs () {
+    if docker ps | grep emacs; then
+        docker rm -f emacs
+    fi
+    docker run -e "TERM=xterm-256color" -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
+}
 e () {
     if [ $# -eq 0 ]; then
         local p=`pwd`
@@ -143,9 +147,6 @@ e () {
         echo "$p does not exist"
     fi
 }
-
-# recent_files () {;
-# }
 
 cdls(){
 	if [ ${#1} -eq 0 ]; then
@@ -176,10 +177,9 @@ alias cd="cdls"
 
 docker_kill()        { docker rm -f `docker ps -aq`; }
 docker_rename()      { docker tag $1 $2; docker rmi $1; }
-
 docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
 
-docker_exec() {
+de() {
     local rflag=false
     while getopts rh OPT; do
         case $OPT in
@@ -202,10 +202,9 @@ docker_exec() {
         fi
     fi
 }
-alias de=docker_exec
 alias dei="docker exec -i"
 
-docker_run() { 
+dr() { 
     if [ $# -eq 0 ]; then
         docker images
     else
@@ -215,7 +214,6 @@ docker_run() {
         sh -c "docker run --rm -v /Users/mbp:/Users/mbp -w /Users/mbp --detach-keys ctrl-q,q -it $name $cmd"
     fi
 }
-alias dr=docker_run
 
 # dei db mysql db < FILEPATH.sql
 docker_temp_mysql() { docker run --name db --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7; }
@@ -239,8 +237,8 @@ import sys
 if len(sys.argv) == 2:
     exit(1)
 
-filepath = '$1'
-word = '$2\n'
+filepath = '''$1'''
+word = '''$2\n'''
 
 with open(filepath) as f:
     lines = f.readlines()
@@ -284,7 +282,8 @@ h () {
     if [ $# -eq 0 ]; then
         local d=`cat $MYCMDS_HISTORY | peco | perl -pE 'chomp $_'`
         update_files $MYCMDS_HISTORY $d
-        echo -n "$d" | tmux_set_buffer
+        # echo -n "$d" | tmux_set_buffer
+        echo "$d" | chomp | pbcopy
     else
         local d=`echo $@`
         update_files $MYCMDS_HISTORY "$d"
@@ -292,5 +291,73 @@ h () {
     fi
 }
 bind -x '"\eh": h'
+
+docker_sync () {
+    if [ $# -eq 1 ]; then
+        docker exec -it $1 /bin/bash
+        return 0
+    fi
+
+    local name=$1; shift
+    local src=$1; shift
+    local sync=".docker-sync/$name/`basename $src`"
+    local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+    local working=`docker_working $name`
+    
+    echo "cd $working"
+    \cd $working
+
+    # コンテナに必ずしもrsyncがインストールされているとは限らないが必須
+    if ! docker exec $name which rsync; then
+        echo "Install rsync on $name"
+        docker exec $name apt-get update -y;
+        if ! docker exec $name apt-get install -y rsync; then
+            return 1
+        fi
+    fi
+
+    if ! docker exec $name test -d $sync; then
+        local d=`dirname $sync`
+        docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
+
+        # echo "cp $src $sync on host"
+        # docker exec $name cp -r $src $sync
+
+        echo "rsync $sync on host"
+        # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
+        docker exec $name rsync -avz $trim/ $sync
+    fi
+    if docker exec $name test -d $sync; then
+        if [ -d "$sync" ]; then
+            local d=~/$sync
+            if [ ! -d $d ]; then
+                mkdir -p `dirname $d`
+                echo "create a symbol link $d"
+                ln -s "$sync" $d
+            fi
+            echo "start sync ..."
+            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
+        else
+            echo "You can't sync on `pwd`. Go to $sync on host"
+        fi
+    else
+        echo "$sync dir is not found on docker."
+    fi
+}
+
+docker_working() {
+    docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
+}
+
+chomp () { perl -pE "chomp \$_"; }
+
+b () {
+    local p=`tmux show-buffer`
+    echo "$p" | peco | chomp | pbcopy
+}
+
+bind -x '"\eb": b'
+bind -x '"\eB": tmux capture-pane'
+
 
 echo "DONE"
