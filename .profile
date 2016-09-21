@@ -1,4 +1,8 @@
 # set -x
+
+# go get github.com/motemen/ghq
+# go get github.com/motemen/github-list-starred
+
 # For Bash
 
 ### TODO
@@ -129,7 +133,7 @@ bind    '"\C-xr": reverse-search-history'
 export RECENT_FILES=~/.recent_files
 
 emacs () {
-    if docker ps | grep emacs; then
+    if docker ps -a --format "{{.Names}}" | grep emacs; then
         docker rm -f emacs
     fi
     docker run -e "TERM=xterm-256color" -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
@@ -175,7 +179,7 @@ extract() {
 
 alias cd="cdls"
 
-docker_kill()        { docker rm -f `docker ps -aq`; }
+docker_kill()        { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
 docker_rename()      { docker tag $1 $2; docker rmi $1; }
 docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
 
@@ -358,6 +362,90 @@ b () {
 
 bind -x '"\eb": b'
 bind -x '"\eB": tmux capture-pane'
+
+docker_remove_volume () { docker volume rm `docker volume ls -q`; }
+
+lang_run() {
+    local name="$1"; shift
+    local container_name="lang_$1"
+    if ! docker ps --format "{{.Names}}" | grep $container_name; then
+        docker run --name "$container_name" -it --rm -v `pwd`:/working "$name:dev"
+    fi
+    if [ $# -eq 0 ]; then
+        docker exec -it "$container_name" bash
+    else
+        docker exec -it "$container_name" $@
+    fi
+}
+
+go_run () { lang_run "golang" $@; }
+
+dict () {
+    local cmd=$1;
+    if ! docker ps --format "{{.Names}}" | grep dict > /dev/null ; then
+        docker-compose -f /Users/mbp/workspace/sandbox/dict/docker-compose.yml up -d
+    fi
+    if [ "$cmd" = "setup" ]; then
+        docker exec -it dict python main.py "$@"
+    else
+        docker exec -it dict python main.py s "$@"
+    fi
+}
+
+# docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
+# または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
+# host側のイベントを取りにいけない...
+docker_sync () {
+    if [ $# -eq 1 ]; then
+        docker exec -it $1 /bin/bash
+        return 0
+    fi
+
+    local name=$1; shift
+    local src=$1; shift
+    local sync=".docker-sync/$name/`basename $src`"
+    local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
+    local working=`docker_working $name`
+    
+    echo "cd $working"
+    \cd $working
+
+    # コンテナに必ずしもrsyncがインストールされているとは限らないが必須
+    if ! docker exec $name which rsync; then
+        echo "Install rsync on $name"
+        docker exec $name apt-get update -y;
+        if ! docker exec $name apt-get install -y rsync; then
+            return 1
+        fi
+    fi
+
+    if ! docker exec $name test -d $sync; then
+        local d=`dirname $sync`
+        docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
+
+        # echo "cp $src $sync on host"
+        # docker exec $name cp -r $src $sync
+
+        echo "rsync $sync on host"
+        # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
+        docker exec $name rsync -avz $trim/ $sync
+    fi
+    if docker exec $name test -d $sync; then
+        if [ -d "$sync" ]; then
+            echo "start sync ... on $working"
+            echo watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
+            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
+        else
+            echo "You can't sync on `pwd`. Go to $sync on host"
+        fi
+    else
+        echo "$sync dir is not found on docker."
+    fi
+}
+
+docker_working() {
+    docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
+}
 
 
 echo "DONE"
