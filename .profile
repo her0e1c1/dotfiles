@@ -42,6 +42,12 @@ export MYCMDS_HISTORY=~/.mycmds
 
 [ ! -d "$GOPATH" ] && mkdir $GOPATH
 
+## REGEX
+f_basename() { echo ${1##*/}; }    # 左からマッチしたものを除外(greedy)
+f_ext() { echo ${1#*.}; }          # 左からマッチしたものを除外(non greedy)
+f_without_ext() { echo ${1%%.*}; } # 右からマッチしたものを除外(greedy)
+f_dirname() { echo ${1%/*}; }      # 右からマッチしたものを除外(non greedy)
+
 ### FUNCTIONS
 
 f () {
@@ -136,7 +142,8 @@ emacs () {
     if docker ps -a --format "{{.Names}}" | grep emacs; then
         docker rm -f emacs
     fi
-    docker run -e "TERM=xterm-256color" -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
+    touch ~/.recentf
+    docker run -e "TERM=xterm-256color" -v ~/.recentf:/root/.emacs.d/recentf -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
 }
 e () {
     if [ $# -eq 0 ]; then
@@ -198,6 +205,10 @@ de() {
         docker ps
     else
         local name=$1; shift
+        if docker ps -a --format "{{.Names}}##{{.Status}}"| grep "$name##Exited"; then
+            echo "Start ..."
+            docker start $name
+        fi
         if [ $# -ne 0 ]; then
             # $@はかなり特殊な変数(配列っぽい動きする。そのため他の変数に代入できないっぽい)
             docker exec -it --detach-keys ctrl-q,q $name $@
@@ -447,5 +458,28 @@ docker_working() {
     docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
 }
 
+r() {
+    local path=$1; shift
+    local ext="`f_ext $path`"
+    local cmd="docker run -it -v `pwd`:/w --rm"
+    if [ "$ext" = "go" ]; then
+        $cmd "golang:dev" go run "/w/$path"
+    elif [ "$ext" = "hs" ]; then
+        $cmd "haskell:dev" runhaskell "/w/$path"
+    elif [ "$ext" = "erl" ]; then
+        $cmd "erlang:dev" sh -c "erlc /w/$path && 1"
+    elif [ "$ext" = "py" ]; then
+        $cmd "py3" python "/w/$path"
+    elif [ "$ext" = "c" ]; then
+        $cmd "rsmmr/clang" sh -c "clang /w/$path -o /a.out && /a.out"
+    elif [ "$ext" = "cpp" ]; then
+        $cmd "rsmmr/clang" sh -c "clang++ -std=c++11 /w/$path -o /a.out && /a.out"
+    elif [ "$ext" = "scm" ]; then
+        $cmd "algo" gosh "/w/$path"
+    else
+        echo "No supported language"
+        return 1
+    fi
+}
 
 echo "DONE"
