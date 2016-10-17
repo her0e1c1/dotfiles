@@ -461,13 +461,17 @@ docker_working() {
 r() {
     local path=$1; shift
     local ext="`f_ext $path`"
+    local wext="`f_without_ext $path`"
+    local dir="`f_dirname $path`"
+    local base="`f_basename $path`"
+    local base_wext="`f_without_ext $base`"
     local cmd="docker run -it -v `pwd`:/w --rm"
     if [ "$ext" = "go" ]; then
         $cmd "golang:dev" go run "/w/$path"
     elif [ "$ext" = "hs" ]; then
         $cmd "haskell:dev" runhaskell "/w/$path"
     elif [ "$ext" = "erl" ]; then
-        $cmd "erlang:dev" sh -c "erlc /w/$path && 1"
+        $cmd "erlang:19" sh -c "erlc /w/$path && erl +B -s $wext main -s init stop"
     elif [ "$ext" = "py" ]; then
         $cmd "py3" python "/w/$path"
     elif [ "$ext" = "c" ]; then
@@ -476,10 +480,20 @@ r() {
         $cmd "rsmmr/clang" sh -c "clang++ -std=c++11 /w/$path -o /a.out && /a.out"
     elif [ "$ext" = "scm" ]; then
         $cmd "algo" gosh "/w/$path"
+    elif [ "$ext" = "java" ]; then
+        $cmd "java:8" sh -c "cd /w/$dir && javac $base && java $base_wext"
     else
         echo "No supported language"
         return 1
     fi
 }
 
+math() {
+    # math IN > OUT or -o OUT
+    pandoc --self-contained -s --mathjax=https://gist.githubusercontent.com/yohm/0c8ed72b6f18948a2fd3/raw/624defc8ffebb0934ab459854b7b3efc563f6efb/dynoload.js -c https://gist.githubusercontent.com/griffin-stewie/9755783/raw/13cf5c04803102d90d2457a39c3a849a2d2cc04b/github.css $@
+}
+
+ghci() { dr haskell:dev ghci; }
+
 echo "DONE"
+

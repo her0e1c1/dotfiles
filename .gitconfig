@@ -35,6 +35,11 @@
 	co = checkout
 	cob = checkout -b
 
+    # cherry pick
+    cp = cherry-pick
+    cpa = cherry-pick --abort
+    cpc = cherry-pick --continue
+
     # diff
     d = diff
     df = "diff --cached"
@@ -73,7 +78,7 @@
 
     # reset
 	rs = reset
-	rs1 = reset HEAD~
+	rs1 = reset HEAD~ --hard
     rsh = reset --hard
     rss = reset --soft
     rsm = reset --merge

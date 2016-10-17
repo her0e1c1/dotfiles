@@ -110,57 +110,12 @@ $main
 
 alias s="\gosh -l ~/lib/scheme/init.scm ~/github/onelinerForGauche/main.scm"
 
-java_oneliner() {
-    source=$(cat <<EOF
-import java.util.*;
-public class Oneliner {
-    static void P(Object o) { System.out.println(o); }
-    public static void main (String[] args) {
-        $1
-    }
-}
-EOF
-)
-    echo $source > Oneliner.java
-    javac Oneliner.java
-    java Oneliner
-    rm Oneliner.java
-    rm Oneliner.class
-}
-alias je=java_oneliner
-
-haskell_oneliner() {
-    local main=$1; shift
-    source=$(cat <<EOF
-import Control.Applicative
-import Control.Monad
-import Data.List
-import Data.Array
-import System.Directory
-import System.Environment
-main = print ($main)
-EOF
-)
-   tfile=`mktemp`
-   echo "$source" >> $tfile
-   runhaskell $tfile "$@"
-   \rm $tfile
-}
-alias he=haskell_oneliner
-
 # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
 # git_add_stream git@...
 alias git_add_stream="git remote add upstream"
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
 
-run-erl () {
-    filepath=$1
-    base=${filepath%%.*}
-    module=main
-    erlc $filepath
-    erl +B -s $base $module -s init stop
-}
 run-erl () {; erlc $1; erl +B -s ${$1%%.*} main -s init stop}
 
 . $HERE/utils.sh
