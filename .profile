@@ -471,7 +471,8 @@ r() {
     elif [ "$ext" = "hs" ]; then
         $cmd "haskell:dev" runhaskell "/w/$path"
     elif [ "$ext" = "erl" ]; then
-        $cmd "erlang:19" sh -c "erlc /w/$path && erl +B -s $wext main -s init stop"
+        $cmd "erlang:19" sh -c "cd /w/$dir && erlc $base && erl +B -s $base_wext main -s init stop"
+        # $cmd "erlang:19" sh -c "erlc /w/$path && erl +B -s $wext main -s init stop"
     elif [ "$ext" = "py" ]; then
         $cmd "py3" python "/w/$path"
     elif [ "$ext" = "c" ]; then
