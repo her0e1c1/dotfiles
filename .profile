@@ -18,15 +18,30 @@ echo LOADING...
 # \u user name
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 export PS1="\u@\w\n$ "
-export GOPATH=~/go 
-export PATH="$PATH:$GOPATH/bin"
+export GOPATH=~/go
+export GOBIN=~/go/bin
+export PATH="$PATH:$GOPATH/bin:$GOBIN"
 export INPUTRC=~/.inputrc
+export HOSTIP=192.168.100.100
 
 # CUSTOM VARS
 export MYDIRS_HISTORY=~/.mydirs
 export MYCMDS_HISTORY=~/.mycmds
 
+do_sudo () {
+    sudo ifconfig lo0 alias $HOSTIP
+}
+
 ### INSTALL IF NEEDED
+
+init_install () {
+    if which go 2>&1 1>/dev/null; then
+       go get github.com/rogpeppe/godef
+       go get -u github.com/nsf/gocode
+       go get github.com/golang/lint/golint
+       go get github.com/kisielk/errcheck
+    fi
+}
 
 #install_dotfile () {
 #  local filepath
@@ -40,7 +55,7 @@ export MYCMDS_HISTORY=~/.mycmds
 
 # install_dotfile
 
-[ ! -d "$GOPATH" ] && mkdir $GOPATH
+# [ ! -d "$GOPATH" ] && mkdir $GOPATH
 
 ## REGEX
 f_basename() { echo ${1##*/}; }    # 左からマッチしたものを除外(greedy)
@@ -79,6 +94,7 @@ bind -f $INPUTRC
 
 alias s='rlwrap sh -l'
 alias d="docker"
+alias dc="docker-compose"
 alias g="git"
 alias ll='ls -alF'
 alias ls='ls -aCF'
@@ -143,7 +159,7 @@ emacs () {
         docker rm -f emacs
     fi
     touch ~/.recentf
-    docker run -e "TERM=xterm-256color" -v ~/.recentf:/root/.emacs.d/recentf -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
+    docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/workspace/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
 }
 e () {
     if [ $# -eq 0 ]; then
@@ -188,6 +204,7 @@ alias cd="cdls"
 
 docker_kill()        { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
 docker_rename()      { docker tag $1 $2; docker rmi $1; }
+docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/'`; }
 docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
 
 de() {
@@ -220,22 +237,44 @@ de() {
 alias dei="docker exec -i"
 
 dr() { 
+    local eflag=false
+    while getopts e OPT; do
+        case $OPT in
+            e) eflag=true;;
+        esac
+    done
+    shift $((OPTIND - 1))
     if [ $# -eq 0 ]; then
         docker images
     else
         local name=$1; shift
         local cmd=/bin/bash
+        local env=""
+        if $eflag; then
+            env=`perl -E 'say map {chomp; "-e $_ "} qx/env/'`
+        fi
         [ $# -ne 0 ] && cmd=$@
-        sh -c "docker run --rm -v /Users/mbp:/Users/mbp -w /Users/mbp --detach-keys ctrl-q,q -it $name $cmd"
+        sh -c "docker run --rm -p 9999 --add-host=docker:$HOSTIP $env -v /Users/mbp:/Users/mbp -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
     fi
 }
 
-# dei db mysql db < FILEPATH.sql
-docker_mysql() { docker run --name mysql --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7; }
+docker_mysql() {
+    if docker ps --format "{{.Names}}" | perl -E 'exit !(grep {$_=~ /^mysql$/} <STDIN>);'; then
+       docker rm -f mysql 
+    fi
+    docker run --name mysql -v /Users/mbp:/Users/mbp -w `pwd` --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7;
+}
+
+docker_es() {
+    if docker ps --format "{{.Names}}" | perl -E 'exit !(grep {$_=~ /^es$/} <STDIN>);'; then
+       docker rm -f es 
+    fi
+    docker run --name es -v /Users/mbp:/Users/mbp -w `pwd` --rm -it elasticsearch:2.3;
+}
 
 # TODO: grep |peco | open file
 
-# alias h='cat ~/GDrive/.zsh_history |peco | perl -pE "chomp \$_" | pbcopy'
+# alias h='cat ~/GDrive/.zsh_history | peco | perl -pE "chomp \$_" | pbcopy'
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
 tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`'; }
 tmux_show_buffers() { perl -E 'say `tmux show-buffer -b $_ ` for 0..20'; }
@@ -283,6 +322,15 @@ alias curl_json='curl -H "Accept: application/json" -H "Content-type: applicatio
 # git_add_stream git@...
 alias git_add_stream="git remote add upstream"
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
+
+git_branch_remove () {
+    if [ $# -eq 0 ]; then
+        git branch   
+        return
+    fi
+    local pattern=$1; shift
+    git branch | grep $pattern | xargs git branch -D
+}
 
 esc () { perl -plE "s#'#'\\''# "; }
 
@@ -472,7 +520,6 @@ r() {
         $cmd "haskell:dev" runhaskell "/w/$path"
     elif [ "$ext" = "erl" ]; then
         $cmd "erlang:19" sh -c "cd /w/$dir && erlc $base && erl +B -s $base_wext main -s init stop"
-        # $cmd "erlang:19" sh -c "erlc /w/$path && erl +B -s $wext main -s init stop"
     elif [ "$ext" = "py" ]; then
         $cmd "py3" python "/w/$path"
     elif [ "$ext" = "c" ]; then
@@ -494,7 +541,36 @@ math() {
     pandoc --self-contained -s --mathjax=https://gist.githubusercontent.com/yohm/0c8ed72b6f18948a2fd3/raw/624defc8ffebb0934ab459854b7b3efc563f6efb/dynoload.js -c https://gist.githubusercontent.com/griffin-stewie/9755783/raw/13cf5c04803102d90d2457a39c3a849a2d2cc04b/github.css $@
 }
 
+docker_process_live () {
+    docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"
+}
+
+ej() {
+    if ! docker_process_live ej; then
+        docker-compose -f ~/workspace/sandbox/lang/erl/ej/docker-compose.yml up -d;
+    fi
+    de ej;
+}
 ghci() { dr haskell:dev ghci; }
+ip2() { dr py2 ipython; }
+ip3() { dr py3 ipython; }
+ipm() { dr math ipython; }
+ma () { dr math; }
+gore () { dr golang:dev gore; }
+spy () { dr py2 scrapy shell $1;}
+erl () { dr erlang:19 erl $@;}
+iex () {
+    if [ $# -eq 0 ]; then
+        dr elixir iex
+    elif [ $# -eq 1 -a -f $1 ]; then
+        dr elixir elixir $1
+    else
+        dr elixir iex "$@"
+    fi
+}
+
+mix () {
+    dr elixir mix "$@"
+}
 
 echo "DONE"
-
