@@ -1,5 +1,7 @@
 # set -x
 
+# TODO: 本番環境のPANEに色付け
+
 # go get github.com/motemen/ghq
 # go get github.com/motemen/github-list-starred
 
@@ -21,7 +23,7 @@ export PS1="\u@\w\n$ "
 export GOPATH=~/go
 export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
-export INPUTRC=~/.inputrc
+# export INPUTRC=~/.inputrc
 export HOSTIP=192.168.100.100
 
 # CUSTOM VARS
@@ -65,6 +67,12 @@ f_dirname() { echo ${1%/*}; }      # 右からマッチしたものを除外(non
 
 ### FUNCTIONS
 
+### UTILS
+debug () { set -x; $@; set +x; }
+exists () { test -e "$(which $1)"; }
+repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
+watch () { while true; do clear; $@; sleep 1; done;}
+
 f () {
     if [ ! -f $MYDIRS_HISTORY ]; then
         touch $MYDIRS_HISTORY
@@ -88,6 +96,15 @@ bind -x '"\ef": f'
 
 # stty -a
 # bind -p
+INPUTRC=`mktemp`
+cat <<EOS >> $INPUTRC
+set bell-style none
+set meta-flag on
+set input-meta on
+set convert-meta off
+set output-meta on
+"\e[1~": beginning-of-line
+EOS
 bind -f $INPUTRC
 
 ### ALIAS
@@ -208,6 +225,7 @@ docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if 
 docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
 
 de() {
+    # stdoutを直接使いたい時は、containerの外に出るのが一番
     local rflag=false
     while getopts rh OPT; do
         case $OPT in
@@ -254,22 +272,24 @@ dr() {
             env=`perl -E 'say map {chomp; "-e $_ "} qx/env/'`
         fi
         [ $# -ne 0 ] && cmd=$@
-        sh -c "docker run --rm -p 9999 --add-host=docker:$HOSTIP $env -v /Users/mbp:/Users/mbp -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
+        # TODO: -v ~/.profile:XXX
+        sh -c "docker run --rm -p 9999 --add-host=docker:$HOSTIP $env  -v /Users/mbp:/Users/mbp -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
     fi
 }
 
 docker_mysql() {
-    if docker ps --format "{{.Names}}" | perl -E 'exit !(grep {$_=~ /^mysql$/} <STDIN>);'; then
-       docker rm -f mysql 
-    fi
+    docker_process_alive mysql && docker rm -f mysql
     docker run --name mysql -v /Users/mbp:/Users/mbp -w `pwd` --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7;
 }
 
 docker_es() {
-    if docker ps --format "{{.Names}}" | perl -E 'exit !(grep {$_=~ /^es$/} <STDIN>);'; then
-       docker rm -f es 
-    fi
-    docker run --name es -v /Users/mbp:/Users/mbp -w `pwd` --rm -it elasticsearch:2.3;
+    docker_process_alive es && docker rm -f es
+    docker run -p 19200:9200 --name es -v /Users/mbp:/Users/mbp -w `pwd` --rm -it elasticsearch:dev;
+}
+
+docker_redis() {
+    docker_process_alive redis && docker rm -f redis
+    docker run --name redis -v /Users/mbp:/Users/mbp --rm -it redis:3.0
 }
 
 # TODO: grep |peco | open file
@@ -541,12 +561,12 @@ math() {
     pandoc --self-contained -s --mathjax=https://gist.githubusercontent.com/yohm/0c8ed72b6f18948a2fd3/raw/624defc8ffebb0934ab459854b7b3efc563f6efb/dynoload.js -c https://gist.githubusercontent.com/griffin-stewie/9755783/raw/13cf5c04803102d90d2457a39c3a849a2d2cc04b/github.css $@
 }
 
-docker_process_live () {
+docker_process_alive () {
     docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"
 }
 
 ej() {
-    if ! docker_process_live ej; then
+    if ! docker_process_alive ej; then
         docker-compose -f ~/workspace/sandbox/lang/erl/ej/docker-compose.yml up -d;
     fi
     de ej;
