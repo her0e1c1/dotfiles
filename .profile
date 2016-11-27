@@ -248,7 +248,7 @@ de() {
             # $@はかなり特殊な変数(配列っぽい動きする。そのため他の変数に代入できないっぽい)
             docker exec -it --detach-keys ctrl-q,q $name $@
         else
-            docker exec -it --detach-keys ctrl-q,q $name /bin/bash
+            docker exec -it --detach-keys ctrl-q,q $name sh -c "cd `pwd`; exec /bin/bash --init-file /etc/profile"
         fi
     fi
 }
@@ -273,24 +273,28 @@ dr() {
         fi
         [ $# -ne 0 ] && cmd=$@
         # TODO: -v ~/.profile:XXX
-        sh -c "docker run --rm -p 9999 --add-host=docker:$HOSTIP $env  -v /Users/mbp:/Users/mbp -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
+        sh -c "docker run --rm -p 9999 --add-host=docker:$HOSTIP $env -v ~/.profile:/root/.profile -v /Users/mbp:/Users/mbp -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
     fi
 }
 
-docker_mysql() {
-    docker_process_alive mysql && docker rm -f mysql
-    docker run --name mysql -v /Users/mbp:/Users/mbp -w `pwd` --rm -it -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db mysql:5.7;
+# Add default docker options
+docker_run() {
+    local image=$1; shift
+    local name=`perl -E '$ARGV[0] =~ /(.*):/; say $1' $image`
+    docker_process_alive $name && docker rm -f $name
+    # -w `pwd`
+    docker run "$@" --name $name -it --rm \
+           -p 9999 --add-host=docker:$HOSTIP \
+           -v ~/.profile:/etc/profile -v /Users/mbp:/Users/mbp \
+           --detach-keys ctrl-q,q \
+           $image
 }
 
-docker_es() {
-    docker_process_alive es && docker rm -f es
-    docker run -p 19200:9200 --name es -v /Users/mbp:/Users/mbp -w `pwd` --rm -it elasticsearch:dev;
-}
-
-docker_redis() {
-    docker_process_alive redis && docker rm -f redis
-    docker run --name redis -v /Users/mbp:/Users/mbp --rm -it redis:3.0
-}
+docker_alias() { docker tag $1 $2; }
+docker_mysql() { docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db;}
+docker_es() { docker_alias elasticsearch:dev es; docker_run es:latest -p 19200:9200; }
+docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
+docker_redis() { docker_run redis:3.0; }
 
 # TODO: grep |peco | open file
 
