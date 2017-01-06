@@ -10,7 +10,7 @@
 ### TODO
 # - L, T (pbcopy)
 
-echo LOADING...
+echo "LOADING ... `hostname`"
 
 ### EXPORT
 
@@ -295,6 +295,7 @@ docker_mysql() { docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_D
 docker_es() { docker_alias elasticsearch:dev es; docker_run es:latest -p 19200:9200; }
 docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
 docker_redis() { docker_run redis:3.0; }
+docker_math() { docker_run math:latest; }
 
 # TODO: grep |peco | open file
 
@@ -353,9 +354,26 @@ git_branch_remove () {
         return
     fi
     local pattern=$1; shift
+    git branch | grep $pattern | xargs -n 1 -P 4 git push --delete origin
     git branch | grep $pattern | xargs git branch -D
 }
 
+git_remote_branch_remove () {
+    git branch -a | grep origin | grep -v master | cut -d "/" -f 3 | xargs -n 1 git push --delete origin
+}
+
+git_pr () {
+    local number=$1; shift
+    local remote=${1-upstream}
+    local branch="PR$number"
+    if git branch |grep $branch; then
+        git checkout master
+        git branch -D $branch
+    fi
+    git fetch $remote pull/$number/head:$branch
+    git checkout $branch
+}
+ 
 esc () { perl -plE "s#'#'\\''# "; }
 
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
@@ -431,6 +449,23 @@ docker_sync () {
         echo "$sync dir is not found on docker."
     fi
 }
+
+docker_edit_file() {
+    local name="$1"; shift
+    local fpath="$1"; shift
+    if docker exec -it $name test -f $fpath; then
+        local tmp=`mktemp`
+        local w=`docker exec $name pwd`
+        docker cp $name:$fpath $tmp
+        vim $tmp
+        docker cp $tmp $name:$fpath
+        
+    else
+        docker exec -it $name ls -1aFG $fpath
+    fi
+}
+
+df() { docker_edit_file "$@"; }
 
 docker_working() {
     docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
@@ -581,20 +616,37 @@ ip3() { dr py3 ipython; }
 ipm() { dr math ipython; }
 ma () { dr math; }
 gore () { dr golang:dev gore; }
+node () { dr node node; }
 spy () { dr py2 scrapy shell $1;}
 erl () { dr erlang:19 erl $@;}
 iex () {
     if [ $# -eq 0 ]; then
-        dr elixir iex
+        dr iex:dev iex -S mix
     elif [ $# -eq 1 -a -f $1 ]; then
-        dr elixir elixir $1
+        dr iex:dev mix run $1
     else
-        dr elixir iex "$@"
+        dr iex:dev iex "$@"
     fi
 }
 
 mix () {
-    dr elixir mix "$@"
+    if [ $1 = "up" ]; then
+        docker rm -f IEX_DEV_UPDATED
+        docker run -dit --name IEX_DEV_UPDATED -w /app -v `pwd`:/v -d iex:dev /bin/bash
+        docker exec IEX_DEV_UPDATED cp /v/$2 /app/
+        docker exec IEX_DEV_UPDATED mix deps.get compile
+        docker exec IEX_DEV_UPDATED mix compile
+        docker commit IEX_DEV_UPDATED iex:dev
+        docker rm -f IEX_DEV_UPDATED
+    else
+        dr iex:dev mix "$@"
+    fi
+}
+
+color(){
+    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
 }
 
 echo "DONE"
+
+# TODO: asciiを表示するプログラム

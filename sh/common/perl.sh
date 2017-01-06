@@ -13,15 +13,6 @@ perl-pkill() {
     fi
 }
 
-# function
-fg255(){
-    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
-}
-
-bg255(){
-    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
-}
-
 PERL_MODULES=$(cat <<EOF
 'File::Spec::Functions qw(:ALL)'
 'Cwd qw(chdir abs_path cwd fastcwd fast_abs_path realpath)'
