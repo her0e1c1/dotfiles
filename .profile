@@ -397,6 +397,20 @@ h () {
 }
 bind -x '"\eh": h'
 
+hard_link () {
+    # -depth ???
+    local src=$1; shift 
+    local dst=$1; shift
+    [ ! -d $dst ] && mkdir $dst
+    find $src | perl -plE "s#$src##" | xargs -I{} perl -MCwd -E "
+    \$s=Cwd::realpath(qq#$src/{}#);
+    \$d='$dst/{}';
+    qx#mkdir \$d#  if ! -d \$d and -d \$s;
+    qx#ln \$s \$d# if ! -f \$d and -f \$s;
+    "
+    # touch
+}
+
 docker_sync () {
     if [ $# -eq 1 ]; then
         docker exec -it $1 /bin/bash
@@ -617,7 +631,7 @@ ipm() { dr math ipython; }
 ma () { dr math; }
 gore () { dr golang:dev gore; }
 node () { dr node node; }
-spy () { dr py2 scrapy shell $1;}
+scrapy () { dr py3 scrapy shell $1;}
 erl () { dr erlang:19 erl $@;}
 iex () {
     if [ $# -eq 0 ]; then
@@ -645,6 +659,22 @@ mix () {
 
 color(){
     perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
+}
+
+sample_xpath() {
+    local cmd=$(cat <<EOF
+    echo "<a><b><c>cccc</c></b></a>" | xmllint  --xpath "/a/b/c/text()"  -  #/はrootから
+    echo "<a><b><c>cccc</c></b></a>" | xmllint  --xpath "//c/text()"  -  # //はnodeを指定
+    echo "<a href='/'>txt</a>" | xmllint  --xpath "//a/@href"  -   # href属性を取得
+    echo "<a><b>b</b><c/><d/></a>" | xmllint  --xpath "/a/*"  -  # aの子供
+    echo '<a href="/"></a>' | xmllint --xpath "//a[@href='/']" -  # 属性にマッチするノード
+    # //* 全てのノード  //a全ての<a> ノード
+    # (//a)[1]全ての<a> ノードを取得して、最初の１個
+    # (//a[1])親ノード中の最初の１個の<a>をすべて
+    # //div//*div の子孫要素をすべて
+EOF)
+    echo "$cmd"
+    eval "$cmd"
 }
 
 echo "DONE"
