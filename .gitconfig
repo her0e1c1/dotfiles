@@ -39,6 +39,7 @@
     cp = cherry-pick
     cpa = cherry-pick --abort
     cpc = cherry-pick --continue
+    cpt = cherry-pick --strategy=recursive -X theirs
 
     # diff
     d = diff
