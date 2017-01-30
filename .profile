@@ -630,7 +630,7 @@ ip3() { dr py3 ipython; }
 ipm() { dr math ipython; }
 ma () { dr math; }
 gore () { dr golang:dev gore; }
-node () { dr node node; }
+node () { dr node:7 node; }
 scrapy () { dr py3 scrapy shell $1;}
 erl () { dr erlang:19 erl $@;}
 iex () {
@@ -659,6 +659,10 @@ mix () {
 
 color(){
     perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
+}
+
+python3_upload() {
+    python3 setup.py sdist bdist bdist_egg upload
 }
 
 sample_xpath() {
