@@ -1,9 +1,10 @@
 # set -x
 
-# TODO: 本番環境のPANEに色付け
+# INSTALL
+# curl https://raw.githubusercontent.com/her0e1c1/home/master/.profile -O && . ~/.profile
 
-### TODO
-# - L, T (pbcopy)
+### TODO: - L, T (pbcopy)
+### TODO: 本番環境のPANEに色付け
 
 echo "LOADING ... `hostname`"
 
@@ -14,6 +15,7 @@ echo "LOADING ... `hostname`"
 # \w \W currend dir
 # \u user name
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
+export LC_ALL=C
 export PS1="\u@\w\n$ "
 export GOPATH=~/go
 export GOBIN=~/go/bin
@@ -136,11 +138,6 @@ else
     export EDITOR=vi
 fi
 
-# export DOCKER_TLS_VERIFY="1"
-# export DOCKER_CERT_PATH="/Users/mbp/.docker/machine/machines/default"
-# export DOCKER_HOST="tcp://192.168.99.100:2376"
-
-
 ### FOR BASH
 
 # export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
@@ -181,6 +178,10 @@ emacs () {
         docker rm -f emacs
     fi
     touch ~/.recentf
+    if [ -d ~/emacs.d ]; then
+        echo "~/emacs.d does not exist"
+        return 1
+    fi
     docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /:/host -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
 }
 e () {
