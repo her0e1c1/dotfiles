@@ -182,7 +182,7 @@ emacs () {
         docker rm -f emacs
     fi
     touch ~/.recentf
-    docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/workspace/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
+    docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /:/host -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
 }
 e () {
     if [ $# -eq 0 ]; then
