@@ -46,7 +46,7 @@ install_go () {
        go get -u github.com/nsf/gocode
        go get github.com/golang/lint/golint
        go get github.com/kisielk/errcheck
-       go get github.com/peco/peco
+       go get github.com/peco/peco/cmd/peco
     fi
 }
 
