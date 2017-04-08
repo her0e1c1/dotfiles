@@ -417,59 +417,6 @@ hard_link () {
     # touch
 }
 
-docker_sync () {
-    if [ $# -eq 1 ]; then
-        docker exec -it $1 /bin/bash
-        return 0
-    fi
-
-    local name=$1; shift
-    local src=$1; shift
-    local sync=".docker-sync/$name/`basename $src`"
-    local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
-    local working=`docker_working $name`
-    
-    echo "cd $working"
-    \cd $working
-
-    # コンテナに必ずしもrsyncがインストールされているとは限らないが必須
-    if ! docker exec $name which rsync; then
-        echo "Install rsync on $name"
-        docker exec $name apt-get update -y;
-        if ! docker exec $name apt-get install -y rsync; then
-            return 1
-        fi
-    fi
-
-    if ! docker exec $name test -d $sync; then
-        local d=`dirname $sync`
-        docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
-
-        # echo "cp $src $sync on host"
-        # docker exec $name cp -r $src $sync
-
-        echo "rsync $sync on host"
-        # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
-        docker exec $name rsync -avz $trim/ $sync
-    fi
-    if docker exec $name test -d $sync; then
-        if [ -d "$sync" ]; then
-            local d=~/$sync
-            if [ ! -d $d ]; then
-                mkdir -p `dirname $d`
-                echo "create a symbol link $d"
-                ln -s "$sync" $d
-            fi
-            echo "start sync ..."
-            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
-        else
-            echo "You can't sync on `pwd`. Go to $sync on host"
-        fi
-    else
-        echo "$sync dir is not found on docker."
-    fi
-}
-
 docker_edit_file() {
     local name="$1"; shift
     local fpath="$1"; shift
