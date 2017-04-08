@@ -180,7 +180,7 @@ emacs () {
         docker rm -f emacs
     fi
     touch ~/.recentf
-    if [ -d ~/emacs.d ]; then
+    if [ ! -d ~/emacs.d ]; then
         echo "~/emacs.d does not exist"
         return 1
     fi
