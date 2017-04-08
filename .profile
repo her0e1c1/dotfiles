@@ -36,6 +36,11 @@ do_sudo () {
 
 ### INSTALL IF NEEDED
 
+setup_mac () {
+    install_dotfile
+    install_brew
+}
+
 init_install () {
     if which go 2>&1 1>/dev/null; then
        go get github.com/rogpeppe/godef
@@ -45,17 +50,20 @@ init_install () {
     fi
 }
 
-#install_dotfile () {
-#  local filepath
-#  for name in .vimrc .tmux.conf do
-#    filepath="~/$name"
-#    if [ ! -f $filepath ]; then
-#      curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
-#    fi
-#  done 
-#}
+install_brew () {
+    brew install tmux
+    brew cask install docker
+}
 
-# install_dotfile
+install_dotfile () {
+ local filepath
+ for name in .vimrc .tmux.conf .gitconfig .hgrc do
+   filepath="~/$name"
+   if [ ! -f $filepath ]; then
+     curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
+   fi
+ done 
+}
 
 # [ ! -d "$GOPATH" ] && mkdir $GOPATH
 
