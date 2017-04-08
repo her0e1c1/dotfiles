@@ -57,11 +57,9 @@ install_brew () {
 
 install_dotfile () {
  local filepath
- for name in .vimrc .tmux.conf .gitconfig .hgrc do
-   filepath=~$name
-   if [ ! -f $filepath ]; then
-     curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
-   fi
+ for name in .vimrc .tmux.conf .gitconfig .hgrc; do
+   filepath="$HOME/$name"
+   curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
  done 
 }
 
