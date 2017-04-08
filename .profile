@@ -2,11 +2,6 @@
 
 # TODO: 本番環境のPANEに色付け
 
-# go get github.com/motemen/ghq
-# go get github.com/motemen/github-list-starred
-
-# For Bash
-
 ### TODO
 # - L, T (pbcopy)
 
@@ -41,17 +36,21 @@ setup_mac () {
     install_brew
 }
 
-init_install () {
+install_go () {
     if which go 2>&1 1>/dev/null; then
        go get github.com/rogpeppe/godef
        go get -u github.com/nsf/gocode
        go get github.com/golang/lint/golint
        go get github.com/kisielk/errcheck
+       go get github.com/peco/peco
     fi
 }
 
 install_brew () {
-    brew install tmux
+    if ! which brew 2>&1 1>/dev/null; then
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
+    brew install tmux go
     brew cask install docker
 }
 
