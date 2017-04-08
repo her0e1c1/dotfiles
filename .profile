@@ -52,7 +52,7 @@ install_brew () {
     if ! which brew 2>&1 1>/dev/null; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
-    brew install tmux go
+    brew install tmux go peco ansible
     brew cask install docker
 }
 
