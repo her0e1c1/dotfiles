@@ -1,8 +1,5 @@
 # set -x
 
-# INSTALL
-# curl https://raw.githubusercontent.com/her0e1c1/home/master/.profile -O && . ~/.profile
-
 ### TODO: - L, T (pbcopy)
 ### TODO: 本番環境のPANEに色付け
 
@@ -36,6 +33,11 @@ do_sudo () {
 setup_mac () {
     install_dotfile
     install_brew
+}
+
+# INSTALL
+install_profile () {
+    curl https://raw.githubusercontent.com/her0e1c1/home/master/.profile -o ~/.profile && . ~/.profile
 }
 
 install_go () {
