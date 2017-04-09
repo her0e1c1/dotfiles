@@ -13,11 +13,12 @@ echo "LOADING ... `hostname`"
 # \u user name
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 # export LC_ALL=C
+# export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
 export PS1="\u@\w\n$ "
 export GOPATH=~/go
 export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
-export LANG=ja_JP.UTF-8
 export PAGER=less
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
