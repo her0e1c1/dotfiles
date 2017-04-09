@@ -12,11 +12,17 @@ echo "LOADING ... `hostname`"
 # \w \W currend dir
 # \u user name
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
-export LC_ALL=C
+# export LC_ALL=C
 export PS1="\u@\w\n$ "
 export GOPATH=~/go
 export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
+export LANG=ja_JP.UTF-8
+export PAGER=less
+export CLICOLOR=1  # lsに色づけ
+export LSCOLORS=DxGxcxdxCxegedabagacad
+export TERM=xterm-256color  # for zenburn-emacs
+
 # export INPUTRC=~/.inputrc
 export HOSTIP=192.168.100.100
 
@@ -127,12 +133,6 @@ alias ls='ls -aCF'
 alias sl=ls
 alias l=ls
 alias sudo="sudo "  # sudo時にアリアス有効
-
-export LANG=ja_JP.UTF-8
-export PAGER=less
-export CLICOLOR=1  # lsに色づけ
-export LSCOLORS=DxGxcxdxCxegedabagacad
-export TERM=xterm-256color  # for zenburn-emacs
 
 if [ -n "$(which vim)" ]; then
     export EDITOR=vim
