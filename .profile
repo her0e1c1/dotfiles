@@ -379,6 +379,8 @@ esc () { perl -plE "s#'#'\\''# "; }
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
 alias timestamp='python -c "import sys, datetime as d; print(d.datetime.fromtimestamp(float(sys.argv[1])))"'
+# alias crypt='python -c "import crypt; print crypt.crypt(, \"$1$SomeSalt$\")"'
+# python -c 'import crypt; print crypt.crypt("PASSWD", "$1$SomeSalt$")'
 
 h () {
     if [ ! -f $MYCMDS_HISTORY ]; then
@@ -591,6 +593,8 @@ r() {
         $cmd "golang:dev" go run "/w/$path"
     elif [ "$ext" = "hs" ]; then
         $cmd "haskell:dev" runhaskell "/w/$path"
+    elif [ "$ext" = "js" ]; then
+        $cmd "node:dev" node "/w/$path"
     elif [ "$ext" = "erl" ]; then
         $cmd "erlang:19" sh -c "cd /w/$dir && erlc $base && erl +B -s $base_wext main -s init stop"
     elif [ "$ext" = "py" ]; then
@@ -661,8 +665,30 @@ color(){
     perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
 }
 
+heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
+# brew install heroku
+# heroku_install2() { curl https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
+heroku_login() { heroku auth:login --app $1; }
+heroku_db() { heroku pg:psql --app $1; }  # use redis-cli instead
+heroku_env() { heroku run env --app $1; }
+heroku_run() { local app=$1; shift; heroku run --app $app $@; }  # python -m MODULE cmd
+heroku_log() { heroku logs --app $1 --tail; }
+heroku_config() { heroku config --app $1; }
+heroku_info() { heroku apps:info --app $1; }
+# heroku config:set KEY=$VAL -a $APP
+
+python_upload() {
+    python setup.py sdist bdist bdist_egg upload
+}
 python3_upload() {
     python3 setup.py sdist bdist bdist_egg upload
+}
+# python -c 'import bottle as b; b.route("<p:path>")(lambda p: b.jinja2_template(p[1:], **dict(b.request.params.items()))); b.run(host="0.0.0.0", debug=True, port=8000)'
+
+echo_export () {
+    echo '
+export LC_ALL=C
+'
 }
 
 sample_xpath() {
