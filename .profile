@@ -1,14 +1,7 @@
 # set -x
 
-# TODO: 本番環境のPANEに色付け
-
-# go get github.com/motemen/ghq
-# go get github.com/motemen/github-list-starred
-
-# For Bash
-
-### TODO
-# - L, T (pbcopy)
+### TODO: - L, T (pbcopy)
+### TODO: 本番環境のPANEに色付け
 
 echo "LOADING ... `hostname`"
 
@@ -19,10 +12,18 @@ echo "LOADING ... `hostname`"
 # \w \W currend dir
 # \u user name
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
+# export LC_ALL=C
+# export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
 export PS1="\u@\w\n$ "
 export GOPATH=~/go
 export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
+export PAGER=less
+export CLICOLOR=1  # lsに色づけ
+export LSCOLORS=DxGxcxdxCxegedabagacad
+export TERM=xterm-256color  # for zenburn-emacs
+
 # export INPUTRC=~/.inputrc
 export HOSTIP=192.168.100.100
 
@@ -36,26 +37,41 @@ do_sudo () {
 
 ### INSTALL IF NEEDED
 
-init_install () {
+setup_mac () {
+    install_dotfile
+    install_brew
+}
+
+# INSTALL
+install_profile () {
+    curl https://raw.githubusercontent.com/her0e1c1/home/master/.profile -o ~/.profile && . ~/.profile
+}
+
+install_go () {
     if which go 2>&1 1>/dev/null; then
        go get github.com/rogpeppe/godef
        go get -u github.com/nsf/gocode
        go get github.com/golang/lint/golint
        go get github.com/kisielk/errcheck
+       go get github.com/peco/peco/cmd/peco
     fi
 }
 
-#install_dotfile () {
-#  local filepath
-#  for name in .vimrc .tmux.conf do
-#    filepath="~/$name"
-#    if [ ! -f $filepath ]; then
-#      curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
-#    fi
-#  done 
-#}
+install_brew () {
+    if ! which brew 2>&1 1>/dev/null; then
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
+    brew install tmux go peco ansible
+    brew cask install docker
+}
 
-# install_dotfile
+install_dotfile () {
+ local filepath
+ for name in .vimrc .tmux.conf .gitconfig .hgrc; do
+   filepath="$HOME/$name"
+   curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
+ done 
+}
 
 # [ ! -d "$GOPATH" ] && mkdir $GOPATH
 
@@ -119,22 +135,11 @@ alias sl=ls
 alias l=ls
 alias sudo="sudo "  # sudo時にアリアス有効
 
-export LANG=ja_JP.UTF-8
-export PAGER=less
-export CLICOLOR=1  # lsに色づけ
-export LSCOLORS=DxGxcxdxCxegedabagacad
-export TERM=xterm-256color  # for zenburn-emacs
-
 if [ -n "$(which vim)" ]; then
     export EDITOR=vim
 else
     export EDITOR=vi
 fi
-
-# export DOCKER_TLS_VERIFY="1"
-# export DOCKER_CERT_PATH="/Users/mbp/.docker/machine/machines/default"
-# export DOCKER_HOST="tcp://192.168.99.100:2376"
-
 
 ### FOR BASH
 
@@ -176,7 +181,11 @@ emacs () {
         docker rm -f emacs
     fi
     touch ~/.recentf
-    docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/workspace/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
+    if [ ! -d ~/emacs.d ]; then
+        echo "~/emacs.d does not exist"
+        return 1
+    fi
+    docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /:/host -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
 }
 e () {
     if [ $# -eq 0 ]; then
@@ -411,59 +420,6 @@ hard_link () {
     qx#ln \$s \$d# if ! -f \$d and -f \$s;
     "
     # touch
-}
-
-docker_sync () {
-    if [ $# -eq 1 ]; then
-        docker exec -it $1 /bin/bash
-        return 0
-    fi
-
-    local name=$1; shift
-    local src=$1; shift
-    local sync=".docker-sync/$name/`basename $src`"
-    local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
-    local working=`docker_working $name`
-    
-    echo "cd $working"
-    \cd $working
-
-    # コンテナに必ずしもrsyncがインストールされているとは限らないが必須
-    if ! docker exec $name which rsync; then
-        echo "Install rsync on $name"
-        docker exec $name apt-get update -y;
-        if ! docker exec $name apt-get install -y rsync; then
-            return 1
-        fi
-    fi
-
-    if ! docker exec $name test -d $sync; then
-        local d=`dirname $sync`
-        docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
-
-        # echo "cp $src $sync on host"
-        # docker exec $name cp -r $src $sync
-
-        echo "rsync $sync on host"
-        # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
-        docker exec $name rsync -avz $trim/ $sync
-    fi
-    if docker exec $name test -d $sync; then
-        if [ -d "$sync" ]; then
-            local d=~/$sync
-            if [ ! -d $d ]; then
-                mkdir -p `dirname $d`
-                echo "create a symbol link $d"
-                ln -s "$sync" $d
-            fi
-            echo "start sync ..."
-            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
-        else
-            echo "You can't sync on `pwd`. Go to $sync on host"
-        fi
-    else
-        echo "$sync dir is not found on docker."
-    fi
 }
 
 docker_edit_file() {
