@@ -89,6 +89,9 @@ exists () { test -e "$(which $1)"; }
 repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
 
+d2h () { printf '%x\n' $1; }
+h2d(){ echo "ibase=16; $@"|bc; }  # capitize
+
 f () {
     if [ ! -f $MYDIRS_HISTORY ]; then
         touch $MYDIRS_HISTORY
@@ -120,6 +123,9 @@ set input-meta on
 set convert-meta off
 set output-meta on
 "\e[1~": beginning-of-line
+
+# set editing-mode vi
+# set blink-matching-paren on
 EOS
 bind -f $INPUTRC
 
@@ -301,6 +307,7 @@ docker_run() {
 
 docker_alias() { docker tag $1 $2; }
 docker_mysql() { docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db;}
+docker_proxy() { docker run --name prx -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy; }
 docker_es() { docker_alias elasticsearch:dev es; docker_run es:latest -p 19200:9200; }
 docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
 docker_redis() { docker_run redis:3.0; }
