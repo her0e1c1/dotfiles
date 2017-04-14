@@ -70,7 +70,7 @@ install_dotfile () {
  for name in .vimrc .tmux.conf .gitconfig .hgrc; do
    filepath="$HOME/$name"
    curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
- done 
+ done
 }
 
 # [ ! -d "$GOPATH" ] && mkdir $GOPATH
@@ -88,6 +88,7 @@ debug () { set -x; $@; set +x; }
 exists () { test -e "$(which $1)"; }
 repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
+# contains () { 0
 
 d2h () { printf '%x\n' $1; }
 h2d(){ echo "ibase=16; $@"|bc; }  # capitize
@@ -124,8 +125,21 @@ set convert-meta off
 set output-meta on
 "\e[1~": beginning-of-line
 
-# set editing-mode vi
-# set blink-matching-paren on
+set convert-meta off
+set blink-matching-paren on
+set editing-mode vi
+
+set keymap vi-command
+# these are for vi-command mode
+"\C-i": undo
+
+set keymap vi-insert
+# these are for vi-insert mode
+"\C-p": previous-history
+"\C-n": next-history
+"\C-l": clear-screen
+"\C-g": vi-movement-mode
+
 EOS
 bind -f $INPUTRC
 
@@ -148,26 +162,28 @@ else
 fi
 
 ### FOR BASH
+if echo $SHELL | grep -q bash; then
 
-# export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
-# export HISTCONTROL=ignoredups  # 重複履歴を無視
-# export HISTCONTROL=ignoreboth  # 両方
+export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
+export HISTCONTROL=ignoredups  # 重複履歴を無視
+export HISTCONTROL=ignoreboth  # 両方
 
-#履歴の共有
-# function share_history {  # 以下の内容を関数として定義
-#     history -a  # .bash_historyに前回コマンドを1行追記
-#     history -c  # 端末ローカルの履歴を一旦消去
-#     history -r  # .bash_historyから履歴を読み込み直す
-# }
+# 履歴の共有
+function share_history {  # 以下の内容を関数として定義
+    history -a  # .bash_historyに前回コマンドを1行追記
+    history -c  # 端末ローカルの履歴を一旦消去
+    history -r  # .bash_historyから履歴を読み込み直す
+}
 
-# PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
-# shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
+PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
+shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
 
-# #よく使うコマンドは履歴保存対象から外す。
-# export HISTIGNORE="fg*:bg*:history:cd*:ls*"
+#よく使うコマンドは履歴保存対象から外す。
+export HISTIGNORE="fg*:bg*:history:cd*:ls*"
 
-# #ヒストリのサイズを増やす
-# export HISTSIZE=100000
+#ヒストリのサイズを増やす
+export HISTSIZE=100000
+fi
 
 peco_select_history() {
     declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
@@ -269,7 +285,7 @@ de() {
 }
 alias dei="docker exec -i"
 
-dr() { 
+dr() {
     local eflag=false
     while getopts e OPT; do
         case $OPT in
@@ -366,7 +382,7 @@ alias git_update="git checkout master; git fetch upstream; git merge upstream/ma
 
 git_branch_remove () {
     if [ $# -eq 0 ]; then
-        git branch   
+        git branch
         return
     fi
     local pattern=$1; shift
@@ -389,7 +405,7 @@ git_pr () {
     git fetch $remote pull/$number/head:$branch
     git checkout $branch
 }
- 
+
 esc () { perl -plE "s#'#'\\''# "; }
 
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
@@ -417,7 +433,7 @@ bind -x '"\eh": h'
 
 hard_link () {
     # -depth ???
-    local src=$1; shift 
+    local src=$1; shift
     local dst=$1; shift
     [ ! -d $dst ] && mkdir $dst
     find $src | perl -plE "s#$src##" | xargs -I{} perl -MCwd -E "
@@ -438,7 +454,7 @@ docker_edit_file() {
         docker cp $name:$fpath $tmp
         vim $tmp
         docker cp $tmp $name:$fpath
-        
+
     else
         docker exec -it $name ls -1aFG $fpath
     fi
@@ -503,7 +519,7 @@ docker_sync () {
     local sync=".docker-sync/$name/`basename $src`"
     local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
     local working=`docker_working $name`
-    
+
     echo "cd $working"
     \cd $working
 
