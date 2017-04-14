@@ -688,4 +688,6 @@ EOF)
 
 echo "DONE"
 
+vs () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+
 # TODO: asciiを表示するプログラム
