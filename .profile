@@ -88,29 +88,9 @@ debug () { set -x; $@; set +x; }
 exists () { test -e "$(which $1)"; }
 repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
-# contains () { 0
 
 d2h () { printf '%x\n' $1; }
 h2d(){ echo "ibase=16; $@"|bc; }  # capitize
-
-f () {
-    if [ ! -f $MYDIRS_HISTORY ]; then
-        touch $MYDIRS_HISTORY
-    fi
-    if [ $# -eq 0 ]; then
-        local d=`cat $MYDIRS_HISTORY | peco`
-        if [ -d $d ]; then
-            cdls $d
-            update_files $MYDIRS_HISTORY $d
-        fi
-    else
-        local d=`python -c "import os; print(os.path.abspath('$1'))"`
-        update_files $MYDIRS_HISTORY $d
-        cd $d
-    fi
-
-}
-bind -x '"\ef": f'
 
 ### BINDS
 
@@ -142,6 +122,25 @@ set keymap vi-insert
 
 EOS
 bind -f $INPUTRC
+
+f () {
+    if [ ! -f $MYDIRS_HISTORY ]; then
+        touch $MYDIRS_HISTORY
+    fi
+    if [ $# -eq 0 ]; then
+        local d=`cat $MYDIRS_HISTORY | peco`
+        if [ -d $d ]; then
+            cdls $d
+            update_files $MYDIRS_HISTORY $d
+        fi
+    else
+        local d=`python -c "import os; print(os.path.abspath('$1'))"`
+        update_files $MYDIRS_HISTORY $d
+        cd $d
+    fi
+
+}
+bind -x '"\ef": f'
 
 ### ALIAS
 
