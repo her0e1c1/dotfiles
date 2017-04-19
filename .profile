@@ -14,7 +14,7 @@ echo "LOADING ... `hostname`"
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 # export LC_ALL=C
 # export LANG=ja_JP.UTF-8
-export LC_ALL=ja_JP.UTF-8
+export LC_ALL=en_US.UTF-8
 export PS1="\u@\w\n$ "
 export GOPATH=~/go
 export GOBIN=~/go/bin
@@ -24,13 +24,15 @@ export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export TERM=xterm-256color  # for zenburn-emacs
 
-# export INPUTRC=~/.inputrc
-export HOSTIP=192.168.100.100
+if uname | grep "Darwin"; then
+    export GOROOT=/usr/local/opt/go/libexec
+fi
 
 # CUSTOM VARS
 export MYDIRS_HISTORY=~/.mydirs
 export MYCMDS_HISTORY=~/.mycmds
 
+export HOSTIP=192.168.100.100
 do_sudo () {
     sudo ifconfig lo0 alias $HOSTIP
 }
@@ -121,7 +123,8 @@ set keymap vi-insert
 "\C-g": vi-movement-mode
 
 EOS
-bind -f $INPUTRC
+# bind -f $INPUTRC
+[ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
 
 f () {
     if [ ! -f $MYDIRS_HISTORY ]; then
@@ -170,7 +173,7 @@ export HISTCONTROL=ignoreboth  # 両方
 # 履歴の共有
 function share_history {  # 以下の内容を関数として定義
     history -a  # .bash_historyに前回コマンドを1行追記
-    history -c  # 端末ローカルの履歴を一旦消去
+    # history -c  # 端末ローカルの履歴を一旦消去
     history -r  # .bash_historyから履歴を読み込み直す
 }
 
@@ -178,7 +181,7 @@ PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実�
 shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
 
 #よく使うコマンドは履歴保存対象から外す。
-export HISTIGNORE="fg*:bg*:history:cd*:ls*"
+export HISTIGNORE="fg*:bg*:history:cd*"
 
 #ヒストリのサイズを増やす
 export HISTSIZE=100000
@@ -625,6 +628,8 @@ iex () {
     fi
 }
 
+run_c () { local f=`mktemp`; clang -xc $1 -o $f; $f; } 
+
 mix () {
     if [ $1 = "up" ]; then
         docker rm -f IEX_DEV_UPDATED
@@ -668,6 +673,8 @@ echo_export () {
 export LC_ALL=C
 '
 }
+
+kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
 
 sample_xpath() {
     local cmd=$(cat <<EOF
