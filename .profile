@@ -23,6 +23,7 @@ export PAGER=less
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export TERM=xterm-256color  # for zenburn-emacs
+export DOCKER_ID_USER=her0e1c1
 
 if uname | grep "Darwin"; then
     export GOROOT=/usr/local/opt/go/libexec
@@ -187,9 +188,17 @@ export HISTIGNORE="fg*:bg*:history:cd*"
 export HISTSIZE=100000
 fi
 
+open_file() {
+    if docker_find_process_name emacs; then
+        e $1
+    else
+        $EDITOR e
+    fi
+}
+
 peco_select_history() {
     declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
-    READLINE_LINE="$l"
+    READLINE_LINE="$l"  # bash ver >= 4
     READLINE_POINT=${#l}
     if [ `uname` = "Darwin" ]; then
         echo "${READLINE_LINE}" | chomp | pbcopy
@@ -198,10 +207,34 @@ peco_select_history() {
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
 
+peco_select_ls() {
+    local l=$(HISTTIMEFORMAT= ls -1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
+    if [ -z $l ] ;then
+        return # do nothing
+    elif [ -f $l ]; then
+        open_file $l
+    else
+        \cd $l
+    fi 
+}
+bind -x '"\ed": peco_select_ls'
+
+anything() {
+    # ACTION: SOMETHING のフォーマットでなんでもやるインターフェイスをつくる
+    # 現在のディレクトリ(ls, find)
+    # 最近のfile/dir/cmmand
+    # お気に入りのcommand/dir/file
+    ls
+}
+
 export RECENT_FILES=~/.recent_files
 
+docker_find_process_name () {
+    docker ps -a --format "{{.Names}}" | grep $1 > /dev/null
+}
+
 emacs () {
-    if docker ps -a --format "{{.Names}}" | grep emacs; then
+    if docker_find_process_name emacs; then
         docker rm -f emacs
     fi
     touch ~/.recentf
@@ -462,7 +495,7 @@ docker_edit_file() {
     fi
 }
 
-df() { docker_edit_file "$@"; }
+def() { docker_edit_file "$@"; }
 
 docker_working() {
     docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
@@ -588,6 +621,8 @@ r() {
         $cmd "algo" gosh "/w/$path"
     elif [ "$ext" = "java" ]; then
         $cmd "java:8" sh -c "cd /w/$dir && javac $base && java $base_wext"
+    elif [ "$ext" = "ts" ]; then
+        $cmd "ts" sh -c "tsc /w/$path --outFile /tmp/a.js && node /tmp/a.js"
     else
         echo "No supported language"
         return 1
@@ -668,13 +703,18 @@ python3_upload() {
 }
 # python -c 'import bottle as b; b.route("<p:path>")(lambda p: b.jinja2_template(p[1:], **dict(b.request.params.items()))); b.run(host="0.0.0.0", debug=True, port=8000)'
 
-echo_export () {
-    echo '
-export LC_ALL=C
-'
+kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
+
+docker_push () {
+    local image=$1; shift
+    docker tag $image $DOCKER_ID_USER/$image
+    docker push $DOCKER_ID_USER/$image
 }
 
-kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
+go_compile () {
+    # or: go build -gcflags -S $1
+    OOS=linux GOARCH=amd64 go tool compile -S $1 2>&1
+}
 
 sample_xpath() {
     local cmd=$(cat <<EOF

@@ -1,10 +1,7 @@
 __pycache__
-
-# for py.test
 .cache
+.vscode
 
-.private
-.docker-sync
-
-# for private
+# for my private directory
 p
+.docker-sync
