@@ -11,32 +11,32 @@ echo "LOADING ... `hostname`"
 # \t \T 24 12 time
 # \w \W currend dir
 # \u user name
+export PS1="\u@\w\n$ "
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 # export LC_ALL=C
-# export LANG=ja_JP.UTF-8
 export LC_ALL=en_US.UTF-8
-export PS1="\u@\w\n$ "
-export GOPATH=~/go
-export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
 export PAGER=less
+export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
-export TERM=xterm-256color  # for zenburn-emacs
+export GOPATH=~/go
+export GOBIN=~/go/bin
 export DOCKER_ID_USER=her0e1c1
+
+export MYDIRS_HISTORY=~/.mydirs
+export MYCMDS_HISTORY=~/.mycmds
+export RECENT_FILES=~/.recent_files
 
 if uname | grep "Darwin"; then
     export GOROOT=/usr/local/opt/go/libexec
 fi
 
-# CUSTOM VARS
-export MYDIRS_HISTORY=~/.mydirs
-export MYCMDS_HISTORY=~/.mycmds
-
-export HOSTIP=192.168.100.100
-do_sudo () {
-    sudo ifconfig lo0 alias $HOSTIP
-}
+if [ -n "$(which vim)" ]; then
+    export EDITOR=vim
+else
+    export EDITOR=vi
+fi
 
 ### INSTALL IF NEEDED
 
@@ -51,6 +51,7 @@ install_profile () {
 }
 
 install_go () {
+    [ ! -d "$GOPATH" ] && mkdir $GOPATH
     if which go 2>&1 1>/dev/null; then
        go get github.com/rogpeppe/godef
        go get -u github.com/nsf/gocode
@@ -76,24 +77,57 @@ install_dotfile () {
  done
 }
 
-# [ ! -d "$GOPATH" ] && mkdir $GOPATH
-
 ## REGEX
+
 f_basename() { echo ${1##*/}; }    # 左からマッチしたものを除外(greedy)
 f_ext() { echo ${1#*.}; }          # 左からマッチしたものを除外(non greedy)
 f_without_ext() { echo ${1%%.*}; } # 右からマッチしたものを除外(greedy)
 f_dirname() { echo ${1%/*}; }      # 右からマッチしたものを除外(non greedy)
 
-### FUNCTIONS
-
 ### UTILS
+
 debug () { set -x; $@; set +x; }
 exists () { test -e "$(which $1)"; }
 repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
+chomp () { perl -pE "chomp \$_"; }
+color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
 
 d2h () { printf '%x\n' $1; }
 h2d(){ echo "ibase=16; $@"|bc; }  # capitize
+esc () { perl -plE "s#'#'\\''# "; }
+
+alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
+alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
+alias timestamp='python -c "import sys, datetime as d; print(d.datetime.fromtimestamp(float(sys.argv[1])))"'
+
+# alias crypt='python -c "import crypt; print crypt.crypt(, \"$1$SomeSalt$\")"'
+# python -c 'import crypt; print crypt.crypt("PASSWD", "$1$SomeSalt$")'
+
+cdls(){
+	if [ ${#1} -eq 0 ]; then
+	   \cd && ls
+	else
+       \cd "$*" && ls -G
+	fi
+}
+
+#圧縮ファイルを名前だけで展開
+extract() {
+  case $1 in
+    *.tar.gz|*.tgz) tar xzvf $1;;
+    *.tar.xz) tar Jxvf $1;;
+    *.zip) unzip $1;;
+    *.lzh) lha e $1;;
+    *.tar.bz2|*.tbz) tar xjvf $1;;
+    *.tar.Z) tar zxvf $1;;
+    *.gz) gzip -dc $1;;
+    *.bz2) bzip2 -dc $1;;
+    *.Z) uncompress $1;;
+    *.tar) tar xvf $1;;
+    *.arj) unarj $1;;
+  esac
+}
 
 ### BINDS
 
@@ -146,24 +180,6 @@ f () {
 }
 bind -x '"\ef": f'
 
-### ALIAS
-
-alias s='rlwrap sh -l'
-alias d="docker"
-alias dc="docker-compose"
-alias g="git"
-alias ll='ls -alF'
-alias ls='ls -aCF'
-alias sl=ls
-alias l=ls
-alias sudo="sudo "  # sudo時にアリアス有効
-
-if [ -n "$(which vim)" ]; then
-    export EDITOR=vim
-else
-    export EDITOR=vi
-fi
-
 ### FOR BASH
 if echo $SHELL | grep -q bash; then
 
@@ -188,6 +204,8 @@ export HISTIGNORE="fg*:bg*:history:cd*"
 export HISTSIZE=100000
 fi
 
+### PECO
+
 open_file() {
     if docker_find_process_name emacs; then
         e $1
@@ -197,15 +215,13 @@ open_file() {
 }
 
 peco_select_history() {
-    declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
+    declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco)
     READLINE_LINE="$l"  # bash ver >= 4
     READLINE_POINT=${#l}
     if [ `uname` = "Darwin" ]; then
         echo "${READLINE_LINE}" | chomp | pbcopy
     fi
 }
-bind -x '"\C-r": peco_select_history'
-bind    '"\C-xr": reverse-search-history'
 
 peco_select_ls() {
     local l=$(HISTTIMEFORMAT= ls -1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
@@ -217,20 +233,39 @@ peco_select_ls() {
         \cd $l
     fi 
 }
-bind -x '"\ed": peco_select_ls'
 
 anything() {
     # ACTION: SOMETHING のフォーマットでなんでもやるインターフェイスをつくる
+    # TODO: grep |peco | open file
     # 現在のディレクトリ(ls, find)
     # 最近のfile/dir/cmmand
     # お気に入りのcommand/dir/file
     ls
 }
 
-export RECENT_FILES=~/.recent_files
+### DOCKER
 
-docker_find_process_name () {
-    docker ps -a --format "{{.Names}}" | grep $1 > /dev/null
+docker_kill()        { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
+docker_rename()      { docker tag $1 $2; docker rmi $1; }
+docker_remove_volume () { docker volume rm `docker volume ls -q`; }
+docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/'`; }
+docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
+docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /dev/null; }
+docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
+docker_working() { docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
+docker_alias() { docker tag $1 $2; }
+
+docker_mysql() { docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db;}
+docker_proxy() { docker run --name prx -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy; }
+docker_es() { docker_alias elasticsearch:dev es; docker_run es:latest -p 19200:9200; }
+docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
+docker_redis() { docker_run redis:3.0; }
+docker_math() { docker_run math:latest; }
+
+docker_push () {
+    local image=$1; shift
+    docker tag $image $DOCKER_ID_USER/$image
+    docker push $DOCKER_ID_USER/$image
 }
 
 emacs () {
@@ -244,6 +279,7 @@ emacs () {
     fi
     docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /:/host -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
 }
+
 e () {
     if [ $# -eq 0 ]; then
         local p=`pwd`
@@ -257,38 +293,6 @@ e () {
         echo "$p does not exist"
     fi
 }
-
-cdls(){
-	if [ ${#1} -eq 0 ]; then
-	   \cd && ls
-	else
-       \cd "$*" && ls -G
-	fi
-}
-
-#圧縮ファイルを名前だけで展開
-extract() {
-  case $1 in
-    *.tar.gz|*.tgz) tar xzvf $1;;
-    *.tar.xz) tar Jxvf $1;;
-    *.zip) unzip $1;;
-    *.lzh) lha e $1;;
-    *.tar.bz2|*.tbz) tar xjvf $1;;
-    *.tar.Z) tar zxvf $1;;
-    *.gz) gzip -dc $1;;
-    *.bz2) bzip2 -dc $1;;
-    *.Z) uncompress $1;;
-    *.tar) tar xvf $1;;
-    *.arj) unarj $1;;
-  esac
-}
-
-alias cd="cdls"
-
-docker_kill()        { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
-docker_rename()      { docker tag $1 $2; docker rmi $1; }
-docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/'`; }
-docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
 
 de() {
     # stdoutを直接使いたい時は、containerの外に出るのが一番
@@ -318,7 +322,6 @@ de() {
         fi
     fi
 }
-alias dei="docker exec -i"
 
 dr() {
     local eflag=false
@@ -356,21 +359,8 @@ docker_run() {
            $image
 }
 
-docker_alias() { docker tag $1 $2; }
-docker_mysql() { docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db;}
-docker_proxy() { docker run --name prx -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy; }
-docker_es() { docker_alias elasticsearch:dev es; docker_run es:latest -p 19200:9200; }
-docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
-docker_redis() { docker_run redis:3.0; }
-docker_math() { docker_run math:latest; }
-
-# TODO: grep |peco | open file
-
 # alias h='cat ~/GDrive/.zsh_history | peco | perl -pE "chomp \$_" | pbcopy'
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
-tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`'; }
-tmux_show_buffers() { perl -E 'say `tmux show-buffer -b $_ ` for 0..20'; }
-alias T=tmux_set_buffer
 # alias h='cat ~/GDrive/.zsh_history |peco | perl -pE "chomp \$_" | tmux_set_buffer'
 
 update_files () {
@@ -407,11 +397,9 @@ open_recent_file () {
     local d=`cat $RECENT_FILES | peco`
     e $d
 }
-bind -x '"\eo": open_recent_file'
 
-# -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
-alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'
-# git_add_stream git@...
+### GIT
+
 alias git_add_stream="git remote add upstream"
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
 
@@ -441,14 +429,6 @@ git_pr () {
     git checkout $branch
 }
 
-esc () { perl -plE "s#'#'\\''# "; }
-
-alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
-alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
-alias timestamp='python -c "import sys, datetime as d; print(d.datetime.fromtimestamp(float(sys.argv[1])))"'
-# alias crypt='python -c "import crypt; print crypt.crypt(, \"$1$SomeSalt$\")"'
-# python -c 'import crypt; print crypt.crypt("PASSWD", "$1$SomeSalt$")'
-
 h () {
     if [ ! -f $MYCMDS_HISTORY ]; then
         touch $MYCMDS_HISTORY
@@ -463,21 +443,6 @@ h () {
         update_files $MYCMDS_HISTORY "$d"
         $@
     fi
-}
-bind -x '"\eh": h'
-
-hard_link () {
-    # -depth ???
-    local src=$1; shift
-    local dst=$1; shift
-    [ ! -d $dst ] && mkdir $dst
-    find $src | perl -plE "s#$src##" | xargs -I{} perl -MCwd -E "
-    \$s=Cwd::realpath(qq#$src/{}#);
-    \$d='$dst/{}';
-    qx#mkdir \$d#  if ! -d \$d and -d \$s;
-    qx#ln \$s \$d# if ! -f \$d and -f \$s;
-    "
-    # touch
 }
 
 docker_edit_file() {
@@ -497,36 +462,13 @@ docker_edit_file() {
 
 def() { docker_edit_file "$@"; }
 
-docker_working() {
-    docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
-}
+### TMUX
 
-chomp () { perl -pE "chomp \$_"; }
+tmux_show_buffer () { tmux show-buffer | peco | chomp | pbcopy; }
+tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`'; }
+tmux_show_buffers() { perl -E 'say `tmux show-buffer -b $_ ` for 0..20'; }
 
-b () {
-    local p=`tmux show-buffer`
-    echo "$p" | peco | chomp | pbcopy
-}
-
-bind -x '"\eb": b'
-bind -x '"\eB": tmux capture-pane'
-
-docker_remove_volume () { docker volume rm `docker volume ls -q`; }
-
-lang_run() {
-    local name="$1"; shift
-    local container_name="lang_$1"
-    if ! docker ps --format "{{.Names}}" | grep $container_name; then
-        docker run --name "$container_name" -it --rm -v `pwd`:/working "$name:dev"
-    fi
-    if [ $# -eq 0 ]; then
-        docker exec -it "$container_name" bash
-    else
-        docker exec -it "$container_name" $@
-    fi
-}
-
-go_run () { lang_run "golang" $@; }
+### OTHERS (no more used)
 
 dict () {
     local cmd=$1;
@@ -591,10 +533,6 @@ docker_sync () {
     fi
 }
 
-docker_working() {
-    docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])'
-}
-
 r() {
     local path=$1; shift
     local ext="`f_ext $path`"
@@ -634,16 +572,8 @@ math() {
     pandoc --self-contained -s --mathjax=https://gist.githubusercontent.com/yohm/0c8ed72b6f18948a2fd3/raw/624defc8ffebb0934ab459854b7b3efc563f6efb/dynoload.js -c https://gist.githubusercontent.com/griffin-stewie/9755783/raw/13cf5c04803102d90d2457a39c3a849a2d2cc04b/github.css $@
 }
 
-docker_process_alive () {
-    docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"
-}
+### REPL
 
-ej() {
-    if ! docker_process_alive ej; then
-        docker-compose -f ~/workspace/sandbox/lang/erl/ej/docker-compose.yml up -d;
-    fi
-    de ej;
-}
 ghci() { dr haskell:dev ghci; }
 ip2() { dr py2 ipython; }
 ip3() { dr py3 ipython; }
@@ -679,10 +609,6 @@ mix () {
     fi
 }
 
-color(){
-    perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'
-}
-
 heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
 # brew install heroku
 # heroku_install2() { curl https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
@@ -705,35 +631,38 @@ python3_upload() {
 
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
 
-docker_push () {
-    local image=$1; shift
-    docker tag $image $DOCKER_ID_USER/$image
-    docker push $DOCKER_ID_USER/$image
-}
-
 go_compile () {
     # or: go build -gcflags -S $1
     OOS=linux GOARCH=amd64 go tool compile -S $1 2>&1
 }
 
-sample_xpath() {
-    local cmd=$(cat <<EOF
-    echo "<a><b><c>cccc</c></b></a>" | xmllint  --xpath "/a/b/c/text()"  -  #/はrootから
-    echo "<a><b><c>cccc</c></b></a>" | xmllint  --xpath "//c/text()"  -  # //はnodeを指定
-    echo "<a href='/'>txt</a>" | xmllint  --xpath "//a/@href"  -   # href属性を取得
-    echo "<a><b>b</b><c/><d/></a>" | xmllint  --xpath "/a/*"  -  # aの子供
-    echo '<a href="/"></a>' | xmllint --xpath "//a[@href='/']" -  # 属性にマッチするノード
-    # //* 全てのノード  //a全ての<a> ノード
-    # (//a)[1]全ての<a> ノードを取得して、最初の１個
-    # (//a[1])親ノード中の最初の１個の<a>をすべて
-    # //div//*div の子孫要素をすべて
-EOF)
-    echo "$cmd"
-    eval "$cmd"
-}
-
-echo "DONE"
-
 vs () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
 
-# TODO: asciiを表示するプログラム
+### ALIAS
+
+alias s='rlwrap sh -l'
+alias d="docker"
+alias dc="docker-compose"
+alias g="git"
+alias ll='ls -alF'
+alias ls='ls -aCF'
+alias sl=ls
+alias l=ls
+alias sudo="sudo "  # sudo時にアリアス有効
+alias cd="cdls"
+alias dei="docker exec -i"
+alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'  # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
+alias T=tmux_set_buffer
+alias b="tmux_show_buffer"
+
+### BINDS
+
+bind -x '"\eh": h'
+bind -x '"\ed": peco_select_ls'
+bind -x '"\C-r": peco_select_history'
+bind    '"\C-xr": reverse-search-history'
+bind -x '"\eo": open_recent_file'
+bind -x '"\eb": b'
+bind -x '"\eB": tmux capture-pane'
+
+echo "DONE"
