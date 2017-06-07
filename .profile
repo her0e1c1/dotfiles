@@ -14,7 +14,7 @@ echo "LOADING ... `hostname`"
 export PS1="\u@\w\n$ "
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 # export LC_ALL=C
-export LC_ALL=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
 export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
@@ -27,6 +27,11 @@ export DOCKER_ID_USER=her0e1c1
 export MYDIRS_HISTORY=~/.mydirs
 export MYCMDS_HISTORY=~/.mycmds
 export RECENT_FILES=~/.recent_files
+
+# android for mac
+export ANDROID_HOME=${HOME}/Library/Android/sdk
+export PATH=${PATH}:${ANDROID_HOME}/tools
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 
 if uname | grep "Darwin"; then
     export GOROOT=/usr/local/opt/go/libexec
@@ -254,13 +259,20 @@ docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /de
 docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
 docker_working() { docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
 docker_alias() { docker tag $1 $2; }
+docker_export() { docker export $1 | tar tf -; }
 
-docker_mysql() { docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db;}
 docker_proxy() { docker run --name prx -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy; }
-docker_es() { docker_alias elasticsearch:dev es; docker_run es:latest -p 19200:9200; }
 docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
 docker_redis() { docker_run redis:3.0; }
 docker_math() { docker_run math:latest; }
+docker_mysql() {
+    local cnf=/tmp/my.cnf
+    cat <<EOS >> $cnf
+[mysqld]
+max_allowed_packet = 32M
+EOS
+    docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db -v $cnf:/etc/mysql/conf.d/my.cnf;
+}
 
 docker_push () {
     local image=$1; shift
@@ -341,8 +353,9 @@ dr() {
             env=`perl -E 'say map {chomp; "-e $_ "} qx/env/'`
         fi
         [ $# -ne 0 ] && cmd=$@
-        # TODO: -v ~/.profile:XXX
-        sh -c "docker run --rm -p 9999 --add-host=docker:$HOSTIP $env -v ~/.profile:/root/.profile -v /Users/mbp:/Users/mbp -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
+        touch ~/.profile  # ensure the file exists
+        # --add-host=docker:$HOSTIP
+        sh -c "docker run --rm -p 9999 $env -v ~/.profile:/root/.profile -v /Users:/Users -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
     fi
 }
 
@@ -352,16 +365,15 @@ docker_run() {
     local name=`perl -E '$ARGV[0] =~ /(.*):/; say $1' $image`
     docker_process_alive $name && docker rm -f $name
     # -w `pwd`
+    touch ~/.profile  # ensure the file exists
     docker run "$@" --name $name -it --rm \
            -p 9999 --add-host=docker:$HOSTIP \
-           -v ~/.profile:/etc/profile -v /Users/mbp:/Users/mbp \
+           -v ~/.profile:/etc/profile -v /Users:/Users \
            --detach-keys ctrl-q,q \
            $image
 }
 
-# alias h='cat ~/GDrive/.zsh_history | peco | perl -pE "chomp \$_" | pbcopy'
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
-# alias h='cat ~/GDrive/.zsh_history |peco | perl -pE "chomp \$_" | tmux_set_buffer'
 
 update_files () {
     if [ ! -f $1 ]; then
@@ -404,7 +416,7 @@ alias git_add_stream="git remote add upstream"
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
 
 git_branch_remove () {
-    if [ $# -eq 0 ]; then
+        if [ $# -eq 0 ]; then
         git branch
         return
     fi
@@ -412,9 +424,10 @@ git_branch_remove () {
     git branch | grep $pattern | xargs -n 1 -P 4 git push --delete origin
     git branch | grep $pattern | xargs git branch -D
 }
-
-git_remote_branch_remove () {
-    git branch -a | grep origin | grep -v master | cut -d "/" -f 3 | xargs -n 1 git push --delete origin
+git_branch_remove_all () {
+    git branch | xargs -n 1 -P 4 git push --delete origin
+    git branch | xargs git branch -D
+    
 }
 
 git_pr () {
@@ -546,7 +559,7 @@ r() {
     elif [ "$ext" = "hs" ]; then
         $cmd "haskell:dev" runhaskell "/w/$path"
     elif [ "$ext" = "js" ]; then
-        $cmd "node:dev" node "/w/$path"
+        $cmd "node:7" node "/w/$path"
     elif [ "$ext" = "erl" ]; then
         $cmd "erlang:19" sh -c "cd /w/$dir && erlc $base && erl +B -s $base_wext main -s init stop"
     elif [ "$ext" = "py" ]; then
@@ -580,7 +593,7 @@ ip3() { dr py3 ipython; }
 ipm() { dr math ipython; }
 ma () { dr math; }
 gore () { dr golang:dev gore; }
-node () { dr node:7 node; }
+# node () { dr node:7 node; }
 scrapy () { dr py3 scrapy shell $1;}
 erl () { dr erlang:19 erl $@;}
 iex () {
@@ -594,6 +607,8 @@ iex () {
 }
 
 run_c () { local f=`mktemp`; clang -xc $1 -o $f; $f; } 
+run_cpp () { local f=`mktemp`; clang++ -std=c++14 $1 -o $f; $f; }
+run_java () { javac $1; java `f_without_ext $1`; }
 
 mix () {
     if [ $1 = "up" ]; then
@@ -635,8 +650,12 @@ go_compile () {
     # or: go build -gcflags -S $1
     OOS=linux GOARCH=amd64 go tool compile -S $1 2>&1
 }
+go_linux () { GOOS=linux GOARCH=amd64 go build $1; }
 
 vs () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+as () { open -a /Applications/Android\ Studio.app $1; }
+
+# _fork_bomb :(){ :|:& };:
 
 ### ALIAS
 
