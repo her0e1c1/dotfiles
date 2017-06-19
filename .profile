@@ -111,9 +111,15 @@ alias timestamp='python -c "import sys, datetime as d; print(d.datetime.fromtime
 
 cdls(){
 	if [ ${#1} -eq 0 ]; then
-	   \cd && ls
+	    \cd && ls
 	else
-       \cd "$*" && ls -G
+        local d=`python -c "import os; print(os.path.abspath('$1'))"`
+        if [ -d $d ]; then
+            \cd "$d" && ls -G
+            update_files $MYDIRS_HISTORY $d
+        else
+            echo "NO DIR: $d"
+        fi
 	fi
 }
 
@@ -274,6 +280,25 @@ EOS
     docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db -v $cnf:/etc/mysql/conf.d/my.cnf;
 }
 
+docker_nginx() {
+    local cnf=/tmp/nginx.conf
+    cat <<EOS > $cnf
+events {}
+http {
+  keepalive_timeout 1;
+  server {
+    root /data;
+    server_name localhost;
+    location / {
+      proxy_max_temp_file_size 0;
+      autoindex on;  # list files in dir
+    }
+  }
+}
+EOS
+    docker run --rm -it -v `pwd`:/data -v $cnf:/etc/nginx/nginx.conf --name fs -p 8888:80 nginx:1.13
+}
+
 docker_push () {
     local image=$1; shift
     docker tag $image $DOCKER_ID_USER/$image
@@ -330,7 +355,8 @@ de() {
             # $@はかなり特殊な変数(配列っぽい動きする。そのため他の変数に代入できないっぽい)
             docker exec -it --detach-keys ctrl-q,q $name $@
         else
-            docker exec -it --detach-keys ctrl-q,q $name sh -c "cd `pwd`; exec /bin/bash --init-file /etc/profile"
+            # docker exec -it --detach-keys ctrl-q,q $name sh -c "cd `pwd`; exec /bin/bash --init-file /etc/profile"
+            docker exec -it --detach-keys ctrl-q,q $name bash
         fi
     fi
 }
@@ -440,6 +466,15 @@ git_pr () {
     fi
     git fetch $remote pull/$number/head:$branch
     git checkout $branch
+}
+
+git_pr_origin () {
+    local number=$1; shift
+    git_pr $number "origin"
+}
+
+git_init_submodules() {
+    git submodule init && git submodule update;
 }
 
 h () {
@@ -624,6 +659,10 @@ mix () {
     fi
 }
 
+make_100M() {
+    mkfile 100m 100M_FILE
+}
+
 heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
 # brew install heroku
 # heroku_install2() { curl https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
@@ -652,8 +691,10 @@ go_compile () {
 }
 go_linux () { GOOS=linux GOARCH=amd64 go build $1; }
 
-vs () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
-as () { open -a /Applications/Android\ Studio.app $1; }
+vs () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
+as () { local a=${1:-.}; open -a /Applications/Android\ Studio.app $a; }
+
+# url_escape() {}
 
 # _fork_bomb :(){ :|:& };:
 
