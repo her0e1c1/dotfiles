@@ -12,6 +12,8 @@ echo "LOADING ... `hostname`"
 # \w \W currend dir
 # \u user name
 export PS1="\u@\w\n$ "
+export GOPATH=~/go
+export GOBIN=~/go/bin
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 # export LC_ALL=C
 # export LC_ALL=en_US.UTF-8
@@ -20,8 +22,6 @@ export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
-export GOPATH=~/go
-export GOBIN=~/go/bin
 export DOCKER_ID_USER=her0e1c1
 
 export MYDIRS_HISTORY=~/.mydirs
