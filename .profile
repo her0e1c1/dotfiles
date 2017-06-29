@@ -12,11 +12,11 @@ echo "LOADING ... `hostname`"
 # \w \W currend dir
 # \u user name
 export PS1="\u@\w\n$ "
-export GOPATH=~/go
-export GOBIN=~/go/bin
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 # export LC_ALL=C
 # export LC_ALL=en_US.UTF-8
+export GOPATH=~/go
+export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
 export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
@@ -76,7 +76,7 @@ install_brew () {
 
 install_dotfile () {
  local filepath
- for name in .vimrc .tmux.conf .gitconfig .hgrc; do
+ for name in .vimrc .tmux.conf .gitconfig .gitignore_global .hgrc; do
    filepath="$HOME/$name"
    curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
  done
@@ -121,6 +121,7 @@ cdls(){
             echo "NO DIR: $d"
         fi
 	fi
+    pwd
 }
 
 #圧縮ファイルを名前だけで展開
@@ -227,11 +228,14 @@ open_file() {
 
 peco_select_history() {
     declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco)
-    READLINE_LINE="$l"  # bash ver >= 4
-    READLINE_POINT=${#l}
-    if [ `uname` = "Darwin" ]; then
-        echo "${READLINE_LINE}" | chomp | pbcopy
-    fi
+    eval "$l"
+    # READLINE_LINE="$l"  # bash ver >= 4
+    # READLINE_POINT=${#l}
+    # if [ `uname` = "Darwin" ]; then
+    #     # this doesn't work on current sierra tmux
+    #     echo "${READLINE_LINE}" | chomp | pbcopy
+    # fi
+
 }
 
 peco_select_ls() {
@@ -242,6 +246,7 @@ peco_select_ls() {
         open_file $l
     else
         \cd $l
+        peco_select_ls
     fi 
 }
 
@@ -693,6 +698,9 @@ go_linux () { GOOS=linux GOARCH=amd64 go build $1; }
 
 vs () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
 as () { local a=${1:-.}; open -a /Applications/Android\ Studio.app $a; }
+
+adb_web() { adb shell am start -a android.intent.action.VIEW -d $1; }
+adb_log() { adb logcat ;}
 
 # url_escape() {}
 
