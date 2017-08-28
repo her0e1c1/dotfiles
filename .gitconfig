@@ -80,11 +80,12 @@
 
     # reset
 	rs = reset
-	rs1 = reset HEAD~ --hard
+    rso = reset ORIG_HEAD --hard
+	rs0 = reset HEAD --hard
+	rs1 = reset HEAD^ --hard
     rsh = reset --hard
     rss = reset --soft
     rsm = reset --merge
-    rso = reset ORIG_HEAD --hard
 
 	# merge
 	mf = merge FETCH_HEAD

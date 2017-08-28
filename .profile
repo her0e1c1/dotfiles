@@ -178,7 +178,7 @@ f () {
         touch $MYDIRS_HISTORY
     fi
     if [ $# -eq 0 ]; then
-        local d=`cat $MYDIRS_HISTORY | peco`
+        local d=`cat $MYDIRS_HISTORY | peco --prompt $(pwd)`
         if [ -d $d ]; then
             cdls $d
             update_files $MYDIRS_HISTORY $d
@@ -190,7 +190,6 @@ f () {
     fi
 
 }
-bind -x '"\ef": f'
 
 ### FOR BASH
 if echo $SHELL | grep -q bash; then
@@ -219,10 +218,16 @@ fi
 ### PECO
 
 open_file() {
+    local file=$1; shift
+    if ! [ -f $file ]; then
+       echo "$file doesn't exist"
+       return 1
+    fi
+    update_files $RECENT_FILES $file
     if docker_find_process_name emacs; then
-        e $1
+        e $file
     else
-        $EDITOR e
+        $EDITOR $file 
     fi
 }
 
@@ -238,15 +243,28 @@ peco_select_history() {
 
 }
 
-peco_select_ls() {
-    local l=$(HISTTIMEFORMAT= ls -1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$READLINE_LINE")
+peco_select_recent_files() {
+    declare l=$(HISTTIMEFORMAT= cat $RECENT_FILES | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco)
+    if [ -f $l ]; then
+        open_file $l
+    elif [ -d $l ]; then
+        \cd $l
+    fi
+}
+
+peco_select_find() {
+    local tmp=/tmp/peco
+    [ -f $tmp ] && rm $tmp
+    ls -1a >> $tmp
+    find . -maxdepth 3 >> $tmp
+    local l=$(cat $tmp | peco --prompt `pwd`)
     if [ -z $l ] ;then
         return # do nothing
     elif [ -f $l ]; then
         open_file $l
     else
         \cd $l
-        peco_select_ls
+        peco_select_find
     fi 
 }
 
@@ -482,6 +500,10 @@ git_init_submodules() {
     git submodule init && git submodule update;
 }
 
+# git submodule foreach git reset --hard HEAD
+# git submodule update
+git_update_submodule() { git submodule update --recursive --remote; }
+
 h () {
     if [ ! -f $MYCMDS_HISTORY ]; then
         touch $MYCMDS_HISTORY
@@ -700,7 +722,8 @@ vs () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --a
 as () { local a=${1:-.}; open -a /Applications/Android\ Studio.app $a; }
 
 adb_web() { adb shell am start -a android.intent.action.VIEW -d $1; }
-adb_log() { adb logcat ;}
+adb_log() { adb logcat ; }
+date_GMT() { TZ=GMT date; }
 
 # url_escape() {}
 
@@ -726,7 +749,9 @@ alias b="tmux_show_buffer"
 ### BINDS
 
 bind -x '"\eh": h'
-bind -x '"\ed": peco_select_ls'
+bind -x '"\es": peco_select_find'
+bind -x '"\ef": peco_select_recent_files'
+bind -x '"\ed": f'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
 bind -x '"\eo": open_recent_file'
