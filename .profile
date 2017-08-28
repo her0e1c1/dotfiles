@@ -124,6 +124,13 @@ cdls(){
     pwd
 }
 
+cdlsgit() {
+    cdls $@;
+    if ls -1 | grep "^\.git"; then
+       git status
+    fi
+}
+
 #圧縮ファイルを名前だけで展開
 extract() {
   case $1 in
@@ -255,7 +262,7 @@ peco_select_recent_files() {
 peco_select_find() {
     local tmp=/tmp/peco
     [ -f $tmp ] && rm $tmp
-    ls -1a >> $tmp
+    ls -1 >> $tmp
     find . -maxdepth 3 >> $tmp
     local l=$(cat $tmp | peco --prompt `pwd`)
     if [ -z $l ] ;then
@@ -263,9 +270,19 @@ peco_select_find() {
     elif [ -f $l ]; then
         open_file $l
     else
-        \cd $l
-        peco_select_find
+        cdlsgit $l
+        # peco_select_find
     fi 
+}
+
+peco_grep_word() {
+    local w=$1; shift
+    local l=$(grep -Inr "$w" . | peco --prompt `pwd`)
+    [ -z "$l" ] && return;
+    # grep format: filepath:line number: matching string
+    local line=$(echo $l | perl -nlE 'say $1 if /:(\d+):/')
+    local file=$(echo $l | perl -nlE 'say $1 if /^(.*?):/')
+    e $file $line
 }
 
 anything() {
@@ -341,14 +358,18 @@ emacs () {
 }
 
 e () {
+    local q=""
     if [ $# -eq 0 ]; then
         local p=`pwd`
     else
         local p=`perl -E "use Cwd 'abs_path'; say abs_path('$1')"`
+        if [ $# -eq 2 ]; then
+            q="+$2:0"
+        fi
     fi
     if [ -e $p ]; then
         update_files $RECENT_FILES $p
-        docker exec -it emacs script -q -c "'/bin/bash' -c 'emacsclient -t $p'" /dev/null
+        docker exec -it emacs script -q -c "'/bin/bash' -c 'emacsclient $q -t $p'" /dev/null
     else
         echo "$p does not exist"
     fi
@@ -745,6 +766,7 @@ alias dei="docker exec -i"
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'  # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias T=tmux_set_buffer
 alias b="tmux_show_buffer"
+alias w="peco_grep_word"
 
 ### BINDS
 
