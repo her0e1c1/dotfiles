@@ -29,7 +29,7 @@
 
 	# status
 	s = status -uno
-	st = status
+	st = status .
 
     # checkout
     com = checkout master

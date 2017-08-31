@@ -97,10 +97,20 @@ repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
 chomp () { perl -pE "chomp \$_"; }
 color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NOCOLOR='\033[0m'
+red() { echo -e "${RED}$1${NOCOLOR}"; }
+green() { echo -e "${GREEN}$1${NOCOLOR}"; }
 
 d2h () { printf '%x\n' $1; }
 h2d(){ echo "ibase=16; $@"|bc; }  # capitize
 esc () { perl -plE "s#'#'\\''# "; }
+
+ignore_files() {
+    perl -nlE 'say if ! m#\.(pyc)$#'
+    perl -nlE 'say if ! m#\.git#'
+}
 
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
@@ -116,19 +126,15 @@ cdls(){
         local d=`python -c "import os; print(os.path.abspath('$1'))"`
         if [ -d $d ]; then
             \cd "$d" && ls -G
-            update_files $MYDIRS_HISTORY $d
+            # update_files $MYDIRS_HISTORY $d
         else
             echo "NO DIR: $d"
         fi
 	fi
-    pwd
-}
-
-cdlsgit() {
-    cdls $@;
-    if ls -1 | grep "^\.git"; then
-       git status
+    if git status 2>/dev/null 1>/dev/null; then
+        git status
     fi
+    pwd
 }
 
 #圧縮ファイルを名前だけで展開
@@ -180,49 +186,44 @@ EOS
 # bind -f $INPUTRC
 [ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
 
-f () {
-    if [ ! -f $MYDIRS_HISTORY ]; then
-        touch $MYDIRS_HISTORY
-    fi
-    if [ $# -eq 0 ]; then
-        local d=`cat $MYDIRS_HISTORY | peco --prompt $(pwd)`
-        if [ -d $d ]; then
-            cdls $d
-            update_files $MYDIRS_HISTORY $d
-        fi
-    else
-        local d=`python -c "import os; print(os.path.abspath('$1'))"`
-        update_files $MYDIRS_HISTORY $d
-        cd $d
-    fi
-
-}
-
 ### FOR BASH
 if echo $SHELL | grep -q bash; then
-
-export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
-export HISTCONTROL=ignoredups  # 重複履歴を無視
-export HISTCONTROL=ignoreboth  # 両方
-
-# 履歴の共有
-function share_history {  # 以下の内容を関数として定義
-    history -a  # .bash_historyに前回コマンドを1行追記
-    # history -c  # 端末ローカルの履歴を一旦消去
-    history -r  # .bash_historyから履歴を読み込み直す
-}
-
-PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
-shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
-
-#よく使うコマンドは履歴保存対象から外す。
-export HISTIGNORE="fg*:bg*:history:cd*"
-
-#ヒストリのサイズを増やす
-export HISTSIZE=100000
+    export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
+    export HISTCONTROL=ignoredups  # 重複履歴を無視
+    export HISTCONTROL=ignoreboth  # 両方
+    # 履歴の共有
+    function share_history {  # 以下の内容を関数として定義
+        history -a  # .bash_historyに前回コマンドを1行追記
+        # history -c  # 端末ローカルの履歴を一旦消去
+        history -r  # .bash_historyから履歴を読み込み直す
+    }
+    PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
+    shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
+    #よく使うコマンドは履歴保存対象から外す。
+    export HISTIGNORE="fg*:bg*:history:cd*"
+    #ヒストリのサイズを増やす
+    export HISTSIZE=100000
+    # bash_pre_command_hook() {  # 2回呼ばれる...
+    #     ;
+    # }
+    # trap "bash_pre_command_hook" DEBUG
+    bash_post_command_hook() {
+        local ecode=$?
+        local e='$'
+        [ $ecode -eq 0 ] || e=`red \$`
+        update_files $MYDIRS_HISTORY `pwd`
+        local branch=""
+        local origin=""
+        if git status 2>/dev/null 1>/dev/null; then
+            branch=$(green `git_current_branch`)
+            origin=`git config --get remote.origin.url`
+        fi
+        export PS1="\u@\w [$branch:$origin]\n$e "
+    }
+    PROMPT_COMMAND="bash_post_command_hook"
 fi
 
-### PECO
+## EDITOR
 
 open_file() {
     local file=$1; shift
@@ -238,45 +239,78 @@ open_file() {
     fi
 }
 
+### PECO
+
+peco_git_branch() {
+    local b=$(git branch | perl -plE 's#^\* ##'| peco --prompt `git_current_branch`)
+    git checkout $b
+}
+
 peco_select_history() {
-    declare l=$(HISTTIMEFORMAT= history | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco)
-    eval "$l"
+    declare cmd=$(
+        history |
+        perl -plE 's#^\s*\d+\s*##' |
+        perl -nlE 'say if length $_ >= 4' |
+        perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
+        uniq |
+        peco --prompt `pwd`
+    )
+    eval "$cmd"
     # READLINE_LINE="$l"  # bash ver >= 4
     # READLINE_POINT=${#l}
     # if [ `uname` = "Darwin" ]; then
     #     # this doesn't work on current sierra tmux
     #     echo "${READLINE_LINE}" | chomp | pbcopy
     # fi
-
 }
 
 peco_select_recent_files() {
-    declare l=$(HISTTIMEFORMAT= cat $RECENT_FILES | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco)
-    if [ -f $l ]; then
+    if [ $# -eq 1 ]; then
+        open_file $1
+        return
+    fi
+    declare l=$(cat $RECENT_FILES | peco --prompt `pwd`)
+    if [ -z "$l" ]; then
+        return  # do nothing
+    elif [ -f $l ]; then
+        cd `dirname $l`
         open_file $l
     elif [ -d $l ]; then
-        \cd $l
+        cdls $l
     fi
 }
 
 peco_select_find() {
     local tmp=/tmp/peco
     [ -f $tmp ] && rm $tmp
-    ls -1 >> $tmp
-    find . -maxdepth 3 >> $tmp
+    ls -1 | ignore_files >> $tmp
+    find . -maxdepth 3 | ignore_files >> $tmp
     local l=$(cat $tmp | peco --prompt `pwd`)
     if [ -z $l ] ;then
         return # do nothing
     elif [ -f $l ]; then
         open_file $l
     else
-        cdlsgit $l
-        # peco_select_find
+        cdls $l
     fi 
 }
 
+peco_replace() {
+    local pattern=$1; shift
+    local file=$1; shift
+    if [ -z $file ]; then
+        file=$(ls -1a | peco --prompt `pwd`)
+    fi
+    perl -plE "$pattern" $file
+}
+
 peco_grep_word() {
-    local w=$1; shift
+    local w=""
+    if [ $# -eq 0 ];then
+        read -p "Enter search word: " w
+    else
+        w=$1; shift
+    fi
     local l=$(grep -Inr "$w" . | peco --prompt `pwd`)
     [ -z "$l" ] && return;
     # grep format: filepath:line number: matching string
@@ -284,6 +318,25 @@ peco_grep_word() {
     local file=$(echo $l | perl -nlE 'say $1 if /^(.*?):/')
     e $file $line
 }
+
+peco_select_dir () {
+    if [ ! -f $MYDIRS_HISTORY ]; then
+        touch $MYDIRS_HISTORY
+    fi
+    if [ $# -eq 0 ]; then
+        local d=`cat $MYDIRS_HISTORY | peco --prompt $(pwd)`
+        if [ -d $d ]; then
+            cdls $d
+            # update_files $MYDIRS_HISTORY $d
+        fi
+    else
+        local d=`python -c "import os; print(os.path.abspath('$1'))"`
+        # update_files $MYDIRS_HISTORY $d
+        cdls $d
+    fi
+
+}
+
 
 anything() {
     # ACTION: SOMETHING のフォーマットでなんでもやるインターフェイスをつくる
@@ -485,6 +538,7 @@ open_recent_file () {
 alias git_add_stream="git remote add upstream"
 alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
 
+git_current_branch() { git rev-parse --abbrev-ref HEAD; }
 git_branch_remove () {
         if [ $# -eq 0 ]; then
         git branch
@@ -711,9 +765,9 @@ make_100M() {
     mkfile 100m 100M_FILE
 }
 
-heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
+### HEROKU
 # brew install heroku
-# heroku_install2() { curl https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
+heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
 heroku_login() { heroku auth:login --app $1; }
 heroku_db() { heroku pg:psql --app $1; }  # use redis-cli instead
 heroku_env() { heroku run env --app $1; }
@@ -723,12 +777,8 @@ heroku_config() { heroku config --app $1; }
 heroku_info() { heroku apps:info --app $1; }
 # heroku config:set KEY=$VAL -a $APP
 
-python_upload() {
-    python setup.py sdist bdist bdist_egg upload
-}
-python3_upload() {
-    python3 setup.py sdist bdist bdist_egg upload
-}
+python_upload()  { python setup.py sdist bdist bdist_egg upload; }
+python_upload3() { python3 setup.py sdist bdist bdist_egg upload; }
 # python -c 'import bottle as b; b.route("<p:path>")(lambda p: b.jinja2_template(p[1:], **dict(b.request.params.items()))); b.run(host="0.0.0.0", debug=True, port=8000)'
 
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
@@ -747,13 +797,11 @@ adb_log() { adb logcat ; }
 date_GMT() { TZ=GMT date; }
 
 # url_escape() {}
-
 # _fork_bomb :(){ :|:& };:
 
 ### ALIAS
 
 alias s='rlwrap sh -l'
-alias d="docker"
 alias dc="docker-compose"
 alias g="git"
 alias ll='ls -alF'
@@ -766,18 +814,22 @@ alias dei="docker exec -i"
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'  # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias T=tmux_set_buffer
 alias b="tmux_show_buffer"
+alias f="peco_select_recent_files"
 alias w="peco_grep_word"
+alias d="peco_select_dir"
 
 ### BINDS
 
-bind -x '"\eh": h'
+bind -x '"\eb": peco_git_branch'
 bind -x '"\es": peco_select_find'
 bind -x '"\ef": peco_select_recent_files'
-bind -x '"\ed": f'
+bind -x '"\ed": peco_select_dir'
+bind -x '"\eD": "cdls .."'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
 bind -x '"\eo": open_recent_file'
-bind -x '"\eb": b'
 bind -x '"\eB": tmux capture-pane'
 
 echo "DONE"
+
+# read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
