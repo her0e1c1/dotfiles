@@ -241,6 +241,13 @@ open_file() {
 
 ### PECO
 
+peco_prompt() {
+    echo `pwd`
+    # if git status 2>/dev/null 1>/dev/null; then
+    #     echo `git_current_branch`
+    # fi
+}
+
 peco_git_branch() {
     local b=$(git branch | perl -plE 's#^\* ##'| peco --prompt `git_current_branch`)
     git checkout $b
@@ -269,6 +276,7 @@ peco_select_recent_files() {
         open_file $1
         return
     fi
+    # share emacs recent files
     declare l=$(cat $RECENT_FILES | peco --prompt `pwd`)
     if [ -z "$l" ]; then
         return  # do nothing
@@ -324,7 +332,9 @@ peco_select_dir () {
         touch $MYDIRS_HISTORY
     fi
     if [ $# -eq 0 ]; then
-        local d=`cat $MYDIRS_HISTORY | peco --prompt $(pwd)`
+        local a=`peco_prompt`
+        echo $a
+        local d=`cat $MYDIRS_HISTORY | peco --prompt $(peco_prompt)`
         if [ -d $d ]; then
             cdls $d
             # update_files $MYDIRS_HISTORY $d
@@ -359,6 +369,7 @@ docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep
 docker_working() { docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
 docker_alias() { docker tag $1 $2; }
 docker_export() { docker export $1 | tar tf -; }
+images_rstudio() { docker run --name rstudio -v `pwd`:/w -w /wn --rm -it -p 8787:8787 rocker/hadleyverse; }
 
 docker_proxy() { docker run --name prx -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy; }
 docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
@@ -536,7 +547,19 @@ open_recent_file () {
 ### GIT
 
 alias git_add_stream="git remote add upstream"
-alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
+# alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
+
+git_origin() { git config --get remote.origin.url; }
+
+git_update() {
+    git checkout master
+    if echo `git_origin` | grep 1 ; then
+        echo 1
+    fi
+    git fetch upstream
+    git merge upstream/master
+    git push
+}
 
 git_current_branch() { git rev-parse --abbrev-ref HEAD; }
 git_branch_remove () {
@@ -551,7 +574,6 @@ git_branch_remove () {
 git_branch_remove_all () {
     git branch | xargs -n 1 -P 4 git push --delete origin
     git branch | xargs git branch -D
-    
 }
 
 git_pr () {
@@ -571,13 +593,13 @@ git_pr_origin () {
     git_pr $number "origin"
 }
 
-git_init_submodules() {
+git_submodule_init() {
     git submodule init && git submodule update;
 }
 
 # git submodule foreach git reset --hard HEAD
 # git submodule update
-git_update_submodule() { git submodule update --recursive --remote; }
+git_submodule_update() { git submodule update --recursive --remote; }
 
 h () {
     if [ ! -f $MYCMDS_HISTORY ]; then
@@ -796,6 +818,8 @@ adb_web() { adb shell am start -a android.intent.action.VIEW -d $1; }
 adb_log() { adb logcat ; }
 date_GMT() { TZ=GMT date; }
 
+ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
+
 # url_escape() {}
 # _fork_bomb :(){ :|:& };:
 
@@ -817,6 +841,7 @@ alias b="tmux_show_buffer"
 alias f="peco_select_recent_files"
 alias w="peco_grep_word"
 alias d="peco_select_dir"
+alias cd="peco_select_dir"
 
 ### BINDS
 
