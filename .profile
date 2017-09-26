@@ -249,7 +249,7 @@ peco_prompt() {
 }
 
 peco_git_branch() {
-    local b=$(git branch | perl -plE 's#^\* ##'| peco --prompt `git_current_branch`)
+    local b=$(git branch -a | perl -plE 's#^\* ##'| perl -plE 's#.*?(origin|upstream)/##' | peco --prompt `git_current_branch`)
     git checkout $b
 }
 
@@ -553,9 +553,8 @@ git_origin() { git config --get remote.origin.url; }
 
 git_update() {
     git checkout master
-    if echo `git_origin` | grep 1 ; then
-        echo 1
-    fi
+    # if echo `git_origin` | grep 1 ; then
+    # fi
     git fetch upstream
     git merge upstream/master
     git push
