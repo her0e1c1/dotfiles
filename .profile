@@ -25,6 +25,7 @@ export LSCOLORS=DxGxcxdxCxegedabagacad
 export DOCKER_ID_USER=her0e1c1
 
 export MYDIRS_HISTORY=~/.mydirs
+export MY_ENV=~/.my.env
 export MYCMDS_HISTORY=~/.mycmds
 export RECENT_FILES=~/.recent_files
 
@@ -43,6 +44,10 @@ else
     export EDITOR=vi
 fi
 
+if [ -f $MY_ENV ]; then
+    . $MY_ENV
+fi
+   
 ### INSTALL IF NEEDED
 
 setup_mac () {
@@ -592,6 +597,32 @@ git_pr_origin () {
     git_pr $number "origin"
 }
 
+git_make () {
+    if [ -z "$GITHUB_TOKEN" -o -z "$GITHUB_USERNAME" ]; then
+        echo "NO GITHUB_TOKEN or GITHUB_USERNAME"
+        return 1
+    fi
+    local base=${1-master}; shift
+    local title=`git log -1 --pretty=%B`
+
+    local remote="origin";
+    local branch="`git_current_branch`"
+    local head="`git_current_branch`"
+    if git remote -v | grep upstream > /dev/null; then
+        remote="upstream"
+        head="$GITHUB_USERNAME:$head"
+        # head="$head"
+    fi 
+    echo git push origin $branch
+    git push origin $branch
+
+    local p=`git remote -v | grep $remote | perl -nlE 'say $1 if /:(.*?)(.git)? /' | head -1`
+    local url="https://api.github.com/repos/$p"
+    echo "make PR: $head on $base at $remote $url"
+    echo "$title"
+    curl -XPOST $url/pulls?access_token=$GITHUB_TOKEN -d "{\"title\": \"$title\", \"head\": \"$head\", \"base\": \"$base\", \"body\": \"\"}" 
+}
+
 git_submodule_init() {
     git submodule init && git submodule update;
 }
@@ -817,6 +848,9 @@ adb_web() { adb shell am start -a android.intent.action.VIEW -d $1; }
 adb_log() { adb logcat ; }
 date_GMT() { TZ=GMT date; }
 
+ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
+ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server.csr; }
+
 ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
 
 # url_escape() {}
@@ -855,5 +889,4 @@ bind -x '"\eo": open_recent_file'
 bind -x '"\eB": tmux capture-pane'
 
 echo "DONE"
-
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
