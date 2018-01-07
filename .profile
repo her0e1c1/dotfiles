@@ -13,6 +13,7 @@ echo "LOADING ... `hostname`"
 # \u user name
 export PS1="\u@\w\n$ "
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
+export PATH=$PATH:./node_modules/.bin
 # export LC_ALL=C
 # export LC_ALL=en_US.UTF-8
 export GOPATH=~/go
@@ -555,6 +556,7 @@ alias git_add_stream="git remote add upstream"
 # alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
 
 git_origin() { git config --get remote.origin.url; }
+git_first_commit() { git log --oneline | tail -1 | perl -nE '/(\w*?) /; say $1'; }
 
 git_update() {
     git checkout master
@@ -852,6 +854,10 @@ ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -tex
 ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server.csr; }
 
 ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
+
+global_ip() {
+    curl http://wtfismyip.com/text
+}
 
 # url_escape() {}
 # _fork_bomb :(){ :|:& };:
