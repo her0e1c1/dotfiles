@@ -855,7 +855,7 @@ ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server
 
 ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
 
-global_ip() {
+ip_global() {
     curl http://wtfismyip.com/text
 }
 
