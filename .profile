@@ -415,6 +415,13 @@ docker_push () {
     docker push $DOCKER_ID_USER/$image
 }
 
+spacemacs() {
+    if docker_find_process_name spacemacs; then
+		docker rm -f spacemacs
+	fi
+    docker run -ti --rm -v `pwd`:/mnt/workspace --name spacemacs -e TERM=xterm-256color -e LC_CTYPE=UTF-8  jare/spacemacs 
+}
+
 emacs () {
     if docker_find_process_name emacs; then
         docker rm -f emacs
