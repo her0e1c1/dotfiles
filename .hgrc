@@ -1,5 +1,5 @@
 [ui]
-#style = compact
+# style = compact
 ignore = ~/.hgignore
 merge = internal:merge 
 # merge = vimdiff
@@ -89,9 +89,6 @@ md = diff --mq
 ml = log -b . --limit 5
 mpush = push --mq
 
-[web]
-#cacerts = /etc/ssl/certs/ca-certificates.crt
-
 [pager]
 pager = LESS='-R' less
 quiet = True
@@ -109,15 +106,7 @@ color =
 graphlog =
 mq =
 shelve =
-#mercurial_keyring = 
-#phase =
 hgext.bookmarks =
-#hg-git =
-#hggit = /usr/local/lib/python2.7/dist-packages/hggit
-#hggit = /usr/local/lib/python2.7/site-packages/hggit
-
-#[phases]
-#publish = False
 
 [mq]
 secret = True
@@ -139,9 +128,3 @@ qseries.missing = red bold
 
 [extdiff]
 cmd.vimdiff =
-
-%include ~/lib/hgrc
-
-[trusted]
-users = jenkins
-groups = jenkins
