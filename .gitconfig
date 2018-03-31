@@ -118,9 +118,3 @@
 
 [push]
 	default = current
-
-[ghq]
-    root = ~/.ghq
-    root = ~/go/src
-[ghq "import"]
-    starred = github-list-starred
