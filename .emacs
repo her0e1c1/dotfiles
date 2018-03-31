@@ -41,11 +41,13 @@
     helm-dired-recent-dirs
     ;;; misc
     magit
+    auto-complete
     ; dired+
     recentf-ext
     rainbow-delimiters
     ;;; theme
-    zerodark-theme
+    cyberpunk-theme
+    ; zerodark-theme
     ))
 (defvar my/package-archives
     '(("melpa" . "http://melpa.milkbox.net/packages/")
@@ -68,10 +70,16 @@
         (require pkg)
       (package-refresh-contents)
       (package-install pkg))))
+
 (require 'dired-x)
 (require 'uniquify)
+
 ;;; Theme
 (load-theme 'zerodark t)
+(font-lock-mode 1)
+(set-face-foreground 'font-lock-comment-face "#1C1C1C")
+(set-face-background 'font-lock-comment-face "white")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Evil
