@@ -16,6 +16,7 @@ export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 export PATH=$PATH:./node_modules/.bin
 # export LC_ALL=C
 # export LC_ALL=en_US.UTF-8
+export VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.json"
 export GOPATH=~/go
 export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
@@ -415,23 +416,18 @@ docker_push () {
     docker push $DOCKER_ID_USER/$image
 }
 
-spacemacs() {
-    if docker_find_process_name spacemacs; then
-		docker rm -f spacemacs
-	fi
-    docker run -ti --rm -v `pwd`:/mnt/workspace --name spacemacs -e TERM=xterm-256color -e LC_CTYPE=UTF-8  jare/spacemacs 
-}
-
-emacs () {
+emacs() {
     if docker_find_process_name emacs; then
         docker rm -f emacs
     fi
     touch ~/.recentf
-    if [ ! -d ~/emacs.d ]; then
-        echo "~/emacs.d does not exist"
-        return 1
-    fi
-    docker run -e "GOPATH=/go:/share/go" -e "TERM=xterm-256color" -v ~/emacs.d/.emacs.d/lisp:/root/.emacs.d/lisp -v ~/go:/share/go -v ~/.recentf:/root/.emacs.d/recentf -v /:/host -v /Users/mbp:/Users/mbp --name emacs -d -it emacs sh -c "emacs --daemon && bash -l"
+    docker run -itd --name emacs \
+	  -w "$HOME" \
+	  -v "$HOME:$HOME" \
+      -v ~/.recentf:/root/.emacs.d/recentf \
+	  -e TERM=xterm-256color \
+	  -e LC_CTYPE=UTF-8 \
+	  emacs sh -c "emacs --daemon && bash -l"
 }
 
 e () {
@@ -865,6 +861,9 @@ ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
 ip_global() {
     curl http://wtfismyip.com/text
 }
+
+# VS CODE
+vs_settings() { vim "$VSCODE_SETTINGS"; }
 
 # url_escape() {}
 # _fork_bomb :(){ :|:& };:
