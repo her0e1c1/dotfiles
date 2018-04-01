@@ -430,7 +430,7 @@ emacs() {
 	  emacs sh -c "emacs --daemon && bash -l"
 }
 
-e () {
+emacsclient () {
     local q=""
     if [ $# -eq 0 ]; then
         local p=`pwd`
@@ -677,18 +677,6 @@ tmux_show_buffers() { perl -E 'say `tmux show-buffer -b $_ ` for 0..20'; }
 
 ### OTHERS (no more used)
 
-dict () {
-    local cmd=$1;
-    if ! docker ps --format "{{.Names}}" | grep dict > /dev/null ; then
-        docker-compose -f /Users/mbp/workspace/sandbox/dict/docker-compose.yml up -d
-    fi
-    if [ "$cmd" = "setup" ]; then
-        docker exec -it dict python main.py "$@"
-    else
-        docker exec -it dict python main.py s "$@"
-    fi
-}
-
 # docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
 # または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
 # host側のイベントを取りにいけない...
@@ -774,21 +762,8 @@ r() {
     fi
 }
 
-math() {
-    # math IN > OUT or -o OUT
-    pandoc --self-contained -s --mathjax=https://gist.githubusercontent.com/yohm/0c8ed72b6f18948a2fd3/raw/624defc8ffebb0934ab459854b7b3efc563f6efb/dynoload.js -c https://gist.githubusercontent.com/griffin-stewie/9755783/raw/13cf5c04803102d90d2457a39c3a849a2d2cc04b/github.css $@
-}
-
 ### REPL
 
-ghci() { dr haskell:dev ghci; }
-ip2() { dr py2 ipython; }
-ip3() { dr py3 ipython; }
-ipm() { dr math ipython; }
-ma () { dr math; }
-gore () { dr golang:dev gore; }
-# node () { dr node:7 node; }
-scrapy () { dr py3 scrapy shell $1;}
 erl () { dr erlang:19 erl $@;}
 iex () {
     if [ $# -eq 0 ]; then
@@ -855,7 +830,6 @@ date_GMT() { TZ=GMT date; }
 
 ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
 ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server.csr; }
-
 ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
 
 ip_global() {
@@ -887,6 +861,7 @@ alias f="peco_select_recent_files"
 alias w="peco_grep_word"
 alias d="peco_select_dir"
 alias cd="peco_select_dir"
+alias e="emacsclient"
 
 ### BINDS
 
