@@ -1,6 +1,27 @@
-__pycache__
-.cache
 .vscode
+
+.#*
+*.a
+*.o
+.DS_Store
+*.zip
+*.tar.gz
+*.exe
+*.bz2
+*.bak
+*~
+*.out
+*.dSYM
+*.hi
+temp/
+
+*.core
+
+# Python
+*.pyc
+__pycache__/
+.cache/  # py.test
+pytest.ini 
 
 # for my private directory
 p
