@@ -2,7 +2,6 @@ _build/
 temp/
 .hgsubstate
 .hgignore
-my_development.ini
 
 syntax: glob
 *.orig
@@ -13,7 +12,6 @@ syntax: glob
 *.swp
 *.swo
 .#*
-
 
 .DS_Store
 *.zip
