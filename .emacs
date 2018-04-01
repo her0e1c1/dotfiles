@@ -73,11 +73,15 @@
 
 (require 'dired-x)
 (require 'uniquify)
+(require 'hl-line)
 
 ;;; Theme
 (load-theme 'cyberpunk t)
 (font-lock-mode 1)
-(set-face-foreground 'font-lock-comment-face "#1C1C1C")
+(set-face-background 'hl-line "#303030")
+(set-face-foreground hl-line-face "#bcbcbc" )
+(set-face-background hl-line-face "#1c1c1c" )
+(set-face-foreground 'font-lock-comment-face "#1c1c1c")
 (set-face-background 'font-lock-comment-face "white")
 
 
@@ -193,10 +197,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq helm-split-window-default-side 'right)
 (custom-set-variables
- '(helm-mini-default-sources '(helm-source-buffers-list
-   helm-source-files-in-current-dir
-   helm-source-recentf
-   helm-source-buffer-not-found
+ '(helm-mini-default-sources
+   '(helm-source-buffers-list
+     helm-source-files-in-current-dir
+     helm-source-recentf
+     helm-source-buffer-not-found
    )))
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-b") 'helm-buffers-list)
@@ -328,12 +333,18 @@
 ;beep音を消す
 (setq ring-bell-function 'ignore)
 
-;補完可能なものを随時表示
-(icomplete-mode 0)
-
 ;現在行を目立たせる
 (global-hl-line-mode)
 
 (setq electric-pair-preserve-balance nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Memo
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; M-x package-install
+; M-x delete-trailing-whitespace
+; M-x list-colors-display
+; M-x list-faces-display
+
 
 (message "DONE :D")
