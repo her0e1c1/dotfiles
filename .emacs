@@ -75,7 +75,7 @@
 (require 'uniquify)
 
 ;;; Theme
-(load-theme 'cyberpunk-theme t)
+(load-theme 'cyberpunk t)
 (font-lock-mode 1)
 (set-face-foreground 'font-lock-comment-face "#1C1C1C")
 (set-face-background 'font-lock-comment-face "white")
