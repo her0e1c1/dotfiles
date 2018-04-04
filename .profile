@@ -58,10 +58,6 @@ setup_mac () {
 }
 
 # INSTALL
-install_profile () {
-    curl https://raw.githubusercontent.com/her0e1c1/home/master/.profile -o ~/.profile && . ~/.profile
-}
-
 install_go () {
     [ ! -d "$GOPATH" ] && mkdir $GOPATH
     if which go 2>&1 1>/dev/null; then
@@ -81,12 +77,16 @@ install_brew () {
     brew cask install docker
 }
 
-install_dotfile () {
- local filepath
- for name in .vimrc .tmux.conf .gitconfig .gitignore_global .hgrc; do
-   filepath="$HOME/$name"
-   curl https://raw.githubusercontent.com/her0e1c1/home/master/$name -o $filepath
- done
+install_dotfiles() {
+    cd ~
+    [ ! -f ~/dotfiles ] && git clone https://github.com/her0e1c1/dotfiles.git;
+    cd ~/dotfiles
+    for file in `ls -1`; do
+        if [ -f $file ]; then
+            local p="$HOME/$name"
+            ln -sf ~/dotfiles/$file ~/$file
+        fi
+    done
 }
 
 ## REGEX
@@ -434,6 +434,7 @@ emacs() {
     docker run -itd --name emacs \
 	  -w "$HOME" \
 	  -v "$HOME:$HOME" \
+	  -v "$HOME/dotfiles/.emacs:/root/.emacs" \
       -v ~/.recentf:/root/.emacs.d/recentf \
 	  -e TERM=xterm-256color \
 	  -e LC_CTYPE=UTF-8 \
