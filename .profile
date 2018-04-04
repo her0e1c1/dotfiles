@@ -1,3 +1,8 @@
+
+# You can install files by this command
+# $ curl https://raw.githubusercontent.com/her0e1c1/dotfiles/master/.profile -o ~/.profile && . ~/.profile
+# install_dotfiles
+
 # set -x
 
 ### TODO: - L, T (pbcopy)
@@ -79,7 +84,7 @@ install_brew () {
 
 install_dotfiles() {
     cd ~
-    [ ! -f ~/dotfiles ] && git clone https://github.com/her0e1c1/dotfiles.git;
+    [ ! -d ~/dotfiles ] && git clone https://github.com/her0e1c1/dotfiles.git;
     cd ~/dotfiles
     for file in `ls -1`; do
         if [ -f $file ]; then
