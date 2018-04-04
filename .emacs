@@ -208,7 +208,7 @@
 (global-set-key (kbd "M-m") 'helm-mini)
 (global-set-key (kbd "M-s") 'helm-swoop)
 (global-set-key (kbd "M-k") 'helm-descbinds)
-(global-set-key (kbd "M-f") 'helm-ag)
+(global-set-key (kbd "M-F") 'helm-ag)
 (define-key helm-map (kbd "C-h") 'delete-backward-char)  ; C-hを削除キーにする
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -222,8 +222,10 @@
   (insert "import pdb; pdb.set_trace()"))
 
 (add-hook 'python-mode-hook
- '(lambda () (define-key python-mode-map (kbd "C-c C-i") 'python-insert-ipdb)
-   ))
+ '(lambda () (define-key python-mode-map (kbd "M-c M-i") 'python-insert-ipdb)
+    ))
+
+(setq js-indent-level 2)  ; json indent
 
 ;;; ts(x)
 ; (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-mode))
