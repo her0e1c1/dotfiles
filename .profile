@@ -240,7 +240,7 @@ open_file() {
     fi
     update_files $RECENT_FILES $file
     if docker_find_process_name emacs; then
-        e $file
+        emacsclient $file
     else
         $EDITOR $file 
     fi
@@ -366,6 +366,18 @@ anything() {
 
 ### DOCKER
 
+docker_purge() {
+    read -p "Are you sure? [y]" -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        docker container prune -f
+        docker volume prune -f
+        docker system prune -f
+    else
+        echo "DO NOTHING"
+    fi
+}
+
 docker_kill()        { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
 docker_rename()      { docker tag $1 $2; docker rmi $1; }
 docker_remove_volume () { docker volume rm `docker volume ls -q`; }
@@ -378,10 +390,8 @@ docker_alias() { docker tag $1 $2; }
 docker_export() { docker export $1 | tar tf -; }
 images_rstudio() { docker run --name rstudio -v `pwd`:/w -w /wn --rm -it -p 8787:8787 rocker/hadleyverse; }
 
-docker_proxy() { docker run --name prx -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy; }
 docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
 docker_redis() { docker_run redis:3.0; }
-docker_math() { docker_run math:latest; }
 docker_mysql() {
     local cnf=/tmp/my.cnf
     cat <<EOS >> $cnf
@@ -427,7 +437,7 @@ emacs() {
       -v ~/.recentf:/root/.emacs.d/recentf \
 	  -e TERM=xterm-256color \
 	  -e LC_CTYPE=UTF-8 \
-	  emacs sh -c "emacs --daemon && bash -l"
+	  her0e1c1/emacs sh -c "emacs --daemon && bash -l"
 }
 
 emacsclient () {
@@ -838,6 +848,7 @@ ip_global() {
 
 # VS CODE
 vs_settings() { vim "$VSCODE_SETTINGS"; }
+# vs_init() { ln -s "$VSCODE_SETTINGS"; }
 
 # url_escape() {}
 # _fork_bomb :(){ :|:& };:
