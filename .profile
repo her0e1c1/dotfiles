@@ -92,6 +92,8 @@ install_dotfiles() {
             ln -sf ~/dotfiles/$file ~/$file
         fi
     done
+    # only for mac
+    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_SETTINGS" 
 }
 
 ## REGEX
