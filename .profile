@@ -338,7 +338,7 @@ peco_grep_word() {
     # grep format: filepath:line number: matching string
     local line=$(echo $l | perl -nlE 'say $1 if /:(\d+):/')
     local file=$(echo $l | perl -nlE 'say $1 if /^(.*?):/')
-    e $file $line
+    emacsclient $file $line
 }
 
 peco_select_dir () {
