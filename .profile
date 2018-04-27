@@ -442,10 +442,10 @@ emacs() {
 	  -w "$HOME" \
 	  -v "$HOME:$HOME" \
 	  -v "$HOME/dotfiles/.emacs:/root/.emacs" \
-      -v ~/.recentf:/root/.emacs.d/recentf \
 	  -e TERM=xterm-256color \
 	  -e LC_CTYPE=UTF-8 \
 	  her0e1c1/emacs sh -c "emacs --daemon && bash -l"
+      # -v ~/.recentf:/root/.emacs.d/recentf \
 }
 
 emacsclient () {
