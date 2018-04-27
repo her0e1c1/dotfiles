@@ -198,14 +198,14 @@
 (setq helm-split-window-default-side 'right)
 (custom-set-variables
  '(helm-mini-default-sources
-   '(helm-source-buffers-list
+   '(helm-source-recentf
      helm-source-files-in-current-dir
-     helm-source-recentf
+     helm-source-buffers-list
      helm-source-buffer-not-found
    )))
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-b") 'helm-buffers-list)
-(global-set-key (kbd "M-m") 'helm-mini)
+(global-set-key (kbd "C-l") 'helm-mini)
 (global-set-key (kbd "M-s") 'helm-swoop)
 (global-set-key (kbd "M-k") 'helm-descbinds)
 (global-set-key (kbd "M-F") 'helm-ag)
