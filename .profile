@@ -63,16 +63,6 @@ setup_mac () {
 }
 
 # INSTALL
-install_go () {
-    [ ! -d "$GOPATH" ] && mkdir $GOPATH
-    if which go 2>&1 1>/dev/null; then
-       go get github.com/rogpeppe/godef
-       go get -u github.com/nsf/gocode
-       go get github.com/golang/lint/golint
-       go get github.com/kisielk/errcheck
-       go get github.com/peco/peco/cmd/peco
-    fi
-}
 
 install_brew () {
     if ! which brew 2>&1 1>/dev/null; then
@@ -198,7 +188,7 @@ set keymap vi-insert
 
 EOS
 # bind -f $INPUTRC
-[ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
+# [ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
 
 ### FOR BASH
 if echo $SHELL | grep -q bash; then
@@ -896,3 +886,6 @@ bind -x '"\eB": tmux capture-pane'
 
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
+
+# FIXME: I forgot which code to set vi key bind :(
+set -o emacs
