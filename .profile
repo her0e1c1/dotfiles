@@ -874,6 +874,9 @@ alias e="emacsclient"
 
 ### BINDS
 
+# FIXME: I forgot which code to set vi key bind :(
+set -o emacs
+
 bind -x '"\eb": peco_git_branch'
 bind -x '"\es": peco_select_find'
 bind -x '"\ef": peco_select_recent_files'
@@ -886,6 +889,3 @@ bind -x '"\eB": tmux capture-pane'
 
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
-
-# FIXME: I forgot which code to set vi key bind :(
-set -o emacs
