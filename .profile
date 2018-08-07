@@ -275,6 +275,15 @@ peco_select_history() {
     # fi
 }
 
+peco_select_docker_shell() {
+    declare l=$(docker ps --format "{{.Names}}" | peco --prompt `pwd`)
+    if [ -z "$l" ]; then
+        return  # do nothing
+    else
+        docker exec -it $l bash
+    fi
+}
+
 peco_select_recent_files() {
     if [ $# -eq 1 ]; then
         open_file $1
@@ -875,6 +884,7 @@ alias w="peco_grep_word"
 alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias e="emacsclient"
+alias ds="peco_select_docker_shell"
 
 ### BINDS
 
@@ -883,6 +893,7 @@ set -o emacs
 
 bind -x '"\eb": peco_git_branch'
 bind -x '"\es": peco_select_find'
+# bind -x '"\ea": peco_select_docker_shell'
 bind -x '"\ef": peco_select_recent_files'
 bind -x '"\ed": peco_select_dir'
 bind -x '"\eD": "cdls .."'
