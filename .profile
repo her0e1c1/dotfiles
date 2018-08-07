@@ -162,31 +162,31 @@ extract() {
 
 # stty -a
 # bind -p
-INPUTRC=`mktemp`
-cat <<EOS >> $INPUTRC
-set bell-style none
-set meta-flag on
-set input-meta on
-set convert-meta off
-set output-meta on
-"\e[1~": beginning-of-line
-
-set convert-meta off
-set blink-matching-paren on
-set editing-mode vi
-
-set keymap vi-command
-# these are for vi-command mode
-"\C-i": undo
-
-set keymap vi-insert
-# these are for vi-insert mode
-"\C-p": previous-history
-"\C-n": next-history
-"\C-l": clear-screen
-"\C-g": vi-movement-mode
-
-EOS
+# INPUTRC=`mktemp`
+# cat <<EOS >> $INPUTRC
+# set bell-style none
+# set meta-flag on
+# set input-meta on
+# set convert-meta off
+# set output-meta on
+# "\e[1~": beginning-of-line
+# 
+# set convert-meta off
+# set blink-matching-paren on
+# set editing-mode vi
+# 
+# set keymap vi-command
+# # these are for vi-command mode
+# "\C-i": undo
+# 
+# set keymap vi-insert
+# # these are for vi-insert mode
+# "\C-p": previous-history
+# "\C-n": next-history
+# "\C-l": clear-screen
+# "\C-g": vi-movement-mode
+# 
+# EOS
 # bind -f $INPUTRC
 # [ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
 
@@ -842,6 +842,10 @@ ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
 
 ip_global() {
     curl http://wtfismyip.com/text
+}
+
+ip_info() {
+    curl ipinfo.io/$1
 }
 
 # VS CODE
