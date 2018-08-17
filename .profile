@@ -224,7 +224,7 @@ if echo $SHELL | grep -q bash; then
         fi
         export PS1="\u@\w [$branch:$origin]\n$e "
     }
-    PROMPT_COMMAND="bash_post_command_hook"
+    # PROMPT_COMMAND="bash_post_command_hook"
 fi
 
 ## EDITOR
