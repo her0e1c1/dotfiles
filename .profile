@@ -214,7 +214,7 @@ if echo $SHELL | grep -q bash; then
     bash_post_command_hook() {
         local ecode=$?
         local e='$'
-        [ $ecode -eq 0 ] || e=`red \$`
+        # [ $ecode -eq 0 ] || e=`red \$`
         update_files $MYDIRS_HISTORY `pwd`
         local branch=""
         local origin=""
@@ -224,7 +224,7 @@ if echo $SHELL | grep -q bash; then
         fi
         export PS1="\u@\w [$branch:$origin]\n$e "
     }
-    # PROMPT_COMMAND="bash_post_command_hook"
+    PROMPT_COMMAND="bash_post_command_hook"
 fi
 
 ## EDITOR
@@ -857,6 +857,8 @@ ip_info() {
     curl ipinfo.io/$1
 }
 
+aws_credentials() { cat ~/.aws/credentials | perl -nlE 'tr/a-z/A-Z/; s/ //g; say if /^AWS/'; }
+
 # VS CODE
 vs_settings() { vim "$VSCODE_SETTINGS"; }
 # vs_init() { ln -s "$VSCODE_SETTINGS"; }
@@ -884,16 +886,13 @@ alias w="peco_grep_word"
 alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias e="emacsclient"
-alias ds="peco_select_docker_shell"
 
 ### BINDS
-
-# FIXME: I forgot which code to set vi key bind :(
-set -o emacs
 
 bind -x '"\eb": peco_git_branch'
 bind -x '"\es": peco_select_find'
 # bind -x '"\ea": peco_select_docker_shell'
+bind -x '"\ew": peco_select_docker_shell'
 bind -x '"\ef": peco_select_recent_files'
 bind -x '"\ed": peco_select_dir'
 bind -x '"\eD": "cdls .."'

@@ -3,5 +3,8 @@
   "editor.minimap.enabled": false,
   "vim.disableAnnoyingNeovimMessage": true,
   "window.zoomLevel": 0,
-  "workbench.activityBar.visible": false
+  "workbench.activityBar.visible": false,
+  "breadcrumbs.enabled": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "git.confirmSync": false
 }

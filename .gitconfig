@@ -43,7 +43,7 @@
     cpt = cherry-pick --strategy=recursive -X theirs
 
     # diff
-    d = diff
+    d = diff .
     df = "diff --cached"
     dfm = diff master..
     dfp = diff upstream/production..
