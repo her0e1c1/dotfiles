@@ -859,6 +859,25 @@ ip_info() {
 
 aws_credentials() { cat ~/.aws/credentials | perl -nlE 'tr/a-z/A-Z/; s/ //g; say if /^AWS/'; }
 
+mac_socks() {
+    local target=$1
+    local port="9999"
+    local name="Wi-Fi"
+    if [ -z "$target" ]; then
+        echo "Need one argument for ssh"
+        return 1
+    fi
+    if [ -z "`networksetup -listnetworkserviceorder | grep $name`" ]; then
+        echo "Can not find $name from networksetup"
+        return 1
+    fi
+    echo "ssh $target -ND localhost:$port on $name"
+    sudo networksetup -setsocksfirewallproxy "$name" localhost "$port"
+    ssh "$target" -ND "localhost:$port"
+    sudo networksetup -setsocksfirewallproxystate "$name" off
+    echo "DONE"
+}
+
 # VS CODE
 vs_settings() { vim "$VSCODE_SETTINGS"; }
 # vs_init() { ln -s "$VSCODE_SETTINGS"; }
