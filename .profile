@@ -861,8 +861,8 @@ aws_credentials() { cat ~/.aws/credentials | perl -nlE 'tr/a-z/A-Z/; s/ //g; say
 
 mac_socks() {
     local target=$1
-    local port="9999"
-    local name="Wi-Fi"
+    local port=${2:-9999}
+    local name=${3:-Wi-Fi}
     if [ -z "$target" ]; then
         echo "Need one argument for ssh"
         return 1
