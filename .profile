@@ -86,13 +86,6 @@ install_dotfiles() {
     ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_SETTINGS" 
 }
 
-## REGEX
-
-f_basename() { echo ${1##*/}; }    # 左からマッチしたものを除外(greedy)
-f_ext() { echo ${1#*.}; }          # 左からマッチしたものを除外(non greedy)
-f_without_ext() { echo ${1%%.*}; } # 右からマッチしたものを除外(greedy)
-f_dirname() { echo ${1%/*}; }      # 右からマッチしたものを除外(non greedy)
-
 ### UTILS
 
 debug () { set -x; $@; set +x; }
