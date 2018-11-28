@@ -104,6 +104,10 @@ d2h () { printf '%x\n' $1; }
 h2d(){ echo "ibase=16; $@"|bc; }  # capitize
 esc () { perl -plE "s#'#'\\''# "; }
 
+check_port_used() {
+    lsof -i -P -n | grep LISTEN | grep ":$1" > /dev/null;
+}
+
 ignore_files() {
     perl -nlE 'say if ! m#\.(pyc)$#'
     perl -nlE 'say if ! m#\.git#'
@@ -459,7 +463,6 @@ emacsclient () {
 }
 
 de() {
-    # stdoutを直接使いたい時は、containerの外に出るのが一番
     local rflag=false
     while getopts rh OPT; do
         case $OPT in
@@ -512,12 +515,79 @@ dr() {
     fi
 }
 
+read_env() {
+    local envfile=$1
+    local prefix=$2
+    if [ -z $envfile ]; then
+        envfile=`ls -1 ~/.env/${prefix}*.env | peco --select-1`
+    fi
+    if [ ! -f $envfile ]; then
+        echo "NO FILE $envfile" >&2;
+        return 1
+    fi
+    local tmp=`mktemp`
+    cat $envfile | perl -plE 's/^/export /' > $tmp
+    source $tmp
+    rm $tmp
+    return 0
+}
+
+ssh_port_forwarding() {
+    local envfile=$1
+    if [ -z $envfile ]; then
+        envfile=`ls -1 ~/.env/ssh*.env | peco --select-1`
+    fi
+    if [ ! -f $envfile ]; then
+        echo "NO FILE $envfile" >&2;
+        return 1
+    fi
+    source $envfile
+    if check_port_used $SSH_PORT_FROM; then
+        echo "PORT IS USED: $SSH_PORT_FROM" >&2;
+        return 1
+    fi
+    local cmd="ssh $SSH_NAME -gNL $SSH_PORT_FROM:$SSH_HOST_TO:$SSH_PORT_TO"
+    echo $cmd
+    eval $cmd
+}
+
+phpmyadmin() {
+    read_env "$1" pma || return 1
+    local name=pma_$DOCKER_PORT
+    local conf=~/.phpmyadmin/$name.config.php:/etc/phpmyadmin/config.user.inc.php
+    local envs=`perl -E 'say join " ", map {"-e $_=$ENV{$_}"} (grep {/^PMA_/} %ENV)'`
+    local cmd="docker run -v $conf --rm --name $name -p $DOCKER_PORT:80 $envs phpmyadmin/phpmyadmin"
+    echo "start phpmyadmin ($name)"
+    open http://localhost:$DOCKER_PORT  # don't care if $cmd is failed
+    eval $cmd
+}
+
+mysql_dump() {
+    if [ ! $# -eq 2 ]; then
+        echo 'USAGE: mysqldump $database $envfile' >&2
+        return 1
+    fi
+    read_env "$2" pma || return 1
+    docker run -a stdout --rm mysql:8.0 mysqldump -h $PMA_HOST -P $PMA_PORT -u $PMA_USER -p$PMA_PASSWORD $1
+}
+
+mysql_store() {
+    if [ ! $# -eq 3 ]; then
+        echo 'USAGE: mysql_store $container_name $database $dumpfile' >&2
+        return 1
+    fi
+    local name=$1
+    local db=$2
+    local dump=$3
+    docker exec $name mysql -e "drop database $db; create database $db;"
+    docker exec -i $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
+}
+
 # Add default docker options
 docker_run() {
     local image=$1; shift
     local name=`perl -E '$ARGV[0] =~ /(.*):/; say $1' $image`
     docker_process_alive $name && docker rm -f $name
-    # -w `pwd`
     touch ~/.profile  # ensure the file exists
     docker run "$@" --name $name -it --rm \
            -p 9999 --add-host=docker:$HOSTIP \
@@ -852,7 +922,7 @@ ip_info() {
 
 aws_credentials() { cat ~/.aws/credentials | perl -nlE 'tr/a-z/A-Z/; s/ //g; say if /^AWS/'; }
 
-mac_socks() {
+mac_socks5() {
     local target=$1
     local port=${2:-9999}
     local name=${3:-Wi-Fi}
@@ -864,9 +934,9 @@ mac_socks() {
         echo "Can not find $name from networksetup"
         return 1
     fi
-    echo "ssh $target -ND localhost:$port on $name"
+    echo "(SOCKS5) ssh $target -vND localhost:$port on $name"
     sudo networksetup -setsocksfirewallproxy "$name" localhost "$port"
-    ssh "$target" -ND "localhost:$port"
+    ssh "$target" -vND "localhost:$port"
     sudo networksetup -setsocksfirewallproxystate "$name" off
     echo "DONE"
 }
