@@ -554,7 +554,9 @@ ssh_port_forwarding() {
 phpmyadmin() {
     read_env "$1" pma || return 1
     local name=pma_$DOCKER_PORT
-    local conf=~/.phpmyadmin/$name.config.php:/etc/phpmyadmin/config.user.inc.php
+    local file=~/.phpmyadmin/$name.config.php
+    touch $file
+    local conf="$file:/etc/phpmyadmin/config.user.inc.php"
     local envs=`perl -E 'say join " ", map {"-e $_=$ENV{$_}"} (grep {/^PMA_/} %ENV)'`
     local cmd="docker run -v $conf --rm --name $name -p $DOCKER_PORT:80 $envs phpmyadmin/phpmyadmin"
     echo "start phpmyadmin ($name)"
@@ -580,7 +582,9 @@ mysql_store() {
     local db=$2
     local dump=$3
     docker exec $name mysql -e "drop database $db; create database $db;"
-    docker exec -i $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
+    docker exec $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
+    # phpmyadmin needs to set password
+    docker exec $name mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY 'passwd'"
 }
 
 # Add default docker options
