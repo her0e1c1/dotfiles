@@ -582,9 +582,10 @@ mysql_store() {
     local db=$2
     local dump=$3
     docker exec $name mysql -e "drop database $db; create database $db;"
-    docker exec $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
+    docker exec -i $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
     # phpmyadmin needs to set password
-    docker exec $name mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY 'passwd'"
+    docker exec $name mysql -e "CREATE USER admin@'%' IDENTIFIED BY 'passwd'"
+    docker exec $name mysql -e "GRANT ALL PRIVILEGES ON *.* TO admin@'%';"
 }
 
 # Add default docker options
