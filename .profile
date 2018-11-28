@@ -923,6 +923,11 @@ ip_info() {
 aws_credentials() { cat ~/.aws/credentials | perl -nlE 'tr/a-z/A-Z/; s/ //g; say if /^AWS/'; }
 
 mac_socks5() {
+    if [ $# -eq 0 ]; then
+        echo 'USAGE: cmd $ssh_name [$port] [$device_name]'
+        echo '$ssh_name: must be proxy server specified in ~/.ssh/config'
+        return 1
+    fi
     local target=$1
     local port=${2:-9999}
     local name=${3:-Wi-Fi}
