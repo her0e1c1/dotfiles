@@ -551,6 +551,34 @@ ssh_port_forwarding() {
     eval $cmd
 }
 
+adminer() {
+    [ ! -d ~/.adminer ] && mkdir ~/.adminer
+    for path in ~/.env/pma_*.env; do
+        local name=`echo $path | perl -nlE 'm#pma_(.*?)\.env#; say $1'`
+        read_env $path
+        echo "loading $name ..."
+        cat <<EOF > ~/.adminer/${name}.php
+<?php
+function adminer_object() {
+  class AdminerSoftware extends Adminer {
+    function name() {
+      return '$name';
+    }
+    function credentials() {
+      return array('${PMA_HOST}:${PMA_PORT}', '${PMA_USER}', '${PMA_PASSWORD}');
+    }
+    function login(\$login, \$password) {
+      return true;
+    }
+  }
+  return new AdminerSoftware;
+}
+include '../adminer.php';
+EOF
+    done
+    docker run --name adminer --rm -p 9998:8080 -v ~/.adminer:/var/www/html/db adminer
+}
+
 phpmyadmin() {
     read_env "$1" pma || return 1
     local name=pma_$DOCKER_PORT
@@ -565,22 +593,36 @@ phpmyadmin() {
 }
 
 mysql_dump() {
+    if [ -t 1 ]; then
+        echo "stdout is tty" >&2
+        return 1
+    fi
     if [ ! $# -eq 2 ]; then
         echo 'USAGE: mysqldump $database $envfile' >&2
         return 1
     fi
     read_env "$2" pma || return 1
+    if [ -z $PMA_HOST ]; then
+        echo '$PMA_HOST is not defined' >&2
+        return 1
+    fi
     docker run -a stdout --rm mysql:8.0 mysqldump -h $PMA_HOST -P $PMA_PORT -u $PMA_USER -p$PMA_PASSWORD $1
 }
 
 mysql_store() {
     if [ ! $# -eq 3 ]; then
         echo 'USAGE: mysql_store $container_name $database $dumpfile' >&2
+        echo '$database: default db' >&2
+        echo '$dumpfile: default dump.sql' >&2
         return 1
     fi
     local name=$1
-    local db=$2
-    local dump=$3
+    local db=${2:-db}
+    local dump=${3:-dump.sql}
+    if [ ! -f $dump ]; then
+        echo "Can not find $dump"
+        return 1
+    fi
     docker exec $name mysql -e "drop database $db; create database $db;"
     docker exec -i $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
     # phpmyadmin needs to set password
