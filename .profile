@@ -345,7 +345,7 @@ peco_select_dir () {
         local a=`peco_prompt`
         echo $a
         local d=`cat $MYDIRS_HISTORY | peco --prompt $(peco_prompt)`
-        if [ -d $d ]; then
+        if [ -d "$d" -a -n "$d" ]; then
             cdls $d
             # update_files $MYDIRS_HISTORY $d
         fi
