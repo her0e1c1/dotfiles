@@ -277,7 +277,7 @@ peco_select_docker_shell() {
     if [ -z "$l" ]; then
         return  # do nothing
     else
-        docker exec -it $l bash
+        docker exec --detach-keys ctrl-q,q -it $l bash
     fi
 }
 
@@ -357,15 +357,6 @@ peco_select_dir () {
 
 }
 
-
-anything() {
-    # ACTION: SOMETHING のフォーマットでなんでもやるインターフェイスをつくる
-    # TODO: grep |peco | open file
-    # 現在のディレクトリ(ls, find)
-    # 最近のfile/dir/cmmand
-    # お気に入りのcommand/dir/file
-    ls
-}
 
 ### DOCKER
 
@@ -955,6 +946,8 @@ adb_web() { adb shell am start -a android.intent.action.VIEW -d $1; }
 adb_log() { adb logcat ; }
 date_GMT() { TZ=GMT date; }
 
+intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
+
 ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
 ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server.csr; }
 ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
@@ -1034,6 +1027,7 @@ bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
 bind -x '"\eo": open_recent_file'
 bind -x '"\eB": tmux capture-pane'
+bind -x '"\ei": stty sane'
 
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
