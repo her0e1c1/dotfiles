@@ -960,7 +960,20 @@ ip_info() {
     curl ipinfo.io/$1
 }
 
-aws_credentials() { cat ~/.aws/credentials | perl -nlE 'tr/a-z/A-Z/; s/ //g; say if /^AWS/'; }
+aws_credentials() {
+	cat ~/.aws/credentials | perl -nlE '
+	next if not /^aws/i;
+	s/ //g;
+	m/(.*?)=(.*)/;
+	$k=$1; $v=$2;
+	$k =~ tr/a-z/A-Z/;
+	say "$k=$v";
+    '
+}
+
+aws_credentials_export () {
+    aws_credentials | perl -nlE 'say "export $_" ';
+}
 
 mac_socks5() {
     if [ $# -eq 0 ]; then
