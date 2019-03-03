@@ -94,6 +94,13 @@ repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
 chomp () { perl -pE "chomp \$_"; }
 color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
+color_bg() { 
+    if [ $# -eq 1 ]; then
+        tmux select-pane -P "bg=colour$1";
+	else
+        tmux select-pane -P "bg=default";
+    fi
+}
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NOCOLOR='\033[0m'
@@ -277,7 +284,7 @@ peco_select_docker_shell() {
     if [ -z "$l" ]; then
         return  # do nothing
     else
-        docker exec --detach-keys ctrl-q,q -it $l bash
+        docker exec --detach-keys ctrl-q,q -it $l sh
     fi
 }
 
@@ -311,6 +318,20 @@ peco_select_find() {
     else
         cdls $l
     fi 
+}
+
+ssh_peco () {
+    # Make sure you setup color code ~/.ssh/config
+    # PermitLocalCommand yes
+    # LocalCommand tmux select-pane -P 'bg=colour255' 
+    local q=$1
+    local host=$(cat ~/.ssh/config | perl -nlE 'say $1 if /Host (.*)/' | grep "$1" | peco --select-1)
+    stty sane;
+    if [ -n "$host" ]; then
+        echo "ssh $host"
+        ssh $host
+    fi
+    color_bg
 }
 
 peco_replace() {
@@ -960,6 +981,15 @@ ip_info() {
     curl ipinfo.io/$1
 }
 
+web_score_loading() {
+    if [ $# -eq 0 ]; then
+        echo "NEED url";
+		return
+    fi
+	local url="https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$1"
+    curl "$url" | jq .lighthouseResult.categories.performance.score
+}
+
 aws_credentials() {
 	cat ~/.aws/credentials | perl -nlE '
 	next if not /^aws/i;
@@ -999,12 +1029,34 @@ mac_socks5() {
     echo "DONE"
 }
 
+cmd() {
+    if [ ! -f ./commands.sh ]; then
+        echo "NO FILE"
+		return 1
+	fi
+    ./commands.sh "$@"
+}
+
 # VS CODE
 vs_settings() { vim "$VSCODE_SETTINGS"; }
 # vs_init() { ln -s "$VSCODE_SETTINGS"; }
 
+create_react_app () {
+    yarn create react-app "$1" --typescript
+}
+
 # url_escape() {}
 # _fork_bomb :(){ :|:& };:
+
+curl_header() {
+    local url=$1; shift;
+    curl -sSL -D - "$url" -o /dev/null "$@"
+}
+
+reset() {
+    stty sane
+    tmux select-pane -P 'fg=default,bg=default';
+}
 
 ### ALIAS
 
@@ -1026,12 +1078,12 @@ alias w="peco_grep_word"
 alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias e="emacsclient"
+alias r="stty sane"
 
 ### BINDS
 
 bind -x '"\eb": peco_git_branch'
-bind -x '"\es": peco_select_find'
-# bind -x '"\ea": peco_select_docker_shell'
+bind -x '"\es": ssh_peco'
 bind -x '"\ew": peco_select_docker_shell'
 bind -x '"\ef": peco_select_recent_files'
 bind -x '"\ed": peco_select_dir'
