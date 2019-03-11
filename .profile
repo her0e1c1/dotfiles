@@ -205,12 +205,10 @@ if echo $SHELL | grep -q bash; then
         # history -c  # 端末ローカルの履歴を一旦消去
         history -r  # .bash_historyから履歴を読み込み直す
     }
-    PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
+    # PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
     shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
-    #よく使うコマンドは履歴保存対象から外す。
-    export HISTIGNORE="fg*:bg*:history:cd*"
-    #ヒストリのサイズを増やす
-    export HISTSIZE=100000
+    export HISTIGNORE="ls*:git*:fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
+    export HISTSIZE=100000  #ヒストリのサイズを増やす
     # bash_pre_command_hook() {  # 2回呼ばれる...
     #     ;
     # }
@@ -227,6 +225,7 @@ if echo $SHELL | grep -q bash; then
             origin=`git config --get remote.origin.url`
         fi
         export PS1="\u@\w [$branch:$origin]\n$e "
+        share_history
     }
     PROMPT_COMMAND="bash_post_command_hook"
 fi
@@ -262,15 +261,11 @@ peco_git_branch() {
 }
 
 peco_select_history() {
-    declare cmd=$(
-        history |
-        perl -plE 's#^\s*\d+\s*##' |
-        perl -nlE 'say if length $_ >= 4' |
-        perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
-        uniq |
-        peco --prompt `pwd`
-    )
-    eval "$cmd"
+    history |
+    perl -plE 's#^\s*\d+\s*##' |
+    perl -nlE 'say if length $_ >= 4' |
+    perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
+    peco --prompt `pwd`
     # READLINE_LINE="$l"  # bash ver >= 4
     # READLINE_POINT=${#l}
     # if [ `uname` = "Darwin" ]; then
