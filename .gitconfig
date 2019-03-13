@@ -14,6 +14,7 @@
     rbt  = rebase -Xtheirs master
 
     # add
+	a  = add .
 	au = add -u
     ap = add -p
 
@@ -43,6 +44,7 @@
     cpt = cherry-pick --strategy=recursive -X theirs
 
     # diff
+    c = "diff --cached"
     d = diff .
     df = "diff --cached"
     dfm = diff master..
@@ -101,6 +103,7 @@
     sas = stash show -p
 
     # push
+    p = push origin
     push = push origin
     pushup = push upstream
 

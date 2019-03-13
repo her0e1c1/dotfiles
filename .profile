@@ -196,9 +196,9 @@ extract() {
 
 ### FOR BASH
 if echo $SHELL | grep -q bash; then
-    export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
-    export HISTCONTROL=ignoredups  # 重複履歴を無視
-    export HISTCONTROL=ignoreboth  # 両方
+    # export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
+    # export HISTCONTROL=ignoredups  # 重複履歴を無視
+    export HISTCONTROL=ignoreboth:erasedups
     # 履歴の共有
     function share_history {  # 以下の内容を関数として定義
         history -a  # .bash_historyに前回コマンドを1行追記
