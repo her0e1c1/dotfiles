@@ -1,4 +1,5 @@
 
+
 # You can install files by this command
 # $ curl https://raw.githubusercontent.com/her0e1c1/dotfiles/master/.profile -o ~/.profile && . ~/.profile
 # install_dotfiles
@@ -40,6 +41,8 @@ export RECENT_FILES=~/.recent_files
 export ANDROID_HOME=${HOME}/Library/Android/sdk
 export PATH=${PATH}:${ANDROID_HOME}/tools
 export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+
+[ -f ~/.sdkman/bin/sdkman-init.sh ] && source ~/.sdkman/bin/sdkman-init.sh
 
 if uname | grep "Darwin"; then
     export GOROOT=/usr/local/opt/go/libexec
@@ -207,7 +210,7 @@ if echo $SHELL | grep -q bash; then
     }
     # PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
     shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
-    export HISTIGNORE="ls*:git*:fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
+    export HISTIGNORE="fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
     export HISTSIZE=100000  #ヒストリのサイズを増やす
     # bash_pre_command_hook() {  # 2回呼ばれる...
     #     ;
