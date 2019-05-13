@@ -5,7 +5,9 @@ noremap! <C-j> <esc>
 syntax on
 set number
 set tabstop=4
-set autoindent
+set expandtab
+set list
+set smartindent
 set background=dark
 set showmatch
 set ruler
