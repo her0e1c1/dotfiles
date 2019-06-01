@@ -411,7 +411,7 @@ docker_mysql() {
 [mysqld]
 max_allowed_packet = 32M
 EOS
-    docker_run mysql:5.7 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db -v $cnf:/etc/mysql/conf.d/my.cnf;
+    docker_run mysql:8.0 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db -v $cnf:/etc/mysql/conf.d/my.cnf --name mysql;
 }
 
 docker_nginx() {
@@ -542,7 +542,7 @@ read_env() {
     return 0
 }
 
-ssh_port_forwarding() {
+port_forwarding() {
     local envfile=$1
     if [ -z $envfile ]; then
         envfile=`ls -1 ~/.env/ssh*.env | peco --select-1`
@@ -646,8 +646,9 @@ docker_run() {
     local name=`perl -E '$ARGV[0] =~ /(.*):/; say $1' $image`
     docker_process_alive $name && docker rm -f $name
     touch ~/.profile  # ensure the file exists
+    # --add-host=docker:$HOSTIP
     docker run "$@" --name $name -it --rm \
-           -p 9999 --add-host=docker:$HOSTIP \
+           -p 9999 \
            -v ~/.profile:/etc/profile -v /Users:/Users \
            --detach-keys ctrl-q,q \
            $image
