@@ -1092,6 +1092,7 @@ bind    '"\C-xr": reverse-search-history'
 bind -x '"\eo": open_recent_file'
 bind -x '"\eB": tmux capture-pane'
 bind -x '"\ei": stty sane'
+bind '"\ex": edit-and-execute-command'                                                                                                                                                                                                                                   
 
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
