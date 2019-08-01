@@ -41,6 +41,7 @@ export RECENT_FILES=~/.recent_files
 export ANDROID_HOME=${HOME}/Library/Android/sdk
 export PATH=${PATH}:${ANDROID_HOME}/tools
 export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 [ -f ~/.sdkman/bin/sdkman-init.sh ] && source ~/.sdkman/bin/sdkman-init.sh
 
@@ -431,6 +432,14 @@ http {
 }
 EOS
     docker run --rm -it -v `pwd`:/data -v $cnf:/etc/nginx/nginx.conf --name fs -p 8888:80 nginx:1.13
+}
+
+docker_cypress() {
+    ROOT=${1:-.}
+    IP=$(ipconfig getifaddr en0)
+    export DISPLAY=$IP:0
+    xhost +
+    docker run -it -v $PWD:/e2e -v /tmp/.X11-unix:/tmp/.X11-unix -w /e2e -e DISPLAY --entrypoint cypress cypress/included:3.4.0 open --project $ROOT
 }
 
 docker_push () {
