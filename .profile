@@ -1,5 +1,4 @@
 
-
 # You can install files by this command
 # $ curl https://raw.githubusercontent.com/her0e1c1/dotfiles/master/.profile -o ~/.profile && . ~/.profile
 # install_dotfiles
@@ -58,7 +57,7 @@ fi
 if [ -f $MY_ENV ]; then
     . $MY_ENV
 fi
-   
+
 ### INSTALL IF NEEDED
 
 setup_mac () {
@@ -87,7 +86,7 @@ install_dotfiles() {
         fi
     done
     # only for mac
-    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_SETTINGS" 
+    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_SETTINGS"
 }
 
 ### UTILS
@@ -98,13 +97,22 @@ repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
 chomp () { perl -pE "chomp \$_"; }
 color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
-color_bg() { 
+color_bg() {
     if [ $# -eq 1 ]; then
         tmux select-pane -P "bg=colour$1";
-	else
+    else
         tmux select-pane -P "bg=default";
     fi
 }
+abspath() {
+    if [ $# -eq 0 ]; then
+        python -c "import os, sys; print(os.path.abspath(sys.stdin.read()))";
+    else
+        python -c "import os; print(os.path.abspath('$1'))";
+
+    fi
+}
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NOCOLOR='\033[0m'
@@ -132,17 +140,17 @@ alias timestamp='python -c "import sys, datetime as d; print(d.datetime.fromtime
 # python -c 'import crypt; print crypt.crypt("PASSWD", "$1$SomeSalt$")'
 
 cdls(){
-	if [ ${#1} -eq 0 ]; then
-	    \cd && ls
-	else
-        local d=`python -c "import os; print(os.path.abspath('$1'))"`
+    if [ ${#1} -eq 0 ]; then
+        \cd && ls
+    else
+        local d=`abspath $1`
         if [ -d $d ]; then
             \cd "$d" && ls -G
             # update_files $MYDIRS_HISTORY $d
         else
             echo "NO DIR: $d"
         fi
-	fi
+    fi
     if git status 2>/dev/null 1>/dev/null; then
         git status
     fi
@@ -178,22 +186,22 @@ extract() {
 # set convert-meta off
 # set output-meta on
 # "\e[1~": beginning-of-line
-# 
+#
 # set convert-meta off
 # set blink-matching-paren on
 # set editing-mode vi
-# 
+#
 # set keymap vi-command
 # # these are for vi-command mode
 # "\C-i": undo
-# 
+#
 # set keymap vi-insert
 # # these are for vi-insert mode
 # "\C-p": previous-history
 # "\C-n": next-history
 # "\C-l": clear-screen
 # "\C-g": vi-movement-mode
-# 
+#
 # EOS
 # bind -f $INPUTRC
 # [ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
@@ -242,12 +250,8 @@ open_file() {
        echo "$file doesn't exist"
        return 1
     fi
-    update_files $RECENT_FILES $file
-    if docker_find_process_name emacs; then
-        emacsclient $file
-    else
-        $EDITOR $file 
-    fi
+    update_files $RECENT_FILES `abspath $file`
+    $EDITOR $file
 }
 
 ### PECO
@@ -265,17 +269,12 @@ peco_git_branch() {
 }
 
 peco_select_history() {
-    history |
+    local cmd=$(history |
     perl -plE 's#^\s*\d+\s*##' |
     perl -nlE 'say if length $_ >= 4' |
     perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
-    peco --prompt `pwd`
-    # READLINE_LINE="$l"  # bash ver >= 4
-    # READLINE_POINT=${#l}
-    # if [ `uname` = "Darwin" ]; then
-    #     # this doesn't work on current sierra tmux
-    #     echo "${READLINE_LINE}" | chomp | pbcopy
-    # fi
+    peco --prompt `pwd`)
+    eval $cmd
 }
 
 peco_select_docker_shell() {
@@ -289,11 +288,14 @@ peco_select_docker_shell() {
 
 peco_select_recent_files() {
     if [ $# -eq 1 ]; then
+        if [ ! -f $1 ]; then
+            touch $1
+        fi
         open_file $1
         return
     fi
     # share emacs recent files
-    declare l=$(cat $RECENT_FILES | peco --prompt `pwd`)
+    declare l=$(cat $RECENT_FILES | perl -nlE 'say if -f' | peco --prompt `pwd`)
     if [ -z "$l" ]; then
         return  # do nothing
     elif [ -f $l ]; then
@@ -308,21 +310,23 @@ peco_select_find() {
     local tmp=/tmp/peco
     [ -f $tmp ] && rm $tmp
     ls -1 | ignore_files >> $tmp
-    find . -maxdepth 3 | ignore_files >> $tmp
-    local l=$(cat $tmp | peco --prompt `pwd`)
+    find . -maxdepth 4 | ignore_files >> $tmp
+    local l=$(cat $tmp | peco --prompt `pwd` | abspath)
+    echo $l
     if [ -z $l ] ;then
         return # do nothing
     elif [ -f $l ]; then
+        cd `dirname $l`
         open_file $l
     else
         cdls $l
-    fi 
+    fi
 }
 
 ssh_peco () {
     # Make sure you setup color code ~/.ssh/config
     # PermitLocalCommand yes
-    # LocalCommand tmux select-pane -P 'bg=colour255' 
+    # LocalCommand tmux select-pane -P 'bg=colour255'
     local q=$1
     local host=$(cat ~/.ssh/config | perl -nlE 'say $1 if /Host (.*)/' | grep "$1" | peco --select-1)
     stty sane;
@@ -440,6 +444,10 @@ docker_cypress() {
     export DISPLAY=$IP:0
     xhost +
     docker run -it -v $PWD:/e2e -v /tmp/.X11-unix:/tmp/.X11-unix -w /e2e -e DISPLAY --entrypoint cypress cypress/included:3.4.0 open --project $ROOT
+}
+
+docker_cypress_run() {
+    docker run -it -v $PWD:/e2e -w /e2e cypress/included:3.4.0
 }
 
 docker_push () {
@@ -695,11 +703,6 @@ EOS
     python -c "$s" $@
 }
 
-open_recent_file () {
-    local d=`cat $RECENT_FILES | peco`
-    e $d
-}
-
 ### GIT
 
 alias git_add_stream="git remote add upstream"
@@ -764,7 +767,7 @@ git_make () {
         remote="upstream"
         head="$GITHUB_USERNAME:$head"
         # head="$head"
-    fi 
+    fi
     echo git push origin $branch
     git push origin $branch
 
@@ -772,7 +775,7 @@ git_make () {
     local url="https://api.github.com/repos/$p"
     echo "make PR: $head on $base at $remote $url"
     echo "$title"
-    curl -XPOST $url/pulls?access_token=$GITHUB_TOKEN -d "{\"title\": \"$title\", \"head\": \"$head\", \"base\": \"$base\", \"body\": \"\"}" 
+    curl -XPOST $url/pulls?access_token=$GITHUB_TOKEN -d "{\"title\": \"$title\", \"head\": \"$head\", \"base\": \"$base\", \"body\": \"\"}"
 }
 
 git_submodule_init() {
@@ -922,7 +925,7 @@ iex () {
     fi
 }
 
-run_c () { local f=`mktemp`; clang -xc $1 -o $f; $f; } 
+run_c () { local f=`mktemp`; clang -xc $1 -o $f; $f; }
 run_cpp () { local f=`mktemp`; clang++ -std=c++14 $1 -o $f; $f; }
 run_java () { javac $1; java `f_without_ext $1`; }
 
@@ -1068,8 +1071,12 @@ reset() {
 
 ### ALIAS
 
+alias vim='peco_select_recent_files'
+alias vi='vim'
+alias v='vim'
 alias s='rlwrap sh -l'
 alias dc="docker-compose"
+alias docker_down="docker-compose down  --remove-orphans"
 alias g="git"
 alias ll='ls -alF'
 alias ls='ls -aCF'
@@ -1093,15 +1100,15 @@ alias r="stty sane"
 bind -x '"\eb": peco_git_branch'
 bind -x '"\es": ssh_peco'
 bind -x '"\ew": peco_select_docker_shell'
-bind -x '"\ef": peco_select_recent_files'
+bind -x '"\ef": peco_select_find'
+bind -x '"\eo": peco_select_recent_files'
 bind -x '"\ed": peco_select_dir'
-bind -x '"\eD": "cdls .."'
+bind -x '"\eu": "cdls .."'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
-bind -x '"\eo": open_recent_file'
 bind -x '"\eB": tmux capture-pane'
 bind -x '"\ei": stty sane'
-bind '"\ex": edit-and-execute-command'                                                                                                                                                                                                                                   
+bind '"\ex": edit-and-execute-command'
 
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
