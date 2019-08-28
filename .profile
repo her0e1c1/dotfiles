@@ -245,13 +245,18 @@ fi
 ## EDITOR
 
 open_file() {
-    local file=$1; shift
+    local file=$1;
     if ! [ -f $file ]; then
        echo "$file doesn't exist"
        return 1
     fi
     update_files $RECENT_FILES `abspath $file`
-    $EDITOR $file
+    if [ $# -eq 2 ]; then
+        $EDITOR $file +$2
+    else
+        $EDITOR $file
+    fi
+
 }
 
 ### PECO
@@ -358,7 +363,7 @@ peco_grep_word() {
     # grep format: filepath:line number: matching string
     local line=$(echo $l | perl -nlE 'say $1 if /:(\d+):/')
     local file=$(echo $l | perl -nlE 'say $1 if /^(.*?):/')
-    emacsclient $file $line
+    open_file $file $line
 }
 
 peco_select_dir () {
@@ -669,6 +674,24 @@ docker_run() {
            -v ~/.profile:/etc/profile -v /Users:/Users \
            --detach-keys ctrl-q,q \
            $image
+}
+
+ipython() {
+    docker run -it --rm -v `pwd`:/w -w /w her0e1c1/dev:py ipython
+}
+
+pycodestyle() {
+    docker run -it --rm -v `pwd`:/w -w /w her0e1c1/dev:py  pycodestyle $@
+}
+
+pyfmt() {
+    local dir=${1:-.}
+    local cwd=`pwd`
+    local cmd0="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pycodestyle --max-line-length=120 $dir"
+    local cmd1="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd0\" $dir"
+    local cmd2="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pylint --errors-only $dir"
+    local cmd3="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd2\" $dir"
+    tmux split-window -p 30 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'" 
 }
 
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
