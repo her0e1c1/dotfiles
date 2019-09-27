@@ -386,6 +386,9 @@ peco_select_dir () {
 
 }
 
+peco_docker_commit() {
+    docker ps | tail +2 | peco | perl -anlE '$cmd = "docker commit $F[-1] $F[1]"; say $cmd; system $cmd'
+}
 
 ### DOCKER
 
@@ -691,7 +694,7 @@ pyfmt() {
     local cmd1="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd0\" $dir"
     local cmd2="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pylint --errors-only $dir"
     local cmd3="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd2\" $dir"
-    tmux split-window -p 30 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'" 
+    tmux split-window -p 20 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'" 
 }
 
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
@@ -1126,6 +1129,7 @@ bind -x '"\ew": peco_select_docker_shell'
 bind -x '"\ef": peco_select_find'
 bind -x '"\eo": peco_select_recent_files'
 bind -x '"\ed": peco_select_dir'
+bind -x '"\eC": peco_docker_commit'
 bind -x '"\eu": "cdls .."'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
