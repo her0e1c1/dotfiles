@@ -26,4 +26,6 @@ pytest.ini
 
 # for my private directory
 p
+dev.yml
+.devcontainer.json
 .docker-sync
