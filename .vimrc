@@ -17,5 +17,5 @@ set foldmethod=marker
 noremap <CR> o<ESC>
 
 :set encoding=utf-8
-:set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8
+:set fileencodings=utf-8,iso-2022-jp,cp932,sjis,euc-jp
 :set fileformats=unix,dos,mac
