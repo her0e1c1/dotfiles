@@ -390,6 +390,10 @@ peco_docker_commit() {
     docker ps | tail +2 | peco | perl -anlE '$cmd = "docker commit $F[-1] $F[1]"; say $cmd; system $cmd'
 }
 
+peco_stash_list() {
+    git stash list | peco | perl -alnE '$s = substr($F[0], 0, -1); $cmd = "git stash apply $s"; system $cmd'
+}
+
 ### DOCKER
 
 docker_purge() {
@@ -1125,6 +1129,7 @@ alias r="stty sane"
 
 bind -x '"\eb": peco_git_branch'
 bind -x '"\es": ssh_peco'
+bind -x '"\eS": peco_stash_list'
 bind -x '"\ew": peco_select_docker_shell'
 bind -x '"\ef": peco_select_find'
 bind -x '"\eo": peco_select_recent_files'
