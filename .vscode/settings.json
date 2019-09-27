@@ -1,10 +1,33 @@
 {
   "go.gopath": "/Users/mbp/go/",
-  "editor.minimap.enabled": false,
-  "vim.disableAnnoyingNeovimMessage": true,
-  "window.zoomLevel": 0,
-  "workbench.activityBar.visible": false,
-  "breadcrumbs.enabled": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "git.confirmSync": false
+  "python.formatting.provider": "autopep8",
+  "python.linting.lintOnSave": true,
+  "python.linting.enabled": true,
+  "window.zoomLevel": 0,
+  "git.confirmSync": false,
+  "files.trimTrailingWhitespace": true,
+  "breadcrumbs.enabled": true,
+  "workbench.activityBar.visible": false,
+  "workbench.useExperimentalGridLayout": true,
+  "workbench.editor.showTabs": false,
+  "editor.highlightActiveIndentGuide": true,
+  "editor.minimap.enabled": false,
+  "editor.hideCursorInOverviewRuler": true,
+  "editor.lineNumbers": "off",
+  "editor.formatOnSave": true,
+  "editor.folding": false,
+  "editor.scrollbar.horizontal": "hidden",
+  "editor.scrollbar.vertical": "hidden",
+  "editor.copyWithSyntaxHighlighting": false, // 書式設定なしでコピー
+  "editor.glyphMargin": false, // hide breakpoints
+  "editor.renderWhitespace": "all",
+  "remote.containers.defaultExtensions": [
+    "eamodio.gitlens",
+    "formulahendry.code-runner",
+  ],
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "python.jediEnabled": false,
+  "terminal.integrated.rendererType": "dom"
 }
