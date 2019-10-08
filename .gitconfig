@@ -1,8 +1,8 @@
 [user]
-	name = her0e1c1
-	email = her0e1c1@gmail.com
+    name = her0e1c1
+    email = her0e1c1@gmail.com
 [alias]
-	rt = remote
+    rt = remote
 
     # rebase
     rb   = rebase
@@ -14,28 +14,28 @@
     rbt  = rebase -Xtheirs master
 
     # add
-	a  = add .
-	au = add -u
+    a  = add .
+    au = add -u
     ap = add -p
 
-	# fetch
-	f = fetch
-	fm = fetch origin master
+    # fetch
+    f = fetch
+    fm = fetch origin master
 
-	# commit
-	ci = commit -v
-	cad = commit -v --amend
-	ca = commit -va
-	ciam = commit -am
+    # commit
+    ci = commit -v
+    cad = commit -v --amend
+    ca = commit -va
+    ciam = commit -am
 
-	# status
-	s = status -uno
-	st = status .
+    # status
+    s = status -uno
+    st = status .
 
     # checkout
     com = checkout master
-	co = checkout
-	cob = checkout -b
+    co = checkout
+    cob = checkout -b
 
     # cherry pick
     cp = cherry-pick
@@ -110,6 +110,7 @@
     # revert
     revertc = revert --continue  
 
+    ls = ls-files
 [color]
 	ui = true
 
