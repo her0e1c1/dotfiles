@@ -29,3 +29,10 @@ p
 dev.yml
 .devcontainer.json
 .docker-sync
+docker-compose.vscode.yml
+
+.bash_history
+.cache/
+.ipython/
+.pylint.d/
+.vscode-server/
