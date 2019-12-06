@@ -1142,5 +1142,9 @@ bind -x '"\eB": tmux capture-pane'
 bind -x '"\ei": stty sane'
 bind '"\ex": edit-and-execute-command'
 
+if which direnv; then
+    eval "$(direnv hook bash)"
+fi
+
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
