@@ -24,10 +24,12 @@
   "editor.renderWhitespace": "all",
   "remote.containers.defaultExtensions": [
     "eamodio.gitlens",
-    "formulahendry.code-runner",
+    "formulahendry.code-runner"
   ],
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "python.jediEnabled": false,
-  "terminal.integrated.rendererType": "dom"
+  "terminal.integrated.rendererType": "dom",
+  "go.formatTool": "goimports",
+  "go.useLanguageServer": true
 }
