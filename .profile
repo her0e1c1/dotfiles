@@ -742,12 +742,13 @@ git_origin() { git config --get remote.origin.url; }
 git_first_commit() { git log --oneline | tail -1 | perl -nE '/(\w*?) /; say $1'; }
 
 git_update() {
-    git checkout master
+    local branch=${1-master}
+    git checkout $branch
     # if echo `git_origin` | grep 1 ; then
     # fi
     git fetch upstream
-    git merge upstream/master
-    git push
+    git merge upstream/$branch
+    git push origin $branch
 }
 
 git_current_branch() { git rev-parse --abbrev-ref HEAD; }
