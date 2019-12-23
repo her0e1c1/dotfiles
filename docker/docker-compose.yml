@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  go:
+    build:
+      context: .
+      dockerfile: go.Dockerfile
+    volumes:
+      - ./:/work
+    working_dir: /work
+    tty: true
+    stdin_open: true
+    entrypoint: bash
