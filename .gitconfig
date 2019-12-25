@@ -57,34 +57,34 @@
     dfcw = "diff --cached" --word-diff
 
     # log
-	l = log -n 5
-	lp = log -p
-	lg = log -g
-	l1 = log --oneline
-	lm = log master..
-	lmp = log master.. -p
+    l = log -n 5
+    lp = log -p
+    lg = log -g
+    l1 = log --oneline
+    lm = log master..
+    lmp = log master.. -p
     ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
     today = log --since=midnight --author='$(git config user.name)' --oneline
     author = log --pretty=format:'%an(%ae): %ad: %s'
 
     # graph log
-	g = log --graph
-	gl = log --graph
+    g = log --graph
+    gl = log --graph
     gf = log --graph --oneline --decorate=full
     gb = log --graph --branches --pretty=format:"%d [%h] \"%s\""
     gg = log --graph --name-status --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"
 
     # branch
-	b = branch -avv
-	br = branch
+    b = branch -avv
+    br = branch
     brm = branch --merged
     brn = branch --no-merged
 
     # reset
-	rs = reset
+    rs = reset
     rso = reset ORIG_HEAD --hard
-	rs0 = reset HEAD --hard
-	rs1 = reset HEAD^ --hard
+    rs0 = reset HEAD --hard
+    rs1 = reset HEAD^ --hard
     rsh = reset --hard
     rss = reset --soft
     rsm = reset --merge
@@ -113,11 +113,11 @@
 
     ls = ls-files
 [color]
-	ui = true
+    ui = true
 
 [core]
-	editor = vim
-	excludesfile = ~/.gitignore_global
+    editor = vim
+    excludesfile = ~/.gitignore_global
     #️ git stなど、日本語の文字化け対応
     quotepath = false
 
