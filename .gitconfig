@@ -89,8 +89,9 @@
     rss = reset --soft
     rsm = reset --merge
 
-	# merge
-	mf = merge FETCH_HEAD
+    # merge
+    mf = merge FETCH_HEAD
+    ma = merge --abort
     merge-ours = merge -Xours
     merge-their = merge -Xtheir
 
