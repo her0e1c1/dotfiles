@@ -54,6 +54,7 @@ bind generic S        !git stash save "%(prompt Enter stash comment: )"
 
 # Reset
 bind status  H        ?git reset --hard HEAD
+bind reflog  H        ?git reset --hard %(commit)
 bind main    H        ?git reset --hard %(commit)
 
 # Rebase
