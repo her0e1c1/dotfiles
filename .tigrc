@@ -4,27 +4,29 @@ color  diff-chunk        black   white
 
 # Settings
 set refresh-mode = auto
+set main-view = id date author commit-title:graph=yes,refs=yes
 
 # Branch
-bind main B      !git checkout -b "%(prompt Enter branch name: )" %(commit)
+bind main B      ?git checkout -b "%(prompt Enter branch name: )" %(commit)
 bind refs B      !git checkout -b "%(prompt Enter branch name: )" %(branch)
 
 # Commit
 bind generic C !git commit -v
+bind generic + !git commit --amend --allow-empty
 bind main    C !git commit -v
 
 # Move
 bind generic <Ctrl-f> move-page-down
 bind generic <Ctrl-b> move-page-up
 
-bind generic g      move-first-line
-bind generic G      move-last-line
+bind generic g  move-first-line
+bind generic G  move-last-line
+bind main    G  move-last-line
 
-bind generic +      !git commit --amend --allow-empty
-bind generic E      view-grep
-bind generic <Ctrl-g> refresh
-
+# Fetch
 bind generic F      !git fetch %(remote)
+
+# Push
 bind generic P      !git push -u %(remote) %(repo:head)
 
 # Merge
@@ -34,6 +36,7 @@ bind refs    M      ?git merge %(branch)
 
 # Delete
 bind refs    D      !git branch -D %(branch)
+bind branch  d !?git branch -d %(branch)
 bind stash   D      !git stash drop %(stash)
 
 # Checkout
@@ -44,6 +47,9 @@ bind generic -      !git checkout -
 # Stash
 bind generic S      !git stash save "%(prompt Enter stash comment: )"
 
+# Reset
+bind status <Ctrl-r> ?git reset --hard HEAD
+
 # Rebase
 bind main    I      ?git rebase -i %(branch)
 bind diff    I      ?git rebase -i %(branch)
@@ -51,5 +57,6 @@ bind refs    I      ?git rebase -i %(branch)
 bind main    <Esc>i ?git rebase -i %(commit)
 bind diff    <Esc>i ?git rebase -i %(commit)
 
-# brew install diff-highlight ?
-# set diff-highlight = true
+# Others
+bind generic E      view-grep
+bind generic <Ctrl-g> refresh
