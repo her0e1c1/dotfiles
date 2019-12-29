@@ -19,6 +19,7 @@ bind refs    M      ?git merge %(branch)
 
 # Delete
 bind refs    D      !git branch -D %(branch)
+bind stash   D      !git stash drop %(stash)
 
 # Checkout
 bind refs    =      !git checkout %(branch)
