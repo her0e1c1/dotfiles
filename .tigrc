@@ -5,58 +5,66 @@ color  diff-chunk        black   white
 # Settings
 set refresh-mode = auto
 set main-view = id date author commit-title:graph=yes,refs=yes
+set ignore-space = all
 
 # Branch
-bind main B      ?git checkout -b "%(prompt Enter branch name: )" %(commit)
-bind refs B      !git checkout -b "%(prompt Enter branch name: )" %(branch)
+bind main    B        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
+bind refs    B        !git checkout -b "%(prompt Enter branch name: )" %(branch)
 
 # Commit
-bind generic C !git commit -v
-bind generic + !git commit --amend --allow-empty
-bind main    C !git commit -v
+bind generic C        !git commit -v
+bind generic +        !git commit --amend --allow-empty
+bind main    C        !git commit -v
 
 # Move
 bind generic <Ctrl-f> move-page-down
 bind generic <Ctrl-b> move-page-up
 
-bind generic g  move-first-line
-bind generic G  move-last-line
-bind main    G  move-last-line
+bind generic g        move-first-line
+bind generic G        move-last-line
+bind main    G        move-last-line
 
 # Fetch
-bind generic F      !git fetch %(remote)
+bind generic F        !git fetch %(remote)
 
 # Push
-bind generic P      !git push -u %(remote) %(repo:head)
+bind generic P        !git push -u %(remote) %(repo:head)
 
 # Merge
-bind main    M      ?git merge %(branch)
-bind diff    M      ?git merge %(branch)
-bind refs    M      ?git merge %(branch)
+bind main    M        ?git merge %(branch)
+bind diff    M        ?git merge %(branch)
+bind refs    M        ?git merge %(branch)
 
 # Delete
-bind refs    D      !git branch -D %(branch)
-bind branch  d !?git branch -d %(branch)
-bind stash   D      !git stash drop %(stash)
+bind refs    D        !git branch -D %(branch)
+bind branch  d        !?git branch -d %(branch)
+bind stash   D        !git stash drop %(stash)
+bind status  x        ?git clean -d -f
+bind refs    <Ctrl-d> !git tag -d
 
 # Checkout
-bind refs    =      !git checkout %(branch)
-bind main    =      !git checkout %(commit)
-bind generic -      !git checkout -
+bind refs    =        !git checkout %(branch)
+bind main    =        !git checkout %(commit)
+bind generic -        !git checkout -
 
 # Stash
-bind generic S      !git stash save "%(prompt Enter stash comment: )"
+bind generic S        !git stash save "%(prompt Enter stash comment: )"
 
 # Reset
-bind status <Ctrl-r> ?git reset --hard HEAD
+bind status  H        ?git reset --hard HEAD
+bind main    H        ?git reset --hard %(commit)
 
 # Rebase
-bind main    I      ?git rebase -i %(branch)
-bind diff    I      ?git rebase -i %(branch)
-bind refs    I      ?git rebase -i %(branch)
-bind main    <Esc>i ?git rebase -i %(commit)
-bind diff    <Esc>i ?git rebase -i %(commit)
+bind main    I        ?git rebase -i %(branch)
+bind diff    I        ?git rebase -i %(branch)
+bind refs    I        ?git rebase -i %(branch)
+bind main    <Esc>i   ?git rebase -i %(commit)
+bind diff    <Esc>i   ?git rebase -i %(commit)
+
+# Cherry Pick
+bind main    K        !git cherry-pick %(commit)
+bind diff    K        !git cherry-pick %(commit)
 
 # Others
-bind generic E      view-grep
+bind generic E        view-grep
 bind generic <Ctrl-g> refresh
