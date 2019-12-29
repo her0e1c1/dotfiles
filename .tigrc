@@ -12,12 +12,21 @@ bind generic <Ctrl-g> refresh
 bind generic F      !git fetch %(remote)
 bind generic P      !git push -u %(remote) %(repo:head)
 
+# Merge
+bind refs    M      ?git merge %(branch)
+bind main    M      ?git merge %(branch)
+bind diff    M      ?git merge %(branch)
+
 # Delete
 bind refs    D      !git branch -D %(branch)
 
 # Checkout
-bind main    =      !git checkout %(branch)
 bind refs    =      !git checkout %(branch)
+bind main    =      !git checkout %(commit)
+bind generic -      !git checkout -
+
+# Stash
+bind generic S      !git stash save "%(prompt Enter stash comment: )"
 
 # Rebase
 bind main    I      ?git rebase -i %(branch)
