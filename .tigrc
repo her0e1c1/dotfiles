@@ -1,0 +1,30 @@
+# Move
+bind generic <Ctrl-f> move-page-down
+bind generic <Ctrl-b> move-page-up
+
+bind generic g      move-first-line
+bind generic G      move-last-line
+
+bind generic +      !git commit --amend --allow-empty
+bind generic E      view-grep
+bind generic <Ctrl-g> refresh
+
+bind generic F      !git fetch %(remote)
+bind generic P      !git push -u %(remote) %(repo:head)
+
+# Delete
+bind refs    D      !git branch -D %(branch)
+
+# Checkout
+bind main    =      !git checkout %(branch)
+bind refs    =      !git checkout %(branch)
+
+# Rebase
+bind main    I      ?git rebase -i %(branch)
+bind diff    I      ?git rebase -i %(branch)
+bind refs    I      ?git rebase -i %(branch)
+bind main    <Esc>i ?git rebase -i %(commit)
+bind diff    <Esc>i ?git rebase -i %(commit)
+
+# brew install diff-highlight ?
+# set diff-highlight = true
