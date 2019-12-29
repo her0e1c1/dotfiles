@@ -1,3 +1,11 @@
+# Color
+# color  diff-header       default magenta
+# color  diff-chunk        black   white
+
+# Branch
+bind main B      !git checkout -b "%(prompt Enter branch name: )" %(commit)
+bind refs B      !git checkout -b "%(prompt Enter branch name: )" %(branch)
+
 # Move
 bind generic <Ctrl-f> move-page-down
 bind generic <Ctrl-b> move-page-up
@@ -25,9 +33,6 @@ bind stash   D      !git stash drop %(stash)
 bind refs    =      !git checkout %(branch)
 bind main    =      !git checkout %(commit)
 bind generic -      !git checkout -
-
-# Stash
-bind generic S      !git stash save "%(prompt Enter stash comment: )"
 
 # Stash
 bind generic S      !git stash save "%(prompt Enter stash comment: )"
