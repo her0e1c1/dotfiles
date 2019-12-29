@@ -55,11 +55,9 @@ bind status  H        ?git reset --hard HEAD
 bind main    H        ?git reset --hard %(commit)
 
 # Rebase
-bind main    I        ?git rebase -i %(branch)
-bind diff    I        ?git rebase -i %(branch)
+bind main    I        ?git rebase -i %(commit)
+bind diff    I        ?git rebase -i %(commit)
 bind refs    I        ?git rebase -i %(branch)
-bind main    <Esc>i   ?git rebase -i %(commit)
-bind diff    <Esc>i   ?git rebase -i %(commit)
 
 # Cherry Pick
 bind main    K        !git cherry-pick %(commit)
