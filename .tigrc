@@ -1,6 +1,9 @@
 # Color
-# color  diff-header       default magenta
-# color  diff-chunk        black   white
+color  diff-header       default magenta
+color  diff-chunk        black   white
+
+# Settings
+set refresh-mode = auto
 
 # Branch
 bind main B      !git checkout -b "%(prompt Enter branch name: )" %(commit)
