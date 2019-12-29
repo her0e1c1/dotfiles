@@ -8,8 +8,10 @@ set main-view = id date author commit-title:graph=yes,refs=yes
 set ignore-space = all
 
 # Branch
-bind main    B        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
-bind refs    B        !git checkout -b "%(prompt Enter branch name: )" %(branch)
+bind main    B        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
+bind main    b        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
+bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(branch)
+bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(branch)
 
 # Commit
 bind generic C        !git commit -v
