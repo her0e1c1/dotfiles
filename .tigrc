@@ -15,8 +15,9 @@ bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(branch)
 
 # Commit
 bind generic C        !git commit -v
-bind generic +        !git commit --amend --allow-empty
+bind status  C        !git commit -v
 bind main    C        !git commit -v
+bind generic +        !git commit --amend --allow-empty
 
 # Move
 bind generic <Ctrl-f> move-page-down
