@@ -41,9 +41,10 @@ bind refs    M        ?git merge %(branch)
 # Delete
 bind refs    D        !git branch -D %(branch)
 bind refs    <Esc>d   ?git push --delete %(remote) %(branch)
+bind refs    <Ctrl-d> !git tag -d %(tag)
 bind stash   D        !git stash drop %(stash)
 bind status  x        ?git clean -d -f
-bind refs    <Ctrl-d> !git tag -d %(tag)
+bind status  D        !@rm %(file)
 
 # Checkout
 bind refs    =        !git checkout %(branch)
