@@ -32,7 +32,7 @@ bind main    G        move-last-line
 bind generic F        !git fetch %(remote)
 
 # Push
-bind generic P        !@git push -u %(remote) %(repo:head)
+bind generic P        !git push -u %(remote) %(repo:head)
 
 # Merge
 bind main    M        ?git merge %(branch)
