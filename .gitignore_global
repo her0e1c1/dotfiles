@@ -1,3 +1,7 @@
+# envfile for local dev
+.env
+.envrc
+
 .vscode
 
 *.swo
@@ -28,6 +32,7 @@ pytest.ini
 # for my private directory
 p
 dev.yml
+.command.sh
 .devcontainer.json
 .docker-sync
 docker-compose.vscode.yml
