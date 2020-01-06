@@ -12,12 +12,13 @@ bind main    B        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind main    b        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
 bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(branch)
 bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(branch)
+bind refs    <Esc>B   !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
 
 # Commit
-bind generic C        !@git commit -v
-bind status  C        !@git commit -v
-bind main    C        !@git commit -v
-bind generic +        !@git commit --amend --allow-empty
+bind generic C        !git commit -v
+bind status  C        !git commit -v
+bind main    C        !git commit -v
+bind generic +        !git commit --amend --allow-empty
 
 # Move
 bind generic <Ctrl-f> move-page-down
@@ -31,25 +32,26 @@ bind main    G        move-last-line
 bind generic F        !git fetch %(remote)
 
 # Push
-bind generic P        !git push -u %(remote) %(repo:head)
+bind generic P        !@git push -u %(remote) %(repo:head)
 
 # Merge
 bind main    M        ?git merge %(branch)
 bind diff    M        ?git merge %(branch)
 bind refs    M        ?git merge %(branch)
+bind refs    <Esc>M   ?git merge %(remote)/%(branch)
 
 # Delete
-bind refs    D        !git branch -D %(branch)
-bind refs    <Esc>d   ?git push --delete %(remote) %(branch)
+bind refs    D        !@git branch -D %(branch)
+bind refs    <Esc>d   ?@git push --delete %(remote) %(branch)
 bind refs    <Ctrl-d> !git tag -d %(tag)
 bind stash   D        !git stash drop %(stash)
 bind status  x        ?git clean -d -f
 bind status  D        !@rm %(file)
 
 # Checkout
-bind refs    =        !git checkout %(branch)
-bind main    =        !git checkout %(commit)
-bind generic -        !git checkout -
+bind refs    =        !@git checkout %(branch)
+bind main    =        !@git checkout %(commit)
+bind generic -        !@git checkout -
 
 # Stash
 bind generic S        !git stash save "%(prompt Enter stash comment: )"
