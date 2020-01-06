@@ -22,3 +22,5 @@ noremap <CR> o<ESC>
 
 set list
 set listchars=tab:^\ ,trail:-,extends:>,precedes:<,nbsp:%
+
+set noswapfile
