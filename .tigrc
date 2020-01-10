@@ -13,7 +13,6 @@ bind main    b        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
 bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(branch)
 bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(branch)
 bind refs    <Esc>B   !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
-
 # Commit
 bind generic C        !git commit -v
 bind status  C        !git commit -v
@@ -41,6 +40,7 @@ bind refs    M        ?git merge %(branch)
 bind refs    <Esc>M   ?git merge %(remote)/%(branch)
 
 # Delete
+bind refs    <Esc>P   ?@git remote prune origin
 bind refs    D        !@git branch -D %(branch)
 bind refs    <Esc>d   ?@git push --delete %(remote) %(branch)
 bind refs    <Ctrl-d> !git tag -d %(tag)
@@ -58,8 +58,8 @@ bind generic S        !git stash save "%(prompt Enter stash comment: )"
 
 # Reset
 bind status  H        ?git reset --hard HEAD
-bind reflog  H        ?git reset --hard %(commit)
-bind main    H        ?git reset --hard %(commit)
+bind reflog  H        ?git reset %(commit)
+bind main    H        ?git reset %(commit)
 
 # Rebase
 bind main    I        ?git rebase -i %(commit)
