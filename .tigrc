@@ -10,9 +10,10 @@ set ignore-space = all
 # Branch
 bind main    B        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind main    b        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
-bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(branch)
+bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
 bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(branch)
-bind refs    <Esc>B   !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
+# bind refs    <Esc>B   !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
+
 # Commit
 bind generic C        !git commit -v
 bind status  C        !git commit -v
