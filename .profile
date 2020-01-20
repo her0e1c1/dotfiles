@@ -237,7 +237,7 @@ if echo $SHELL | grep -q bash; then
             origin=`git config --get remote.origin.url`
         fi
         export PS1="\u@\w [$branch:$origin]\n$e "
-        share_history
+        # share_history
     }
     PROMPT_COMMAND="bash_post_command_hook"
 fi
@@ -279,7 +279,8 @@ peco_select_history() {
     perl -nlE 'say if length $_ >= 4' |
     perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
     peco --prompt `pwd`)
-    eval $cmd
+    echo $cmd
+    [ -x `which pbcopy` ] && echo $cmd | pbcopy
 }
 
 peco_select_docker_shell() {
