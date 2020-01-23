@@ -37,6 +37,8 @@ dev.yml
 .docker-sync
 docker-compose.vscode.yml
 
+.dev-database.sh
+
 .bash_history
 .cache/
 .ipython/
