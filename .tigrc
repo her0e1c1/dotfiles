@@ -11,7 +11,8 @@ set ignore-space = all
 bind main    B        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind main    b        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
 bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
-bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(branch)
+bind refs    <Esc>B   !git checkout -B %(branch) %(remote)/%(branch)
+bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(remote)/%(branch)
 # bind refs    <Esc>B   !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
 
 # Commit
@@ -29,7 +30,8 @@ bind generic G        move-last-line
 bind main    G        move-last-line
 
 # Fetch
-bind generic F        !git fetch %(remote)
+bind main    F        ?git fetch %(remote)
+bind refs    F        ?git fetch %(remote)
 
 # Push
 bind generic P        !git push -u %(remote) %(repo:head)
@@ -37,8 +39,7 @@ bind generic P        !git push -u %(remote) %(repo:head)
 # Merge
 bind main    M        ?git merge %(branch)
 bind diff    M        ?git merge %(branch)
-bind refs    M        ?git merge %(branch)
-bind refs    <Esc>M   ?git merge %(remote)/%(branch)
+bind refs    M        ?git merge %(remote)/%(branch)
 
 # Delete
 bind refs    <Esc>P   ?@git remote prune origin
@@ -68,8 +69,8 @@ bind diff    I        ?git rebase -i %(commit)
 bind refs    I        ?git rebase -i %(branch)
 
 # Cherry Pick
-bind main    K        !git cherry-pick %(commit)
-bind diff    K        !git cherry-pick %(commit)
+bind main    <Esc>K   !git cherry-pick %(commit)
+bind diff    <Esc>K   !git cherry-pick %(commit)
 
 # Others
 bind generic E        view-grep
