@@ -2,7 +2,7 @@ imap <c-j> <Esc>
 noremap <C-j> <esc>
 noremap! <C-j> <esc>
 syntax on
-set number
+" set number
 set tabstop=4
 set expandtab
 set list
@@ -11,7 +11,8 @@ set background=dark
 set showmatch
 set ruler
 set showcmd
-set mouse=a
+set mouse=
+set ttymouse=
 set wildmenu
 set foldmethod=marker
 noremap <CR> o<ESC>
