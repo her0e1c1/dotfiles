@@ -8,12 +8,10 @@ set main-view = id date author commit-title:graph=yes,refs=yes
 set ignore-space = all
 
 # Branch
-bind main    B        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
-bind main    b        ?git checkout -b "%(prompt Enter branch name: )" %(commit)
-bind refs    B        !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
-bind refs    <Esc>B   !git checkout -B %(branch) %(remote)/%(branch)
-bind refs    b        !git checkout -b "%(prompt Enter branch name: )" %(remote)/%(branch)
-# bind refs    <Esc>B   !git checkout -B "%(prompt Enter branch name: )" %(remote)/%(branch)
+bind main    b        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
+bind refs    b        !git checkout -B "%(prompt Enter branch name: )" %(commit)
+bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
+bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
 
 # Commit
 bind generic C        !git commit -v
@@ -32,10 +30,10 @@ bind main    G        move-last-line
 # Fetch
 bind main    F        ?git fetch %(remote)
 bind refs    F        ?git fetch %(remote)
-bind main    <Esc>F        !git fetch upstream
-bind refs    <Esc>F        !git fetch upstream
-bind main    <Esc>1        !sh -c "git fetch upstream && git checkout -B master upstream/master"
-bind main    <Esc>2        !sh -c "git fetch upstream && git checkout -B develop upstream/develop"
+bind main    <Esc>F   !git fetch upstream
+bind refs    <Esc>F   !git fetch upstream
+bind main    <Esc>1   !sh -c "git fetch upstream && git checkout -B master upstream/master"
+bind main    <Esc>2   !sh -c "git fetch upstream && git checkout -B develop upstream/develop"
 
 # Push
 bind generic P        !git push -u origin %(repo:head)
@@ -61,7 +59,9 @@ bind main    =        !@git checkout %(commit)
 bind generic -        !@git checkout -
 
 # Stash
-bind generic S        !git stash save "%(prompt Enter stash comment: )"
+# bind generic S        !git stash save "%(prompt Enter stash comment: )"
+bind generic S        !git stash save
+bind generic <Esc>S   !git stash pop
 
 # Reset
 bind status  H        ?git reset --hard HEAD
