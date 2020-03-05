@@ -34,6 +34,8 @@ bind main    F        ?git fetch %(remote)
 bind refs    F        ?git fetch %(remote)
 bind main    <Esc>F        !git fetch upstream
 bind refs    <Esc>F        !git fetch upstream
+bind main    <Esc>1        !sh -c "git fetch upstream && git checkout -B master upstream/master"
+bind main    <Esc>2        !sh -c "git fetch upstream && git checkout -B develop upstream/develop"
 
 # Push
 bind generic P        !git push -u origin %(repo:head)
