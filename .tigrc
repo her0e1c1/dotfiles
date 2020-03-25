@@ -32,8 +32,8 @@ bind main    F        ?git fetch %(remote)
 bind refs    F        ?git fetch %(remote)
 bind main    <Esc>F   !git fetch upstream
 bind refs    <Esc>F   !git fetch upstream
-bind main    <Esc>1   !sh -c "git fetch upstream && git checkout -B master  upstream/master"
-bind main    <Esc>2   !sh -c "git fetch upstream && git checkout -B develop upstream/develop"
+bind main    <Esc>1   !sh -c "git fetch upstream && git checkout -B master  upstream/master && git push origin master"
+bind main    <Esc>2   !sh -c "git fetch upstream && git checkout -B develop upstream/develop && git push origin develop"
 bind main    <Esc>3   !sh -c "git fetch origin   && git checkout -B master  origin/master"
 bind main    <Esc>4   !sh -c "git fetch origin   && git checkout -B develop origin/develop"
 
