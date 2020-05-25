@@ -30,8 +30,8 @@ bind main    G        move-last-line
 # Fetch
 bind main    F        ?git fetch %(remote)
 bind refs    F        ?git fetch %(remote)
-bind main    <Esc>F   !git fetch upstream
-bind refs    <Esc>F   !git fetch upstream
+bind main    <Esc>F   !sh -c "git fetch upstream && git fetch -p upstream && git fetch -p origin"
+bind refs    <Esc>F   !sh -c "git fetch upstream && git fetch -p upstream && git fetch -p origin"
 bind main    <Esc>1   !sh -c "git fetch upstream && git checkout -B master  upstream/master && git push origin master"
 bind main    <Esc>2   !sh -c "git fetch upstream && git checkout -B develop upstream/develop && git push origin develop"
 bind main    <Esc>3   !sh -c "git fetch origin   && git checkout -B master  origin/master"
@@ -47,9 +47,11 @@ bind diff    M        ?git merge %(commit)
 bind refs    M        ?git merge %(commit)
 
 # Delete
-bind refs    <Esc>P   ?@git remote prune origin
+bind refs    d        ?@sh -c "git push --delete %(remote) %(branch) &"
+bind refs    P        !git remote update --prune
 bind refs    D        !@git branch -D %(branch)
-bind refs    <Esc>d   ?@git push --delete %(remote) %(branch)
+
+## FIXME
 bind refs    <Ctrl-d> !git tag -d %(tag)
 bind stash   D        !git stash drop %(stash)
 bind status  x        ?git clean -d -f
