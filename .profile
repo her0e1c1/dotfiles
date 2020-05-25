@@ -135,6 +135,7 @@ ignore_files() {
 alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
 alias timestamp='python -c "import sys, datetime as d; print(d.datetime.utcfromtimestamp(float(sys.argv[1])))"'
+alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); print(a)"'
 
 # alias crypt='python -c "import crypt; print crypt.crypt(, \"$1$SomeSalt$\")"'
 # python -c 'import crypt; print crypt.crypt("PASSWD", "$1$SomeSalt$")'
