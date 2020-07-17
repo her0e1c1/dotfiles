@@ -1,0 +1,7 @@
+
+[
+    {
+        "key": "shift+cmd+t",
+        "command": "go.test.cursor"
+    }
+]
