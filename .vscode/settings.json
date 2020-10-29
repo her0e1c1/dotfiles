@@ -10,7 +10,7 @@
   "breadcrumbs.enabled": true,
   "workbench.activityBar.visible": false,
   "workbench.useExperimentalGridLayout": true,
-  "workbench.editor.showTabs": false,
+  "workbench.editor.showTabs": true,
   "editor.highlightActiveIndentGuide": true,
   "editor.minimap.enabled": false,
   "editor.hideCursorInOverviewRuler": true,

@@ -18,10 +18,12 @@ echo "LOADING ... `hostname`"
 # \u user name
 export PS1="\u@\w\n$ "
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
+export PATH="$HOME/bin:$PATH"
 export PATH=$PATH:./node_modules/.bin
 # export LC_ALL=C
 # export LC_ALL=en_US.UTF-8
 export VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.json"
+export VSCODE_DIR="$HOME/Library/Application Support/Code/User/"
 export GOPATH=~/go
 export GOBIN=~/go/bin
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
@@ -86,7 +88,8 @@ install_dotfiles() {
         fi
     done
     # only for mac
-    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_SETTINGS"
+    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_DIR"
+    ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_DIR"
 }
 
 ### UTILS
