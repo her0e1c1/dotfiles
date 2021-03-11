@@ -12,6 +12,7 @@ bind main    b        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind refs    b        !git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
+bind refs    <ESC>B   !git checkout -B %(branch) %(commit)
 
 # Commit
 bind generic C        !git commit -v
