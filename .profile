@@ -32,6 +32,7 @@ export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export DOCKER_ID_USER=her0e1c1
+export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 
 export MYDIRS_HISTORY=~/.mydirs
 export MY_ENV=~/.my.env
