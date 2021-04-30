@@ -92,6 +92,7 @@ install_dotfiles() {
     # only for mac
     ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_DIR"
     ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_DIR"
+    echo "source ~/.profile" >> ~/.bashrc
 }
 
 ### UTILS
