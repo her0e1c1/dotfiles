@@ -14,6 +14,11 @@ bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    <ESC>B   !git checkout -B %(branch) %(commit)
 
+# Log
+bind diff    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
+bind tree    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
+# bind status  H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
+
 # Commit
 bind generic C        !git commit -v
 bind status  C        !git commit -v
