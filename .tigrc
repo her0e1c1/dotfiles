@@ -45,6 +45,7 @@ bind refs    d        ?@sh -c "git push --delete %(remote) %(branch) &"
 bind refs    P        !git remote update --prune
 bind refs    D        !@git branch -D %(branch)
 bind stash   D        !@git stash drop %(stash)
+bind tree    D        !git rm %(file)
 
 ## FIXME
 bind refs    <Ctrl-d> !git tag -d %(tag)
