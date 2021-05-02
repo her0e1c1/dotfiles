@@ -14,11 +14,6 @@ bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    <ESC>B   !git checkout -B %(branch) %(commit)
 
-# Log
-bind diff    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
-bind tree    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
-# bind status  H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
-
 # Commit
 bind generic C        !git commit -v
 bind status  C        !git commit -v
@@ -36,16 +31,9 @@ bind main    G        move-last-line
 # Fetch
 bind main    F        !git fetch %(remote)
 bind refs    F        !git fetch %(remote)
-bind main    <Esc>F   !sh -c "git fetch upstream && git fetch -p upstream && git fetch -p origin"
-bind refs    <Esc>F   !sh -c "git fetch upstream && git fetch -p upstream && git fetch -p origin"
-bind main    <Esc>1   !sh -c "git fetch upstream && git checkout -B master  upstream/master && git push origin master"
-bind main    <Esc>2   !sh -c "git fetch upstream && git checkout -B develop upstream/develop && git push origin develop"
-bind main    <Esc>3   !sh -c "git fetch origin   && git checkout -B master  origin/master"
-bind main    <Esc>4   !sh -c "git fetch origin   && git checkout -B develop origin/develop"
 
 # Push
-bind generic <Esc>P !git push -u origin %(repo:head)
-# bind generic P        !git push -u %(remote) %(repo:head)
+bind generic <Esc>P   !git push -u origin %(repo:head)
 
 # Merge
 bind main    M        ?git merge %(commit)
@@ -55,12 +43,11 @@ bind refs    M        ?git merge %(commit)
 # Delete
 bind refs    d        ?@sh -c "git push --delete %(remote) %(branch) &"
 bind refs    P        !git remote update --prune
-bind refs    R        !git remote update --prune
 bind refs    D        !@git branch -D %(branch)
+bind stash   D        !@git stash drop %(stash)
 
 ## FIXME
 bind refs    <Ctrl-d> !git tag -d %(tag)
-bind stash   D        !git stash drop %(stash)
 bind status  x        ?git clean -d -f
 bind status  D        !@rm %(file)
 
@@ -69,15 +56,21 @@ bind refs    =        !@git checkout %(branch)
 bind main    =        !@git checkout %(commit)
 bind generic -        !@git checkout -
 
-# Stash
-# bind generic S        !git stash save "%(prompt Enter stash comment: )"
-bind generic S        !git stash save
-bind generic <Esc>S   !git stash pop
+# Stash (Status, Stash)
+bind status S         !@git stash save
+bind stash  S         !@git stash save
+bind status <Esc>S    !@git stash pop
+bind stash  <Esc>S    !@git stash pop
 
 # Reset
-bind status  H        ?git reset --hard HEAD
+# bind status  H        ?git reset --hard HEAD
 bind reflog  H        ?git reset %(commit)
 bind main    H        ?git reset %(commit)
+
+# History
+bind diff    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
+bind tree    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
+bind status  H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
 
 # Rebase
 bind main    I        ?git rebase -i %(commit)
