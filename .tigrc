@@ -14,6 +14,11 @@ bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    <ESC>B   !git checkout -B %(branch) %(commit)
 
+# Checkout
+bind refs    =        !@git checkout %(branch)
+bind main    =        !@git checkout %(commit)
+bind generic -        !@git checkout -
+
 # Commit
 bind generic C        !git commit -v
 bind status  C        !git commit -v
@@ -51,11 +56,6 @@ bind tree    D        !git rm %(file)
 bind refs    <Ctrl-d> !git tag -d %(tag)
 bind status  x        ?git clean -d -f
 bind status  D        !@rm %(file)
-
-# Checkout
-bind refs    =        !@git checkout %(branch)
-bind main    =        !@git checkout %(commit)
-bind generic -        !@git checkout -
 
 # Stash (Status, Stash)
 bind status Y         !@git stash save
