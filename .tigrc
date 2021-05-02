@@ -57,10 +57,10 @@ bind main    =        !@git checkout %(commit)
 bind generic -        !@git checkout -
 
 # Stash (Status, Stash)
-bind status S         !@git stash save
-bind stash  S         !@git stash save
-bind status <Esc>S    !@git stash pop
-bind stash  <Esc>S    !@git stash pop
+bind status Y         !@git stash save
+bind stash  Y         !@git stash save
+bind status <Esc>Y    !@git stash pop
+bind stash  <Esc>Y    !@git stash pop
 
 # Reset
 # bind status  H        ?git reset --hard HEAD
