@@ -51,7 +51,6 @@ if uname | grep "Darwin"; then
     export GOROOT=/usr/local/opt/go/libexec
 fi
 
-[ -e ~/google-cloud-sdk/bin ] && export PATH="$PATH:~/google-cloud-sdk/bin"
 if [ -n "$(which vim)" ]; then
     export EDITOR=vim
 else
