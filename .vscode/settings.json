@@ -2,8 +2,10 @@
   "go.gopath": "/Users/mbp/go/",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "python.formatting.provider": "autopep8",
+  "python.linting.flake8Args": ["--config=.flake8"],
   "python.linting.lintOnSave": true,
   "python.linting.enabled": true,
+  "python.jediEnabled": false,
   "window.zoomLevel": 0,
   "git.confirmSync": false,
   "files.trimTrailingWhitespace": true,
@@ -28,7 +30,6 @@
   ],
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-  "python.jediEnabled": false,
   "terminal.integrated.rendererType": "dom",
   "go.formatTool": "goimports",
   "go.useLanguageServer": true

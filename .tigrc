@@ -6,6 +6,8 @@ color  diff-chunk        black   white
 set refresh-mode = auto
 set main-view = id date author commit-title:graph=yes,refs=yes
 set ignore-space = all
+set vertical-split = no
+set split-view-height = 80%
 
 # Branch
 bind main    b        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
