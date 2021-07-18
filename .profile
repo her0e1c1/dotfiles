@@ -1153,5 +1153,10 @@ bind '"\ex": edit-and-execute-command'
 which direnv && eval "$(direnv hook bash)"
 which nodenv && eval "$(nodenv init -)"
 
+if [ -d "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" ]; then
+  source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc"
+  source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc"
+fi
+
 echo "DONE"
 # read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
