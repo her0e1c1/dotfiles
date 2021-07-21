@@ -1,9 +1,7 @@
 # envfile for local dev
 .env
-.envrc
 
-.vscode
-
+*.core
 *.swo
 *.swp
 .#*
@@ -21,26 +19,21 @@
 *.hi
 temp/
 
-*.core
-
-# Python
+# python
 *.pyc
 __pycache__/
-.cache/  # py.test
-pytest.ini 
-
-# for my private directory
-p
-dev.yml
-.command.sh
-.devcontainer.json
-.docker-sync
-docker-compose.vscode.yml
-
-.dev-database.sh
-
-.bash_history
 .cache/
 .ipython/
 .pylint.d/
+
+# docker
+.docker
+.devcontainer.json
+.docker-sync
+
+# vscode
 .vscode-server/
+.vscode
+
+.bash_history
+
