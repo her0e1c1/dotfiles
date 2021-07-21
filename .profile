@@ -161,6 +161,7 @@ cdls(){
         git status
     fi
     pwd
+    exists direnv && _direnv_hook
 }
 
 #圧縮ファイルを名前だけで展開
