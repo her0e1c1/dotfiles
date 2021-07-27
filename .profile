@@ -1114,7 +1114,6 @@ alias vim='peco_select_recent_files'
 alias vi='vim'
 alias v='vim'
 alias s='rlwrap sh -l'
-alias dc="docker-compose"
 alias docker_down="docker-compose down  --remove-orphans"
 alias g="git"
 alias ll='ls -alF'
@@ -1122,8 +1121,6 @@ alias ls='ls -aCF'
 alias sl=ls
 alias l=ls
 alias sudo="sudo "  # sudo時にアリアス有効
-alias cd="cdls"
-alias dei="docker exec -i"
 alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'  # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
 alias T=tmux_set_buffer
 alias b="tmux_show_buffer"
@@ -1133,6 +1130,10 @@ alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias e="emacsclient"
 alias r="stty sane"
+
+alias dc="docker compose"
+alias dcr="docker compose run"
+alias dcu="docker compose up"
 
 ### BINDS
 
