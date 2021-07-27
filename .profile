@@ -1,4 +1,3 @@
-
 # You can install files by this command
 # $ curl https://raw.githubusercontent.com/her0e1c1/dotfiles/master/.profile -o ~/.profile && . ~/.profile
 # install_dotfiles
@@ -1131,9 +1130,10 @@ alias cd="peco_select_dir"
 alias e="emacsclient"
 alias r="stty sane"
 
-alias dc="docker compose"
-alias dcr="docker compose run"
-alias dcu="docker compose up"
+# TODO: use docker compose
+alias dc="docker-compose"
+alias dcr="docker-compose run"
+alias dcu="docker-compose up"
 
 ### BINDS
 
