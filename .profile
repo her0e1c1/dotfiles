@@ -916,52 +916,7 @@ docker_sync () {
     fi
 }
 
-r() {
-    local path=$1; shift
-    local ext="`f_ext $path`"
-    local wext="`f_without_ext $path`"
-    local dir="`f_dirname $path`"
-    local base="`f_basename $path`"
-    local base_wext="`f_without_ext $base`"
-    local cmd="docker run -it -v `pwd`:/w --rm"
-    if [ "$ext" = "go" ]; then
-        $cmd "golang:dev" go run "/w/$path"
-    elif [ "$ext" = "hs" ]; then
-        $cmd "haskell:dev" runhaskell "/w/$path"
-    elif [ "$ext" = "js" ]; then
-        $cmd "node:7" node "/w/$path"
-    elif [ "$ext" = "erl" ]; then
-        $cmd "erlang:19" sh -c "cd /w/$dir && erlc $base && erl +B -s $base_wext main -s init stop"
-    elif [ "$ext" = "py" ]; then
-        $cmd "py3" python "/w/$path"
-    elif [ "$ext" = "c" ]; then
-        $cmd "rsmmr/clang" sh -c "clang /w/$path -o /a.out && /a.out"
-    elif [ "$ext" = "cpp" ]; then
-        $cmd "rsmmr/clang" sh -c "clang++ -std=c++11 /w/$path -o /a.out && /a.out"
-    elif [ "$ext" = "scm" ]; then
-        $cmd "algo" gosh "/w/$path"
-    elif [ "$ext" = "java" ]; then
-        $cmd "java:8" sh -c "cd /w/$dir && javac $base && java $base_wext"
-    elif [ "$ext" = "ts" ]; then
-        $cmd "ts" sh -c "tsc /w/$path --outFile /tmp/a.js && node /tmp/a.js"
-    else
-        echo "No supported language"
-        return 1
-    fi
-}
-
 ### REPL
-
-erl () { dr erlang:19 erl $@;}
-iex () {
-    if [ $# -eq 0 ]; then
-        dr iex:dev iex -S mix
-    elif [ $# -eq 1 -a -f $1 ]; then
-        dr iex:dev mix run $1
-    else
-        dr iex:dev iex "$@"
-    fi
-}
 
 run_c () { local f=`mktemp`; clang -xc $1 -o $f; $f; }
 run_cpp () { local f=`mktemp`; clang++ -std=c++14 $1 -o $f; $f; }
@@ -984,18 +939,6 @@ mix () {
 make_100M() {
     mkfile 100m 100M_FILE
 }
-
-### HEROKU
-# brew install heroku
-heroku_install() { wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh; }
-heroku_login() { heroku auth:login --app $1; }
-heroku_db() { heroku pg:psql --app $1; }  # use redis-cli instead
-heroku_env() { heroku run env --app $1; }
-heroku_run() { local app=$1; shift; heroku run --app $app $@; }  # python -m MODULE cmd
-heroku_log() { heroku logs --app $1 --tail; }
-heroku_config() { heroku config --app $1; }
-heroku_info() { heroku apps:info --app $1; }
-# heroku config:set KEY=$VAL -a $APP
 
 python_upload()  { python setup.py sdist bdist bdist_egg upload; }
 python_upload3() { python3 setup.py sdist bdist bdist_egg upload; }
