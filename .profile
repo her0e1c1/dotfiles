@@ -25,6 +25,7 @@ export VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.jso
 export VSCODE_DIR="$HOME/Library/Application Support/Code/User/"
 export GOPATH=~/go
 export GOBIN=~/go/bin
+
 export PATH="$PATH:$GOPATH/bin:$GOBIN"
 export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
@@ -939,10 +940,6 @@ mix () {
 make_100M() {
     mkfile 100m 100M_FILE
 }
-
-python_upload()  { python setup.py sdist bdist bdist_egg upload; }
-python_upload3() { python3 setup.py sdist bdist bdist_egg upload; }
-# python -c 'import bottle as b; b.route("<p:path>")(lambda p: b.jinja2_template(p[1:], **dict(b.request.params.items()))); b.run(host="0.0.0.0", debug=True, port=8000)'
 
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
 
