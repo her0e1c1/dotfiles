@@ -47,8 +47,12 @@ export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 [ -f ~/.sdkman/bin/sdkman-init.sh ] && source ~/.sdkman/bin/sdkman-init.sh
 
-if uname | grep "Darwin"; then
+if [ -d "/usr/local/opt/go/libexec" ]; then
     export GOROOT=/usr/local/opt/go/libexec
+elif [ -d "/opt/homebrew/opt/go" ]; then
+    export GOROOT="/opt/homebrew/opt/go"
+elif [ -d "$(brew --prefix golang)/libexec" ]; then
+    export GOROOT="$(brew --prefix golang)/libexec"
 fi
 
 if [ -n "$(which vim)" ]; then
