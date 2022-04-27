@@ -115,9 +115,9 @@ color_bg() {
 }
 abspath() {
     if [ $# -eq 0 ]; then
-        python -c "import os, sys; print(os.path.abspath(sys.stdin.read()))";
+        python3 -c "import os, sys; print(os.path.abspath(sys.stdin.read()))";
     else
-        python -c "import os; print(os.path.abspath('$1'))";
+        python3 -c "import os; print(os.path.abspath('$1'))";
 
     fi
 }
@@ -141,9 +141,9 @@ ignore_files() {
     perl -nlE 'say if ! m#\.git#'
 }
 
-alias urlencode='python -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
-alias urldecode='python -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
-alias timestamp='python -c "import sys, datetime as d; print(d.datetime.utcfromtimestamp(float(sys.argv[1])))"'
+alias urlencode='python3 -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
+alias urldecode='python3 -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
+alias timestamp='python3 -c "import sys, datetime as d; print(d.datetime.utcfromtimestamp(float(sys.argv[1])))"'
 alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); print(a)"'
 
 # alias crypt='python -c "import crypt; print crypt.crypt(, \"$1$SomeSalt$\")"'
@@ -391,7 +391,7 @@ peco_select_dir () {
             # update_files $MYDIRS_HISTORY $d
         fi
     else
-        local d=`python -c "import os; print(os.path.abspath('$1'))"`
+        local d=`python3 -c "import os; print(os.path.abspath('$1'))"`
         # update_files $MYDIRS_HISTORY $d
         cdls $d
     fi
@@ -427,7 +427,7 @@ docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if 
 docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
 docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /dev/null; }
 docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
-docker_working() { docker inspect $1 | python -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
+docker_working() { docker inspect $1 | python3 -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
 docker_alias() { docker tag $1 $2; }
 docker_export() { docker export $1 | tar tf -; }
 images_rstudio() { docker run --name rstudio -v `pwd`:/w -w /wn --rm -it -p 8787:8787 rocker/hadleyverse; }
@@ -742,7 +742,7 @@ with open(filepath, 'w') as f:
     f.writelines(lines)
 EOS
 )
-    python -c "$s" $@
+    python3 -c "$s" $@
 }
 
 ### GIT
