@@ -1073,6 +1073,7 @@ alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias e="emacsclient"
 alias r="stty sane"
+alias me="docker-compose -f docker-compose.me.yml"
 
 # TODO: use docker compose
 alias dc="docker-compose"
