@@ -30,6 +30,7 @@ __pycache__/
 .docker
 .devcontainer.json
 .docker-sync
+docker-compose.me.yml
 
 # vscode
 .vscode-server/
