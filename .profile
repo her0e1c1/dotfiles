@@ -2,50 +2,27 @@
 # $ curl https://raw.githubusercontent.com/her0e1c1/dotfiles/master/.profile -o ~/.profile && . ~/.profile
 # install_dotfiles
 
-# set -x
-
-### TODO: - L, T (pbcopy)
-### TODO: 本番環境のPANEに色付け
-
 echo "LOADING ... `hostname`"
 
 ### EXPORT
 
-# \h hostname
-# \t \T 24 12 time
-# \w \W currend dir
-# \u user name
 export PS1="\u@\w\n$ "
-export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 export PATH="$HOME/bin:$PATH"
-export PATH=$PATH:./node_modules/.bin
-# export LC_ALL=C
-# export LC_ALL=en_US.UTF-8
-export VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.json"
-export VSCODE_DIR="$HOME/Library/Application Support/Code/User/"
-export GOPATH=~/go
-export GOBIN=~/go/bin
+export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
+export PATH=$HOME/.nodebrew/current/bin:$PATH
+export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 
-export PATH="$PATH:$GOPATH/bin:$GOBIN"
 export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
-export DOCKER_ID_USER=her0e1c1
-export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 
+export VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.json"
+export VSCODE_DIR="$HOME/Library/Application Support/Code/User/"
 export MYDIRS_HISTORY=~/.mydirs
 export MY_ENV=~/.my.env
 export MYCMDS_HISTORY=~/.mycmds
 export RECENT_FILES=~/.recent_files
-
-# android for mac
-export ANDROID_HOME=${HOME}/Library/Android/sdk
-export PATH=${PATH}:${ANDROID_HOME}/tools
-export PATH=${PATH}:${ANDROID_HOME}/platform-tools
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-
-[ -f ~/.sdkman/bin/sdkman-init.sh ] && source ~/.sdkman/bin/sdkman-init.sh
 
 if [ -d "/usr/local/opt/go/libexec" ]; then
     export GOROOT=/usr/local/opt/go/libexec
@@ -61,18 +38,12 @@ else
     export EDITOR=vi
 fi
 
-if [ -f $MY_ENV ]; then
-    . $MY_ENV
-fi
-
 ### INSTALL IF NEEDED
 
 setup_mac () {
     install_dotfile
     install_brew
 }
-
-# INSTALL
 
 install_brew () {
     if ! which brew 2>&1 1>/dev/null; then
@@ -106,19 +77,11 @@ repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
 chomp () { perl -pE "chomp \$_"; }
 color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
-color_bg() {
-    if [ $# -eq 1 ]; then
-        tmux select-pane -P "bg=colour$1";
-    else
-        tmux select-pane -P "bg=default";
-    fi
-}
 abspath() {
     if [ $# -eq 0 ]; then
         python3 -c "import os, sys; print(os.path.abspath(sys.stdin.read()))";
     else
         python3 -c "import os; print(os.path.abspath('$1'))";
-
     fi
 }
 
@@ -132,13 +95,8 @@ d2h () { printf '%x\n' $1; }
 h2d(){ echo "ibase=16; $@"|bc; }  # capitize
 esc () { perl -plE "s#'#'\\''# "; }
 
-check_port_used() {
-    lsof -i -P -n | grep LISTEN | grep ":$1" > /dev/null;
-}
-
-ignore_files() {
-    perl -nlE 'say if ! m#\.(pyc)$#'
-    perl -nlE 'say if ! m#\.git#'
+port_used() {
+    lsof -i -P -n | grep LISTEN
 }
 
 alias urlencode='python3 -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
@@ -168,7 +126,7 @@ cdls(){
     exists direnv && _direnv_hook
 }
 
-#圧縮ファイルを名前だけで展開
+# 圧縮ファイルを名前だけで展開
 extract() {
   case $1 in
     *.tar.gz|*.tgz) tar xzvf $1;;
@@ -431,49 +389,6 @@ docker_working() { docker inspect $1 | python3 -c 'import sys, json; print(json.
 docker_alias() { docker tag $1 $2; }
 docker_export() { docker export $1 | tar tf -; }
 images_rstudio() { docker run --name rstudio -v `pwd`:/w -w /wn --rm -it -p 8787:8787 rocker/hadleyverse; }
-
-docker_es5() { docker_alias elasticsearch:5 es5; docker_run es5:latest -p 19205:9200; }
-docker_redis() { docker_run redis:3.0; }
-docker_mysql() {
-    local cnf=/tmp/my.cnf
-    cat <<EOS >> $cnf
-[mysqld]
-max_allowed_packet = 32M
-EOS
-    docker_run mysql:8.0 -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_DATABASE=db -v $cnf:/etc/mysql/conf.d/my.cnf --name mysql;
-}
-
-docker_nginx() {
-    local cnf=/tmp/nginx.conf
-    cat <<EOS > $cnf
-events {}
-http {
-  keepalive_timeout 1;
-  server {
-    root /data;
-    server_name localhost;
-    location / {
-      proxy_max_temp_file_size 0;
-      autoindex on;  # list files in dir
-    }
-  }
-}
-EOS
-    docker run --rm -it -v `pwd`:/data -v $cnf:/etc/nginx/nginx.conf --name fs -p 8888:80 nginx:1.13
-}
-
-docker_cypress() {
-    ROOT=${1:-.}
-    IP=$(ipconfig getifaddr en0)
-    export DISPLAY=$IP:0
-    xhost +
-    docker run -it -v $PWD:/e2e -v /tmp/.X11-unix:/tmp/.X11-unix -w /e2e -e DISPLAY --entrypoint cypress cypress/included:3.4.0 open --project $ROOT
-}
-
-docker_cypress_run() {
-    docker run -it -v $PWD:/e2e -w /e2e cypress/included:3.4.0
-}
-
 docker_push () {
     local image=$1; shift
     docker tag $image $DOCKER_ID_USER/$image
@@ -630,57 +545,6 @@ EOF
     docker run --name adminer --rm -p 9998:8080 -v ~/.adminer:/var/www/html/db adminer
 }
 
-phpmyadmin() {
-    read_env "$1" pma || return 1
-    local name=pma_$DOCKER_PORT
-    local file=~/.phpmyadmin/$name.config.php
-    touch $file
-    local conf="$file:/etc/phpmyadmin/config.user.inc.php"
-    local envs=`perl -E 'say join " ", map {"-e $_=$ENV{$_}"} (grep {/^PMA_/} %ENV)'`
-    local cmd="docker run -v $conf --rm --name $name -p $DOCKER_PORT:80 $envs phpmyadmin/phpmyadmin"
-    echo "start phpmyadmin ($name)"
-    open http://localhost:$DOCKER_PORT  # don't care if $cmd is failed
-    eval $cmd
-}
-
-mysql_dump() {
-    if [ -t 1 ]; then
-        echo "stdout is tty" >&2
-        return 1
-    fi
-    if [ ! $# -eq 2 ]; then
-        echo 'USAGE: mysqldump $database $envfile' >&2
-        return 1
-    fi
-    read_env "$2" pma || return 1
-    if [ -z $PMA_HOST ]; then
-        echo '$PMA_HOST is not defined' >&2
-        return 1
-    fi
-    docker run -a stdout --rm mysql:8.0 mysqldump -h $PMA_HOST -P $PMA_PORT -u $PMA_USER -p$PMA_PASSWORD $1
-}
-
-mysql_store() {
-    if [ ! $# -eq 3 ]; then
-        echo 'USAGE: mysql_store $container_name $database $dumpfile' >&2
-        echo '$database: default db' >&2
-        echo '$dumpfile: default dump.sql' >&2
-        return 1
-    fi
-    local name=$1
-    local db=${2:-db}
-    local dump=${3:-dump.sql}
-    if [ ! -f $dump ]; then
-        echo "Can not find $dump"
-        return 1
-    fi
-    docker exec $name mysql -e "drop database $db; create database $db;"
-    docker exec -i $name mysql --init-command="SET SESSION FOREIGN_KEY_CHECKS=0;" $db < $dump
-    # phpmyadmin needs to set password
-    docker exec $name mysql -e "CREATE USER admin@'%' IDENTIFIED BY 'passwd'"
-    docker exec $name mysql -e "GRANT ALL PRIVILEGES ON *.* TO admin@'%';"
-}
-
 # Add default docker options
 docker_run() {
     local image=$1; shift
@@ -693,14 +557,6 @@ docker_run() {
            -v ~/.profile:/etc/profile -v /Users:/Users \
            --detach-keys ctrl-q,q \
            $image
-}
-
-ipython() {
-    docker run -it --rm -v `pwd`:/w -w /w her0e1c1/dev:py ipython
-}
-
-pycodestyle() {
-    docker run -it --rm -v `pwd`:/w -w /w her0e1c1/dev:py  pycodestyle $@
 }
 
 pyfmt() {
@@ -778,18 +634,6 @@ git_branch_remove_all () {
     git branch | xargs git branch -D
 }
 
-git_pr () {
-    local number=$1; shift
-    local remote=${1-upstream}
-    local branch="PR$number"
-    if git branch |grep $branch; then
-        git checkout master
-        git branch -D $branch
-    fi
-    git fetch $remote pull/$number/head:$branch
-    git checkout $branch
-}
-
 git_pr_origin () {
     local number=$1; shift
     git_pr $number "origin"
@@ -825,8 +669,6 @@ git_submodule_init() {
     git submodule init && git submodule update;
 }
 
-# git submodule foreach git reset --hard HEAD
-# git submodule update
 git_submodule_update() { git submodule update --recursive --remote; }
 
 h () {
@@ -861,12 +703,6 @@ docker_edit_file() {
 }
 
 def() { docker_edit_file "$@"; }
-
-### TMUX
-
-tmux_show_buffer () { tmux show-buffer | peco | chomp | pbcopy; }
-tmux_set_buffer() { perl -E '@a=<stdin>; `tmux set-buffer "@a"`'; }
-tmux_show_buffers() { perl -E 'say `tmux show-buffer -b $_ ` for 0..20'; }
 
 ### OTHERS (no more used)
 
@@ -923,10 +759,6 @@ docker_sync () {
 
 ### REPL
 
-run_c () { local f=`mktemp`; clang -xc $1 -o $f; $f; }
-run_cpp () { local f=`mktemp`; clang++ -std=c++14 $1 -o $f; $f; }
-run_java () { javac $1; java `f_without_ext $1`; }
-
 mix () {
     if [ $1 = "up" ]; then
         docker rm -f IEX_DEV_UPDATED
@@ -941,25 +773,9 @@ mix () {
     fi
 }
 
-make_100M() {
-    mkfile 100m 100M_FILE
-}
-
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
 
-go_compile () {
-    # or: go build -gcflags -S $1
-    OOS=linux GOARCH=amd64 go tool compile -S $1 2>&1
-}
-go_linux () { GOOS=linux GOARCH=amd64 go build $1; }
-
 vs () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
-as () { local a=${1:-.}; open -a /Applications/Android\ Studio.app $a; }
-
-adb_web() { adb shell am start -a android.intent.action.VIEW -d $1; }
-adb_log() { adb logcat ; }
-date_GMT() { TZ=GMT date; }
-
 intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
 
 ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
@@ -1022,34 +838,8 @@ mac_socks5() {
     echo "DONE"
 }
 
-cmd() {
-    if [ ! -f ./commands.sh ]; then
-        echo "NO FILE"
-		return 1
-	fi
-    ./commands.sh "$@"
-}
-
 # VS CODE
 vs_settings() { vim "$VSCODE_SETTINGS"; }
-# vs_init() { ln -s "$VSCODE_SETTINGS"; }
-
-create_react_app () {
-    yarn create react-app "$1" --typescript
-}
-
-# url_escape() {}
-# _fork_bomb :(){ :|:& };:
-
-curl_header() {
-    local url=$1; shift;
-    curl -sSL -D - "$url" -o /dev/null "$@"
-}
-
-reset() {
-    stty sane
-    tmux select-pane -P 'fg=default,bg=default';
-}
 
 ### ALIAS
 
@@ -1063,14 +853,10 @@ alias ls='ls -aCF'
 alias sl=ls
 alias l=ls
 alias sudo="sudo "  # sudo時にアリアス有効
-alias curl_json='curl -H "Accept: application/json" -H "Content-type: application/json"'  # -d オプションには、-d '{"key": "value", "number": int}'とkeyは"で囲むこと
-alias T=tmux_set_buffer
-alias b="tmux_show_buffer"
 alias f="peco_select_recent_files"
 alias w="peco_grep_word"
 alias d="peco_select_dir"
 alias cd="peco_select_dir"
-alias e="emacsclient"
 alias r="stty sane"
 alias me="docker-compose -f docker-compose.me.yml"
 
@@ -1092,7 +878,6 @@ bind -x '"\eC": peco_docker_commit'
 bind -x '"\eu": "cdls .."'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
-bind -x '"\eB": tmux capture-pane'
 bind -x '"\ei": stty sane'
 bind '"\ex": edit-and-execute-command'
 
@@ -1105,4 +890,3 @@ if [ -d "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" ]; 
 fi
 
 echo "DONE"
-# read i1 i2 <<< 'foo bar'; echo -E "status=$? i1=[$i1] i2=[$i2]"
