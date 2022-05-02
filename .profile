@@ -1056,7 +1056,6 @@ reset() {
 alias vim='peco_select_recent_files'
 alias vi='vim'
 alias v='vim'
-alias s='rlwrap sh -l'
 alias docker_down="docker-compose down  --remove-orphans"
 alias g="git"
 alias ll='ls -alF'
