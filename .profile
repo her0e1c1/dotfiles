@@ -177,8 +177,6 @@ extract() {
 
 ### FOR BASH
 if echo $SHELL | grep -q bash; then
-    # export HISTCONTROL=ignorespace  # 空白から始めたコマンドを無視
-    # export HISTCONTROL=ignoredups  # 重複履歴を無視
     export HISTCONTROL=ignoreboth:erasedups
     # 履歴の共有
     function share_history {  # 以下の内容を関数として定義
@@ -187,7 +185,7 @@ if echo $SHELL | grep -q bash; then
         history -r  # .bash_historyから履歴を読み込み直す
     }
     # PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
-    shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
+    # shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
     export HISTIGNORE="fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
     export HISTSIZE=100000  #ヒストリのサイズを増やす
     # bash_pre_command_hook() {  # 2回呼ばれる...
@@ -754,22 +752,6 @@ docker_sync () {
         fi
     else
         echo "$sync dir is not found on docker."
-    fi
-}
-
-### REPL
-
-mix () {
-    if [ $1 = "up" ]; then
-        docker rm -f IEX_DEV_UPDATED
-        docker run -dit --name IEX_DEV_UPDATED -w /app -v `pwd`:/v -d iex:dev /bin/bash
-        docker exec IEX_DEV_UPDATED cp /v/$2 /app/
-        docker exec IEX_DEV_UPDATED mix deps.get compile
-        docker exec IEX_DEV_UPDATED mix compile
-        docker commit IEX_DEV_UPDATED iex:dev
-        docker rm -f IEX_DEV_UPDATED
-    else
-        dr iex:dev mix "$@"
     fi
 }
 
