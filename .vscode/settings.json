@@ -31,4 +31,6 @@
   "terminal.integrated.rendererType": "dom",
   "go.formatTool": "goimports",
   "go.useLanguageServer": true
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
 }
