@@ -1,12 +1,9 @@
-# You can install files by this command
-# $ curl https://raw.githubusercontent.com/her0e1c1/dotfiles/master/.profile -o ~/.profile && . ~/.profile
-# install_dotfiles
-
 echo "LOADING ... `hostname`"
 
 ### EXPORT
 
 export PS1="\u@\w\n$ "
+
 export PATH="$HOME/bin:$PATH"
 export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 export PATH=$HOME/.nodebrew/current/bin:$PATH
@@ -16,9 +13,8 @@ export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
+export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
 
-export VSCODE_SETTINGS="$HOME/Library/Application Support/Code/User/settings.json"
-export VSCODE_DIR="$HOME/Library/Application Support/Code/User/"
 export MYDIRS_HISTORY=~/.mydirs
 export MY_ENV=~/.my.env
 export MYCMDS_HISTORY=~/.mycmds
@@ -40,19 +36,6 @@ fi
 
 ### INSTALL IF NEEDED
 
-setup_mac () {
-    install_dotfile
-    install_brew
-}
-
-install_brew () {
-    if ! which brew 2>&1 1>/dev/null; then
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    fi
-    brew install tmux go peco ansible
-    brew cask install docker
-}
-
 install_dotfiles() {
     cd ~
     [ ! -d ~/dotfiles ] && git clone https://github.com/her0e1c1/dotfiles.git;
@@ -64,8 +47,8 @@ install_dotfiles() {
         fi
     done
     # only for mac
-    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_DIR"
-    ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_DIR"
+    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
+    ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_HOME"
     echo "source ~/.profile" >> ~/.bashrc
 }
 
@@ -185,7 +168,6 @@ if echo $SHELL | grep -q bash; then
         history -r  # .bash_historyから履歴を読み込み直す
     }
     # PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
-    # shopt -u histappend   # .bash_history追記モードは不要なのでOFFに
     export HISTIGNORE="fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
     export HISTSIZE=100000  #ヒストリのサイズを増やす
     # bash_pre_command_hook() {  # 2回呼ばれる...
@@ -819,9 +801,6 @@ mac_socks5() {
     sudo networksetup -setsocksfirewallproxystate "$name" off
     echo "DONE"
 }
-
-# VS CODE
-vs_settings() { vim "$VSCODE_SETTINGS"; }
 
 ### ALIAS
 
