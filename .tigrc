@@ -80,6 +80,9 @@ bind main    I        ?git rebase -i %(commit)
 bind diff    I        ?git rebase -i %(commit)
 bind refs    I        ?git rebase -i %(branch)
 
+# Revert
+bind main    R        !git revert --no-commit %(commit)
+
 # Cherry Pick
 bind main    <Esc>K   !git cherry-pick %(commit)
 bind diff    <Esc>K   !git cherry-pick %(commit)
