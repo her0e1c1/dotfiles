@@ -17,6 +17,7 @@ bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    <ESC>B   !git checkout -B %(branch) %(commit)
 
 # Checkout
+bind refs    c        !@git checkout %(branch)
 bind refs    =        !@git checkout %(branch)
 bind main    =        !@git checkout %(commit)
 bind generic -        !@git checkout -
@@ -41,6 +42,8 @@ bind refs    F        !git fetch %(remote)
 
 # Push
 bind generic <Esc>P   !git push -u origin %(repo:head)
+bind refs    p        !git push -u origin %(branch)
+bind refs    <Esc>P   ?git push --force-with-lease -u origin %(branch)
 
 # Merge
 bind main    M        ?git merge %(commit)
