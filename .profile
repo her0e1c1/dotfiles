@@ -46,9 +46,10 @@ install_dotfiles() {
             ln -sf ~/dotfiles/$file ~/$file
         fi
     done
-    # only for mac
-    ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
-    ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_HOME"
+    if [ -d "$VSCODE_HOME" ]; then
+        ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
+        ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_HOME"
+    fi
     echo "source ~/.profile" >> ~/.bashrc
 }
 
@@ -86,9 +87,6 @@ alias urlencode='python3 -c "import sys, urllib as ul; print(ul.quote_plus(sys.a
 alias urldecode='python3 -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
 alias timestamp='python3 -c "import sys, datetime as d; print(d.datetime.utcfromtimestamp(float(sys.argv[1])))"'
 alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); print(a)"'
-
-# alias crypt='python -c "import crypt; print crypt.crypt(, \"$1$SomeSalt$\")"'
-# python -c 'import crypt; print crypt.crypt("PASSWD", "$1$SomeSalt$")'
 
 cdls(){
     if [ ${#1} -eq 0 ]; then
@@ -130,6 +128,7 @@ extract() {
 
 if echo $SHELL | grep -q bash; then
     export HISTCONTROL=ignoreboth:erasedups
+    shopt -s histappend
     # 履歴の共有
     function share_history {  # 以下の内容を関数として定義
         history -a  # .bash_historyに前回コマンドを1行追記

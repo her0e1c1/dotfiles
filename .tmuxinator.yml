@@ -10,4 +10,5 @@ windows:
         - vim .tmux.conf
   - sub:
       panes:
+        - vim .profile
         - bash
