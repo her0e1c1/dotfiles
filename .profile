@@ -126,39 +126,8 @@ extract() {
   esac
 }
 
-### BINDS
-
-# stty -a
-# bind -p
-# INPUTRC=`mktemp`
-# cat <<EOS >> $INPUTRC
-# set bell-style none
-# set meta-flag on
-# set input-meta on
-# set convert-meta off
-# set output-meta on
-# "\e[1~": beginning-of-line
-#
-# set convert-meta off
-# set blink-matching-paren on
-# set editing-mode vi
-#
-# set keymap vi-command
-# # these are for vi-command mode
-# "\C-i": undo
-#
-# set keymap vi-insert
-# # these are for vi-insert mode
-# "\C-p": previous-history
-# "\C-n": next-history
-# "\C-l": clear-screen
-# "\C-g": vi-movement-mode
-#
-# EOS
-# bind -f $INPUTRC
-# [ ! -f ~/.inputrc ] && cp $INPUTRC ~/.inputrc
-
 ### FOR BASH
+
 if echo $SHELL | grep -q bash; then
     export HISTCONTROL=ignoreboth:erasedups
     # 履歴の共有
@@ -619,32 +588,6 @@ git_pr_origin () {
     git_pr $number "origin"
 }
 
-git_make () {
-    if [ -z "$GITHUB_TOKEN" -o -z "$GITHUB_USERNAME" ]; then
-        echo "NO GITHUB_TOKEN or GITHUB_USERNAME"
-        return 1
-    fi
-    local base=${1-master}; shift
-    local title=`git log -1 --pretty=%B`
-
-    local remote="origin";
-    local branch="`git_current_branch`"
-    local head="`git_current_branch`"
-    if git remote -v | grep upstream > /dev/null; then
-        remote="upstream"
-        head="$GITHUB_USERNAME:$head"
-        # head="$head"
-    fi
-    echo git push origin $branch
-    git push origin $branch
-
-    local p=`git remote -v | grep $remote | perl -nlE 'say $1 if /:(.*?)(.git)? /' | head -1`
-    local url="https://api.github.com/repos/$p"
-    echo "make PR: $head on $base at $remote $url"
-    echo "$title"
-    curl -XPOST $url/pulls?access_token=$GITHUB_TOKEN -d "{\"title\": \"$title\", \"head\": \"$head\", \"base\": \"$base\", \"body\": \"\"}"
-}
-
 git_submodule_init() {
     git submodule init && git submodule update;
 }
@@ -820,6 +763,7 @@ alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias r="stty sane"
 alias me="docker-compose -f docker-compose.me.yml"
+alias ti="tmuxinator"
 
 # TODO: use docker compose
 alias dc="docker-compose"
