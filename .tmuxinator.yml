@@ -1,0 +1,13 @@
+name: dotfiles
+root: .
+
+windows:
+  - main:
+      layout: main-horizontal
+      panes:
+        - tig
+        - vim .tigrc
+        - vim .tmux.conf
+  - sub:
+      panes:
+        - bash
