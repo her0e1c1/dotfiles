@@ -180,8 +180,9 @@ peco_git_branch() {
 
 peco_select_history() {
     local cmd=$(history |
+    tail -r |
     perl -plE 's#^\s*\d+\s*##' |
-    perl -nlE 'say if length $_ >= 4' |
+    perl -nlE 'say if length $_ >= 5' |
     perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
     peco --prompt `pwd`)
     echo $cmd
