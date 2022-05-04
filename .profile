@@ -16,8 +16,6 @@ export LSCOLORS=DxGxcxdxCxegedabagacad
 export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
 
 export MYDIRS_HISTORY=~/.mydirs
-export MY_ENV=~/.my.env
-export MYCMDS_HISTORY=~/.mycmds
 export RECENT_FILES=~/.recent_files
 
 if [ -d "/usr/local/opt/go/libexec" ]; then
@@ -128,20 +126,17 @@ extract() {
 
 if echo $SHELL | grep -q bash; then
     export HISTCONTROL=ignoreboth:erasedups
-    shopt -s histappend
-    # 履歴の共有
-    function share_history {  # 以下の内容を関数として定義
-        history -a  # .bash_historyに前回コマンドを1行追記
-        # history -c  # 端末ローカルの履歴を一旦消去
-        history -r  # .bash_historyから履歴を読み込み直す
-    }
-    # PROMPT_COMMAND='share_history'  # 上記関数をプロンプト毎に自動実施
     export HISTIGNORE="fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
     export HISTSIZE=100000  #ヒストリのサイズを増やす
-    # bash_pre_command_hook() {  # 2回呼ばれる...
-    #     ;
-    # }
-    # trap "bash_pre_command_hook" DEBUG
+
+    # 履歴の共有
+    shopt -u histappend
+    function share_history {
+        history -a
+        history -c
+        history -r
+    }
+
     bash_post_command_hook() {
         local ecode=$?
         local e='$'
@@ -154,7 +149,7 @@ if echo $SHELL | grep -q bash; then
             origin=`git config --get remote.origin.url`
         fi
         export PS1="\u@\w [$branch:$origin]\n$e "
-        # share_history
+        share_history
     }
     PROMPT_COMMAND="bash_post_command_hook"
 fi
@@ -177,13 +172,6 @@ open_file() {
 }
 
 ### PECO
-
-peco_prompt() {
-    echo `pwd`
-    # if git status 2>/dev/null 1>/dev/null; then
-    #     echo `git_current_branch`
-    # fi
-}
 
 peco_git_branch() {
     local b=$(git branch -a | perl -plE 's#^\* ##'| perl -plE 's#.*?(origin|upstream)/##' | peco --prompt `git_current_branch`)
@@ -592,22 +580,6 @@ git_submodule_init() {
 }
 
 git_submodule_update() { git submodule update --recursive --remote; }
-
-h () {
-    if [ ! -f $MYCMDS_HISTORY ]; then
-        touch $MYCMDS_HISTORY
-    fi
-    if [ $# -eq 0 ]; then
-        local d=`cat $MYCMDS_HISTORY | peco | perl -pE 'chomp $_'`
-        update_files $MYCMDS_HISTORY $d
-        # echo -n "$d" | tmux_set_buffer
-        echo "$d" | chomp | pbcopy
-    else
-        local d=`echo $@`
-        update_files $MYCMDS_HISTORY "$d"
-        $@
-    fi
-}
 
 docker_edit_file() {
     local name="$1"; shift
