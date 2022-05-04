@@ -278,16 +278,12 @@ peco_select_dir () {
         touch $MYDIRS_HISTORY
     fi
     if [ $# -eq 0 ]; then
-        local a=`peco_prompt`
-        echo $a
-        local d=`cat $MYDIRS_HISTORY | peco --prompt $(peco_prompt)`
+        local d=`cat $MYDIRS_HISTORY | peco --prompt $(pwd)`
         if [ -d "$d" -a -n "$d" ]; then
             cdls $d
-            # update_files $MYDIRS_HISTORY $d
         fi
     else
         local d=`python3 -c "import os; print(os.path.abspath('$1'))"`
-        # update_files $MYDIRS_HISTORY $d
         cdls $d
     fi
 
