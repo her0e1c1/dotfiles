@@ -32,6 +32,12 @@ else
     export EDITOR=vi
 fi
 
+### macOS
+
+if [[ $OSTYPE == "darwin"* ]]; then
+    ssh-add --apple-load-keychain  # ssh-add --apple-use-keychain ~/.ssh/[your-private-key]
+fi
+
 ### INSTALL IF NEEDED
 
 install_dotfiles() {
