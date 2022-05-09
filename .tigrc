@@ -67,6 +67,8 @@ bind status Y         !@git stash save
 bind stash  Y         !@git stash save
 bind status <Esc>Y    !@git stash pop
 bind stash  <Esc>Y    !@git stash pop
+bind status S         !@git stash push -m "%(prompt Enter name for stash: )" %(file)
+bind stash  S         !@git stash pop %(stash)
 
 # Reset
 # bind status  H        ?git reset --hard HEAD
