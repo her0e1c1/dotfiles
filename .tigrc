@@ -49,6 +49,8 @@ bind refs    <Esc>P   ?git push --force-with-lease -u origin %(branch)
 bind main    M        ?git merge %(commit)
 bind diff    M        ?git merge %(commit)
 bind refs    M        ?git merge %(commit)
+bind refs    O        ?git merge -X ours %(commit)
+bind refs    T        ?git merge -X theirs %(commit)
 
 # Delete
 bind refs    d        ?@sh -c "git push --delete %(remote) %(branch) &"
