@@ -39,6 +39,7 @@ bind main    G        move-last-line
 # Fetch
 bind main    F        !git fetch %(remote)
 bind refs    F        !git fetch %(remote)
+bind refs    r        !git pull %(remote) %(branch)
 
 # Push
 bind generic <Esc>P   !git push -u origin %(repo:head)
