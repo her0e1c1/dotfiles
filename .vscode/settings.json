@@ -1,17 +1,14 @@
 {
-  "go.gopath": "/Users/mbp/go/",
   "mdmath.delimiters": "gitlab",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "python.formatting.provider": "autopep8",
   "python.linting.lintOnSave": true,
   "python.linting.enabled": true,
-  "window.zoomLevel": 0,
   "git.confirmSync": false,
   "files.trimTrailingWhitespace": true,
   "breadcrumbs.enabled": true,
   "workbench.activityBar.visible": false,
   "workbench.editor.showTabs": true,
-  "editor.highlightActiveIndentGuide": true,
   "editor.minimap.enabled": false,
   "editor.hideCursorInOverviewRuler": true,
   "editor.lineNumbers": "off",
@@ -30,7 +27,8 @@
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "terminal.integrated.rendererType": "dom",
   "go.formatTool": "goimports",
-  "go.useLanguageServer": true
+  "go.useLanguageServer": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
+  "editor.guides.highlightActiveIndentation": true,
 }
