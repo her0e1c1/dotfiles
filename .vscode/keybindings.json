@@ -3,5 +3,9 @@
     {
         "key": "shift+cmd+t",
         "command": "go.test.cursor"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "terminal.focus"
     }
 ]
