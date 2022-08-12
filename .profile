@@ -59,8 +59,8 @@ install_dotfiles() {
         done
     fi
     if [ -d "$KARABINER_CONFIG" ]; then
-        ln -sf ~/dotfiles/karabiner.json "$KARABINER_CONFIG"
-        echo "karabiner.json installed"
+        cp ~/dotfiles/karabiner/karabiner.json "$KARABINER_CONFIG"
+        echo "karabiner.json copied"
     fi
     if [ -d "$VSCODE_HOME" ]; then
         ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
@@ -518,7 +518,7 @@ pyfmt() {
     local cmd1="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd0\" $dir"
     local cmd2="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pylint --errors-only $dir"
     local cmd3="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd2\" $dir"
-    tmux split-window -p 20 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'" 
+    tmux split-window -p 20 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'"
 }
 
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
