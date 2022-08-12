@@ -14,6 +14,8 @@ export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
+export KARABINER_ASSETS="$HOME/.config/karabiner/assets/complex_modifications/"
+export KARABINER_CONFIG="$HOME/.config/karabiner"
 
 export MYDIRS_HISTORY=~/.mydirs
 export RECENT_FILES=~/.recent_files
@@ -50,9 +52,20 @@ install_dotfiles() {
             ln -sf ~/dotfiles/$file ~/$file
         fi
     done
+    if [ -d "$KARABINER_ASSETS" ]; then
+        for i in `ls -1 ~/dotfiles/karabiner/assets/*.json`; do
+            ln -sf $i "$KARABINER_ASSETS"
+            echo "karabiner assets $i installed"
+        done
+    fi
+    if [ -d "$KARABINER_CONFIG" ]; then
+        ln -sf ~/dotfiles/karabiner.json "$KARABINER_CONFIG"
+        echo "karabiner.json installed"
+    fi
     if [ -d "$VSCODE_HOME" ]; then
         ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
         ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_HOME"
+        echo "vscode setting files installed"
     fi
     echo "source ~/.profile" >> ~/.bashrc
 }
