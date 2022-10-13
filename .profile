@@ -14,6 +14,8 @@ export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
+export KARABINER_ASSETS="$HOME/.config/karabiner/assets/complex_modifications/"
+export KARABINER_CONFIG="$HOME/.config/karabiner"
 
 export MYDIRS_HISTORY=~/.mydirs
 export RECENT_FILES=~/.recent_files
@@ -50,9 +52,20 @@ install_dotfiles() {
             ln -sf ~/dotfiles/$file ~/$file
         fi
     done
+    if [ -d "$KARABINER_ASSETS" ]; then
+        for i in `ls -1 ~/dotfiles/karabiner/assets/*.json`; do
+            ln -sf $i "$KARABINER_ASSETS"
+            echo "karabiner assets $i installed"
+        done
+    fi
+    if [ -d "$KARABINER_CONFIG" ]; then
+        cp ~/dotfiles/karabiner/karabiner.json "$KARABINER_CONFIG"
+        echo "karabiner.json copied"
+    fi
     if [ -d "$VSCODE_HOME" ]; then
         ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
         ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_HOME"
+        echo "vscode setting files installed"
     fi
     echo "source ~/.profile" >> ~/.bashrc
 }
@@ -505,7 +518,7 @@ pyfmt() {
     local cmd1="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd0\" $dir"
     local cmd2="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pylint --errors-only $dir"
     local cmd3="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd2\" $dir"
-    tmux split-window -p 20 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'" 
+    tmux split-window -p 20 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'"
 }
 
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }

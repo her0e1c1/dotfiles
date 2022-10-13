@@ -16,8 +16,8 @@
   "editor.folding": false,
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "hidden",
-  "editor.copyWithSyntaxHighlighting": false, // 書式設定なしでコピー
-  "editor.glyphMargin": false, // hide breakpoints
+  "editor.copyWithSyntaxHighlighting": false,
+  "editor.glyphMargin": false,
   "editor.renderWhitespace": "all",
   "remote.containers.defaultExtensions": [
     "eamodio.gitlens",
@@ -30,5 +30,5 @@
   "go.useLanguageServer": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
-  "editor.guides.highlightActiveIndentation": true,
+  "editor.guides.highlightActiveIndentation": true
 }

@@ -122,4 +122,4 @@
     quotepath = false
 
 [push]
-	default = current
+    default = current
