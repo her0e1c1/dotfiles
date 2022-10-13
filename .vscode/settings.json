@@ -1,5 +1,4 @@
 {
-  "go.gopath": "/Users/mbp/go/",
   "mdmath.delimiters": "gitlab",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "python.formatting.provider": "autopep8",
@@ -19,8 +18,8 @@
   "editor.folding": false,
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "hidden",
-  "editor.copyWithSyntaxHighlighting": false, // 書式設定なしでコピー
-  "editor.glyphMargin": false, // hide breakpoints
+  "editor.copyWithSyntaxHighlighting": false,
+  "editor.glyphMargin": false,
   "editor.renderWhitespace": "all",
   "remote.containers.defaultExtensions": [
     "eamodio.gitlens",
