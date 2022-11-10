@@ -527,9 +527,6 @@ EOS
 
 ### GIT
 
-alias git_add_stream="git remote add upstream"
-# alias git_update="git checkout master; git fetch upstream; git merge upstream/master; git push"
-
 git_origin() { git config --get remote.origin.url; }
 git_first_commit() { git log --oneline | tail -1 | perl -nE '/(\w*?) /; say $1'; }
 
@@ -561,10 +558,6 @@ git_branch_remove_all () {
 git_pr_origin () {
     local number=$1; shift
     git_pr $number "origin"
-}
-
-git_submodule_init() {
-    git submodule init && git submodule update;
 }
 
 git_submodule_update() { git submodule update --recursive --remote; }
@@ -663,21 +656,6 @@ web_score_loading() {
     fi
 	local url="https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$1"
     curl "$url" | jq .lighthouseResult.categories.performance.score
-}
-
-aws_credentials() {
-	cat ~/.aws/credentials | perl -nlE '
-	next if not /^aws/i;
-	s/ //g;
-	m/(.*?)=(.*)/;
-	$k=$1; $v=$2;
-	$k =~ tr/a-z/A-Z/;
-	say "$k=$v";
-    '
-}
-
-aws_credentials_export () {
-    aws_credentials | perl -nlE 'say "export $_" ';
 }
 
 mac_socks5() {
