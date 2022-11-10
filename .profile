@@ -770,8 +770,7 @@ bind -x '"\eC": peco_docker_commit'
 bind -x '"\eu": "cdls .."'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
-bind -x '"\ei": stty sane'
-bind '"\ex": edit-and-execute-command'
+bind '"\ei": edit-and-execute-command'
 
 which direnv && eval "$(direnv hook bash)"
 which nodenv && eval "$(nodenv init -)"
