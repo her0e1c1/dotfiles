@@ -634,7 +634,7 @@ docker_sync () {
 
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
 
-vs () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
+open_vscode () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
 intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
 
 ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
@@ -701,6 +701,7 @@ alias cd="peco_select_dir"
 alias r="stty sane"
 alias me="docker-compose -f docker-compose.me.yml"
 alias ti="tmuxinator"
+alias vs="open_vscode"
 
 # TODO: use docker compose
 alias dc="docker-compose"
