@@ -469,34 +469,6 @@ port_forwarding() {
     eval $cmd
 }
 
-adminer() {
-    [ ! -d ~/.adminer ] && mkdir ~/.adminer
-    for path in ~/.env/pma_*.env; do
-        local name=`echo $path | perl -nlE 'm#pma_(.*?)\.env#; say $1'`
-        read_env $path
-        echo "loading $name ..."
-        cat <<EOF > ~/.adminer/${name}.php
-<?php
-function adminer_object() {
-  class AdminerSoftware extends Adminer {
-    function name() {
-      return '$name';
-    }
-    function credentials() {
-      return array('${PMA_HOST}:${PMA_PORT}', '${PMA_USER}', '${PMA_PASSWORD}');
-    }
-    function login(\$login, \$password) {
-      return true;
-    }
-  }
-  return new AdminerSoftware;
-}
-include '../adminer.php';
-EOF
-    done
-    docker run --name adminer --rm -p 9998:8080 -v ~/.adminer:/var/www/html/db adminer
-}
-
 # Add default docker options
 docker_run() {
     local image=$1; shift
