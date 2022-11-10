@@ -254,18 +254,9 @@ peco_select_find() {
     fi
 }
 
-ssh_peco () {
-    # Make sure you setup color code ~/.ssh/config
-    # PermitLocalCommand yes
-    # LocalCommand tmux select-pane -P 'bg=colour255'
+peco_ssh () {
     local q=$1
-    local host=$(cat ~/.ssh/config | perl -nlE 'say $1 if /Host (.*)/' | grep "$1" | peco --select-1)
-    stty sane;
-    if [ -n "$host" ]; then
-        echo "ssh $host"
-        ssh $host
-    fi
-    color_bg
+    cat ~/.ssh/config | perl -nlE '/^Host (.*)/ and say $1 if !/github/i' | grep "$1" | peco --select-1
 }
 
 peco_replace() {
