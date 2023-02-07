@@ -9,6 +9,7 @@ export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 export PATH=$HOME/.nodebrew/current/bin:$PATH
 export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 
+export LANG=en_US.UTF-8
 export PAGER=less
 export TERM=xterm-256color  # for zenburn-emacs
 export CLICOLOR=1  # lsに色づけ
