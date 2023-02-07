@@ -474,6 +474,10 @@ docker_run() {
            $image
 }
 
+ubuntu() {
+    docker run -it --rm -v `pwd`:`pwd` -w `pwd` ubuntu bash
+}
+
 pyfmt() {
     local dir=${1:-.}
     local cwd=`pwd`
