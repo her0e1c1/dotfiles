@@ -7,5 +7,23 @@
     {
         "key": "ctrl+t",
         "command": "terminal.focus"
+    },
+    {
+        "key": "cmd+ctrl+t",
+        "command": "workbench.action.toggleMaximizedPanel",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.terminal.focus"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.togglePanel"
     }
 ]
