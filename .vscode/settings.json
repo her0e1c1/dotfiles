@@ -30,5 +30,6 @@
   "go.useLanguageServer": true,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
-  "editor.guides.highlightActiveIndentation": true
+  "editor.guides.highlightActiveIndentation": true,
+  "go.toolsManagement.autoUpdate": true,
 }
