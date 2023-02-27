@@ -35,6 +35,10 @@ else
     export EDITOR=vi
 fi
 
+if [ -d "$HOME/go/bin" ]; then
+    export PATH="$PATH:$HOME/go/bin"
+fi
+
 ### macOS
 
 if [[ $OSTYPE == "darwin"* ]]; then
