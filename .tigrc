@@ -10,23 +10,21 @@ set vertical-split = no
 set split-view-height = 80%
 
 # Branch
-bind main    b        ?git checkout -B "%(prompt Enter branch name: )" %(commit)
+bind main    b        !git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind refs    b        !git checkout -B "%(prompt Enter branch name: )" %(commit)
 bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
 bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
-bind refs    <ESC>B   !git checkout -B %(branch) %(commit)
 
 # Checkout
 bind refs    c        !@git checkout %(branch)
-bind refs    =        !@git checkout %(branch)
-bind main    =        !@git checkout %(commit)
-bind generic -        !@git checkout -
+bind main    c        !@git checkout %(commit)
 
 # Commit
 bind generic C        !git commit -v
 bind status  C        !git commit -v
 bind main    C        !git commit -v
-bind generic +        !git commit --amend --allow-empty
+bind refs    C        !git commit -v
+bind status  +        !git commit --amend --allow-empty
 
 # Move
 bind generic <Ctrl-f> move-page-down
@@ -37,21 +35,21 @@ bind generic G        move-last-line
 bind main    G        move-last-line
 
 # Fetch
-bind main    F        !git fetch %(remote)
-bind refs    F        !git fetch %(remote)
-bind refs    r        !git pull %(remote) %(branch)
+bind main    F        !sh -c "git checkout $(git remote show %(remote) | grep 'HEAD branch' | awk '{print $NF}') && git pull %(remote) --rebase -p"
+bind refs    F        !git fetch %(remote) -p
+bind refs    r        !git pull --ff-only --rebase %(remote) %(branch):%(branch)
 
 # Push
-bind generic <Esc>P   !git push -u origin %(repo:head)
-bind refs    p        !git push -u origin %(branch)
-bind refs    <Esc>P   ?git push --force-with-lease -u origin %(branch)
+bind generic <Esc>P   !git push -u %(remote) %(repo:head)
+bind refs    <Esc>P   ?git push --force-with-lease -u %(remote) %(branch)
+bind refs    p        !git push -u %(remote) %(branch)
 
 # Merge
 bind main    M        ?git merge %(commit)
-bind diff    M        ?git merge %(commit)
 bind refs    M        ?git merge %(commit)
-bind refs    O        ?git merge -X ours %(commit)
-bind refs    T        ?git merge -X theirs %(commit)
+bind refs    ;mm      ?git merge %(commit)
+bind refs    ;mo      ?git merge -X ours %(commit)
+bind refs    ;mt      ?git merge -X theirs %(commit)
 
 # Delete
 bind refs    d        ?@sh -c "git push --delete %(remote) %(branch) &"
@@ -66,12 +64,10 @@ bind status  x        ?git clean -d -f
 bind status  D        !@rm %(file)
 
 # Stash (Status, Stash)
-bind status Y         !@git stash save
-bind stash  Y         !@git stash save
-bind status <Esc>Y    !@git stash pop
-bind stash  <Esc>Y    !@git stash pop
-bind status S         !@git stash push -m "%(prompt Enter name for stash: )" %(file)
-bind stash  S         !@git stash pop %(stash)
+bind generic Y        !git stash save
+bind status  Y        !git stash push -m "%(prompt Enter name for stash: )" %(file)
+bind stash   y        !git stash pop %(stash)
+bind generic ;sa      !git reset --merge  # for conflict
 
 # Reset
 # bind status  H        ?git reset --hard HEAD
@@ -79,22 +75,33 @@ bind reflog  H        ?git reset %(commit)
 bind main    H        ?git reset %(commit)
 
 # History
-bind diff    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
-bind tree    H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
-bind status  H        !sh -c "tig \"$(git rev-parse --show-toplevel)/%(file)\""
+bind diff    H        !tig %(file)
+bind tree    H        !tig %(file)
+bind status  H        !tig %(file)
 
-# Rebase
-bind main    I        ?git rebase -i %(commit)
-bind diff    I        ?git rebase -i %(commit)
-bind refs    I        ?git rebase -i %(branch)
-
-# Revert
+# Main
+bind main    I        !git rebase --autosquash -i %(commit)~
 bind main    R        !git revert --no-commit %(commit)
-
-# Cherry Pick
-bind main    <Esc>K   !git cherry-pick %(commit)
-bind diff    <Esc>K   !git cherry-pick %(commit)
+bind main    K        !git cherry-pick %(commit)
 
 # Others
 bind generic E        view-grep
 bind generic <Ctrl-g> refresh
+
+# gh
+bind generic ;gg      !gh browse
+bind generic ;gc      !gh pr create --fill --web --assignee "@me"
+bind generic ;gv      @>gh pr view --web
+bind generic ;gl      !gh pr list
+bind main    ;gb      @>gh browse %(commit)
+bind refs    ;gb      @>gh browse --branch %(branch)
+
+# merge
+bind generic ;ma      !git merge --abort
+bind generic ;mc      !git merge --continue
+
+# rebase
+bind generic ;ra      !git rebase --abort
+bind generic ;rc      !git rebase --continue
+bind generic ;rs      !git rebase --skip
+
