@@ -103,6 +103,11 @@ bind diff    ;gb      @>gh browse %(file)
 bind tree    ;gb      @>gh browse %(file)
 bind status  ;gb      @>gh browse %(file)
 
+# diff
+bind generic ;dd      !>tig %(commit)..%(repo:head)
+bind generic ;dr      !>tig %(repo:head)..%(commit)
+bind generic ;d3      !>tig %(commit)...%(repo:head)
+
 # merge
 bind generic ;ma      !git merge --abort
 bind generic ;mc      !git merge --continue
