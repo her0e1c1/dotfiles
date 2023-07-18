@@ -10,10 +10,9 @@ set vertical-split = no
 set split-view-height = 80%
 
 # Branch
-bind main    b        !git checkout -B "%(prompt Enter branch name: )" %(commit)
-bind refs    b        !git checkout -B "%(prompt Enter branch name: )" %(commit)
-bind main    B        ?git checkout -B remote/%(remote)/%(branch) %(commit)
-bind refs    B        !git checkout -B remote/%(remote)/%(branch) %(commit)
+bind main    b        !@git checkout -B "%(prompt Enter branch name: )" %(commit)
+bind refs    b        !@git checkout -B "%(prompt Enter branch name: )" %(commit)
+bind refs    B        !@git checkout -B %(branch) %(commit)
 
 # Checkout
 bind refs    c        !@git checkout %(branch)
@@ -35,7 +34,7 @@ bind generic G        move-last-line
 bind main    G        move-last-line
 
 # Fetch
-bind main    F        !sh -c "git checkout $(git remote show %(remote) | grep 'HEAD branch' | awk '{print $NF}') && git pull %(remote) --rebase -p"
+bind main    F        !sh -c "branch=$(git remote show %(remote) | grep 'HEAD branch' | awk '{print $NF}'); git checkout $branch; git pull %(remote) $branch --rebase -p"
 bind refs    F        !git fetch %(remote) -p
 bind refs    r        !git pull --ff-only --rebase %(remote) %(branch):%(branch)
 
@@ -75,26 +74,34 @@ bind reflog  H        ?git reset %(commit)
 bind main    H        ?git reset %(commit)
 
 # History
+bind blob    H        !tig %(file)
 bind diff    H        !tig %(file)
 bind tree    H        !tig %(file)
 bind status  H        !tig %(file)
 
-# Main
+# main
 bind main    I        !git rebase --autosquash -i %(commit)~
 bind main    R        !git revert --no-commit %(commit)
 bind main    K        !git cherry-pick %(commit)
 
-# Others
-bind generic E        view-grep
-bind generic <Ctrl-g> refresh
+# status
+bind status  R        ?git reset --hard HEAD
+
+# refs
+bind refs    v        !tig
 
 # gh
 bind generic ;gg      !gh browse
 bind generic ;gc      !gh pr create --fill --web --assignee "@me"
 bind generic ;gv      @>gh pr view --web
 bind generic ;gl      !gh pr list
+
 bind main    ;gb      @>gh browse %(commit)
 bind refs    ;gb      @>gh browse --branch %(branch)
+bind blob    ;gb      @>gh browse %(file)
+bind diff    ;gb      @>gh browse %(file)
+bind tree    ;gb      @>gh browse %(file)
+bind status  ;gb      @>gh browse %(file)
 
 # merge
 bind generic ;ma      !git merge --abort
@@ -104,4 +111,9 @@ bind generic ;mc      !git merge --continue
 bind generic ;ra      !git rebase --abort
 bind generic ;rc      !git rebase --continue
 bind generic ;rs      !git rebase --skip
+
+# Others
+bind generic E        view-grep
+bind generic <Ctrl-g> refresh
+bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote), repo:head=%(repo:head), file=%(file)"
 
