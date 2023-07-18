@@ -3,66 +3,43 @@
 
     # rebase
     rb   = rebase
-    rbi  = rebase -i --autosquash
-    rbm  = rebase -i --autosquash master
     rba  = rebase --abort
     rbc  = rebase --continue
     rbs  = rebase --skip
-    rbt  = rebase -Xtheirs master
 
     # add
     a  = add .
-    au = add -u
-    ap = add -p
 
     # fetch
     f = fetch
-    fm = fetch origin master
 
     # commit
     ci = commit -v
-    cad = commit -v --amend
     ca = commit -va
-    ciam = commit -am
 
     # status
     s = status -uno
     st = status .
 
     # checkout
-    com = checkout master
     co = checkout
-    cob = checkout -b
 
     # cherry pick
     cp = cherry-pick
     cpa = cherry-pick --abort
     cpc = cherry-pick --continue
-    cpt = cherry-pick --strategy=recursive -X theirs
 
     # diff
-    c = "diff --cached"
     d = diff .
     df = "diff --cached"
-    dfm = diff master..
-    dfp = diff upstream/production..
-    dfomh = diff origin/master..HEAD
-    dfhom = diff HEAD..origin/master
-    dff = diff ..FETCH_HEAD
     dfc = "diff --cached"
-    dfw = diff --word-diff
-    dfcw = "diff --cached" --word-diff
 
     # log
     l = log -n 5
     lp = log -p
     lg = log -g
     l1 = log --oneline
-    lm = log master..
-    lmp = log master.. -p
-    ld = 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
     today = log --since=midnight --author='$(git config user.name)' --oneline
-    author = log --pretty=format:'%an(%ae): %ad: %s'
 
     # graph log
     g = log --graph
@@ -87,26 +64,18 @@
     rsm = reset --merge
 
     # merge
-    mf = merge FETCH_HEAD
     ma = merge --abort
-    merge-ours = merge -Xours
-    merge-their = merge -Xtheir
 
     # stash
     sa  = stash
-    sav = stash save --include-untracked
     sal = stash list
     sap = stash pop
-    saa = stash apply
-    sas = stash show -p
 
     # push
-    p = push origin
-    push = push origin
-    pushup = push upstream
+    p = push
 
     # revert
-    revertc = revert --continue  
+    revertc = revert --continue
 
     ls = ls-files
 [color]
