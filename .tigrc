@@ -34,7 +34,7 @@ bind generic G        move-last-line
 bind main    G        move-last-line
 
 # Fetch
-bind main    F        !sh -c "branch=$(git remote show %(remote) | grep 'HEAD branch' | awk '{print $NF}'); git checkout $branch; git pull %(remote) $branch --rebase -p"
+bind main    F        !sh -c "branch=$(git remote show %(remote) | grep 'HEAD branch' | awk '{print $NF}'); git fetch %(remote) -p; git checkout -B $branch %(remote)/$branch"
 bind refs    F        !git fetch %(remote) -p
 bind refs    r        !git pull --ff-only --rebase %(remote) %(branch):%(branch)
 
