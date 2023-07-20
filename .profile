@@ -527,38 +527,7 @@ EOS
 
 ### GIT
 
-git_origin() { git config --get remote.origin.url; }
-git_first_commit() { git log --oneline | tail -1 | perl -nE '/(\w*?) /; say $1'; }
-
-git_update() {
-    local branch=${1-master}
-    git checkout $branch
-    # if echo `git_origin` | grep 1 ; then
-    # fi
-    git fetch upstream
-    git merge upstream/$branch
-    git push origin $branch
-}
-
 git_current_branch() { git rev-parse --abbrev-ref HEAD; }
-git_branch_remove () {
-        if [ $# -eq 0 ]; then
-        git branch
-        return
-    fi
-    local pattern=$1; shift
-    git branch | grep $pattern | xargs -n 1 -P 4 git push --delete origin
-    git branch | grep $pattern | xargs git branch -D
-}
-git_branch_remove_all () {
-    git branch | xargs -n 1 -P 4 git push --delete origin
-    git branch | xargs git branch -D
-}
-
-git_pr_origin () {
-    local number=$1; shift
-    git_pr $number "origin"
-}
 
 git_submodule_update() { git submodule update --recursive --remote; }
 
@@ -576,8 +545,6 @@ docker_edit_file() {
         docker exec -it $name ls -1aFG $fpath
     fi
 }
-
-def() { docker_edit_file "$@"; }
 
 ### OTHERS (no more used)
 
@@ -639,7 +606,6 @@ intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
 
 ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
 ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server.csr; }
-ssh_add_key() { eval `ssh-agent` && ssh-add $1; }
 
 ip_global() {
     curl http://wtfismyip.com/text
