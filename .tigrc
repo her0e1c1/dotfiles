@@ -1,3 +1,4 @@
+
 # Color
 color  diff-header       default magenta
 color  diff-chunk        black   white
@@ -123,6 +124,7 @@ bind blob    c        !git restore -s "%(prompt Restore hash: )" %(file)
 bind tree    c        !git restore -s "%(prompt Restore hash: )" %(file)
 
 # Others
+bind generic f        !>sh -c "vim $(git ls-files | peco)"
 bind generic E        view-grep
 bind generic <Ctrl-g> refresh
 bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote), repo:head=%(repo:head), file=%(file)"
