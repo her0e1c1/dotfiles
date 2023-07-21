@@ -131,3 +131,4 @@ bind generic <Ctrl-g> refresh
 bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote), repo:head=%(repo:head), file=%(file)"
 bind generic <Esc>C   +bash -c "echo -n %(commit) | pbcopy; echo copied %(commit)"
 bind generic ;vs      !>sh -c "VSCODE_CWD=$PWD open -n -b 'com.microsoft.VSCode' --args %(file)"
+bind generic <Esc>d   !<sh -c "cd $(git ls-files | xargs -n 1 dirname | uniq | sort | peco); tig"
