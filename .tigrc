@@ -24,7 +24,7 @@ bind generic C        !git commit -v
 bind status  C        !git commit -v
 bind main    C        !git commit -v
 bind refs    C        !git commit -v
-bind status  +        !git commit --amend --allow-empty
+bind generic +        !git commit --amend --allow-empty
 
 # Move
 bind generic <Ctrl-f> move-page-down
@@ -84,6 +84,7 @@ bind status  H        !tig %(file)
 bind main    I        !git rebase --autosquash -i %(commit)~
 bind main    R        !git revert --no-commit %(commit)
 bind main    K        !git cherry-pick %(commit)
+bind main    S        ?git reset --soft %(commit)
 
 # status
 bind status  R        ?git reset --hard HEAD
