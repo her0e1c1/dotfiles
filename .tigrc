@@ -69,11 +69,6 @@ bind status  Y        !git stash push -m "%(prompt Enter name for stash: )" %(fi
 bind stash   y        !git stash pop %(stash)
 bind generic ;sa      !git reset --merge  # for conflict
 
-# Reset
-# bind status  H        ?git reset --hard HEAD
-bind reflog  H        ?git reset %(commit)
-bind main    H        ?git reset %(commit)
-
 # History
 bind blob    H        !tig %(file)
 bind diff    H        !tig %(file)
@@ -92,6 +87,12 @@ bind status  R        ?git reset --hard HEAD
 
 # refs
 bind refs    v        !tig
+
+# reflog
+bind reflog  R        ?git reset %(commit)
+bind reflog  H        ?git reset --hard %(commit)
+bind reflog  S        ?git reset --soft %(commit)
+bind reflog  b        !@git checkout -B "%(prompt Enter branch name: )" %(commit)
 
 # gh
 bind generic ;gg      !>gh browse
