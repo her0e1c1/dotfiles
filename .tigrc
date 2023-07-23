@@ -82,6 +82,7 @@ bind status  H        !tig %(file)
 
 # main
 bind main    I        !git rebase --autosquash -i %(commit)~
+bind main    O        !git rebase --onto "%(prompt Rebase branch)" %(commit)~ %(repo:head)
 bind main    R        !git revert --no-commit %(commit)
 bind main    K        !git cherry-pick %(commit)
 bind main    S        ?git reset --soft %(commit)
