@@ -52,16 +52,16 @@ bind refs    ;mo      ?git merge -X ours %(commit)
 bind refs    ;mt      ?git merge -X theirs %(commit)
 
 # Delete
-bind refs    d        ?@sh -c "git push --delete %(remote) %(branch) &"
-bind refs    P        !git remote update --prune
-bind refs    D        !@git branch -D %(branch)
-bind stash   D        !@git stash drop %(stash)
-bind tree    D        !git rm %(file)
-
-## FIXME
-bind refs    <Ctrl-d> !git tag -d %(tag)
-bind status  x        ?git clean -d -f
-bind status  D        !@rm %(file)
+bind generic d        none
+bind refs    dd       !@git branch -D %(branch)
+bind stash   dd       !@git stash drop %(stash)
+bind tree    dd       !git rm %(file)
+bind status  dd       !@rm %(file)
+bind blame   dd       !@rm %(file)
+bind refs    dr       ?@sh -c "git push --delete %(remote) %(branch) &"
+bind refs    dp       !git remote update --prune
+bind refs    dt       !git tag -d %(tag)
+bind status  dc       ?git clean -d -f
 
 # Stash (Status, Stash)
 bind generic Y        !git stash save
@@ -70,10 +70,7 @@ bind stash   y        !git stash pop %(stash)
 bind generic ;sa      !git reset --merge  # for conflict
 
 # History
-bind blob    H        !tig %(file)
-bind diff    H        !tig %(file)
-bind tree    H        !tig %(file)
-bind status  H        !tig %(file)
+bind generic H        !tig %(file)
 
 # main
 bind main    I        !git rebase --autosquash -i %(commit)~
@@ -86,7 +83,7 @@ bind main    S        ?git reset --soft %(commit)
 bind status  R        ?git reset --hard HEAD
 
 # refs
-bind refs    v        !tig
+bind refs    R        ?git rebase %(branch)
 
 # reflog
 bind reflog  R        ?git reset %(commit)
@@ -123,11 +120,11 @@ bind generic ;rc      !git rebase --continue
 bind generic ;rs      !git rebase --skip
 
 # restore
-bind blob    c        !git restore -s "%(prompt Restore hash: )" %(file)
+bind blame   c        !git restore -s "%(commit)" %(file)
 bind tree    c        !git restore -s "%(prompt Restore hash: )" %(file)
 
 # Others
-bind generic f        !>sh -c "vi $(git ls-files | peco)"
+bind generic f        !<sh -c "tig blame -- $(git ls-files | peco)"
 bind generic e        !>vi %(file)
 bind generic E        view-grep
 bind generic <Ctrl-g> refresh
@@ -135,3 +132,4 @@ bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote)
 bind generic <Esc>C   +bash -c "echo -n %(commit) | pbcopy; echo copied %(commit)"
 bind generic ;vs      !>sh -c "VSCODE_CWD=$PWD open -n -b 'com.microsoft.VSCode' --args %(file)"
 bind generic <Esc>d   !<sh -c "cd $(git ls-files | xargs -n 1 dirname | uniq | sort | peco); tig"
+bind generic .        !<sh -c "cd $(dirname %(file)); tig"
