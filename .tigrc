@@ -85,6 +85,9 @@ bind status  R        ?git reset --hard HEAD
 # refs
 bind refs    R        ?git rebase %(branch)
 
+# tree
+bind tree    n        !touch "%(prompt new file name: )"
+
 # reflog
 bind reflog  R        ?git reset %(commit)
 bind reflog  H        ?git reset --hard %(commit)
