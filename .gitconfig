@@ -1,4 +1,5 @@
 [alias]
+    sb = show-branch
     rt = remote
 
     # rebase
