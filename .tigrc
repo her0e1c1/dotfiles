@@ -97,6 +97,7 @@ bind generic ;gc      !>gh pr create --fill --web --assignee "@me"
 bind generic ;gv      @>gh pr view --web
 bind generic ;gl      !gh pr list
 
+bind blame   v        @>gh browse %(file)
 bind main    ;gb      @>gh browse %(commit)
 bind refs    ;gb      @>gh browse --branch %(branch)
 bind blob    ;gb      @>gh browse %(file)
@@ -123,9 +124,12 @@ bind generic ;rs      !git rebase --skip
 bind blame   c        !git restore -s "%(commit)" %(file)
 bind tree    c        !git restore -s "%(prompt Restore hash: )" %(file)
 
+# edit
+bind generic e        !>vi %(file)
+bind main e           !>sh -c "vi $(git ls-files | peco)"
+
 # Others
 bind generic f        !<sh -c "tig blame -- $(git ls-files | peco)"
-bind generic e        !>vi %(file)
 bind generic E        view-grep
 bind generic <Ctrl-g> refresh
 bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote), repo:head=%(repo:head), file=%(file)"
