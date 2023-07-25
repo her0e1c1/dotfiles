@@ -140,8 +140,8 @@ bind main e           !>sh -c "vi $(git ls-files | peco)"
 bind generic f        !<sh -c "tig blame -- $(git ls-files | peco)"
 bind generic E        view-grep
 bind generic <Ctrl-g> refresh
-bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote), repo:head=%(repo:head), file=%(file)"
+bind generic ;var     !+sh -c "echo remote=%(remote), repo:remote=%(repo:remote), repo:head=%(repo:head), file=%(file), dir=%(directory)"
 bind generic <Esc>C   +bash -c "echo -n %(commit) | pbcopy; echo copied %(commit)"
 bind generic ;vs      !>sh -c "VSCODE_CWD=$PWD open -n -b 'com.microsoft.VSCode' --args %(file)"
 bind generic <Esc>d   !<sh -c "cd $(git ls-files | xargs -n 1 dirname | uniq | sort | peco); tig"
-bind generic .        !<sh -c "cd $(dirname %(file)); tig"
+bind generic .        !<sh -c "cd %(directory); tig"
