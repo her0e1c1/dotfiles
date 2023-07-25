@@ -68,7 +68,8 @@ bind status  dc       ?git clean -d -f
 # Stash (Status, Stash)
 bind generic Y        !git stash save
 bind status  Y        !git stash push -m "%(prompt Enter name for stash: )" %(file)
-bind stash   y        !git stash pop %(stash)
+bind stash   Y        ?git stash pop %(stash)
+bind stash   y        !git stash apply %(stash)
 bind generic ;sa      !git reset --merge  # for conflict
 
 # History
