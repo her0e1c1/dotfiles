@@ -109,9 +109,9 @@ bind tree    ;gb      @>gh browse %(file)
 bind status  ;gb      @>gh browse %(file)
 
 # diff
-bind generic ;dd      !>tig %(commit)..%(repo:head)
-bind generic ;dr      !>tig %(repo:head)..%(commit)
-bind generic ;d3      !>tig %(commit)...%(repo:head)
+bind generic ;dd      !>sh -c "git diff %(commit)..%(repo:head) | tig"
+bind generic ;dr      !>sh -c "git diff %(repo:head)..%(commit) | tig"
+bind generic ;d3      !>sh -c "git diff %(commit)...%(repo:head) | tig"
 bind generic ;df      !>sh -c 'git diff "%(prompt Compare hash: )" %(file) | tig'
 
 # merge
