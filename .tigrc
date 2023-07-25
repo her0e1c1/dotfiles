@@ -127,6 +127,9 @@ bind generic ;rs      !git rebase --skip
 bind blame   c        !git restore -s "%(commit)" %(file)
 bind tree    c        !git restore -s "%(prompt Restore hash: )" %(file)
 
+# submodule
+bind generic ;si      !git submodule update --init
+
 # edit
 bind generic e        !>vi %(file)
 bind main e           !>sh -c "vi $(git ls-files | peco)"
