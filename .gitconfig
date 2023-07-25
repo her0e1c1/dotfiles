@@ -57,12 +57,6 @@
 
     # reset
     rs = reset
-    rso = reset ORIG_HEAD --hard
-    rs0 = reset HEAD --hard
-    rs1 = reset HEAD^ --hard
-    rsh = reset --hard
-    rss = reset --soft
-    rsm = reset --merge
 
     # merge
     ma = merge --abort
@@ -75,8 +69,6 @@
     # push
     p = push
 
-    # revert
-    revertc = revert --continue
 
     ls = ls-files
 [color]
