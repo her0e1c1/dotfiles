@@ -56,5 +56,8 @@
     "*.rmd": "markdown"
   },
   "editor.guides.highlightActiveIndentation": true,
-  "security.workspace.trust.untrustedFiles": "open"
+  "security.workspace.trust.untrustedFiles": "open",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
