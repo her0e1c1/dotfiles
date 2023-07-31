@@ -16,9 +16,10 @@
   "editor.folding": false,
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "hidden",
-  "editor.copyWithSyntaxHighlighting": false,
-  "editor.glyphMargin": false,
+  "editor.copyWithSyntaxHighlighting": false, // 書式設定なしでコピー
+  "editor.glyphMargin": false, // hide breakpoints
   "editor.renderWhitespace": "all",
+  "editor.acceptSuggestionOnCommitCharacter": false,
   "remote.containers.defaultExtensions": [
     "eamodio.gitlens",
     "formulahendry.code-runner"
@@ -28,8 +29,32 @@
   "terminal.integrated.rendererType": "dom",
   "go.formatTool": "goimports",
   "go.useLanguageServer": true,
+  "python.languageServer": "Pylance",
+  "editor.accessibilitySupport": "off",
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "window.zoomLevel": 3,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
+  "git.autofetch": true,
+  "java.project.importOnFirstTimeStartup": "automatic",
+  "files.exclude": {
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "redhat.telemetry.enabled": true,
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "files.associations": {
+    "*.rmd": "markdown"
+  },
   "editor.guides.highlightActiveIndentation": true,
-  "go.toolsManagement.autoUpdate": true,
+  "security.workspace.trust.untrustedFiles": "open"
 }
