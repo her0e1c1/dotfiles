@@ -104,6 +104,8 @@ bind generic ;gv      @>gh pr view --web
 bind generic ;gl      !gh pr list
 
 bind blame   v        @>gh browse %(file)
+bind main    v        @>gh browse %(commit)
+bind tree    v        @>gh browse %(file)
 bind main    ;gb      @>gh browse %(commit)
 bind refs    ;gb      @>gh browse --branch %(branch)
 bind blob    ;gb      @>gh browse %(file)
