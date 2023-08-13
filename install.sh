@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "try to run install.sh"
 
 if [ "$CODESPACES" ==  true ]; then
