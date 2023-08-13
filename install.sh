@@ -3,7 +3,6 @@
 echo "try to run install.sh"
 
 if [ "$CODESPACES" ==  true ]; then
-  #apt update -y
-  apt install tig;
-  apt install peco;
+  apt-get update -y
+  apt-get install -y tig peco;
 fi
