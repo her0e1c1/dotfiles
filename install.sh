@@ -7,7 +7,7 @@ if [ "$CODESPACES" ==  true ]; then
   sudo apt-get install -y tig peco;
   for file in .*; do
         if [ -f $file ]; then
-            ln -sf $file ~/$file
+            cp -f $file ~/$file
         fi
     done
 fi
