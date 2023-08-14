@@ -4,7 +4,7 @@ echo "try to run install.sh　at $(pwd)"
 
 if [ "$CODESPACES" ==  true ]; then
   sudo apt-get update -y
-  sudo apt-get install -y tig peco tmux;
+  sudo apt-get install -y tig peco tmux vim;
   for file in .*; do
         if [ -f $file ]; then
             cp -f $file ~/$file
