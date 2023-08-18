@@ -1,14 +1,10 @@
 {
   "mdmath.delimiters": "gitlab",
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "python.formatting.provider": "autopep8",
-  "python.linting.lintOnSave": true,
-  "python.linting.enabled": true,
   "git.confirmSync": false,
   "files.trimTrailingWhitespace": true,
   "breadcrumbs.enabled": true,
   "workbench.activityBar.visible": false,
-  "workbench.editor.showTabs": true,
+  "workbench.editor.showTabs": false,
   "editor.minimap.enabled": false,
   "editor.hideCursorInOverviewRuler": true,
   "editor.lineNumbers": "off",
@@ -20,13 +16,12 @@
   "editor.glyphMargin": false, // hide breakpoints
   "editor.renderWhitespace": "all",
   "editor.acceptSuggestionOnCommitCharacter": false,
-  "remote.containers.defaultExtensions": [
+  "dev.containers.defaultExtensions": [
     "eamodio.gitlens",
     "formulahendry.code-runner"
   ],
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-  "terminal.integrated.rendererType": "dom",
   "go.formatTool": "goimports",
   "go.useLanguageServer": true,
   "python.languageServer": "Pylance",
@@ -57,7 +52,14 @@
   },
   "editor.guides.highlightActiveIndentation": true,
   "security.workspace.trust.untrustedFiles": "open",
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "githubPullRequests.pullBranch": "never"
 }
