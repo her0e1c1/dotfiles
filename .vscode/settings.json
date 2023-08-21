@@ -1,5 +1,4 @@
 {
-  "mdmath.delimiters": "gitlab",
   "git.confirmSync": false,
   "files.trimTrailingWhitespace": true,
   "breadcrumbs.enabled": true,
@@ -65,6 +64,5 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "githubPullRequests.pullBranch": "never",
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
