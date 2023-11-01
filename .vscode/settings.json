@@ -1,5 +1,4 @@
 {
-  "mdmath.delimiters": "gitlab",
   "git.confirmSync": false,
   "files.trimTrailingWhitespace": true,
   "breadcrumbs.enabled": true,
@@ -30,7 +29,7 @@
     "*.ipynb": "jupyter-notebook"
   },
   "go.toolsManagement.autoUpdate": true,
-  "window.zoomLevel": 3,
+  "window.zoomLevel": 1,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "git.autofetch": true,
@@ -65,5 +64,5 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "githubPullRequests.pullBranch": "never"
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
