@@ -666,6 +666,7 @@ alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias r="stty sane"
 alias me="docker-compose -f docker-compose.me.yml"
+alias mesh="docker-compose -f docker-compose.me.yml run sh"
 alias ti="tmuxinator"
 alias vs="open_vscode"
 
