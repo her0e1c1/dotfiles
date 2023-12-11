@@ -1,5 +1,6 @@
 {
   "git.confirmSync": false,
+  "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "breadcrumbs.enabled": true,
   "workbench.activityBar.visible": false,
