@@ -666,14 +666,15 @@ alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias r="stty sane"
 alias me="docker-compose -f docker-compose.me.yml"
-alias mesh="docker-compose -f docker-compose.me.yml run sh"
+alias mesh="docker-compose -f docker-compose.me.yml run --remove-orphans sh"
 alias ti="tmuxinator"
 alias vs="open_vscode"
 
 # TODO: use docker compose
 alias dc="docker-compose"
-alias dcr="docker-compose run"
+alias dcr="docker-compose run --remove-orphans"
 alias dcu="docker-compose up"
+alias dcd="docker-compose down --remove-orphans"
 
 ### BINDS
 
