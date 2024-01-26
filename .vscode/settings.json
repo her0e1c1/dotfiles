@@ -3,8 +3,7 @@
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "breadcrumbs.enabled": true,
-  "workbench.activityBar.visible": false,
-  "workbench.editor.showTabs": false,
+  "workbench.editor.showTabs": "single",
   "editor.minimap.enabled": false,
   "editor.hideCursorInOverviewRuler": true,
   "editor.lineNumbers": "off",
@@ -21,34 +20,33 @@
     "formulahendry.code-runner"
   ],
   "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-  "go.formatTool": "goimports",
-  "go.useLanguageServer": true,
   "python.languageServer": "Pylance",
   "editor.accessibilitySupport": "off",
   "workbench.editorAssociations": {
     "*.ipynb": "jupyter-notebook"
   },
-  "go.toolsManagement.autoUpdate": true,
-  "window.zoomLevel": 1,
+  "window.zoomLevel": 3,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "git.autofetch": true,
-  "java.project.importOnFirstTimeStartup": "automatic",
   "files.exclude": {
     "**/.classpath": true,
     "**/.project": true,
     "**/.settings": true,
+    "**/__pycache__": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
     "**/.factorypath": true
   },
-  "redhat.telemetry.enabled": true,
   "notebook.cellToolbarLocation": {
     "default": "right",
     "jupyter-notebook": "left"
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "files.associations": {
-    "*.rmd": "markdown"
+    "*.rmd": "markdown",
+    "*.md": "markdown",
+    "*.yaml": "yaml"
   },
   "editor.guides.highlightActiveIndentation": true,
   "security.workspace.trust.untrustedFiles": "open",
@@ -65,5 +63,15 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "workbench.activityBar.location": "hidden",
+  "git.openRepositoryInParentFolders": "never",
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "remote.autoForwardPortsSource": "hybrid",
+  "debug.openDebug": "neverOpen"
 }
