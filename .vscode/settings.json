@@ -73,5 +73,6 @@
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
   "remote.autoForwardPortsSource": "hybrid",
-  "debug.openDebug": "neverOpen"
+  "debug.openDebug": "neverOpen",
+  "testing.automaticallyOpenPeekView": "never"
 }
