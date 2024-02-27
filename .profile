@@ -648,6 +648,27 @@ mac_socks5() {
     echo "DONE"
 }
 
+traefik_start() {
+    if ! docker info >/dev/null 2>&1; then
+       echo "You need to start docker first to start trafik"
+       return 0
+    fi
+    local lockfile=/tmp/traefik_start.lock
+    if mkdir $lockfile >/dev/null 2>&1; then
+        if ! docker ps -a --format "{{.Names}}" | grep -x traefik >/dev/null 2>&1; then
+            echo "Start traefik ..."
+            docker run -d -it --rm --name traefik -v /var/run/docker.sock:/var/run/docker.sock -p 80:80 traefik:v2.10 \
+            --api.insecure=true \
+            --providers.docker=true \
+            --providers.docker.exposedbydefault=false \
+            --entrypoints.web.address=:80
+        fi
+        rmdir $lockfile
+    else
+        echo "Can not start traefik. You need to remove '$lockfile' directory manually"
+    fi
+}
+
 ### ALIAS
 
 alias vim='peco_select_recent_files'
