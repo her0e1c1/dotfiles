@@ -660,6 +660,7 @@ traefik_start() {
             docker run -d -it --rm --name traefik -v /var/run/docker.sock:/var/run/docker.sock -p 80:80 traefik:v2.10 \
             --api.insecure=true \
             --providers.docker=true \
+            --providers.docker.network=bridge \
             --providers.docker.exposedbydefault=false \
             --entrypoints.web.address=:80
         fi
