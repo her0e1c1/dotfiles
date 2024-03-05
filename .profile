@@ -657,7 +657,7 @@ traefik_start() {
     if mkdir $lockfile >/dev/null 2>&1; then
         if ! docker ps -a --format "{{.Names}}" | grep -x traefik >/dev/null 2>&1; then
             echo "Start traefik ..."
-            docker run -d -it --rm --name traefik -v /var/run/docker.sock:/var/run/docker.sock -p 80:80 traefik:v2.10 \
+            docker run -d -it --rm --name traefik -v /var/run/docker.sock:/var/run/docker.sock -p 8888:80 traefik:v2.10 \
             --api.insecure=true \
             --providers.docker=true \
             --providers.docker.network=bridge \
