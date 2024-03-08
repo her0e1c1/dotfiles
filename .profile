@@ -321,6 +321,7 @@ docker_purge() {
         docker container prune -f
         docker volume prune -f
         docker system prune -f
+        docker image prune -f
     else
         echo "DO NOTHING"
     fi
@@ -694,7 +695,7 @@ alias vs="open_vscode"
 
 # TODO: use docker compose
 alias dc="docker-compose"
-alias dcr="docker-compose run --remove-orphans"
+alias dcr="docker-compose run --remove-orphans --rm"
 alias dcu="docker-compose up"
 alias dcd="docker-compose down --remove-orphans --volumes"
 
