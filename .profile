@@ -696,7 +696,7 @@ alias vs="open_vscode"
 alias dc="docker-compose"
 alias dcr="docker-compose run --remove-orphans"
 alias dcu="docker-compose up"
-alias dcd="docker-compose down --remove-orphans"
+alias dcd="docker-compose down --remove-orphans --volumes"
 
 ### BINDS
 
