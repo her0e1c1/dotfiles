@@ -1,3 +1,4 @@
+set -eu
 echo "LOADING ... `hostname`"
 
 ### EXPORT
@@ -42,7 +43,7 @@ fi
 ### macOS
 
 if [[ $OSTYPE == "darwin"* ]]; then
-    ssh-add --apple-load-keychain  # ssh-add --apple-use-keychain ~/.ssh/[your-private-key]
+    # DO NOTHING
 fi
 
 ### INSTALL IF NEEDED
@@ -192,7 +193,6 @@ open_file() {
     else
         $EDITOR $file
     fi
-
 }
 
 ### PECO
@@ -335,14 +335,14 @@ docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <doc
 docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /dev/null; }
 docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
 docker_working() { docker inspect $1 | python3 -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
-docker_alias() { docker tag $1 $2; }
 docker_export() { docker export $1 | tar tf -; }
-images_rstudio() { docker run --name rstudio -v `pwd`:/w -w /wn --rm -it -p 8787:8787 rocker/hadleyverse; }
 docker_push () {
     local image=$1; shift
     docker tag $image $DOCKER_ID_USER/$image
     docker push $DOCKER_ID_USER/$image
 }
+
+### emacs
 
 emacs() {
     if docker_find_process_name emacs; then
@@ -397,7 +397,6 @@ de() {
             docker start $name
         fi
         if [ $# -ne 0 ]; then
-            # $@はかなり特殊な変数(配列っぽい動きする。そのため他の変数に代入できないっぽい)
             docker exec -it --detach-keys ctrl-q,q $name $@
         else
             # docker exec -it --detach-keys ctrl-q,q $name sh -c "cd `pwd`; exec /bin/bash --init-file /etc/profile"
@@ -484,16 +483,6 @@ ubuntu() {
     docker run -it --rm -v `pwd`:`pwd` -w `pwd` ubuntu bash
 }
 
-pyfmt() {
-    local dir=${1:-.}
-    local cwd=`pwd`
-    local cmd0="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pycodestyle --max-line-length=120 $dir"
-    local cmd1="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd0\" $dir"
-    local cmd2="clear; docker run -it --rm -v $cwd:/w -w /w her0e1c1/dev:py pylint --errors-only $dir"
-    local cmd3="watchmedo shell-command -W --recursive --pattern \"*.py;\" --command \"$cmd2\" $dir"
-    tmux split-window -p 20 "tmux split-window -hp 100 '$cmd0; $cmd1'; tmux split-window -hp 50 '$cmd2; $cmd3'"
-}
-
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
 
 update_files () {
@@ -549,64 +538,11 @@ docker_edit_file() {
 
 ### OTHERS (no more used)
 
-# docker run のタイミングでsyncもできるようにするか(指定したディレクトリを監視するみたいな)
-# または、cp cpを2回繰り返す! (または docker-sync name /path ./host_side)
-# host側のイベントを取りにいけない...
-docker_sync () {
-    if [ $# -eq 1 ]; then
-        docker exec -it $1 /bin/bash
-        return 0
-    fi
-
-    local name=$1; shift
-    local src=$1; shift
-    local sync=".docker-sync/$name/`basename $src`"
-    local trim=`perl -E '\$_=\$ARGV[0]; s#/*\$## and say' $src`
-    local working=`docker_working $name`
-
-    echo "cd $working"
-    \cd $working
-
-    # コンテナに必ずしもrsyncがインストールされているとは限らないが必須
-    if ! docker exec $name which rsync; then
-        echo "Install rsync on $name"
-        docker exec $name apt-get update -y;
-        if ! docker exec $name apt-get install -y rsync; then
-            return 1
-        fi
-    fi
-
-    if ! docker exec $name test -d $sync; then
-        local d=`dirname $sync`
-        docker exec $name sh -c "[ ! -d $d ] && mkdir -p $d"
-
-        # echo "cp $src $sync on host"
-        # docker exec $name cp -r $src $sync
-
-        echo "rsync $sync on host"
-        # docker exec $name rsync -avz --exclude '*.git*' $trim/ $sync
-        docker exec $name rsync -avz $trim/ $sync
-    fi
-    if docker exec $name test -d $sync; then
-        if [ -d "$sync" ]; then
-            echo "start sync ... on $working"
-            echo watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
-            watchmedo shell-command -R "$sync" -c "docker exec $name rsync -avz --exclude '*.git*' $sync/ $trim" $@
-        else
-            echo "You can't sync on `pwd`. Go to $sync on host"
-        fi
-    else
-        echo "$sync dir is not found on docker."
-    fi
-}
-
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
 
 open_vscode () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
-intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
 
-ssl_expired() { openssl s_client -connect $1:443 < /dev/null | openssl x509 -text |grep Not; }
-ssl_crt() { openssl req -nodes -newkey rsa:2048 -keyout myserver.key -out server.csr; }
+intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
 
 ip_global() {
     curl http://wtfismyip.com/text
