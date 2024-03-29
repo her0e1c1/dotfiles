@@ -607,6 +607,15 @@ traefik_start() {
     fi
 }
 
+html_serve() {
+    local cwd=${1:-.}
+    local port=${2:-8121}
+    (
+        cd $cwd
+        python3 -m http.server $port
+    )
+}
+
 ### ALIAS
 
 alias vim='peco_select_recent_files'
