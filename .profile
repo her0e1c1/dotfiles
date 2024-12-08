@@ -616,6 +616,11 @@ html_serve() {
     )
 }
 
+kubectl_kustomize () {
+    local cwd=${1:-.}
+    kubectl kustomize --enable-helm $cwd | kubectl apply -f -
+}
+
 ### ALIAS
 
 alias vim='peco_select_recent_files'
@@ -625,6 +630,7 @@ alias docker_down="docker-compose down  --remove-orphans"
 alias g="git"
 alias k="kubectl"
 alias ka="kubectl apply -f"
+alias kk="kubectl_kustomize"
 alias ll='ls -alF'
 alias ls='ls -aCF'
 alias sl=ls
