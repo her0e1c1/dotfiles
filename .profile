@@ -647,7 +647,7 @@ alias ti="tmuxinator"
 alias vs="open_vscode"
 
 # TODO: use docker compose
-alias dc="docker-compose"
+alias dc="docker compose"
 alias dcr="docker compose run --remove-orphans --rm"
 alias dcu="docker compose up"
 alias dcd="docker compose down --remove-orphans --volumes"
