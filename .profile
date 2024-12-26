@@ -12,38 +12,20 @@ export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 
 export LANG=en_US.UTF-8
 export PAGER=less
-export TERM=xterm-256color  # for zenburn-emacs
-export CLICOLOR=1  # lsに色づけ
+export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
 export KARABINER_ASSETS="$HOME/.config/karabiner/assets/complex_modifications/"
 export KARABINER_CONFIG="$HOME/.config/karabiner"
 
+# CUSTOM ENV VARS
 export MYDIRS_HISTORY=~/.mydirs
 export RECENT_FILES=~/.recent_files
-
-if [ -d "/usr/local/opt/go/libexec" ]; then
-    export GOROOT=/usr/local/opt/go/libexec
-elif [ -d "/opt/homebrew/opt/go/libexec" ]; then
-    export GOROOT="/opt/homebrew/opt/go/libexec"
-elif [ -d "$(brew --prefix golang)/libexec" ]; then
-    export GOROOT="$(brew --prefix golang)/libexec"
-fi
 
 if [ -n "$(which vim)" ]; then
     export EDITOR=vim
 else
     export EDITOR=vi
-fi
-
-if [ -d "$HOME/go/bin" ]; then
-    export PATH="$PATH:$HOME/go/bin"
-fi
-
-### macOS
-
-if [[ $OSTYPE == "darwin"* ]]; then
-    :  # DO NOTHING
 fi
 
 ### INSTALL IF NEEDED
@@ -429,23 +411,6 @@ dr() {
     fi
 }
 
-read_env() {
-    local envfile=$1
-    local prefix=$2
-    if [ -z $envfile ]; then
-        envfile=`ls -1 ~/.env/${prefix}*.env | peco --select-1`
-    fi
-    if [ ! -f $envfile ]; then
-        echo "NO FILE $envfile" >&2;
-        return 1
-    fi
-    local tmp=`mktemp`
-    cat $envfile | perl -plE 's/^/export /' > $tmp
-    source $tmp
-    rm $tmp
-    return 0
-}
-
 port_forwarding() {
     local envfile=$1
     if [ -z $envfile ]; then
@@ -477,10 +442,6 @@ docker_run() {
            -v ~/.profile:/etc/profile -v /Users:/Users \
            --detach-keys ctrl-q,q \
            $image
-}
-
-ubuntu() {
-    docker run -it --rm -v `pwd`:`pwd` -w `pwd` ubuntu bash
 }
 
 gr () { find . -type f -exec grep -nH -e $1 {} \;; }
@@ -646,7 +607,6 @@ alias mesh="docker-compose -f docker-compose.me.yml run --remove-orphans sh"
 alias ti="tmuxinator"
 alias vs="open_vscode"
 
-# TODO: use docker compose
 alias dc="docker compose"
 alias dcr="docker compose run --remove-orphans --rm"
 alias dcu="docker compose up"
