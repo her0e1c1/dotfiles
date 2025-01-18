@@ -585,8 +585,9 @@ kubectl_kustomize () {
 ### ALIAS
 
 alias vim='peco_select_recent_files'
-alias vi='vim'
-alias v='vim'
+alias vi="nvim"
+alias v='nvim'
+alias m='make'
 alias docker_down="docker-compose down  --remove-orphans"
 alias g="git"
 alias k="kubectl"
@@ -610,6 +611,7 @@ alias vs="open_vscode"
 alias dc="docker compose"
 alias dcr="docker compose run --remove-orphans --rm"
 alias dcu="docker compose up"
+alias dcw="docker compose up --remove-orphans --force-recreate --watch watch"
 alias dcd="docker compose down --remove-orphans --volumes"
 
 ### BINDS
