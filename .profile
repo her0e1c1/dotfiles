@@ -257,7 +257,7 @@ peco_replace() {
 
 peco_grep_word() {
     local w=""
-    if [ $# -eq 0 ];then
+    if [ $# -eq 0 ]; then
         read -p "Enter search word: " w
     else
         w=$1; shift
@@ -585,6 +585,21 @@ html_serve() {
 kubectl_kustomize () {
     local cwd=${1:-.}
     kubectl kustomize --enable-helm $cwd | kubectl apply -f -
+}
+
+replace () {
+    if [ $# -lt 2 ]; then
+        echo 'USAGE: replace FILE_PATTERN WORD_SUBSTITUTION (perl)'
+        echo 'if confirmed, call replace_ok'
+        return 1
+    fi
+    local p=$1 s=$2
+    find . | grep -E "$p" | xargs perl -nlE "$s and say qq/\$ARGV[0]: \$_/"
+}
+
+replace_ok () {
+    local p=$1 s=$2
+    replace "$@" && find . | grep -E "$p" | xargs perl -i -plE "$s"
 }
 
 ### ALIAS
