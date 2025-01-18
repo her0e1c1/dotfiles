@@ -547,6 +547,7 @@ mac_socks5() {
 }
 
 traefik_start() {
+    local port=${1:-8888}
     if ! docker info >/dev/null 2>&1; then
        echo "You need to start docker first to start trafik"
        return 0
@@ -555,7 +556,7 @@ traefik_start() {
     if mkdir $lockfile >/dev/null 2>&1; then
         if ! docker ps -a --format "{{.Names}}" | grep -x traefik >/dev/null 2>&1; then
             echo "Start traefik ..."
-            docker run -d -it --rm --name traefik -v /var/run/docker.sock:/var/run/docker.sock -p 8888:80 traefik:v2.10 \
+            docker run -d -it --rm --name traefik -v /var/run/docker.sock:/var/run/docker.sock -p $port:80 traefik:v2.10 \
             --api.insecure=true \
             --providers.docker=true \
             --providers.docker.network=bridge \
@@ -566,6 +567,10 @@ traefik_start() {
     else
         echo "Can not start traefik. You need to remove '$lockfile' directory manually"
     fi
+}
+
+traefik_end() {
+    docker rm --force traefik
 }
 
 html_serve() {
@@ -600,14 +605,14 @@ alias l=ls
 alias sudo="sudo "  # sudo時にアリアス有効
 alias f="peco_select_recent_files"
 alias w="peco_grep_word"
-alias d="peco_select_dir"
 alias cd="peco_select_dir"
 alias r="stty sane"
-alias me="docker-compose -f docker-compose.me.yml"
-alias mesh="docker-compose -f docker-compose.me.yml run --remove-orphans sh"
+alias me="docker compose -f docker-compose.me.yml"
+alias mesh="docker compose -f docker-compose.me.yml run --remove-orphans sh"
 alias ti="tmuxinator"
 alias vs="open_vscode"
 
+alias d="docker"
 alias dc="docker compose"
 alias dcr="docker compose run --remove-orphans --rm"
 alias dcu="docker compose up"
