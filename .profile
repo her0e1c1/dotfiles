@@ -324,6 +324,10 @@ docker_push () {
     docker push $DOCKER_ID_USER/$image
 }
 
+docker_compose_down() {
+    docker compose ls --quiet | xargs -I{} docker compose -p {} down -v
+}
+
 ### emacs
 
 emacs() {
