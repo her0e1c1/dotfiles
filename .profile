@@ -1,19 +1,19 @@
 set -eu
-echo "LOADING ... `hostname`"
+echo "LOADING .profile at `hostname` ..."
 
 ### EXPORT
 
 export PS1="\u@\w\n$ "
 
-export PATH="$HOME/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
+# export PATH="$HOME/bin:$PATH"
+# export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
+# export PATH=$HOME/.nodebrew/current/bin:$PATH
+# export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
 
-export LANG=en_US.UTF-8
-export PAGER=less
-export CLICOLOR=1
-export LSCOLORS=DxGxcxdxCxegedabagacad
+# export LANG=en_US.UTF-8
+# export PAGER=less
+# export CLICOLOR=1
+# export LSCOLORS=DxGxcxdxCxegedabagacad
 export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
 export KARABINER_ASSETS="$HOME/.config/karabiner/assets/complex_modifications/"
 export KARABINER_CONFIG="$HOME/.config/karabiner"
@@ -21,9 +21,8 @@ export KARABINER_CONFIG="$HOME/.config/karabiner"
 # CUSTOM ENV VARS
 export MYDIRS_HISTORY=~/.mydirs
 export RECENT_FILES=~/.recent_files
-
-if [ -n "$(which vim)" ]; then
-    export EDITOR=vim
+if [ -n "$(which nvim)" ]; then
+    export EDITOR=nvim
 else
     export EDITOR=vi
 fi
@@ -64,13 +63,14 @@ debug () { set -x; $@; set +x; }
 exists () { test -e "$(which $1)"; }
 repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
-chomp () { perl -pE "chomp \$_"; }
 color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
+
 abspath() {
-    if [ $# -eq 0 ]; then
-        python3 -c "import os, sys; print(os.path.abspath(sys.stdin.read()))";
+    if [ $# -eq 1 ]; then
+        python3 -c "import os, sys; print(os.path.abspath(sys.argv[1]))" "$1";
     else
-        python3 -c "import os; print(os.path.abspath('$1'))";
+        echo "you need to pass a path"
+        return 1
     fi
 }
 
@@ -80,8 +80,8 @@ NOCOLOR='\033[0m'
 red() { echo -e "${RED}$1${NOCOLOR}"; }
 green() { echo -e "${GREEN}$1${NOCOLOR}"; }
 
-d2h () { printf '%x\n' $1; }
-h2d(){ echo "ibase=16; $@"|bc; }  # capitize
+d2h () { printf '%x\n' $1; }  # dight to hex
+h2d(){ echo "ibase=16; $@"|bc; }  # hex to digit
 esc () { perl -plE "s#'#'\\''# "; }
 
 port_used() {
@@ -94,15 +94,15 @@ alias timestamp='python3 -c "import sys, datetime as d; print(d.datetime.utcfrom
 alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); print(a)"'
 
 cdls(){
-    if [ ${#1} -eq 0 ]; then
+    if [ $# -eq 0 ]; then
         \cd && ls
     else
-        local d=`abspath $1`
-        if [ -d $d ]; then
+        local d=`abspath "$1"`
+        if [ -d "$d" ]; then
             \cd "$d" && ls -G
-            # update_files $MYDIRS_HISTORY $d
         else
             echo "NO DIR: $d"
+            return 1
         fi
     fi
     if git status 2>/dev/null 1>/dev/null; then
@@ -112,7 +112,6 @@ cdls(){
     exists direnv && _direnv_hook
 }
 
-# 圧縮ファイルを名前だけで展開
 extract() {
   case $1 in
     *.tar.gz|*.tgz) tar xzvf $1;;
@@ -133,10 +132,9 @@ extract() {
 
 if echo $SHELL | grep -q bash; then
     export HISTCONTROL=ignoreboth:erasedups
-    export HISTIGNORE="fg*:bg*:history:cd*:rm*"  #よく使うコマンドは履歴保存対象から外す。
-    export HISTSIZE=100000  #ヒストリのサイズを増やす
+    export HISTIGNORE="fg*:bg*:history:cd*:rm*"
+    export HISTSIZE=100000
 
-    # 履歴の共有
     shopt -u histappend
     function share_history {
         history -a
@@ -147,8 +145,10 @@ if echo $SHELL | grep -q bash; then
     bash_post_command_hook() {
         local ecode=$?
         local e='$'
-        # [ $ecode -eq 0 ] || e=`red \$`
-        update_files $MYDIRS_HISTORY `pwd`
+        if [ $ecode -ne 0 ]; then
+            e="`red $`"
+        fi
+        update_files $MYDIRS_HISTORY "`pwd`"
         local branch=""
         local origin=""
         if git status 2>/dev/null 1>/dev/null; then
@@ -165,11 +165,11 @@ fi
 
 open_file() {
     local file=$1;
-    if ! [ -f $file ]; then
+    if ! [ -f "$file" ]; then
        echo "$file doesn't exist"
        return 1
     fi
-    update_files $RECENT_FILES `abspath $file`
+    update_files $RECENT_FILES `abspath "$file"`
     if [ $# -eq 2 ]; then
         $EDITOR $file +$2
     else
@@ -179,11 +179,6 @@ open_file() {
 
 ### PECO
 
-peco_git_branch() {
-    local b=$(git branch -a | perl -plE 's#^\* ##'| perl -plE 's#.*?(origin|upstream)/##' | peco --prompt `git_current_branch`)
-    git checkout $b
-}
-
 peco_select_history() {
     local cmd=$(history |
     tail -r |
@@ -191,16 +186,17 @@ peco_select_history() {
     perl -nlE 'say if length $_ >= 5' |
     perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
     peco --prompt `pwd`)
-    echo $cmd
-    [ -x `which pbcopy` ] && echo $cmd | pbcopy
+    $cmd
+    # echo $cmd
+    # [ -x `which pbcopy` ] && echo $cmd | pbcopy
 }
 
 peco_select_docker_shell() {
-    declare l=$(docker ps --format "{{.Names}}" | peco --prompt `pwd`)
-    if [ -z "$l" ]; then
-        return  # do nothing
+    local name=$(docker ps --format "{{.Names}}" | peco --prompt `pwd`)
+    if [ -z "$name" ]; then
+        return 1 # do nothing
     else
-        docker exec --detach-keys ctrl-q,q -it $l sh
+        docker exec --detach-keys ctrl-q,q -it $name sh
     fi
 }
 
@@ -224,37 +220,6 @@ peco_select_recent_files() {
     fi
 }
 
-peco_select_find() {
-    local tmp=/tmp/peco
-    [ -f $tmp ] && rm $tmp
-    ls -1 | ignore_files >> $tmp
-    find . -maxdepth 4 | ignore_files >> $tmp
-    local l=$(cat $tmp | peco --prompt `pwd` | abspath)
-    echo $l
-    if [ -z $l ] ;then
-        return # do nothing
-    elif [ -f $l ]; then
-        cd `dirname $l`
-        open_file $l
-    else
-        cdls $l
-    fi
-}
-
-peco_ssh () {
-    local q=$1
-    cat ~/.ssh/config | perl -nlE '/^Host (.*)/ and say $1 if !/github/i' | grep "$1" | peco --select-1
-}
-
-peco_replace() {
-    local pattern=$1; shift
-    local file=$1; shift
-    if [ -z $file ]; then
-        file=$(ls -1a | peco --prompt `pwd`)
-    fi
-    perl -plE "$pattern" $file
-}
-
 peco_grep_word() {
     local w=""
     if [ $# -eq 0 ]; then
@@ -271,19 +236,20 @@ peco_grep_word() {
 }
 
 peco_select_dir () {
-    if [ ! -f $MYDIRS_HISTORY ]; then
-        touch $MYDIRS_HISTORY
+    if [ ! -f "$MYDIRS_HISTORY" ]; then
+        touch "$MYDIRS_HISTORY"
     fi
     if [ $# -eq 0 ]; then
-        local d=`cat $MYDIRS_HISTORY | peco --prompt $(pwd)`
-        if [ -d "$d" -a -n "$d" ]; then
-            cdls $d
+        local d=`cat "$MYDIRS_HISTORY" | peco --prompt "$(pwd)"`
+        if [ -d "$d" ]; then
+            cdls "$d"
+        else
+            echo "invalid directory: $d"
+            return 1
         fi
     else
-        local d=`python3 -c "import os; print(os.path.abspath('$1'))"`
-        cdls $d
+        cdls "$1"
     fi
-
 }
 
 peco_docker_commit() {
@@ -298,8 +264,7 @@ peco_stash_list() {
 
 docker_purge() {
     read -p "Are you sure? [y]" -n 1 -r
-    if [[ $REPLY =~ ^[Yy]$ ]]
-    then
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
         docker container prune -f
         docker volume prune -f
         docker system prune -f
@@ -309,61 +274,18 @@ docker_purge() {
     fi
 }
 
-docker_kill()        { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
-docker_rename()      { docker tag $1 $2; docker rmi $1; }
-docker_remove_volume () { docker volume rm `docker volume ls -q`; }
-docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/'`; }
-docker_compose_all() { docker-compose `perl -E 'say map {" -f \$_"} reverse <docker-compose*.yml>'` $@; }
-docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /dev/null; }
-docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
-docker_working() { docker inspect $1 | python3 -c 'import sys, json; print(json.loads(sys.stdin.read())[0]["Mounts"][0]["Source"])';}
-docker_export() { docker export $1 | tar tf -; }
-docker_push () {
-    local image=$1; shift
-    docker tag $image $DOCKER_ID_USER/$image
-    docker push $DOCKER_ID_USER/$image
-}
-
 docker_compose_down() {
     docker compose ls --quiet | xargs -I{} docker compose -p {} down -v
 }
 
-### emacs
+docker_remove_all() { docker rm -f `docker ps -aq`; docker network rm `docker network ls -q`; }
+docker_remove_volume () { docker volume rm `docker volume ls -q`; }
+docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/'`; }
 
-emacs() {
-    if docker_find_process_name emacs; then
-        docker rm -f emacs
-    fi
-    touch ~/.recentf
-    docker run -itd --name emacs \
-	  -w "$HOME" \
-	  -v "$HOME:$HOME" \
-	  -v "$HOME/dotfiles/.emacs:/root/.emacs" \
-	  -e TERM=xterm-256color \
-	  -e LC_CTYPE=UTF-8 \
-	  her0e1c1/emacs sh -c "emacs --daemon && bash -l"
-      # -v ~/.recentf:/root/.emacs.d/recentf \
-}
+docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /dev/null; }
+docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
 
-emacsclient () {
-    local q=""
-    if [ $# -eq 0 ]; then
-        local p=`pwd`
-    else
-        local p=`perl -E "use Cwd 'abs_path'; say abs_path('$1')"`
-        if [ $# -eq 2 ]; then
-            q="+$2:0"
-        fi
-    fi
-    if [ -e $p ]; then
-        update_files $RECENT_FILES $p
-        docker exec -it emacs script -q -c "'/bin/bash' -c 'emacsclient $q -t $p'" /dev/null
-    else
-        echo "$p does not exist"
-    fi
-}
-
-de() {
+docker_exec() {
     local rflag=false
     while getopts rh OPT; do
         case $OPT in
@@ -415,25 +337,6 @@ dr() {
     fi
 }
 
-port_forwarding() {
-    local envfile=$1
-    if [ -z $envfile ]; then
-        envfile=`ls -1 ~/.env/ssh*.env | peco --select-1`
-    fi
-    if [ ! -f $envfile ]; then
-        echo "NO FILE $envfile" >&2;
-        return 1
-    fi
-    source $envfile
-    if check_port_used $SSH_PORT_FROM; then
-        echo "PORT IS USED: $SSH_PORT_FROM" >&2;
-        return 1
-    fi
-    local cmd="ssh $SSH_NAME -gNL $SSH_PORT_FROM:$SSH_HOST_TO:$SSH_PORT_TO"
-    echo $cmd
-    eval $cmd
-}
-
 # Add default docker options
 docker_run() {
     local image=$1; shift
@@ -447,8 +350,6 @@ docker_run() {
            --detach-keys ctrl-q,q \
            $image
 }
-
-gr () { find . -type f -exec grep -nH -e $1 {} \;; }
 
 update_files () {
     if [ ! -f $1 ]; then
@@ -486,21 +387,6 @@ git_current_branch() { git rev-parse --abbrev-ref HEAD; }
 
 git_submodule_update() { git submodule update --recursive --remote; }
 
-docker_edit_file() {
-    local name="$1"; shift
-    local fpath="$1"; shift
-    if docker exec -it $name test -f $fpath; then
-        local tmp=`mktemp`
-        local w=`docker exec $name pwd`
-        docker cp $name:$fpath $tmp
-        vim $tmp
-        docker cp $tmp $name:$fpath
-
-    else
-        docker exec -it $name ls -1aFG $fpath
-    fi
-}
-
 ### OTHERS (no more used)
 
 kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
@@ -515,15 +401,6 @@ ip_global() {
 
 ip_info() {
     curl ipinfo.io/$1
-}
-
-web_score_loading() {
-    if [ $# -eq 0 ]; then
-        echo "NEED url";
-		return
-    fi
-	local url="https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$1"
-    curl "$url" | jq .lighthouseResult.categories.performance.score
 }
 
 mac_socks5() {
@@ -554,7 +431,7 @@ traefik_start() {
     local port=${1:-8888}
     if ! docker info >/dev/null 2>&1; then
        echo "You need to start docker first to start trafik"
-       return 0
+       return 1
     fi
     local lockfile=/tmp/traefik_start.lock
     if mkdir $lockfile >/dev/null 2>&1; then
@@ -570,6 +447,7 @@ traefik_start() {
         rmdir $lockfile
     else
         echo "Can not start traefik. You need to remove '$lockfile' directory manually"
+        return 1
     fi
 }
 
@@ -621,7 +499,6 @@ alias ll='ls -alF'
 alias ls='ls -aCF'
 alias sl=ls
 alias l=ls
-alias sudo="sudo "  # sudo時にアリアス有効
 alias f="peco_select_recent_files"
 alias w="peco_grep_word"
 alias cd="peco_select_dir"
@@ -641,7 +518,6 @@ alias dcd="docker compose down --remove-orphans --volumes"
 ### BINDS
 
 bind -x '"\eb": peco_git_branch'
-bind -x '"\es": ssh_peco'
 bind -x '"\eS": peco_stash_list'
 bind -x '"\ew": peco_select_docker_shell'
 bind -x '"\ef": peco_select_find'
@@ -653,12 +529,9 @@ bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
 bind '"\ei": edit-and-execute-command'
 
+### EVAL
+
 which direnv && eval "$(direnv hook bash)"
 which nodenv && eval "$(nodenv init -)"
-
-if [ -d "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk" ]; then
-  source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc"
-  source "$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc"
-fi
 
 set +eu  # needed, otherwise if sh got non 0 return code, it exits
