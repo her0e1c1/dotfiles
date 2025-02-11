@@ -46,13 +46,14 @@
   "files.associations": {
     "*.rmd": "markdown",
     "*.md": "markdown",
-    "*.yaml": "yaml"
+    "*.yaml": "helm",
+    "*.tpl": "gotmpl"
   },
   "editor.guides.highlightActiveIndentation": true,
   "security.workspace.trust.untrustedFiles": "open",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.formatOnSave": true
   },
   "[javascript]": {
@@ -60,7 +61,7 @@
     "editor.formatOnSave": true
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.formatOnSave": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -74,5 +75,25 @@
   },
   "remote.autoForwardPortsSource": "hybrid",
   "debug.openDebug": "neverOpen",
-  "testing.automaticallyOpenPeekView": "never"
+  "redhat.telemetry.enabled": true,
+  "testing.automaticallyOpenPeekView": "never",
+  "jest.debugMode": true,
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "editor.tabSize": 2,
+  "cmake.showOptionsMovedNotification": false,
+  "makefile.configureOnOpen": false,
+  "[gotmpl]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "vs-kubernetes": {
+    "vs-kubernetes.minikube-show-information-expiration": "2025-06-15T08:39:12.542Z",
+    "vs-kubernetes.ignore-recommendations": true
+  },
+  "[purescript]": {
+    "editor.defaultFormatter": "mvakula.vscode-purty"
+  },
+  "testing.automaticallyOpenTestResults": "neverOpen"
 }
