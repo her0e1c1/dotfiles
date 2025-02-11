@@ -1,19 +1,14 @@
-set -eu
-echo "LOADING .profile at `hostname` ..."
+echo "Loading .profile at `hostname` ... "
 
 ### EXPORT
 
 export PS1="\u@\w\n$ "
+export LANG=en_US.UTF-8
+export PAGER=less
+export CLICOLOR=1
+export LSCOLORS=DxGxcxdxCxegedabagacad
+export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 
-# export PATH="$HOME/bin:$PATH"
-# export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
-# export PATH=$HOME/.nodebrew/current/bin:$PATH
-# export PATH="/Applications/Docker.app/Contents/Resources/bin/:$PATH"
-
-# export LANG=en_US.UTF-8
-# export PAGER=less
-# export CLICOLOR=1
-# export LSCOLORS=DxGxcxdxCxegedabagacad
 export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
 export KARABINER_ASSETS="$HOME/.config/karabiner/assets/complex_modifications/"
 export KARABINER_CONFIG="$HOME/.config/karabiner"
@@ -35,7 +30,6 @@ install_dotfiles() {
     cd ~/dotfiles
     for file in `ls -1`; do
         if [ -f $file ]; then
-            local p="$HOME/$name"
             ln -sf ~/dotfiles/$file ~/$file
         fi
     done
@@ -61,7 +55,6 @@ install_dotfiles() {
 
 debug () { set -x; $@; set +x; }
 exists () { test -e "$(which $1)"; }
-repeat () { local n=$1; shift; for i in `seq $n`; do $@ ;done; }
 watch () { while true; do clear; $@; sleep 1; done;}
 color(){ perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
 
@@ -83,10 +76,6 @@ green() { echo -e "${GREEN}$1${NOCOLOR}"; }
 d2h () { printf '%x\n' $1; }  # dight to hex
 h2d(){ echo "ibase=16; $@"|bc; }  # hex to digit
 esc () { perl -plE "s#'#'\\''# "; }
-
-port_used() {
-    lsof -i -P -n | grep LISTEN
-}
 
 alias urlencode='python3 -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
 alias urldecode='python3 -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
@@ -313,30 +302,6 @@ docker_exec() {
     fi
 }
 
-dr() {
-    local eflag=false
-    while getopts e OPT; do
-        case $OPT in
-            e) eflag=true;;
-        esac
-    done
-    shift $((OPTIND - 1))
-    if [ $# -eq 0 ]; then
-        docker images
-    else
-        local name=$1; shift
-        local cmd=/bin/bash
-        local env=""
-        if $eflag; then
-            env=`perl -E 'say map {chomp; "-e $_ "} qx/env/'`
-        fi
-        [ $# -ne 0 ] && cmd=$@
-        touch ~/.profile  # ensure the file exists
-        # --add-host=docker:$HOSTIP
-        sh -c "docker run --rm -p 9999 $env -v ~/.profile:/root/.profile -v /Users:/Users -w `pwd` --detach-keys ctrl-q,q -it $name $cmd"
-    fi
-}
-
 # Add default docker options
 docker_run() {
     local image=$1; shift
@@ -387,13 +352,17 @@ git_current_branch() { git rev-parse --abbrev-ref HEAD; }
 
 git_submodule_update() { git submodule update --recursive --remote; }
 
-### OTHERS (no more used)
+### OTHERS
 
-kill_port () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
+port_kill () { local port=$1; lsof -t -i tcp:$port | xargs kill -9; }
+
+port_used() {
+    lsof -i -P -n | grep LISTEN
+}
 
 open_vscode () { local a=${1:-.}; VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $a; }
 
-intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
+open_intellij () { /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea `pwd`; }
 
 ip_global() {
     curl http://wtfismyip.com/text
@@ -470,18 +439,36 @@ kubectl_kustomize () {
 }
 
 replace () {
+    local y=false
+    while getopts y OPT; do
+    case $OPT in
+      y) y=true;;
+    esac
+    done
+    shift $((OPTIND - 1))
     if [ $# -lt 2 ]; then
-        echo 'USAGE: replace FILE_PATTERN WORD_SUBSTITUTION (perl)'
-        echo 'if confirmed, call replace_ok'
+        echo 'USAGE: replace [-y] FILE_PATTERN PERL_WORD_SUBSTITUTIONS'
         return 1
     fi
-    local p=$1 s=$2
-    find . | grep -E "$p" | xargs perl -nlE "$s and say qq/\$ARGV[0]: \$_/"
-}
-
-replace_ok () {
-    local p=$1 s=$2
-    replace "$@" && find . | grep -E "$p" | xargs perl -i -plE "$s"
+    local pattern=$1
+    shift
+    find . | grep -E "$pattern" | {
+        read filepath;
+        if [ $# -eq 1 -a $y = false ]; then  # for handy
+            perl -nlE "$1 and say qq/\$ARGV: \$_/" "$filepath"
+            return 0
+        fi
+        echo "========== Replacing $filepath =========="
+        local t="$filepath"
+        if ! $y; then
+            t=`mktemp`
+            cp "$filepath" "$t"
+        fi
+        for s in "$@"; do
+            perl -i -plE "$s" "$t"
+        done
+        if ! $y; then cat "$t"; fi
+    }
 }
 
 ### ALIAS
@@ -490,7 +477,6 @@ alias vim='peco_select_recent_files'
 alias vi="nvim"
 alias v='nvim'
 alias m='make'
-alias docker_down="docker-compose down  --remove-orphans"
 alias g="git"
 alias k="kubectl"
 alias ka="kubectl apply -f"
@@ -517,14 +503,10 @@ alias dcd="docker compose down --remove-orphans --volumes"
 
 ### BINDS
 
-bind -x '"\eb": peco_git_branch'
-bind -x '"\eS": peco_stash_list'
 bind -x '"\ew": peco_select_docker_shell'
-bind -x '"\ef": peco_select_find'
 bind -x '"\eo": peco_select_recent_files'
 bind -x '"\ed": peco_select_dir'
-bind -x '"\eC": peco_docker_commit'
-bind -x '"\eu": "cdls .."'
+bind -x '"\eg": "cdls .."'
 bind -x '"\C-r": peco_select_history'
 bind    '"\C-xr": reverse-search-history'
 bind '"\ei": edit-and-execute-command'
@@ -534,4 +516,4 @@ bind '"\ei": edit-and-execute-command'
 which direnv && eval "$(direnv hook bash)"
 which nodenv && eval "$(nodenv init -)"
 
-set +eu  # needed, otherwise if sh got non 0 return code, it exits
+echo "done!"
