@@ -160,9 +160,9 @@ open_file() {
     fi
     update_files $RECENT_FILES `abspath "$file"`
     if [ $# -eq 2 ]; then
-        $EDITOR $file +$2
+        $EDITOR "$file" "+$2"
     else
-        $EDITOR $file
+        $EDITOR "$file"
     fi
 }
 
@@ -182,34 +182,28 @@ peco_select_history() {
 
 peco_select_docker_shell() {
     local name=$(docker ps --format "{{.Names}}" | peco --prompt `pwd`)
-    if [ -z "$name" ]; then
-        return 1 # do nothing
-    else
-        docker exec --detach-keys ctrl-q,q -it $name sh
+    if [ -n "$name" ]; then
+        docker exec --detach-keys ctrl-q,q -it "$name" sh
     fi
 }
 
 peco_select_recent_files() {
     if [ $# -eq 1 ]; then
-        if [ ! -f $1 ]; then
-            touch $1
+        if [ ! -f "$1" ]; then
+            touch "$1"
         fi
-        open_file $1
+        open_file "$1"
         return
     fi
-    # share emacs recent files
-    declare l=$(cat $RECENT_FILES | perl -nlE 'say if -f' | peco --prompt `pwd`)
-    if [ -z "$l" ]; then
-        return  # do nothing
-    elif [ -f $l ]; then
-        cd `dirname $l`
-        open_file $l
-    elif [ -d $l ]; then
-        cdls $l
-    fi
+    cat $RECENT_FILES | perl -nlE 'say if -f' | peco --prompt `pwd` | {
+        read file
+        if [ -f "$file" ]; then
+            open_file "$file"
+        fi
+    }
 }
 
-peco_grep_word() {
+peco_find_word() {
     local w=""
     if [ $# -eq 0 ]; then
         read -p "Enter search word: " w
@@ -217,11 +211,11 @@ peco_grep_word() {
         w=$1; shift
     fi
     local l=$(grep -Inr "$w" . | peco --prompt `pwd`)
-    [ -z "$l" ] && return;
+    [ -z "$l" ] && return 1;
     # grep format: filepath:line number: matching string
     local line=$(echo $l | perl -nlE 'say $1 if /:(\d+):/')
     local file=$(echo $l | perl -nlE 'say $1 if /^(.*?):/')
-    open_file $file $line
+    open_file "$file" "$line"
 }
 
 peco_select_dir () {
@@ -241,14 +235,6 @@ peco_select_dir () {
     fi
 }
 
-peco_docker_commit() {
-    docker ps | tail +2 | peco | perl -anlE '$cmd = "docker commit $F[-1] $F[1]"; say $cmd; system $cmd'
-}
-
-peco_stash_list() {
-    git stash list | peco | perl -alnE '$s = substr($F[0], 0, -1); $cmd = "git stash apply $s"; system $cmd'
-}
-
 ### DOCKER
 
 docker_purge() {
@@ -258,8 +244,6 @@ docker_purge() {
         docker volume prune -f
         docker system prune -f
         docker image prune -f
-    else
-        echo "DO NOTHING"
     fi
 }
 
@@ -271,63 +255,19 @@ docker_remove_all() { docker rm -f `docker ps -aq`; docker network rm `docker ne
 docker_remove_volume () { docker volume rm `docker volume ls -q`; }
 docker_remove_images() { docker rmi `docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/'`; }
 
-docker_find_process_name () { docker ps -a --format "{{.Names}}" | grep $1 > /dev/null; }
-docker_process_alive () { docker ps --format "{{.Names}}" | perl -E "exit !(grep {\$_=~ /^$1\$/} <STDIN>);"; }
-
-docker_exec() {
-    local rflag=false
-    while getopts rh OPT; do
-        case $OPT in
-            r) rflag=true;;
-            h) docker-exec-help; return 0;;
-        esac
-    done
-    shift $((OPTIND - 1))
-    if $rflag; then
-        docker-volume-remove $@
-    elif [ $# -eq 0 ]; then
-        docker ps
-    else
-        local name=$1; shift
-        if docker ps -a --format "{{.Names}}##{{.Status}}"| grep "$name##Exited"; then
-            echo "Start ..."
-            docker start $name
-        fi
-        if [ $# -ne 0 ]; then
-            docker exec -it --detach-keys ctrl-q,q $name $@
-        else
-            # docker exec -it --detach-keys ctrl-q,q $name sh -c "cd `pwd`; exec /bin/bash --init-file /etc/profile"
-            docker exec -it --detach-keys ctrl-q,q $name bash
-        fi
-    fi
-}
-
-# Add default docker options
-docker_run() {
-    local image=$1; shift
-    local name=`perl -E '$ARGV[0] =~ /(.*):/; say $1' $image`
-    docker_process_alive $name && docker rm -f $name
-    touch ~/.profile  # ensure the file exists
-    # --add-host=docker:$HOSTIP
-    docker run "$@" --name $name -it --rm \
-           -p 9999 \
-           -v ~/.profile:/etc/profile -v /Users:/Users \
-           --detach-keys ctrl-q,q \
-           $image
-}
-
 update_files () {
+    if [ $# -ne 2 ]; then
+        echo 'USAGE: update_files $FILEPATH $WORD'
+        echo 'Add $WORD into $FILEPATH of the first line'
+        return 1
+    fi
     if [ ! -f $1 ]; then
         touch $1
     fi
-    local s=$(cat <<EOS
+    cat << EOS | python3 - "$@"
 import sys
-
-if len(sys.argv) == 2:
-    exit(1)
-
-filepath = '''$1'''
-word = '''$2\n'''
+filepath, word = sys.argv[1:3]
+word += "\n"
 
 with open(filepath) as f:
     lines = f.readlines()
@@ -342,8 +282,6 @@ with open(filepath) as f:
 with open(filepath, 'w') as f:
     f.writelines(lines)
 EOS
-)
-    python3 -c "$s" $@
 }
 
 ### GIT
@@ -485,8 +423,7 @@ alias ll='ls -alF'
 alias ls='ls -aCF'
 alias sl=ls
 alias l=ls
-alias f="peco_select_recent_files"
-alias w="peco_grep_word"
+alias f="peco_find_word"
 alias cd="peco_select_dir"
 alias r="stty sane"
 alias me="docker compose -f docker-compose.me.yml"
