@@ -32,6 +32,7 @@ if [ -n "$PATH_ADDITIONAL" ]; then
   done
   export PATH
 fi
+
 ### INSTALL IF NEEDED
 
 install_dotfiles() {
@@ -154,7 +155,7 @@ if echo $SHELL | grep -q bash; then
             branch=$(green `git_current_branch`)
             origin=`git config --get remote.origin.url`
         fi
-        export PS1="\u@\w [$branch:$origin]\n$e "
+        export PS1="\u@\w [$branch:$origin]\n[\H]$ "
         share_history
     }
     PROMPT_COMMAND="bash_post_command_hook"
