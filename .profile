@@ -22,6 +22,16 @@ else
     export EDITOR=vi
 fi
 
+# Used in docker container
+if [ -n "$PATH_ADDITIONAL" ]; then
+  IFS=':' read -ra ADD_PATHS <<< "$PATH_ADDITIONAL"
+  for p in "${ADD_PATHS[@]}"; do
+    if [ -n "$p" ] && [ -d "$p" ]; then
+      PATH="$p:$PATH"
+    fi
+  done
+  export PATH
+fi
 ### INSTALL IF NEEDED
 
 install_dotfiles() {
