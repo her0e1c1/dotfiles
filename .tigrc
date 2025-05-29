@@ -139,6 +139,10 @@ bind generic ;si      !git submodule update --init
 bind generic e        !>vi %(file)
 bind main e           !>sh -c "vi $(git ls-files | peco)"
 
+# upstream
+bind refs    UU        !git remote add upstream "%(prompt Enter remote url: )"
+bind refs    UF        !git fetch upstream
+
 # Others
 bind generic f        !<sh -c "tig blame -- $(git ls-files | peco)"
 bind generic E        view-grep
