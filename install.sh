@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-echo "=== Dotfiles Installer ==="
-
 # 環境変数
 DOTFILES_DIR=~/dotfiles
 REPO_URL="https://github.com/her0e1c1/dotfiles.git"
@@ -27,77 +25,202 @@ BREW_CASK_PACKAGES=(
   visual-studio-code
 )
 
-### 1. dotfiles リポジトリの取得
-if [ ! -d "$DOTFILES_DIR" ]; then
-    echo "📦 Cloning dotfiles repo..."
-    git clone "$REPO_URL" "$DOTFILES_DIR"
-else
-    echo "✅ dotfiles repo already exists."
-fi
+# ヘルプメッセージ表示
+show_help() {
+    cat << EOF
+=== Dotfiles Installer ===
 
-cd "$DOTFILES_DIR"
+Usage: $0 [OPTIONS]
 
-### 2. dotfiles のリンク作成
-echo "🔗 Installing dotfiles..."
-for file in .[^.]*; do
-    if [ -f "$file" ] && [ "$file" != ".git" ]; then
-        ln -sf "$DOTFILES_DIR/$file" "$HOME/$file"
-        echo "  linked: $file"
-    fi
-done
+Options:
+  -h, --help          Show this help message
+  --skip-dotfiles     Skip dotfiles installation
+  --skip-homebrew     Skip Homebrew installation
+  --skip-packages     Skip brew package installation
+  --skip-vscode       Skip VSCode settings installation
+  --skip-shell        Skip shell configuration
 
-### 3. Homebrew のインストール確認
-if ! command -v brew >/dev/null 2>&1; then
-    echo "🍺 Homebrew not found. Installing..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
-else
-    echo "✅ Homebrew already installed."
-fi
+Examples:
+  $0                  Full installation
+  $0 --skip-packages  Install everything except brew packages
+EOF
+}
 
-### 4. brew パッケージのインストール (CLI)
-echo "📦 Installing brew packages..."
-for pkg in "${BREW_PACKAGES[@]}"; do
-    if brew list --formula | grep -q "^${pkg}\$"; then
-        echo "  ✅ $pkg already installed."
+# エラーメッセージ出力
+error() {
+    echo "❌ Error: $1" >&2
+    exit 1
+}
+
+# 成功メッセージ出力
+success() {
+    echo "✅ $1"
+}
+
+# 情報メッセージ出力
+info() {
+    echo "📦 $1"
+}
+
+# dotfilesリポジトリの取得
+clone_dotfiles() {
+    if [ ! -d "$DOTFILES_DIR" ]; then
+        info "Cloning dotfiles repo..."
+        git clone "$REPO_URL" "$DOTFILES_DIR" || error "Failed to clone dotfiles repository"
     else
-        echo "  ⬇️ Installing $pkg..."
-        brew install "$pkg"
+        success "dotfiles repo already exists."
     fi
-done
+}
 
-### 5. brew cask パッケージのインストール (GUI)
-echo "📦 Installing brew cask packages..."
-for cask in "${BREW_CASK_PACKAGES[@]}"; do
-    if brew list --cask | grep -q "^${cask}\$"; then
-        echo "  ✅ $cask already installed."
+# dotfilesのリンク作成
+install_dotfiles() {
+    info "Installing dotfiles..."
+    cd "$DOTFILES_DIR" || error "Failed to change directory to $DOTFILES_DIR"
+    
+    for file in .[^.]*; do
+        if [ -f "$file" ] && [ "$file" != ".git" ]; then
+            ln -sf "$DOTFILES_DIR/$file" "$HOME/$file"
+            echo "  linked: $file"
+        fi
+    done
+    success "Dotfiles installation completed"
+}
+
+# Homebrewのインストール
+install_homebrew() {
+    if ! command -v brew >/dev/null 2>&1; then
+        info "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || error "Failed to install Homebrew"
+        eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)" || error "Failed to setup Homebrew environment"
     else
-        echo "  ⬇️ Installing $cask..."
-        brew install --cask "$cask"
+        success "Homebrew already installed."
     fi
-done
+}
 
-### 6. VSCode 設定ファイル
-if [ -d "$VSCODE_HOME" ]; then
-    echo "🧠 Installing VSCode settings..."
-    ln -sf "$DOTFILES_DIR/.vscode/settings.json" "$VSCODE_HOME/settings.json"
-    ln -sf "$DOTFILES_DIR/.vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
-    echo "VSCode settings installed."
-fi
+# brewパッケージのインストール
+install_brew_packages() {
+    info "Installing brew packages..."
+    for pkg in "${BREW_PACKAGES[@]}"; do
+        if brew list --formula | grep -q "^${pkg}\$"; then
+            echo "  ✅ $pkg already installed."
+        else
+            echo "  ⬇️ Installing $pkg..."
+            brew install "$pkg" || error "Failed to install $pkg"
+        fi
+    done
 
-### 7. ~/.bashrc を上書き作成
-echo "source ~/.profile" > ~/.bashrc
-echo "✅ Created/overwritten ~/.bashrc with 'source ~/.profile'"
+    info "Installing brew cask packages..."
+    for cask in "${BREW_CASK_PACKAGES[@]}"; do
+        if brew list --cask | grep -q "^${cask}\$"; then
+            echo "  ✅ $cask already installed."
+        else
+            echo "  ⬇️ Installing $cask..."
+            brew install --cask "$cask" || error "Failed to install $cask"
+        fi
+    done
+    success "Brew packages installation completed"
+}
 
-### 8. ~/.bash_profile を上書き作成
-echo "source ~/.bashrc" > ~/.bash_profile
-echo "✅ Created/overwritten ~/.bash_profile with 'source ~/.bashrc'"
+# VSCode設定ファイルのインストール
+install_vscode_settings() {
+    if [ -d "$VSCODE_HOME" ]; then
+        info "Installing VSCode settings..."
+        ln -sf "$DOTFILES_DIR/.vscode/settings.json" "$VSCODE_HOME/settings.json" || error "Failed to link VSCode settings.json"
+        ln -sf "$DOTFILES_DIR/.vscode/keybindings.json" "$VSCODE_HOME/keybindings.json" || error "Failed to link VSCode keybindings.json"
+        success "VSCode settings installed"
+    else
+        echo "⚠️ VSCode not found, skipping settings installation"
+    fi
+}
 
-echo
-echo "⚠️ To use bash as your main shell, consider running:"
-echo "    chsh -s /bin/bash"
-echo "and restart your terminal or logout/login."
-echo
+# シェル設定
+configure_shell() {
+    info "Configuring shell..."
+    echo "source ~/.profile" > ~/.bashrc || error "Failed to create ~/.bashrc"
+    success "Created/overwritten ~/.bashrc with 'source ~/.profile'"
+    
+    echo "source ~/.bashrc" > ~/.bash_profile || error "Failed to create ~/.bash_profile"
+    success "Created/overwritten ~/.bash_profile with 'source ~/.bashrc'"
+}
 
-echo "🎉 Install completed!"
+# メイン処理
+main() {
+    local skip_dotfiles=false
+    local skip_homebrew=false
+    local skip_packages=false
+    local skip_vscode=false
+    local skip_shell=false
+
+    # オプション解析
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            --skip-dotfiles)
+                skip_dotfiles=true
+                shift
+                ;;
+            --skip-homebrew)
+                skip_homebrew=true
+                shift
+                ;;
+            --skip-packages)
+                skip_packages=true
+                shift
+                ;;
+            --skip-vscode)
+                skip_vscode=true
+                shift
+                ;;
+            --skip-shell)
+                skip_shell=true
+                shift
+                ;;
+            *)
+                error "Unknown option: $1"
+                ;;
+        esac
+    done
+
+    echo "=== Dotfiles Installer ==="
+
+    # dotfilesリポジトリの取得
+    if [ "$skip_dotfiles" = false ]; then
+        clone_dotfiles
+        install_dotfiles
+    fi
+
+    # Homebrewのインストール
+    if [ "$skip_homebrew" = false ]; then
+        install_homebrew
+    fi
+
+    # brewパッケージのインストール
+    if [ "$skip_packages" = false ]; then
+        install_brew_packages
+    fi
+
+    # VSCode設定
+    if [ "$skip_vscode" = false ]; then
+        install_vscode_settings
+    fi
+
+    # シェル設定
+    if [ "$skip_shell" = false ]; then
+        configure_shell
+    fi
+
+    echo
+    echo "⚠️ To use bash as your main shell, consider running:"
+    echo "    chsh -s /bin/bash"
+    echo "and restart your terminal or logout/login."
+    echo
+
+    echo "🎉 Install completed!"
+}
+
+# スクリプト実行
+main "$@"
 
