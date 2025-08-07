@@ -9,10 +9,6 @@ export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 
-export VSCODE_HOME="$HOME/Library/Application Support/Code/User/"
-export KARABINER_ASSETS="$HOME/.config/karabiner/assets/complex_modifications/"
-export KARABINER_CONFIG="$HOME/.config/karabiner"
-
 # CUSTOM ENV VARS
 export MYDIRS_HISTORY=~/.mydirs
 export RECENT_FILES=~/.recent_files
@@ -32,35 +28,6 @@ if [ -n "$PATH_ADDITIONAL" ]; then
   done
   export PATH
 fi
-
-### INSTALL IF NEEDED
-
-install_dotfiles() {
-    cd ~
-    [ ! -d ~/dotfiles ] && git clone https://github.com/her0e1c1/dotfiles.git;
-    cd ~/dotfiles
-    for file in `ls -1`; do
-        if [ -f $file ]; then
-            ln -sf ~/dotfiles/$file ~/$file
-        fi
-    done
-    if [ -d "$KARABINER_ASSETS" ]; then
-        for i in `ls -1 ~/dotfiles/karabiner/assets/*.json`; do
-            ln -sf $i "$KARABINER_ASSETS"
-            echo "karabiner assets $i installed"
-        done
-    fi
-    if [ -d "$KARABINER_CONFIG" ]; then
-        cp ~/dotfiles/karabiner/karabiner.json "$KARABINER_CONFIG"
-        echo "karabiner.json copied"
-    fi
-    if [ -d "$VSCODE_HOME" ]; then
-        ln -sf ~/dotfiles/.vscode/settings.json "$VSCODE_HOME"
-        ln -sf ~/dotfiles/.vscode/keybindings.json "$VSCODE_HOME"
-        echo "vscode setting files installed"
-    fi
-    echo "source ~/.profile" >> ~/.bashrc
-}
 
 ### UTILS
 
