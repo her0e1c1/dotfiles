@@ -4,7 +4,7 @@
 ## Run install script
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/her0e1c1/dotfiles/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/her0e1c1/dotfiles/refs/heads/master/install.sh | bash
 ```
 
 ## Setup VSCODE
