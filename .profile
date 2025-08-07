@@ -7,7 +7,6 @@ export LANG=en_US.UTF-8
 export PAGER=less
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
-export PATH="/opt/homebrew/bin:$PATH"  # for mac m1
 
 # CUSTOM ENV VARS
 export MYDIRS_HISTORY=~/.mydirs
@@ -428,6 +427,7 @@ bind '"\ei": edit-and-execute-command'
 
 ### EVAL
 
+which brew && eval "$(brew shellenv)"
 which direnv && eval "$(direnv hook bash)"
 which nodenv && eval "$(nodenv init -)"
 
