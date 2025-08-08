@@ -17,11 +17,13 @@ BREW_PACKAGES=(
   direnv
   tig
   node
+  python
 )
 
 # GUIアプリ（brew install --cask）
 BREW_CASK_PACKAGES=(
   docker
+  google-chrome
   visual-studio-code
 )
 
@@ -76,7 +78,7 @@ clone_dotfiles() {
 install_dotfiles() {
     info "Installing dotfiles..."
     cd "$DOTFILES_DIR" || error "Failed to change directory to $DOTFILES_DIR"
-    
+
     for file in .[^.]*; do
         if [ -f "$file" ] && [ "$file" != ".git" ]; then
             ln -sf "$DOTFILES_DIR/$file" "$HOME/$file"
@@ -138,7 +140,7 @@ configure_shell() {
     info "Configuring shell..."
     echo "source ~/.profile" > ~/.bashrc || error "Failed to create ~/.bashrc"
     success "Created/overwritten ~/.bashrc with 'source ~/.profile'"
-    
+
     echo "source ~/.bashrc" > ~/.bash_profile || error "Failed to create ~/.bash_profile"
     success "Created/overwritten ~/.bash_profile with 'source ~/.bashrc'"
 }

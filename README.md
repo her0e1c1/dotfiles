@@ -13,6 +13,12 @@ Sign in with github account by selecting `Backup and Sync Settings`
 
 ## Setup Mac
 
+### PS1の `\H` を変更
+
+```bash
+sudo scutil --set LocalHostName $NAME
+```
+
 ### 同じ文字を連続入力
 
 ```bash

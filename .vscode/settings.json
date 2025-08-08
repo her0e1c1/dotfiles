@@ -95,5 +95,6 @@
   "[purescript]": {
     "editor.defaultFormatter": "mvakula.vscode-purty"
   },
-  "testing.automaticallyOpenTestResults": "neverOpen"
+  "testing.automaticallyOpenTestResults": "neverOpen",
+  "docker.extension.enableComposeLanguageServer": false
 }
