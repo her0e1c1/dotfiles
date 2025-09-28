@@ -1,0 +1,7 @@
+services:
+  nvim:
+    image: nvim:stable
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /home/dev
