@@ -7,17 +7,40 @@ DOTFILES_DIR=~/dotfiles
 REPO_URL="https://github.com/her0e1c1/dotfiles.git"
 VSCODE_HOME="${VSCODE_HOME:-$HOME/Library/Application Support/Code/User}"
 
-# CLIツール（通常のbrew install）
+# OSの判定
+detect_os() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "macos"
+  elif [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+    echo "${ID}"
+  else
+    echo "unknown"
+  fi
+}
+
+OS=$(detect_os)
+
+# CLIツール（Homebrew用）
 BREW_PACKAGES=(
   git
   gh
   tmux
-  peco
-  nvim
+  fzf
   direnv
   tig
-  node
-  python
+)
+
+# CLIツール（apt用）
+APT_PACKAGES=(
+  git
+  gh
+  tmux
+  fzf
+  direnv
+  tig
+  curl
+  build-essential
 )
 
 # GUIアプリ（brew install --cask）
@@ -123,8 +146,31 @@ install_brew_packages() {
     success "Brew packages installation completed"
 }
 
+# aptパッケージのインストール
+install_apt_packages() {
+    info "Updating apt package list..."
+    sudo apt update || error "Failed to update apt package list"
+
+    info "Installing apt packages..."
+    for pkg in "${APT_PACKAGES[@]}"; do
+        if dpkg -l | grep -q "^ii  ${pkg}"; then
+            echo "  ✅ $pkg already installed."
+        else
+            echo "  ⬇️ Installing $pkg..."
+            sudo apt install -y "$pkg" || error "Failed to install $pkg"
+        fi
+    done
+
+    success "Apt packages installation completed"
+}
+
 # VSCode設定ファイルのインストール
 install_vscode_settings() {
+    # Linux用のVSCode設定ディレクトリも考慮
+    if [[ "$OS" == "ubuntu" ]] || [[ "$OS" == "debian" ]]; then
+        VSCODE_HOME="$HOME/.config/Code/User"
+    fi
+
     if [ -d "$VSCODE_HOME" ]; then
         info "Installing VSCode settings..."
         ln -sf "$DOTFILES_DIR/.vscode/settings.json" "$VSCODE_HOME/settings.json" || error "Failed to link VSCode settings.json"
@@ -187,6 +233,7 @@ main() {
     done
 
     echo "=== Dotfiles Installer ==="
+    info "Detected OS: $OS"
 
     # dotfilesリポジトリの取得
     if [ "$skip_dotfiles" = false ]; then
@@ -194,14 +241,20 @@ main() {
         install_dotfiles
     fi
 
-    # Homebrewのインストール
-    if [ "$skip_homebrew" = false ]; then
-        install_homebrew
-    fi
-
-    # brewパッケージのインストール
+    # パッケージマネージャーとパッケージのインストール
     if [ "$skip_packages" = false ]; then
-        install_brew_packages
+        if [[ "$OS" == "macos" ]]; then
+            # macOS: Homebrewを使用
+            if [ "$skip_homebrew" = false ]; then
+                install_homebrew
+            fi
+            install_brew_packages
+        elif [[ "$OS" == "ubuntu" ]] || [[ "$OS" == "debian" ]]; then
+            # Ubuntu/Debian: aptを使用
+            install_apt_packages
+        else
+            echo "⚠️ Unsupported OS: $OS. Skipping package installation."
+        fi
     fi
 
     # VSCode設定
