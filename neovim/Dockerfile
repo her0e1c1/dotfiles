@@ -26,13 +26,14 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists
 
-# Neovim (stable, arm64) を AppImage から導入（URL を固定）
-RUN curl -LO https://github.com/neovim/neovim/releases/download/stable/nvim-linux-arm64.appimage \
-    && chmod u+x nvim-linux-arm64.appimage \
-    && ./nvim-linux-arm64.appimage --appimage-extract \
+# Neovim (stable) を AppImage から導入
+ARG TARGETARCH=arm64
+RUN curl -Lo nvim.appimage https://github.com/neovim/neovim/releases/download/stable/nvim-linux-${TARGETARCH}.appimage \
+    && chmod u+x nvim.appimage \
+    && ./nvim.appimage --appimage-extract \
     && mv squashfs-root /opt/nvim \
     && ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim \
-    && rm nvim-linux-arm64.appimage
+    && rm nvim.appimage
 
 # ユーザー作成
 RUN useradd -ms /bin/bash dev
