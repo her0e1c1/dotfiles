@@ -7,6 +7,8 @@ echo "Loading .profile at $(hostname) ... "
 # Core shell environment
 export PS1="\u@\w\n$ "
 export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
 export PAGER=less
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
