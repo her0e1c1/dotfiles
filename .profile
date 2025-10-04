@@ -489,17 +489,31 @@ replace() {
 
 nvim_start() {
   local name="nvim-$(date +%Y%m%d-%H%M%S)-$RANDOM"
+
+  # Create volumes if they don't exist
+  docker volume create nvim-cache >/dev/null 2>&1
+  docker volume create nvim-local >/dev/null 2>&1
+
   docker run --rm -it \
     --name "$name" \
     --detach-keys="ctrl-x" \
-    -e LANG=C.UTF-8 -e LC_ALL=C.UTF-8 \
     -v "$PWD:$PWD" \
-    -v ~/.cache/nvim:/home/dev/.cache/nvim \
-    -v ~/.local:/home/dev/.local \
+    -v nvim-cache:/home/dev/.cache \
+    -v nvim-local:/home/dev/.local \
     -v ~/dotfiles/neovim/lua/plugins:/home/dev/.config/nvim/lua/plugins \
     -v ~/dotfiles/neovim/lua/config/options.lua:/home/dev/.config/nvim/lua/config/options.lua \
     -w "$PWD" \
     nvim:stable nvim "$@"
+}
+
+nvim_end() {
+  read -p "Remove nvim volumes (nvim-cache, nvim-local)? [y/N] " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    docker volume rm nvim-cache nvim-local 2>/dev/null && echo "✅ Removed nvim volumes" || echo "⚠️ Volumes not found or already removed"
+  else
+    echo "Cancelled"
+  fi
 }
 
 #==============================================================================
