@@ -10,6 +10,7 @@ export LANG=en_US.UTF-8
 export PAGER=less
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
+export FZF_DEFAULT_OPTS="--reverse --height 40%"
 
 # Editor configuration
 if [ -n "$(which nvim)" ]; then
@@ -193,29 +194,29 @@ open_file() {
 }
 
 #==============================================================================
-# PECO INTEGRATION FUNCTIONS
+# FZF INTEGRATION FUNCTIONS
 #==============================================================================
 
-peco_select_history() {
+fzf_select_history() {
     local cmd
     cmd=$(history |
         tail -r |
         perl -plE 's#^\s*\d+\s*##' |
         perl -nlE 'say if length $_ >= 5' |
         perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
-        peco --prompt "$(pwd)")
+        fzf --prompt "$(pwd) > ")
     $cmd
 }
 
-peco_select_docker_shell() {
+fzf_select_docker_shell() {
     local name
-    name=$(docker ps --format "{{.Names}}" | peco --prompt "$(pwd)")
+    name=$(docker ps --format "{{.Names}}" | fzf --prompt "$(pwd) > ")
     if [ -n "$name" ]; then
         docker exec --detach-keys ctrl-q,q -it "$name" sh
     fi
 }
 
-peco_select_recent_files() {
+fzf_select_recent_files() {
     if [ $# -eq 1 ]; then
         if [ ! -f "$1" ]; then
             touch "$1"
@@ -223,7 +224,7 @@ peco_select_recent_files() {
         open_file "$1"
         return
     fi
-    cat "$RECENT_FILES" | perl -nlE 'say if -f' | peco --prompt "$(pwd)" | {
+    cat "$RECENT_FILES" | perl -nlE 'say if -f' | fzf --prompt "$(pwd) > " | {
         read -r file
         if [ -f "$file" ]; then
             open_file "$file"
@@ -231,7 +232,7 @@ peco_select_recent_files() {
     }
 }
 
-peco_find_word() {
+fzf_find_word() {
     local w=""
     if [ $# -eq 0 ]; then
         read -p "Enter search word: " -r w
@@ -240,7 +241,7 @@ peco_find_word() {
         shift
     fi
     local l
-    l=$(grep -Inr "$w" . | peco --prompt "$(pwd)")
+    l=$(grep -Inr "$w" . | fzf --prompt "$(pwd) > ")
     [ -z "$l" ] && return 1
     # grep format: filepath:line number: matching string
     local line file
@@ -249,13 +250,13 @@ peco_find_word() {
     open_file "$file" "$line"
 }
 
-peco_select_dir() {
+fzf_select_dir() {
     if [ ! -f "$MYDIRS_HISTORY" ]; then
         touch "$MYDIRS_HISTORY"
     fi
     if [ $# -eq 0 ]; then
         local d
-        d=$(cat "$MYDIRS_HISTORY" | peco --prompt "$(pwd)")
+        d=$(cat "$MYDIRS_HISTORY" | fzf --prompt "$(pwd) > ")
         if [ -d "$d" ]; then
             cdls "$d"
         else
@@ -483,7 +484,7 @@ alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); pri
 #==============================================================================
 
 # Editor aliases
-alias vim='peco_select_recent_files'
+alias vim='fzf_select_recent_files'
 alias vi="nvim"
 alias v='nvim'
 
@@ -516,18 +517,18 @@ alias ti="tmuxinator"
 alias vs="open_vscode"
 
 # Utility aliases
-alias f="peco_find_word"
-alias cd="peco_select_dir"
+alias f="fzf_find_word"
+alias cd="fzf_select_dir"
 
 #==============================================================================
 # KEY BINDINGS
 #==============================================================================
 
-bind -x '"\ew": peco_select_docker_shell'
-bind -x '"\eo": peco_select_recent_files'
-bind -x '"\ed": peco_select_dir'
+bind -x '"\ew": fzf_select_docker_shell'
+bind -x '"\eo": fzf_select_recent_files'
+bind -x '"\ed": fzf_select_dir'
 bind -x '"\eg": "cdls .."'
-bind -x '"\C-r": peco_select_history'
+bind -x '"\C-r": fzf_select_history'
 bind '"\C-xr": reverse-search-history'
 bind '"\ei": edit-and-execute-command'
 
