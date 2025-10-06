@@ -326,6 +326,12 @@ docker_remove_volumes() {
   fi
 }
 
+docker_remove_all() {
+  docker_remove_containers
+  docker_remove_networks
+  docker_remove_volumes
+}
+
 docker_remove_images() {
   docker rmi "$(docker images | perl -anlE 'say "$F[2]" if $F[0] =~ /<none>/')"
 }
