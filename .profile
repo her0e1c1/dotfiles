@@ -296,13 +296,34 @@ docker_compose_down() {
   docker compose ls --quiet | xargs -I{} docker compose -p {} down -v
 }
 
-docker_remove_all() {
-  docker rm -f "$(docker ps -aq)"
-  docker network rm "$(docker network ls -q)"
+docker_remove_containers() {
+  local containers
+  containers=$(docker ps -aq)
+  if [ -n "$containers" ]; then
+    echo "$containers" | xargs docker rm -f
+  else
+    echo "No containers to remove"
+  fi
 }
 
-docker_remove_volume() {
-  docker volume rm "$(docker volume ls -q)"
+docker_remove_networks() {
+  local networks
+  networks=$(docker network ls -q --filter type=custom)
+  if [ -n "$networks" ]; then
+    echo "$networks" | xargs docker network rm -f
+  else
+    echo "No custom networks to remove"
+  fi
+}
+
+docker_remove_volumes() {
+  local volumes
+  volumes=$(docker volume ls -q)
+  if [ -n "$volumes" ]; then
+    echo "$volumes" | xargs docker volume rm -f
+  else
+    echo "No volumes to remove"
+  fi
 }
 
 docker_remove_images() {

@@ -35,10 +35,10 @@ RUN curl -Lo nvim.appimage https://github.com/neovim/neovim/releases/download/st
     && ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim \
     && rm nvim.appimage
 
-# ユーザー作成
-RUN useradd -ms /bin/bash dev
-USER dev
-WORKDIR /home/dev
+# ユーザー作成 (wsl上で権限エラーになるのでrootを使うことにした)
+# RUN useradd -ms /bin/bash dev
+# USER dev
+# WORKDIR /home/dev
 
 # LazyVim スターターをクローン
 RUN git clone https://github.com/LazyVim/starter ~/.config/nvim \
