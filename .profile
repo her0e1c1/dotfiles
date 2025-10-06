@@ -560,8 +560,7 @@ alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); pri
 
 # Editor aliases
 alias vim='fzf_select_recent_files'
-alias vi="nvim"
-alias v='nvim'
+alias n=nvim_start
 
 # Basic command aliases
 alias m='make'
@@ -581,9 +580,9 @@ alias kk="kubectl_kustomize"
 alias d="docker"
 alias dc="docker compose"
 alias dcr="docker compose run --remove-orphans --rm"
+alias dcd="docker compose down --remove-orphans --volumes"
 alias dcu="docker compose up"
 alias dcw="docker compose up --remove-orphans --force-recreate --watch watch"
-alias dcd="docker compose down --remove-orphans --volumes"
 
 # Project-specific aliases
 alias me="docker compose -f docker-compose.me.yml"
@@ -592,7 +591,6 @@ alias ti="tmuxinator"
 alias vs="open_vscode"
 
 # Utility aliases
-alias n=nvim_start
 alias f="fzf_find_word"
 alias cd="fzf_select_dir"
 
