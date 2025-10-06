@@ -210,7 +210,7 @@ open_file() {
 fzf_select_history() {
   local cmd
   cmd=$(history |
-    tail -r |
+    perl -E 'say for reverse <>' |
     perl -plE 's#^\s*\d+\s*##' |
     perl -nlE 'say if length $_ >= 5' |
     perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
