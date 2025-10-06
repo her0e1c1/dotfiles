@@ -208,12 +208,13 @@ open_file() {
 #==============================================================================
 
 fzf_select_history() {
+  local min_length="${1:-5}"
   local cmd
   cmd=$(history |
     perl -E 'say for reverse <>' |
     perl -plE 's#^\s*\d+\s*##' |
-    perl -nlE 'say if length $_ >= 5' |
-    perl -M"List::MoreUtils qw(uniq)" -E '@a=uniq <STDIN>; say @a' |
+    perl -nlE "say if length \$_ >= $min_length" |
+    perl -ne 'print unless $seen{$_}++' |
     fzf --prompt "$(pwd) > ")
   $cmd
 }
