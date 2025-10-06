@@ -510,6 +510,7 @@ replace() {
 
 nvim_start() {
   local name="nvim-$(date +%Y%m%d-%H%M%S)-$RANDOM"
+  local home="${NVIM_HOME:-/root}"
 
   # Create volumes if they don't exist
   docker volume create nvim-cache >/dev/null 2>&1
@@ -519,10 +520,10 @@ nvim_start() {
     --name "$name" \
     --detach-keys="ctrl-x" \
     -v "$PWD:$PWD" \
-    -v nvim-cache:/home/dev/.cache \
-    -v nvim-local:/home/dev/.local \
-    -v ~/dotfiles/neovim/lua/plugins:/home/dev/.config/nvim/lua/plugins \
-    -v ~/dotfiles/neovim/lua/config/options.lua:/home/dev/.config/nvim/lua/config/options.lua \
+    -v "nvim-cache:$home/.cache" \
+    -v "nvim-local:$home/.local" \
+    -v "$HOME/dotfiles/neovim/lua/plugins:$home/.config/nvim/lua/plugins" \
+    -v "$HOME/dotfiles/neovim/lua/config/options.lua:$home/.config/nvim/lua/config/options.lua" \
     -w "$PWD" \
     nvim:stable nvim "$@"
 }
