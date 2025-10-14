@@ -293,6 +293,10 @@ docker_purge() {
   fi
 }
 
+docker_remove_containers_safe() {
+  docker container prune -f
+}
+
 docker_compose_down() {
   docker compose ls --quiet | xargs -I{} docker compose -p {} down -v
 }
