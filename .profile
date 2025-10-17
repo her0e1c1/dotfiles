@@ -473,6 +473,15 @@ mac_socks5() {
 # TEXT PROCESSING UTILITIES
 #==============================================================================
 
+check_spell() {
+  local target=${1:-.}
+  docker run --rm \
+    -v "$(pwd)":/workspace \
+    -w /workspace \
+    ghcr.io/streetsidesoftware/cspell:latest \
+    cspell check --no-progress --no-summary --gitignore "$target"
+}
+
 replace() {
   local y=false
   while getopts y OPT; do
