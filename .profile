@@ -485,7 +485,7 @@ check_spell() {
 gen_mermaid_svg() {
   local args=("-i" "/data/$1")
   [ -n "$2" ] && args+=("-o" "/data/$2")
-  docker run --rm -v "$(pwd)":/data minlag/mermaid-cli "${args[@]}"
+  docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd)":/data minlag/mermaid-cli "${args[@]}"
 }
 
 replace() {
