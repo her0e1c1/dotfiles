@@ -482,6 +482,12 @@ check_spell() {
     cspell check --no-progress --no-summary --gitignore "$target"
 }
 
+gen_mermaid_svg() {
+  local args=("-i" "/data/$1")
+  [ -n "$2" ] && args+=("-o" "/data/$2")
+  docker run --rm -v "$(pwd)":/data minlag/mermaid-cli "${args[@]}"
+}
+
 replace() {
   local y=false
   while getopts y OPT; do
