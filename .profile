@@ -446,7 +446,7 @@ serve_swagger_ui() {
 serve_redocly() {
   local yaml_file="$1"
   local port="${2:-8080}"
-  docker run --rm -p "$port":8080 \
+  docker run --rm -u root -p "$port":80 \
     -v "$(pwd)":/spec \
     redocly/redoc \
     /spec/$yaml_file
