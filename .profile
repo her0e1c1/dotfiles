@@ -434,6 +434,15 @@ html_serve() {
   )
 }
 
+serve_swagger_ui() {
+  local yaml_file="$1"
+  local port="${2:-8080}"
+  docker run --rm -p "$port":8080 \
+    -e SWAGGER_JSON="/app/$yaml_file" \
+    -v "$(pwd)":/app \
+    swaggerapi/swagger-ui
+}
+
 #==============================================================================
 # KUBERNETES UTILITIES
 #==============================================================================
