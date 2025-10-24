@@ -449,7 +449,7 @@ serve_redocly() {
   docker run --rm -p "$port":8080 \
     -v "$(pwd)":/spec \
     redocly/redoc \
-    redoc-cli serve "/spec/$yaml_file"
+    /spec/$yaml_file
 }
 
 #==============================================================================
