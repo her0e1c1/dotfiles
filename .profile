@@ -443,6 +443,15 @@ serve_swagger_ui() {
     swaggerapi/swagger-ui
 }
 
+serve_redocly() {
+  local yaml_file="$1"
+  local port="${2:-8080}"
+  docker run --rm -p "$port":8080 \
+    -v "$(pwd)":/spec \
+    redocly/redoc \
+    redoc-cli serve "/spec/$yaml_file"
+}
+
 #==============================================================================
 # KUBERNETES UTILITIES
 #==============================================================================
