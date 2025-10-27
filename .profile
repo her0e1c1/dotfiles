@@ -286,6 +286,7 @@ fzf_select_dir() {
 devcontainer_wrapper() {
   local cmd="$1"
   shift
+  [ "$cmd" = "exec" ] && [ $# -eq 0 ] && set -- bash
   command devcontainer "$cmd" --workspace-folder . "$@"
 }
 
