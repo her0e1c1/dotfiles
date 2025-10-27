@@ -283,6 +283,12 @@ fzf_select_dir() {
 # DOCKER FUNCTIONS
 #==============================================================================
 
+devcontainer_wrapper() {
+  local cmd="$1"
+  shift
+  command devcontainer "$cmd" --workspace-folder . "$@"
+}
+
 docker_purge() {
   read -p "Are you sure? [y]" -n 1 -r
   if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -620,6 +626,7 @@ alias dcr="docker compose run --remove-orphans --rm"
 alias dcd="docker compose down --remove-orphans --volumes"
 alias dcu="docker compose up"
 alias dcw="docker compose up --remove-orphans --force-recreate --watch watch"
+alias dev="devcontainer_wrapper"
 
 # Project-specific aliases
 alias me="docker compose -f docker-compose.me.yml"
