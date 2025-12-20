@@ -1,4 +1,4 @@
-echo "Loading .profile at $(hostname) ... "
+echo -n "Loading .profile at $(hostname) ... "
 
 #==============================================================================
 # ENVIRONMENT VARIABLES
@@ -6,13 +6,16 @@ echo "Loading .profile at $(hostname) ... "
 
 # Core shell environment
 export PS1="\u@\w\n$ "
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export LANGUAGE=C.UTF-8
 export PAGER=less
 export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export FZF_DEFAULT_OPTS="--reverse --height 40%"
+
+# brew install make
+export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
 
 # Editor configuration
 if [ -n "$(which nvim)" ]; then
