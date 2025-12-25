@@ -361,16 +361,23 @@ traefik_start() {
     echo "You need to start docker first to start traefik"
     return 1
   fi
+  docker network inspect traefik >/dev/null 2>&1 || {
+    docker network create --driver bridge traefik || {
+      echo "Failed to create traefik network"
+      return 1
+    }
+  }
   local lockfile="/tmp/traefik_start.lock"
   if mkdir "$lockfile" >/dev/null 2>&1; then
     if ! docker ps -a --format "{{.Names}}" | grep -x traefik >/dev/null 2>&1; then
       echo "Start traefik at port $port ..."
-      docker run -d -it --rm --name traefik \
+      docker run -d --rm --name traefik \
+        --network traefik \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -p "$port":80 traefik:v2.10 \
         --api.insecure=true \
         --providers.docker=true \
-        --providers.docker.network=bridge \
+        --providers.docker.network=traefik \
         --providers.docker.exposedbydefault=false \
         --entrypoints.web.address=:80
     fi
@@ -383,6 +390,7 @@ traefik_start() {
 
 traefik_end() {
   docker rm --force traefik
+  docker network rm -f traefik
 }
 
 #==============================================================================
