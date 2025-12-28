@@ -86,11 +86,22 @@ debug() {
   set +x
 }
 exists() { test -e "$(which "$1")"; }
-watch() { while true; do
-  clear
-  "$@"
-  sleep 1
-done; }
+watch() { 
+  while true; do
+    clear
+    "$@"
+    sleep 1
+  done;
+}
+watch_time() { 
+  local t=$1;
+  shift;
+  while true; do
+    clear
+    "$@"
+    sleep $t
+  done;
+}
 color() { perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
 
 # Path utilities
