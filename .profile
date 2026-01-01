@@ -385,7 +385,7 @@ traefik_start() {
       docker run -d --rm --name traefik \
         --network traefik \
         -v /var/run/docker.sock:/var/run/docker.sock \
-        -p "$port":80 traefik:v2.10 \
+        -p "$port":80 traefik:v3 \
         --api.insecure=true \
         --providers.docker=true \
         --providers.docker.network=traefik \
