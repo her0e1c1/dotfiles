@@ -1,7 +1,12 @@
 services:
   nvim:
     image: nvim:stable
+    platform: ${PLATFORM}
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - ${PLATFORM}
+      args:
+        TARGETARCH: ${TARGETARCH}
     working_dir: /home/dev

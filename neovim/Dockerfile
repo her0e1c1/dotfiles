@@ -4,7 +4,7 @@ FROM ubuntu:24.04
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
 
-# 基本ツールのインストール（ripgrep, fd, fzf, Node.js, Python など）
+# Install basic tools (ripgrep, fd, fzf, Node.js, Python, etc.)
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     git \
     curl \
@@ -26,28 +26,40 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists
 
-# Neovim (stable) を AppImage から導入
+# Install Neovim (stable)
 ARG TARGETARCH=arm64
-RUN curl -Lo nvim.appimage https://github.com/neovim/neovim/releases/download/stable/nvim-linux-${TARGETARCH}.appimage \
-    && chmod u+x nvim.appimage \
-    && ./nvim.appimage --appimage-extract \
-    && mv squashfs-root /opt/nvim \
-    && ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim \
-    && rm nvim.appimage
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+      curl -Lo nvim.tar.gz https://github.com/neovim/neovim/releases/download/stable/nvim-linux-arm64.tar.gz \
+      && tar -xzf nvim.tar.gz \
+      && mv nvim-linux-arm64 /opt/nvim \
+      && ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim \
+      && rm nvim.tar.gz; \
+    else \
+      curl -Lo nvim.appimage https://github.com/neovim/neovim/releases/download/stable/nvim-linux-${TARGETARCH}.appimage \
+      && chmod u+x nvim.appimage \
+      && ./nvim.appimage --appimage-extract \
+      && mv squashfs-root /opt/nvim \
+      && ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim \
+      && rm nvim.appimage; \
+    fi
 
-# ユーザー作成 (wsl上で権限エラーになるのでrootを使うことにした)
+# Create a user (use root to avoid permission errors on WSL)
 # RUN useradd -ms /bin/bash dev
 # USER dev
 # WORKDIR /home/dev
 
-# LazyVim スターターをクローン
+# Clone the LazyVim starter
 RUN git clone https://github.com/LazyVim/starter ~/.config/nvim \
     && rm -rf ~/.config/nvim/.git
 
-# 初回プラグインインストール + Mason 更新/ツール導入
-ARG MASON_TOOLS="lua-language-server stylua pyright debugpy ruff-lsp ruff black isort"
+# Initial plugin install
 RUN nvim --headless \
   "+Lazy! sync" \
+  +qa
+
+# Mason update/tool install (separate to avoid concurrent installs)
+ARG MASON_TOOLS="lua-language-server stylua pyright debugpy ruff-lsp ruff black isort"
+RUN nvim --headless \
   "+MasonUpdate" \
   "+MasonInstall ${MASON_TOOLS}" \
   +qa
