@@ -8,7 +8,7 @@ set refresh-mode = auto
 set main-view = id date author commit-title:graph=yes,refs=yes
 set log-view = line-number:no,interval=1 text
 set log-options = -p
-set ignore-space = all
+set ignore-space = all  # Toggle with W
 set vertical-split = no
 set split-view-height = 80%
 
