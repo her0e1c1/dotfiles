@@ -742,10 +742,17 @@ copilot_planner() {
 }
 
 copilot_commit() {
-  git diff --cached --quiet && { echo "No staged changes. (run: git add -A)"; return 1; }
-  git commit -m "$(copilot --available-tools "" -s -p "Generate a Conventional Commit message (<=72 chars) for this staged diff. Output ONLY the message.
-
-$(git diff --cached)")"
+  copilot \
+    --allow-tool 'shell(git:*)' \
+    --deny-tool  'shell(git push)' \
+    --disable-builtin-mcps \
+    -p "Commit the currently staged changes.
+  Steps:
+  1) If there are no staged changes, stop and say: 'No staged changes'.
+  2) Inspect staged diff (git diff --cached).
+  3) Create ONE Conventional Commit subject line <= 72 chars.
+  4) Run: git commit -m \"<that message>\"
+  Do NOT run git push."
 }
 
 ai_worktree() {
