@@ -86,14 +86,14 @@ debug() {
   set +x
 }
 exists() { test -e "$(which "$1")"; }
-watch() { 
+watch() {
   while true; do
     clear
     "$@"
     sleep 1
   done;
 }
-watch_time() { 
+watch_time() {
   local t=$1;
   shift;
   while true; do
@@ -412,6 +412,14 @@ git_current_branch() {
   git rev-parse --abbrev-ref HEAD
 }
 
+git_current_repository() {
+  basename "$(git rev-parse --show-toplevel)"
+}
+
+git_to_branch_name() {
+  echo "$1" | tr '[:upper:]' '[:lower:]' | tr ' /' '-'
+}
+
 git_submodule_update() {
   git submodule update --recursive --remote
 }
@@ -672,6 +680,65 @@ bind -x '"\eg": "cdls .."'
 bind -x '"\C-r": fzf_select_history'
 bind '"\C-xr": reverse-search-history'
 bind '"\ei": edit-and-execute-command'
+
+#==============================================================================
+# AI FUNCTIONS
+#==============================================================================
+
+copilot_do() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: copilot_do <plan_file> [timeout]"
+    return 1
+  fi
+
+  local plan_file=$(abspath "$1")
+  local timeout_val="${2:-}"
+
+  if [ ! -f "$plan_file" ]; then
+    echo "Plan file not found: $plan_file"
+    return 1
+  fi
+
+  local cmd=(copilot
+    --autopilot
+    --yolo
+    --deny-tool 'shell(git push)'
+    -p "Please execute the plan in $plan_file"
+  )
+
+  if [ -n "$timeout_val" ]; then
+    timeout "$timeout_val" "${cmd[@]}"
+  else
+    "${cmd[@]}"
+  fi
+}
+
+ai_worktree() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: ai_worktree <plan_file> [name]"
+    return 1
+  fi
+
+  local plan_file=$(abspath "$1")
+  local name="${2:-ai}"
+
+  if [ ! -f "$plan_file" ]; then
+    echo "Plan file not found: $plan_file"
+    return 1
+  fi
+
+  local repo=$(git_current_repository)
+  local branch=$(git_to_branch_name "$(basename "${plan_file%.*}")")
+  mkdir -p "/tmp/worktree/${repo}"
+  local tmpdir=$(mktemp -d "/tmp/worktree/${repo}/${branch}-${name}.XXXXX")
+
+  git worktree add -b "plan/${branch}-${name}" "$tmpdir" HEAD || {
+    rmdir "$tmpdir"
+    return 1
+  }
+
+  cd "$tmpdir"
+}
 
 #==============================================================================
 # EXTERNAL TOOL INITIALIZATION
