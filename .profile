@@ -688,6 +688,30 @@ copilot_planner() {
     "$@"
 }
 
+commit() {
+  if [ -z "${GIT_AUTHOR_NAME:-}" ]; then
+    echo "Error: GIT_AUTHOR_NAME is not set."
+    return 1
+  fi
+
+  if [ -z "${GIT_AUTHOR_EMAIL:-}" ]; then
+    echo "Error: GIT_AUTHOR_EMAIL is not set."
+    return 1
+  fi
+
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "Error: Not in a git repository."
+    return 1
+  fi
+
+  if git diff --cached --quiet --exit-code; then
+    echo "Error: No staged files."
+    return 1
+  fi
+
+  copilot_commit "$@"
+}
+
 copilot_commit() {
   copilot \
     --allow-tool 'shell(git:*)' \
