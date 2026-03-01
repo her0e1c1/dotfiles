@@ -731,7 +731,7 @@ copilot_pr() {
   local base=$(git config "branch.$(git_current_branch).base")
   copilot_do "$plan_file" || return 1
   git push -u origin HEAD
-  gh pr create --fill --base "$base"
+  gh pr create --fill --base "$base" --reviewer copilot
 }
 
 ai_worktree() {
