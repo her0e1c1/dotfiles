@@ -1,4 +1,4 @@
-echo -n "Loading .profile at $(hostname) ... "
+echo "Loading .profile at $(hostname) ... "
 
 #==============================================================================
 # ENVIRONMENT VARIABLES
@@ -793,5 +793,10 @@ ai_worktree() {
 which brew >/dev/null && eval "$(brew shellenv)"
 which direnv >/dev/null && eval "$(direnv hook bash)"
 which nodenv >/dev/null && eval "$(nodenv init -)"
+
+if [ ! -f "$HOME/.envrc" ]; then
+  echo "⚠️ Warning: ~/.envrc not found. Personal env vars (GIT_AUTHOR_NAME, etc.) may be missing."
+  echo "   See ~/dotfiles/.envrc.example for reference."
+fi
 
 echo "done!"
