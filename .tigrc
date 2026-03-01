@@ -61,6 +61,7 @@ bind tree    dd       !git rm %(file)
 bind status  dd       !@rm %(file)
 bind blame   dd       !@rm %(file)
 bind refs    dr       ?@sh -c "git push --delete %(remote) %(branch) &"
+bind refs    dw       !@sh -c "git worktree remove $(git worktree list | grep -F '[%(branch)]' | awk '{print $1}') && git branch -D %(branch)"  # -F: fixed string (disable regex, treat [] literally)
 bind refs    dp       !git remote update --prune
 bind refs    dt       !git tag -d %(tag)
 bind status  dc       ?git clean -d -f
