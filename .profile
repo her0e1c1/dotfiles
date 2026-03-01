@@ -696,6 +696,25 @@ copilot_commit() {
     -p "$prompt_commit"
 }
 
+gemini_commit() {
+  local policy_file=$(mktemp /tmp/gemini_policy.XXXXXX.toml)
+  cat > "$policy_file" <<EOF
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "git push"
+decision = "deny"
+priority = 100
+deny_message = "Pushing to remote is restricted by gemini_commit policy."
+EOF
+
+  gemini \
+    --policy "$policy_file" \
+    --approval-mode yolo \
+    -p "$prompt_commit"
+
+  rm -f "$policy_file"
+}
+
 ai_worktree() {
   if [ $# -eq 0 ]; then
     echo "Usage: ai_worktree <plan_file> [name]"
