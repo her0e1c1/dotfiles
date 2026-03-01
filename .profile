@@ -620,68 +620,6 @@ nvim_end() {
 }
 
 #==============================================================================
-# URL ENCODING ALIASES
-#==============================================================================
-
-alias urlencode='python3 -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
-alias urldecode='python3 -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
-alias timestamp='python3 -c "import sys, datetime as d; print(d.datetime.utcfromtimestamp(float(sys.argv[1])))"'
-alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); print(a)"'
-
-#==============================================================================
-# ALIASES
-#==============================================================================
-
-# Editor aliases
-alias vim='fzf_select_recent_files'
-alias n=nvim_start
-
-# Basic command aliases
-alias m='make'
-alias g="git"
-alias ll='ls -alF'
-alias ls='ls -aCF'
-alias sl=ls
-alias l=ls
-alias r="stty sane"
-
-# Kubernetes aliases
-alias k="kubectl"
-alias ka="kubectl apply -f"
-alias kk="kubectl_kustomize"
-
-# Docker aliases
-alias d="docker"
-alias dc="docker compose"
-alias dcr="docker compose run --remove-orphans --rm"
-alias dcd="docker compose down --remove-orphans --volumes"
-alias dcu="docker compose up"
-alias dcw="docker compose up --remove-orphans --force-recreate --watch watch"
-alias dev="devcontainer_wrapper"
-
-# Project-specific aliases
-alias me="docker compose -f docker-compose.me.yml"
-alias mesh="docker compose -f docker-compose.me.yml run --remove-orphans sh"
-alias ti="tmuxinator"
-alias vs="open_vscode"
-
-# Utility aliases
-alias f="fzf_find_word"
-alias cd="fzf_select_dir"
-
-#==============================================================================
-# KEY BINDINGS
-#==============================================================================
-
-bind -x '"\ew": fzf_select_docker_shell'
-bind -x '"\eo": fzf_select_recent_files'
-bind -x '"\ed": fzf_select_dir'
-bind -x '"\eg": "cdls .."'
-bind -x '"\C-r": fzf_select_history'
-bind '"\C-xr": reverse-search-history'
-bind '"\ei": edit-and-execute-command'
-
-#==============================================================================
 # AI FUNCTIONS
 #==============================================================================
 
@@ -787,6 +725,68 @@ ai_worktree() {
 }
 
 #==============================================================================
+# URL ENCODING ALIASES
+#==============================================================================
+
+alias urlencode='python3 -c "import sys, urllib as ul; print(ul.quote_plus(sys.argv[1]))"'
+alias urldecode='python3 -c "import sys, urllib as ul; print(ul.unquote_plus(sys.argv[1]))"'
+alias timestamp='python3 -c "import sys, datetime as d; print(d.datetime.utcfromtimestamp(float(sys.argv[1])))"'
+alias jsonload='python3 -c "import json,sys; a=json.loads(sys.stdin.read()); print(a)"'
+
+#==============================================================================
+# ALIASES
+#==============================================================================
+
+# Editor aliases
+alias vim='fzf_select_recent_files'
+alias n=nvim_start
+
+# Basic command aliases
+alias m='make'
+alias g="git"
+alias ll='ls -alF'
+alias ls='ls -aCF'
+alias sl=ls
+alias l=ls
+alias r="stty sane"
+
+# Kubernetes aliases
+alias k="kubectl"
+alias ka="kubectl apply -f"
+alias kk="kubectl_kustomize"
+
+# Docker aliases
+alias d="docker"
+alias dc="docker compose"
+alias dcr="docker compose run --remove-orphans --rm"
+alias dcd="docker compose down --remove-orphans --volumes"
+alias dcu="docker compose up"
+alias dcw="docker compose up --remove-orphans --force-recreate --watch watch"
+alias dev="devcontainer_wrapper"
+
+# Project-specific aliases
+alias me="docker compose -f docker-compose.me.yml"
+alias mesh="docker compose -f docker-compose.me.yml run --remove-orphans sh"
+alias ti="tmuxinator"
+alias vs="open_vscode"
+
+# Utility aliases
+alias f="fzf_find_word"
+alias cd="fzf_select_dir"
+
+#==============================================================================
+# KEY BINDINGS
+#==============================================================================
+
+bind -x '"\ew": fzf_select_docker_shell'
+bind -x '"\eo": fzf_select_recent_files'
+bind -x '"\ed": fzf_select_dir'
+bind -x '"\eg": "cdls .."'
+bind -x '"\C-r": fzf_select_history'
+bind '"\C-xr": reverse-search-history'
+bind '"\ei": edit-and-execute-command'
+
+#==============================================================================
 # EXTERNAL TOOL INITIALIZATION
 #==============================================================================
 
@@ -796,7 +796,6 @@ which nodenv >/dev/null && eval "$(nodenv init -)"
 
 if [ ! -f "$HOME/.envrc" ]; then
   echo "⚠️ Warning: ~/.envrc not found. Personal env vars (GIT_AUTHOR_NAME, etc.) may be missing."
-  echo "   See ~/dotfiles/.envrc.example for reference."
 fi
 
 echo "done!"
