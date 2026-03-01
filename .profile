@@ -729,13 +729,17 @@ ai_worktree() {
 
   local repo=$(git_current_repository)
   local branch=$(git_to_branch_name "$(basename "${plan_file%.*}")")
+  local base=$(git_current_branch)
+  local new_branch="plan/${branch}-${name}"
   mkdir -p "/tmp/worktree/${repo}"
   local tmpdir=$(mktemp -d "/tmp/worktree/${repo}/${branch}-${name}.XXXXX")
 
-  git worktree add -b "plan/${branch}-${name}" "$tmpdir" HEAD || {
+  git worktree add -b "$new_branch" "$tmpdir" HEAD || {
     rmdir "$tmpdir"
     return 1
   }
+
+  git config "branch.${new_branch}.base" "$base"
 
   cd "$tmpdir"
 }
