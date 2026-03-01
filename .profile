@@ -741,6 +741,13 @@ copilot_planner() {
     "$@"
 }
 
+copilot_commit() {
+  git diff --cached --quiet && { echo "No staged changes. (run: git add -A)"; return 1; }
+  git commit -m "$(copilot --available-tools "" -s -p "Generate a Conventional Commit message (<=72 chars) for this staged diff. Output ONLY the message.
+
+$(git diff --cached)")"
+}
+
 ai_worktree() {
   if [ $# -eq 0 ]; then
     echo "Usage: ai_worktree <plan_file> [name]"
