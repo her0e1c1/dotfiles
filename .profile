@@ -713,6 +713,25 @@ copilot_do() {
   fi
 }
 
+copilot_pr() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: copilot_pr <plan_file> [name]"
+    return 1
+  fi
+
+  local plan_file=$(abspath "$1")
+  local name="${2:-copilot}"
+
+  if [ ! -f "$plan_file" ]; then
+    echo "Plan file not found: $plan_file"
+    return 1
+  fi
+
+  ai_worktree "$plan_file" "$name" || return 1
+  copilot_do "$plan_file" || return 1
+  gh pr create --fill
+}
+
 ai_worktree() {
   if [ $# -eq 0 ]; then
     echo "Usage: ai_worktree <plan_file> [name]"
