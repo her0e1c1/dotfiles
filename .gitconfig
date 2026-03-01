@@ -69,6 +69,13 @@
     # push
     p = push
 
+    # worktree
+    wl = worktree list
+    wa = worktree add
+    wr = worktree remove
+    wp = worktree prune
+    wm = worktree move
+
 
     ls = ls-files
 [color]
