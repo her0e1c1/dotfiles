@@ -36,3 +36,5 @@ docker-compose.me.yml
 
 .bash_history
 
+# plan
+.plan/
