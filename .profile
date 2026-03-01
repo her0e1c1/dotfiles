@@ -728,10 +728,10 @@ copilot_pr() {
   fi
 
   ai_worktree "$plan_file" "$name" || return 1
-  copilot_do "$plan_file" || return 1
   local base=$(git config "branch.$(git_current_branch).base")
+  copilot_do "$plan_file" || return 1
   git push -u origin HEAD
-  gh pr create --fill ${base:+--base "$base"}
+  gh pr create --fill --base "$base"
 }
 
 ai_worktree() {
