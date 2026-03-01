@@ -734,6 +734,13 @@ copilot_pr() {
   gh pr create --fill --base "$base" --reviewer copilot
 }
 
+copilot_planner() {
+  copilot \
+    --agent planner \
+    --available-tools view glob grep create edit \
+    "$@"
+}
+
 ai_worktree() {
   if [ $# -eq 0 ]; then
     echo "Usage: ai_worktree <plan_file> [name]"
