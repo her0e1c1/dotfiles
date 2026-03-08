@@ -667,24 +667,23 @@ copilot_pr() {
   fi
 
   local plan_file=$(abspath "$1")
-  local name="${2:-copilot}"
+  shift
 
   if [ ! -f "$plan_file" ]; then
     echo "Plan file not found: $plan_file"
     return 1
   fi
 
-  ai_worktree "$plan_file" "$name" || return 1
+  ai_worktree "$plan_file" "copilot" || return 1
   local base=$(git config "branch.$(git_current_branch).base")
-  copilot_do "$plan_file" || return 1
+  copilot_do "$plan_file" "$@" || return 1
   git push -u origin HEAD
-  gh pr create --fill --base "$base" --reviewer copilot
+  gh pr create --fill --base "$base"
 }
 
 copilot_planner() {
   copilot \
     --agent planner \
-    --available-tools view glob grep create edit \
     "$@"
 }
 
