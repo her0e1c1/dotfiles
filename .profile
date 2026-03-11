@@ -149,6 +149,7 @@ cdls() {
   fi
   pwd
   exists direnv && _direnv_hook
+  update_mydirs
 }
 
 # File extraction utility
@@ -167,6 +168,24 @@ extract() {
   *.arj) unarj "$1" ;;
   *) echo "Unknown archive format: $1" ;;
   esac
+}
+
+# Remove non-existent directories from ~/.mydirs
+update_mydirs() {
+  if [ ! -f "$MYDIRS_HISTORY" ]; then
+    return
+  fi
+  local tmpfile
+  tmpfile=$(mktemp) || return 1
+  while IFS= read -r line; do
+    if [ -d "$line" ]; then
+      echo "$line"
+    fi
+  done < "$MYDIRS_HISTORY" > "$tmpfile"
+  if ! mv "$tmpfile" "$MYDIRS_HISTORY"; then
+    rm -f "$tmpfile"
+    return 1
+  fi
 }
 
 # File history management
