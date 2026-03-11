@@ -177,11 +177,7 @@ update_mydirs() {
   fi
   local tmpfile
   tmpfile=$(mktemp) || return 1
-  while IFS= read -r line; do
-    if [ -d "$line" ]; then
-      echo "$line"
-    fi
-  done < "$MYDIRS_HISTORY" > "$tmpfile"
+  perl -nlE 'say if -d' "$MYDIRS_HISTORY" > "$tmpfile"
   if ! mv "$tmpfile" "$MYDIRS_HISTORY"; then
     rm -f "$tmpfile"
     return 1
