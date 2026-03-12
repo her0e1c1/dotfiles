@@ -172,16 +172,8 @@ extract() {
 
 # Remove non-existent directories from ~/.mydirs
 update_mydirs() {
-  if [ ! -f "$MYDIRS_HISTORY" ]; then
-    return
-  fi
-  local tmpfile
-  tmpfile=$(mktemp) || return 1
-  perl -nlE 'say if -d' "$MYDIRS_HISTORY" > "$tmpfile"
-  if ! mv "$tmpfile" "$MYDIRS_HISTORY"; then
-    rm -f "$tmpfile"
-    return 1
-  fi
+  [ -f "$MYDIRS_HISTORY" ] || return
+  perl -i -nlE 'say if -d' "$MYDIRS_HISTORY"
 }
 
 # File history management
