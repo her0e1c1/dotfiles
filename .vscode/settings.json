@@ -96,5 +96,14 @@
     "editor.defaultFormatter": "mvakula.vscode-purty"
   },
   "testing.automaticallyOpenTestResults": "neverOpen",
-  "docker.extension.enableComposeLanguageServer": false
+  "docker.extension.enableComposeLanguageServer": false,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "githubPullRequests.pullBranch": "never",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false
+  },
+  "editor.largeFileOptimizations": false
 }
