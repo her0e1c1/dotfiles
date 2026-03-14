@@ -68,6 +68,16 @@ return {
     "nvim-telescope/telescope.nvim",
     opts = {
       defaults = {
+        -- Fill the available editor area for all Telescope pickers.
+        layout_strategy = "horizontal",
+        layout_config = {
+          width = { padding = 0 },
+          height = { padding = 0 },
+          preview_cutoff = 0,
+          horizontal = {
+            preview_width = 0.55,
+          },
+        },
         -- 除外したいパターンを追加
         -- Lua パターンなので . は %. でエスケープ
         -- .pyc/.pyo と __pycache__ ディレクトリを除外

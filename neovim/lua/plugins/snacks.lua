@@ -35,6 +35,9 @@ return {
         enabled = true,
       },
       picker = {
+        layout = {
+          fullscreen = true,
+        },
         sources = {
           explorer = {
             win = {
