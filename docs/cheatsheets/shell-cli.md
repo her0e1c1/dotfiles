@@ -42,6 +42,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `me` | `docker compose -f docker-compose.me.yml` |
 | `mesh` | Run a shell in `docker-compose.me.yml` |
 | `ti` | `tmuxinator` |
+| `tmux_new [name]` | Start a new tmux session, optionally with a session name |
 | `Alt-i` | Edit and execute the current shell command |
 | `Ctrl-x r` | Use Bash reverse history search |
 
