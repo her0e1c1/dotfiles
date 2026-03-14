@@ -40,6 +40,9 @@ return {
         },
         sources = {
           explorer = {
+            jump = {
+              close = true,
+            },
             win = {
               list = {
                 keys = {

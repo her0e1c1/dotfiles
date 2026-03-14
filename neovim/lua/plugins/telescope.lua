@@ -63,6 +63,49 @@ local function telescope_pick_directory_entries(dir)
   })
 end
 
+local function telescope_pick_subdirectories(dir)
+  local builtin = require("telescope.builtin")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+  -- Ubuntu packages fd as `fdfind`, while macOS/Homebrew uses `fd`.
+  local fd_cmd = vim.fn.executable("fd") == 1 and "fd" or "fdfind"
+  local target_dir = dir or current_buffer_dir()
+
+  builtin.find_files({
+    cwd = target_dir,
+    prompt_title = "Subdirectories",
+    find_command = {
+      fd_cmd,
+      "--hidden",
+      "--strip-cwd-prefix",
+      "--type",
+      "d",
+      "--exclude",
+      "__pycache__",
+      ".",
+    },
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if not selection then
+          return
+        end
+
+        local relative_path = selection.path or selection.filename or selection.value or selection[1]
+        if not relative_path then
+          return
+        end
+
+        local path = relative_path:match("^/") and relative_path or vim.fs.joinpath(target_dir, relative_path)
+        telescope_pick_directory_entries(path)
+      end)
+
+      return true
+    end,
+  })
+end
+
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -109,6 +152,14 @@ return {
           telescope_pick_directory_entries()
         end,
         desc = "Pick Dir Entries",
+        nowait = true,
+      },
+      {
+        "<leader>D",
+        function()
+          telescope_pick_subdirectories()
+        end,
+        desc = "Pick Subdirectory",
         nowait = true,
       },
       { "<leader>fc", "<cmd>Telescope commands<cr>", desc = "Find Commands" },
