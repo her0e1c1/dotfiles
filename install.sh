@@ -7,6 +7,15 @@ DOTFILES_DIR=~/dotfiles
 REPO_URL="https://github.com/her0e1c1/dotfiles.git"
 VSCODE_HOME="${VSCODE_HOME:-$HOME/Library/Application Support/Code/User}"
 
+# 明示的にリンクする dotfiles
+DOTFILES_TO_LINK=(
+  .tmux.conf
+  .gitconfig
+  .gitignore_global
+  .profile
+  .vimrc
+)
+
 # OSの判定
 detect_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -106,10 +115,12 @@ install_dotfiles() {
   info "Installing dotfiles..."
   cd "$DOTFILES_DIR" || error "Failed to change directory to $DOTFILES_DIR"
 
-  for file in .[^.]*; do
-    if [ -f "$file" ] && [ "$file" != ".git" ]; then
+  for file in "${DOTFILES_TO_LINK[@]}"; do
+    if [ -f "$file" ]; then
       ln -sf "$DOTFILES_DIR/$file" "$HOME/$file"
       echo "  linked: $file"
+    else
+      echo "  skipped: $file not found"
     fi
   done
 
