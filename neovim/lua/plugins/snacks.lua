@@ -3,7 +3,30 @@ return {
     "folke/snacks.nvim",
     lazy = false,
     priority = 1000,
+    keys = {
+      {
+        "<leader>o",
+        function()
+          local explorer = Snacks.picker.get({ source = "explorer" })[1]
+          if explorer then
+            explorer:close()
+            return
+          end
+
+          local cwd = vim.fn.expand("%:p:h")
+          if cwd == "" then
+            cwd = vim.uv.cwd()
+          end
+
+          Snacks.explorer({ cwd = cwd })
+        end,
+        desc = "Toggle Explorer",
+      },
+    },
     opts = {
+      explorer = {
+        enabled = true,
+      },
       picker = {
         sources = {
           -- ファイル検索の除外
@@ -25,4 +48,3 @@ return {
     end,
   },
 }
-
