@@ -486,7 +486,7 @@ open_intellij() {
 # WEB AND SERVER UTILITIES
 #==============================================================================
 
-html_serve() {
+serve_html() {
   local cwd="${1:-.}"
   local port="${2:-8121}"
   (
@@ -686,7 +686,7 @@ copilot_do() {
 
 copilot_pr() {
   if [ $# -eq 0 ]; then
-    echo "Usage: copilot_pr <plan_file> [name]"
+    echo "Usage: copilot_pr <plan_file> [timeout]"
     return 1
   fi
 
@@ -698,7 +698,8 @@ copilot_pr() {
     return 1
   fi
 
-  ai_worktree "$plan_file" "copilot" || return 1
+  local worktree_name="$(basename "${plan_file%.md}")-copilot"
+  ai_worktree "$worktree_name" || return 1
   local base=$(git config "branch.$(git_current_branch).base")
   copilot_do "$plan_file" "$@" || return 1
   git push -u origin HEAD
@@ -758,24 +759,17 @@ EOF
 
 ai_worktree() {
   if [ $# -eq 0 ]; then
-    echo "Usage: ai_worktree <plan_file> [name]"
+    echo "Usage: ai_worktree <name>"
     return 1
   fi
 
-  local plan_file=$(abspath "$1")
-  local name="${2:-ai}"
-
-  if [ ! -f "$plan_file" ]; then
-    echo "Plan file not found: $plan_file"
-    return 1
-  fi
-
+  local name="$1"
   local repo=$(git_current_repository)
-  local branch=$(git_to_branch_name "$(basename "${plan_file%.*}")")
   local base=$(git_current_branch)
-  local new_branch="plan/${branch}-${name}"
-  mkdir -p "/tmp/worktree/${repo}"
-  local tmpdir=$(mktemp -d "/tmp/worktree/${repo}/${branch}-${name}.XXXXX")
+  local prefix="/tmp/worktree/${repo}/${name}-"
+  mkdir -p "$(dirname "$prefix")" || return 1
+  local tmpdir=$(mktemp -d "${prefix}XXX") || return 1
+  local new_branch="${tmpdir#"/tmp/worktree/${repo}/"}"
 
   git worktree add -b "$new_branch" "$tmpdir" HEAD || {
     rmdir "$tmpdir"
