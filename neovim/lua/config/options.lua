@@ -11,7 +11,11 @@ vim.g.snacks_animate = false
 
 -- 他のエディタによるファイルの変更を反映
 vim.opt.autoread = true
+local autoread_group = vim.api.nvim_create_augroup("custom_autoread", { clear = true })
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  group = autoread_group,
+  command = "if mode() != 'c' | checktime | endif",
+})
 
 --  mdの```を省略せずに表示
 vim.opt.conceallevel = 0
-
