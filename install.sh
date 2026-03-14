@@ -47,9 +47,12 @@ APT_PACKAGES=(
 
 # GUIアプリ（brew install --cask）
 BREW_CASK_PACKAGES=(
-  docker
+  # codex
+  docker-desktop
   google-chrome
   visual-studio-code
+  # Required for nvim to render Nerd Font glyphs correctly
+  font-hack-nerd-font
 )
 
 # ヘルプメッセージ表示
@@ -62,14 +65,13 @@ Usage: $0 [OPTIONS]
 Options:
   -h, --help          Show this help message
   --skip-dotfiles     Skip dotfiles installation
-  --skip-homebrew     Skip Homebrew installation
-  --skip-packages     Skip brew package installation
+  --skip-packages     Skip package manager and package installation
   --skip-vscode       Skip VSCode settings installation
   --skip-shell        Skip shell configuration
 
 Examples:
   $0                  Full installation
-  $0 --skip-packages  Install everything except brew packages
+  $0 --skip-packages  Install everything except package setup
 EOF
 }
 
@@ -208,7 +210,6 @@ configure_shell() {
 # メイン処理
 main() {
   local skip_dotfiles=false
-  local skip_homebrew=false
   local skip_packages=false
   local skip_vscode=false
   local skip_shell=false
@@ -222,10 +223,6 @@ main() {
       ;;
     --skip-dotfiles)
       skip_dotfiles=true
-      shift
-      ;;
-    --skip-homebrew)
-      skip_homebrew=true
       shift
       ;;
     --skip-packages)
@@ -259,9 +256,7 @@ main() {
   if [ "$skip_packages" = false ]; then
     if [[ "$OS" == "macos" ]]; then
       # macOS: Homebrewを使用
-      if [ "$skip_homebrew" = false ]; then
-        install_homebrew
-      fi
+      install_homebrew
       install_brew_packages
     elif [[ "$OS" == "ubuntu" ]] || [[ "$OS" == "debian" ]]; then
       # Ubuntu/Debian: aptを使用

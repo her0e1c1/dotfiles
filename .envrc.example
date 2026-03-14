@@ -1,5 +1,7 @@
-# git config
-export GIT_AUTHOR_NAME=her0e1c1
-export GIT_AUTHOR_EMAIL=her0e1c1@gmail.com
-export GIT_COMMITTER_NAME=her0e1c1
-export GIT_COMMITTER_EMAIL=her0e1c1@gmail.com
+# Keep author/committer values derived from one source to avoid local drift.
+export GIT_USER_NAME=her0e1c1
+export GIT_USER_EMAIL=her0e1c1@gmail.com
+export GIT_AUTHOR_NAME="${GIT_USER_NAME}"
+export GIT_AUTHOR_EMAIL="${GIT_USER_EMAIL}"
+export GIT_COMMITTER_NAME="${GIT_USER_NAME}"
+export GIT_COMMITTER_EMAIL="${GIT_USER_EMAIL}"
