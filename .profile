@@ -658,35 +658,7 @@ Do NOT run git push."
 
 copilot_do() {
   if [ $# -eq 0 ]; then
-    echo "Usage: copilot_do <plan_file> [timeout]"
-    return 1
-  fi
-
-  local plan_file=$(abspath "$1")
-  local timeout_val="${2:-}"
-
-  if [ ! -f "$plan_file" ]; then
-    echo "Plan file not found: $plan_file"
-    return 1
-  fi
-
-  local cmd=(copilot
-    --autopilot
-    --yolo
-    --deny-tool 'shell(git push)'
-    -p "Please execute the plan in $plan_file"
-  )
-
-  if [ -n "$timeout_val" ]; then
-    timeout "$timeout_val" "${cmd[@]}"
-  else
-    "${cmd[@]}"
-  fi
-}
-
-copilot_pr() {
-  if [ $# -eq 0 ]; then
-    echo "Usage: copilot_pr <plan_file> [timeout]"
+    echo "Usage: copilot_do <plan_file> [copilot_args...]"
     return 1
   fi
 
@@ -698,12 +670,35 @@ copilot_pr() {
     return 1
   fi
 
-  local worktree_name="$(basename "${plan_file%.md}")-copilot"
+  local worktree_name="$(basename "${plan_file%.*}")"
   ai_worktree "$worktree_name" || return 1
+
+  copilot \
+    --autopilot \
+    --yolo \
+    --deny-tool 'shell(git push)' \
+    "$@" \
+    -p "Please execute the plan in $plan_file" || return 1
+
   local base=$(git config "branch.$(git_current_branch).base")
-  copilot_do "$plan_file" "$@" || return 1
-  git push -u origin HEAD
-  gh pr create --fill --base "$base"
+  if [ -z "$base" ]; then
+    echo "Error: Base branch is not set for $(git_current_branch)."
+    return 1
+  fi
+
+  git push -u origin HEAD || return 1
+
+  local pr_branch=$(git_current_branch)
+  local pr_summary
+  pr_summary=$(git diff --stat "${base}...HEAD")
+
+  copilot \
+    --yolo \
+    --allow-tool 'shell(gh:*)' \
+    -p "Create a GitHub pull request from ${pr_branch} into ${base}. Summarize the actual diff against ${base} in the PR body, then use gh to create the pull request.
+
+Diff stat:
+${pr_summary}" || return 1
 }
 
 commit() {
