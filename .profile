@@ -686,19 +686,17 @@ copilot_do() {
     return 1
   fi
 
-  git push -u origin HEAD || return 1
-
-  local pr_branch=$(git_current_branch)
-  local pr_summary
-  pr_summary=$(git diff --stat "${base}...HEAD")
-
   copilot \
     --yolo \
+    --allow-tool 'shell(git:*)' \
     --allow-tool 'shell(gh:*)' \
-    -p "Create a GitHub pull request from ${pr_branch} into ${base}. Summarize the actual diff against ${base} in the PR body, then use gh to create the pull request.
+    -p "Create a GitHub pull request from $(git_current_branch) into ${base}.
 
-Diff stat:
-${pr_summary}" || return 1
+Before creating the pull request, run git status --short. If any files are still left in git status, run git add -A, inspect the staged diff with git diff --cached, create ONE Conventional Commit subject line <= 72 chars, and run git commit -m \"<that message>\" to commit all remaining changes.
+
+After that, run git push -u origin HEAD so the remote branch matches the local branch.
+
+Then summarize the actual diff against ${base} in the PR body, and use gh to create the pull request." || return 1
 }
 
 commit() {
