@@ -27,6 +27,8 @@ Use this when you forget the custom prefix or the window/pane bindings from this
 | `M-u M-t` | Open the tree chooser |
 | `M-u M-s` | Choose a session |
 | `M-u C-s` | Rename the current session |
+| `M-Down` | Switch to the previous session |
+| `M-Up` | Switch to the next session |
 | `M-u M-p` | Choose a paste buffer |
 | `M-p` | Paste the latest buffer |
 | `M-k` | Enter copy-mode |
