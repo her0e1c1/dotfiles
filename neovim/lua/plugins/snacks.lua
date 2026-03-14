@@ -5,7 +5,14 @@ return {
     priority = 1000,
     keys = {
       {
-        "<leader>o",
+        "<leader>E",
+        function()
+          Snacks.explorer({ cwd = LazyVim.root() })
+        end,
+        desc = "Toggle Explorer",
+      },
+      {
+        "<leader>e",
         function()
           local explorer = Snacks.picker.get({ source = "explorer" })[1]
           if explorer then
