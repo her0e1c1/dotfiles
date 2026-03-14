@@ -63,6 +63,7 @@ BREW_CASK_PACKAGES=(
   google-chrome
   visual-studio-code
   # Required for nvim to render Nerd Font glyphs correctly
+  # Settings -> Text -> Font -> Change... -> JetBrainsMono Nerd Font
   font-hack-nerd-font
 )
 
