@@ -41,6 +41,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `kk` | `kubectl kustomize --enable-helm ... | kubectl apply -f -` |
 | `me` | `docker compose -f docker-compose.me.yml` |
 | `mesh` | Run a shell in `docker-compose.me.yml` |
+| `docker_remove_volume` | Fuzzy-select removable Docker volumes and remove the selection |
 | `ti` | `tmuxinator` |
 | `tmux_new [name]` | Start a new tmux session, optionally with a session name |
 | `Alt-i` | Edit and execute the current shell command |
@@ -67,4 +68,5 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | Command | Purpose |
 | --- | --- |
 | `dcd` | Drops compose services and removes volumes |
+| `docker_remove_volume` | Removes selected Docker volumes that are not in use |
 | `nvim_end` | Removes Neovim Docker volumes if confirmed |

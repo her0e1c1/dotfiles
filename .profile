@@ -359,6 +359,23 @@ docker_remove_volumes() {
   fi
 }
 
+docker_remove_volume() {
+  local volumes
+  volumes=$(
+    docker volume ls --format "{{.Name}}" | while read -r volume; do
+      if [ -n "$volume" ] && ! docker ps -a --filter "volume=$volume" -q | grep -q .; then
+        echo "$volume"
+      fi
+    done | fzf --height 100% --multi --prompt "$(pwd) > "
+  )
+  if [ -z "$volumes" ]; then
+    echo "No volumes selected"
+    return 1
+  fi
+
+  echo "$volumes" | xargs docker volume rm -f
+}
+
 docker_remove_all() {
   docker_remove_containers
   docker_remove_networks
