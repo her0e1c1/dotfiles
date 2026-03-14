@@ -18,6 +18,7 @@ Use this when you know the edit flow but forget the command name or this config'
 | --- | --- |
 | `/` | Fuzzy-search lines in the current buffer via `fzf-lua` |
 | `g/` | Use the original Vim `/` search |
+| `<leader>d` | Pick files and directories in the current buffer's directory only |
 | `<leader>fc` | Open Telescope command search |
 | `<leader>fk` | Open Telescope keymap search |
 | `<leader>fh` | Open Telescope help search |

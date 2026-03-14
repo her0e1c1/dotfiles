@@ -1,3 +1,68 @@
+local function current_buffer_dir()
+  local path = vim.api.nvim_buf_get_name(0)
+  if path == "" then
+    return vim.uv.cwd() or vim.fn.getcwd()
+  end
+
+  return vim.fs.dirname(path)
+end
+
+local function telescope_pick_directory_entries(dir)
+  local builtin = require("telescope.builtin")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+  -- Ubuntu packages fd as `fdfind`, while macOS/Homebrew uses `fd`.
+  local fd_cmd = vim.fn.executable("fd") == 1 and "fd" or "fdfind"
+  local target_dir = dir or current_buffer_dir()
+
+  builtin.find_files({
+    cwd = target_dir,
+    prompt_title = "Dir Entries",
+    find_command = {
+      fd_cmd,
+      "--max-depth",
+      "1",
+      "--hidden",
+      "--strip-cwd-prefix",
+      "--type",
+      "f",
+      "--type",
+      "d",
+      "--exclude",
+      "__pycache__",
+      "--exclude",
+      "*.pyc",
+      "--exclude",
+      "*.pyo",
+      ".",
+    },
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if not selection then
+          return
+        end
+
+        local relative_path = selection.path or selection.filename or selection.value or selection[1]
+        if not relative_path then
+          return
+        end
+
+        local path = relative_path:match("^/") and relative_path or vim.fs.joinpath(target_dir, relative_path)
+        if vim.fn.isdirectory(path) == 1 then
+          telescope_pick_directory_entries(path)
+          return
+        end
+
+        vim.cmd.edit(vim.fn.fnameescape(path))
+      end)
+
+      return true
+    end,
+  })
+end
+
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -28,6 +93,14 @@ return {
       },
     },
     keys = {
+      {
+        "<leader>d",
+        function()
+          telescope_pick_directory_entries()
+        end,
+        desc = "Pick Dir Entries",
+        nowait = true,
+      },
       { "<leader>fc", "<cmd>Telescope commands<cr>", desc = "Find Commands" },
       { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Find Keymaps" },
       { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Find Help" },
