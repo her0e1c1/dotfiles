@@ -91,16 +91,16 @@ watch() {
     clear
     "$@"
     sleep 1
-  done;
+  done
 }
 watch_time() {
-  local t=$1;
-  shift;
+  local t=$1
+  shift
   while true; do
     clear
     "$@"
     sleep $t
-  done;
+  done
 }
 color() { perl -E 'print qq/\x1b[38;5;${_}mC$_ / for 0..255; say'; }
 
@@ -705,12 +705,6 @@ copilot_pr() {
   gh pr create --fill --base "$base"
 }
 
-copilot_planner() {
-  copilot \
-    --agent planner \
-    "$@"
-}
-
 commit() {
   if [ -z "${GIT_AUTHOR_NAME:-}" ]; then
     echo "Error: GIT_AUTHOR_NAME is not set."
@@ -738,14 +732,14 @@ commit() {
 copilot_commit() {
   copilot \
     --allow-tool 'shell(git:*)' \
-    --deny-tool  'shell(git push)' \
+    --deny-tool 'shell(git push)' \
     --disable-builtin-mcps \
     -p "$prompt_commit"
 }
 
 gemini_commit() {
   local policy_file=$(mktemp /tmp/gemini_policy.XXXXXX.toml)
-  cat > "$policy_file" <<EOF
+  cat >"$policy_file" <<EOF
 [[rule]]
 toolName = "run_shell_command"
 commandPrefix = "git push"
