@@ -36,6 +36,15 @@ return {
       },
       picker = {
         sources = {
+          explorer = {
+            win = {
+              list = {
+                keys = {
+                  ["p"] = "explorer_up",
+                },
+              },
+            },
+          },
           -- ファイル検索の除外
           files = {
             hidden = true, -- 必要に応じて変更
