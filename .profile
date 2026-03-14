@@ -288,7 +288,7 @@ fzf_select_dir() {
   fi
   if [ $# -eq 0 ]; then
     local d
-    d=$(cat "$MYDIRS_HISTORY" | fzf --prompt "$(pwd) > ")
+    d=$(cat "$MYDIRS_HISTORY" | fzf --height 100% --prompt "$(pwd) > ")
     if [ -d "$d" ]; then
       cdls "$d"
     else
