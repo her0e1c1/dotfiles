@@ -112,6 +112,16 @@ install_dotfiles() {
       echo "  linked: $file"
     fi
   done
+
+  mkdir -p "$HOME/.codex"
+  # Required so Codex can load repo-managed prompt templates from ~/.codex/prompts.
+  if [ -L "$HOME/.codex/prompts" ] || [ ! -e "$HOME/.codex/prompts" ]; then
+    ln -sfn "$DOTFILES_DIR/.codex/prompts" "$HOME/.codex/prompts"
+    echo "  linked: .codex/prompts"
+  else
+    echo "  skipped: ~/.codex/prompts already exists and is not a symlink"
+  fi
+
   success "Dotfiles installation completed"
 }
 
