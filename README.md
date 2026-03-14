@@ -24,3 +24,7 @@ sudo scutil --set LocalHostName $NAME
 ```bash
 defaults write -g ApplePressAndHoldEnabled -bool false
 ```
+
+## Cheatsheets
+
+- [Command cheatsheets](docs/cheatsheets/README.md)
