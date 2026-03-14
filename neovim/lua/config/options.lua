@@ -20,6 +20,10 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 --  mdの```を省略せずに表示
 vim.opt.conceallevel = 0
 
+-- specll checkerが英語にしか対応していないため、日本語の文字列が常にエラーになるのを防ぐ (underlineが表示されなくなる)
+vim.opt.spelllang = { "en", "cjk" }
+
+-- :ReloadConfigで、設定を反映させる
 pcall(vim.api.nvim_del_user_command, "ReloadConfig")
 
 vim.api.nvim_create_user_command("ReloadConfig", function()
