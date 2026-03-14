@@ -14,6 +14,7 @@ DOTFILES_TO_LINK=(
   .gitignore_global
   .profile
   .vimrc
+  .codex/skills
   .copilot/skills
 )
 
