@@ -8,6 +8,7 @@ Use this when you know the edit flow but forget the command name or this config'
 | --- | --- |
 | `:e` | Reload the current buffer |
 | `<leader>e` | toggle explorer |
+| `<leader>uw` | toggle line wrap |
 | `<leader>z` | zen mode |
 | `:checkhealth` | Run health checks |
 
