@@ -727,6 +727,7 @@ gemini_do() {
 
   gemini \
     --approval-mode yolo \
+    --model pro \
     "$@" \
     -p "Please follow the instructions in $instruction_file"
 }
