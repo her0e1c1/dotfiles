@@ -658,26 +658,26 @@ Do NOT run git push."
 
 copilot_do() {
   if [ $# -eq 0 ]; then
-    echo "Usage: copilot_do <plan_file> [copilot_args...]"
+    echo "Usage: copilot_do <file> [copilot_args...]"
     return 1
   fi
 
-  local plan_file=$(abspath "$1")
+  local instruction_file=$(abspath "$1")
   shift
 
-  if [ ! -f "$plan_file" ]; then
-    echo "Plan file not found: $plan_file"
+  if [ ! -f "$instruction_file" ]; then
+    echo "File not found: $instruction_file"
     return 1
   fi
 
-  local name="$(basename "${plan_file%.*}")"
+  local name="$(basename "${instruction_file%.*}")"
   ai_worktree "$name" || return 1
 
   copilot \
     --autopilot \
     --yolo \
     "$@" \
-    -p "Please execute the plan in $plan_file"
+    -p "Please follow the instructions in $instruction_file"
 }
 
 commit() {
