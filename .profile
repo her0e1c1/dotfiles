@@ -680,6 +680,29 @@ copilot_do() {
     -p "Please follow the instructions in $instruction_file"
 }
 
+codex_do() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: codex_do <file> [codex_args...]"
+    return 1
+  fi
+
+  local instruction_file=$(abspath "$1")
+  shift
+
+  if [ ! -f "$instruction_file" ]; then
+    echo "File not found: $instruction_file"
+    return 1
+  fi
+
+  local name="$(basename "${instruction_file%.*}")"
+  ai_worktree "$name" || return 1
+
+  codex exec \
+    --full-auto \
+    "$@" \
+    "Please follow the instructions in $instruction_file"
+}
+
 commit() {
   if [ -z "${GIT_AUTHOR_NAME:-}" ]; then
     echo "Error: GIT_AUTHOR_NAME is not set."
