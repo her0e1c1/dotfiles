@@ -186,7 +186,7 @@ update_files() {
   if [ ! -f "$1" ]; then
     touch "$1"
   fi
-  cat <<'EOS' | python3 - "$@"
+  python3 - "$@" <<'EOS'
 import sys
 filepath, word = sys.argv[1:3]
 word += "\n"
@@ -697,10 +697,15 @@ codex_do() {
   local name="codex-$(basename "${instruction_file%.*}")"
   ai_worktree "$name" || return 1
 
+  # Ask Codex to terminate after the final response and avoid waiting on tty input.
   codex exec \
     --full-auto \
     "$@" \
-    "Please follow the instructions in $instruction_file"
+    "Please follow the instructions in $instruction_file
+
+When the task is complete, provide the final response and exit immediately.
+Do not wait for more input, and do not leave background or interactive processes running." \
+    </dev/null
 }
 
 gemini_do() {
