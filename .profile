@@ -670,7 +670,7 @@ copilot_do() {
     return 1
   fi
 
-  local name="$(basename "${instruction_file%.*}")"
+  local name="copilot-$(basename "${instruction_file%.*}")"
   ai_worktree "$name" || return 1
 
   copilot \
@@ -694,7 +694,7 @@ codex_do() {
     return 1
   fi
 
-  local name="$(basename "${instruction_file%.*}")"
+  local name="codex-$(basename "${instruction_file%.*}")"
   ai_worktree "$name" || return 1
 
   codex exec \
@@ -717,7 +717,7 @@ gemini_do() {
     return 1
   fi
 
-  local name="$(basename "${instruction_file%.*}")"
+  local name="gemini-$(basename "${instruction_file%.*}")"
   ai_worktree "$name" || return 1
 
   gemini \
