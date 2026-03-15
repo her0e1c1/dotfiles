@@ -43,7 +43,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `mesh` | Run a shell in `docker-compose.me.yml` |
 | `docker_remove_volume` | Fuzzy-select removable Docker volumes and remove the selection |
 | `ti` | `tmuxinator` |
-| `tmux_new [name]` | With no name, pick an existing tmux session via `fzf` or create `main` if none exist; with a name, create or attach, except inside tmux where existing names fail with a message |
+| `tmux_new [name]` | With no name, pick an existing tmux session via `fzf` or create `main` if none exist; with a name, create or attach. Inside tmux it switches clients and creates new sessions detached to avoid nested tmux |
 | `Alt-i` | Edit and execute the current shell command |
 | `Ctrl-x r` | Use Bash reverse history search |
 

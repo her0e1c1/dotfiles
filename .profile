@@ -823,7 +823,7 @@ tmux_new() {
 
     sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null)
     if [ -z "$sessions" ]; then
-      tmux new-session -s main
+        tmux new-session -s main
       return
     fi
 
@@ -837,16 +837,15 @@ tmux_new() {
   local session_name="$1"
 
   if tmux has-session -t "$session_name" 2>/dev/null; then
-    if [ -n "${TMUX:-}" ]; then
-      echo "tmux_new: session '$session_name' already exists; refusing to switch clients from inside tmux" >&2
-      return 1
-    fi
-
     tmux_attach_or_switch_session "$session_name"
     return
   fi
 
-  tmux new-session -s "$session_name"
+  if [ -n "${TMUX:-}" ]; then
+    tmux new-session -d -s "$session_name" && tmux switch-client -t "$session_name"
+  else
+    tmux new-session -s "$session_name"
+  fi
 }
 
 #==============================================================================
