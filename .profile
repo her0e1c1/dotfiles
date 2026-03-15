@@ -756,11 +756,46 @@ ai_worktree() {
 }
 
 tmux_new() {
+  tmux_attach_or_switch_session() {
+    local session_name="$1"
+
+    if [ -n "${TMUX:-}" ]; then
+      tmux switch-client -t "$session_name"
+    else
+      tmux attach-session -t "$session_name"
+    fi
+  }
+
   if [ $# -eq 0 ]; then
-    tmux new-session
-  else
-    tmux new-session -s "$1"
+    local sessions
+    local session_name
+
+    sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null)
+    if [ -z "$sessions" ]; then
+      tmux new-session -s main
+      return
+    fi
+
+    session_name=$(printf '%s\n' "$sessions" | fzf --select-1 --prompt "$(pwd) > tmux > ")
+    [ -n "$session_name" ] || return 1
+
+    tmux_attach_or_switch_session "$session_name"
+    return
   fi
+
+  local session_name="$1"
+
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    if [ -n "${TMUX:-}" ]; then
+      echo "tmux_new: session '$session_name' already exists; refusing to switch clients from inside tmux" >&2
+      return 1
+    fi
+
+    tmux_attach_or_switch_session "$session_name"
+    return
+  fi
+
+  tmux new-session -s "$session_name"
 }
 
 #==============================================================================
