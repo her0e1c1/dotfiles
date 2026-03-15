@@ -703,6 +703,29 @@ codex_do() {
     "Please follow the instructions in $instruction_file"
 }
 
+gemini_do() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: gemini_do <file> [gemini_args...]"
+    return 1
+  fi
+
+  local instruction_file=$(abspath "$1")
+  shift
+
+  if [ ! -f "$instruction_file" ]; then
+    echo "File not found: $instruction_file"
+    return 1
+  fi
+
+  local name="$(basename "${instruction_file%.*}")"
+  ai_worktree "$name" || return 1
+
+  gemini \
+    --approval-mode yolo \
+    "$@" \
+    -p "Please follow the instructions in $instruction_file"
+}
+
 commit() {
   if [ -z "${GIT_AUTHOR_NAME:-}" ]; then
     echo "Error: GIT_AUTHOR_NAME is not set."
