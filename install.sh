@@ -76,15 +76,15 @@ show_help() {
 Usage: $0 [OPTIONS]
 
 Options:
-  -h, --help          Show this help message
-  --skip-dotfiles     Skip dotfiles installation
-  --skip-packages     Skip package manager and package installation
-  --skip-vscode       Skip VSCode settings installation
-  --skip-shell        Skip shell configuration
+  -h, --help           Show this help message
+  --install-dotfiles   Install dotfiles
+  --install-packages   Install package manager and packages
+  --install-vscode     Install VSCode settings
+  --install-shell      Install shell configuration
 
 Examples:
-  $0                  Full installation
-  $0 --skip-packages  Install everything except package setup
+  $0                   Full installation
+  $0 --install-vscode  Install only VSCode settings
 EOF
 }
 
@@ -242,10 +242,11 @@ configure_shell() {
 
 # メイン処理
 main() {
-  local skip_dotfiles=false
-  local skip_packages=false
-  local skip_vscode=false
-  local skip_shell=false
+  local should_install_dotfiles=false
+  local should_install_packages=false
+  local should_install_vscode=false
+  local should_install_shell=false
+  local has_install_flag=false
 
   # オプション解析
   while [[ $# -gt 0 ]]; do
@@ -254,20 +255,24 @@ main() {
       show_help
       exit 0
       ;;
-    --skip-dotfiles)
-      skip_dotfiles=true
+    --install-dotfiles)
+      should_install_dotfiles=true
+      has_install_flag=true
       shift
       ;;
-    --skip-packages)
-      skip_packages=true
+    --install-packages)
+      should_install_packages=true
+      has_install_flag=true
       shift
       ;;
-    --skip-vscode)
-      skip_vscode=true
+    --install-vscode)
+      should_install_vscode=true
+      has_install_flag=true
       shift
       ;;
-    --skip-shell)
-      skip_shell=true
+    --install-shell)
+      should_install_shell=true
+      has_install_flag=true
       shift
       ;;
     *)
@@ -276,17 +281,25 @@ main() {
     esac
   done
 
+  # フラグ未指定時は全項目をインストールする
+  if [ "$has_install_flag" = false ]; then
+    should_install_dotfiles=true
+    should_install_packages=true
+    should_install_vscode=true
+    should_install_shell=true
+  fi
+
   echo "=== Dotfiles Installer ==="
   info "Detected OS: $OS"
 
   # dotfilesリポジトリの取得
-  if [ "$skip_dotfiles" = false ]; then
+  if [ "$should_install_dotfiles" = true ]; then
     clone_dotfiles
     install_dotfiles
   fi
 
   # パッケージマネージャーとパッケージのインストール
-  if [ "$skip_packages" = false ]; then
+  if [ "$should_install_packages" = true ]; then
     if [[ "$OS" == "macos" ]]; then
       # macOS: Homebrewを使用
       install_homebrew
@@ -300,12 +313,12 @@ main() {
   fi
 
   # VSCode設定
-  if [ "$skip_vscode" = false ]; then
+  if [ "$should_install_vscode" = true ]; then
     install_vscode_settings
   fi
 
   # シェル設定
-  if [ "$skip_shell" = false ]; then
+  if [ "$should_install_shell" = true ]; then
     configure_shell
   fi
 

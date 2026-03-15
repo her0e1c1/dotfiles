@@ -1,10 +1,16 @@
-.PHONY: install env
+.PHONY: install dot pkg env
 
 ENVRC_SOURCE := $(CURDIR)/.envrc.example
 ENVRC_TARGET ?= $(HOME)/.envrc
 
 install:
 	./install.sh
+
+dot:
+	./install.sh --install-dotfiles
+
+pkg:
+	./install.sh --install-packages
 
 env:
 	@test -f "$(ENVRC_SOURCE)" || { echo "missing: $(ENVRC_SOURCE)"; exit 1; }
