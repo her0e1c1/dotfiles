@@ -1,3 +1,6 @@
+-- https://www.lazyvim.org/configuration
+-- ここによると、 lua/config/lazy.luaから呼び出しがある
+
 -- マウスを無効にして、コピーできるようにする
 vim.opt.mouse = ""
 
@@ -24,6 +27,8 @@ vim.opt.conceallevel = 0
 vim.opt.spelllang = { "en", "cjk" }
 
 -- :ReloadConfigで、設定を反映させる
+-- lazy vimの場合、supportされていないみたい...
+-- ただし、options.luaの読み込みはされた
 pcall(vim.api.nvim_del_user_command, "ReloadConfig")
 
 vim.api.nvim_create_user_command("ReloadConfig", function()
@@ -36,5 +41,3 @@ vim.api.nvim_create_user_command("ReloadConfig", function()
   dofile(vim.env.MYVIMRC)
   print("Config reloaded")
 end, {})
-
-vim.keymap.set("n", "<leader>r", "<cmd>ReloadConfig<cr>", { desc = "Reload Config" })
