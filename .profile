@@ -670,33 +670,14 @@ copilot_do() {
     return 1
   fi
 
-  local worktree_name="$(basename "${plan_file%.*}")"
-  ai_worktree "$worktree_name" || return 1
+  local name="$(basename "${plan_file%.*}")"
+  ai_worktree "$name" || return 1
 
   copilot \
     --autopilot \
     --yolo \
-    --deny-tool 'shell(git push)' \
     "$@" \
-    -p "Please execute the plan in $plan_file" || return 1
-
-  local base=$(git config "branch.$(git_current_branch).base")
-  if [ -z "$base" ]; then
-    echo "Error: Base branch is not set for $(git_current_branch)."
-    return 1
-  fi
-
-  copilot \
-    --yolo \
-    --allow-tool 'shell(git:*)' \
-    --allow-tool 'shell(gh:*)' \
-    -p "Create a GitHub pull request from $(git_current_branch) into ${base}.
-
-Before creating the pull request, run git status --short. If any files are still left in git status, run git add -A, inspect the staged diff with git diff --cached, create ONE Conventional Commit subject line <= 72 chars, and run git commit -m \"<that message>\" to commit all remaining changes.
-
-After that, run git push -u origin HEAD so the remote branch matches the local branch.
-
-Then summarize the actual diff against ${base} in the PR body, and use gh to create the pull request." || return 1
+    -p "Please execute the plan in $plan_file"
 }
 
 commit() {
