@@ -11,6 +11,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `d` | `docker` |
 | `dc` | `docker compose` |
 | `k` | `kubectl` |
+| `t` | Run `tmux_new` |
 | `vs` | Open VS Code rooted at the current working directory |
 | `f` | Search for a word under the current directory and open the match |
 | `cd` | Fuzzy-select a recent directory via `fzf_select_dir` |
@@ -42,6 +43,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `me` | `docker compose -f docker-compose.me.yml` |
 | `mesh` | Run a shell in `docker-compose.me.yml` |
 | `docker_remove_volume` | Fuzzy-select removable Docker volumes and remove the selection |
+| `t [name]` | Alias for `tmux_new [name]` |
 | `ti` | `tmuxinator` |
 | `tmux_new [name]` | With no name, pick an existing tmux session via `fzf` or create `main` if none exist; with a name, create or attach. Inside tmux it switches clients and creates new sessions detached to avoid nested tmux |
 | `Alt-i` | Edit and execute the current shell command |

@@ -892,6 +892,7 @@ alias dev="devcontainer_wrapper"
 # Project-specific aliases
 alias me="docker compose -f docker-compose.me.yml"
 alias mesh="docker compose -f docker-compose.me.yml run --remove-orphans sh"
+alias t="tmux_new"
 alias ti="tmuxinator"
 alias vs="open_vscode"
 
