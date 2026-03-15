@@ -4,6 +4,9 @@
 -- マウスを無効にして、コピーできるようにする
 vim.opt.mouse = ""
 
+-- swapファイルを作らない
+vim.opt.swapfile = false
+
 -- 行番号非表示
 vim.opt.number = false
 vim.opt.relativenumber = false
