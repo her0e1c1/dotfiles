@@ -1,0 +1,3 @@
+# Allow direnv in ~/workspace without repeated trust prompts.
+[whitelist]
+prefix = ["~/workspace"]
