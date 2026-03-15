@@ -6,6 +6,7 @@ Quick index for the commands and keybindings that are easy to forget in this dot
 
 | Page | Focus |
 | --- | --- |
+| [hhkb.md](hhkb.md) | HHKB shortcuts and Karabiner remaps |
 | [nvim.md](nvim.md) | Neovim commands and this config's keymaps |
 | [tmux.md](tmux.md) | Custom prefix, pane/window/session operations |
 | [tig.md](tig.md) | Custom tig bindings, git/gh flows, destructive actions |
