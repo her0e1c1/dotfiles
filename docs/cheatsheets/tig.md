@@ -14,6 +14,7 @@ Use this when you remember the workflow but not the custom `tig` bindings in thi
 | `r` | `refs` | Pull with `--ff-only --rebase` |
 | `F` | `refs` | Fetch and prune the selected remote |
 | `H` | `generic` | Open `tig` history for the selected file |
+| `W` | `generic` | Toggle whitespace ignoring in diffs (`ignore-space`) |
 
 ## Config-Specific
 
