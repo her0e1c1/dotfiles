@@ -59,6 +59,7 @@ Use this when you know the edit flow but forget the command name or this config'
 
 ## Vim Binds
 
+| `<C-q>` | Enter Visual Block mode; useful on Windows where `<C-v>` is often paste |
 | `:w` | Save the current buffer |
 | `:q` | Quit the current window |
 | `:qa` | Quit all windows |
