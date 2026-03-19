@@ -24,6 +24,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `Ctrl-r` | Fuzzy-search shell history and execute the selected command |
 | `Alt-o` | Fuzzy-pick a recent file and open it in `$EDITOR` |
 | `Alt-d` | Fuzzy-pick a recent directory and `cd` into it |
+| `Alt-s` | Fuzzy-pick a tmux session via `tmux_new`, or create `main` if none exist |
 | `Alt-w` | Fuzzy-pick a running Docker container and open a shell inside it |
 | `Alt-g` | Jump to the parent directory with `cdls ..` |
 | `f <word>` | Grep under the current directory, then open the selected result |
