@@ -53,6 +53,7 @@ The skill should instruct Codex to follow this order:
    - remote availability
    - `gh` availability
 2. Determine the base branch:
+   - check `git config branch.<current-branch>.base` first and prefer it when set
    - compare likely candidates such as `main`, `master`, and `develop`
    - use merge-base and fork-point style evidence first
    - use upstream and recent branch context as secondary signals
@@ -82,9 +83,10 @@ The skill should instruct Codex to follow this order:
 
 The skill should prefer evidence in this order:
 
-1. merge-base and fork-point relationships with common integration branches
-2. the branch's configured upstream or remote default branch when that evidence aligns with the commit graph
-3. recent branch history or naming context as a tie-breaker only
+1. `git config branch.<current-branch>.base` when it is set
+2. merge-base and fork-point relationships with common integration branches
+3. the branch's configured upstream or remote default branch when that evidence aligns with the commit graph
+4. recent branch history or naming context as a tie-breaker only
 
 The skill should treat base-branch inference as successful only when one candidate is materially stronger than the others. If `main` and `master`, or `main` and `develop`, remain similarly plausible after graph inspection, the skill should ask the user directly instead of guessing.
 
