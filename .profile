@@ -436,8 +436,12 @@ git_current_branch() {
   git rev-parse --abbrev-ref HEAD
 }
 
+git_repository_root() {
+  git rev-parse --show-toplevel 2>/dev/null
+}
+
 git_current_repository() {
-  basename "$(git rev-parse --show-toplevel)"
+  basename "$(git_repository_root)"
 }
 
 git_to_branch_name() {
@@ -790,12 +794,14 @@ ai_worktree() {
   fi
 
   local name="$1"
-  local repo=$(git_current_repository)
+  local root=$(git_repository_root) || return 1
   local base=$(git_current_branch)
-  local prefix="/tmp/worktree/${repo}/${name}-"
-  mkdir -p "$(dirname "$prefix")" || return 1
+  local worktree="${root}/.worktrees"
+  local prefix="${worktree}/${name}-"
+  mkdir -p "$worktree" || return 1
   local tmpdir=$(mktemp -d "${prefix}XXX") || return 1
-  local new_branch="${tmpdir#"/tmp/worktree/${repo}/"}"
+  local new_branch
+  new_branch=$(basename "$tmpdir")
 
   git worktree add -b "$new_branch" "$tmpdir" HEAD || {
     rmdir "$tmpdir"
@@ -824,7 +830,7 @@ tmux_new() {
 
     sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null)
     if [ -z "$sessions" ]; then
-        tmux new-session -s main
+      tmux new-session -s main
       return
     fi
 
@@ -907,16 +913,16 @@ alias cd="fzf_select_dir"
 # $- contains the current shell option flags; if it includes i, this is an interactive shell with readline enabled.
 # Skip bind commands in non-interactive shells to avoid "line editing not enabled" warnings.
 case $- in
-  *i*)
-    bind -x '"\ew": fzf_select_docker_shell'
-    bind -x '"\eo": fzf_select_recent_files'
-    bind -x '"\ed": fzf_select_dir'
-    bind -x '"\eg": "cdls .."'
-    bind -x '"\es": tmux_new'
-    bind -x '"\C-r": fzf_select_history'
-    bind '"\C-xr": reverse-search-history'
-    bind '"\ei": edit-and-execute-command'
-    ;;
+*i*)
+  bind -x '"\ew": fzf_select_docker_shell'
+  bind -x '"\eo": fzf_select_recent_files'
+  bind -x '"\ed": fzf_select_dir'
+  bind -x '"\eg": "cdls .."'
+  bind -x '"\es": tmux_new'
+  bind -x '"\C-r": fzf_select_history'
+  bind '"\C-xr": reverse-search-history'
+  bind '"\ei": edit-and-execute-command'
+  ;;
 esac
 
 #==============================================================================
