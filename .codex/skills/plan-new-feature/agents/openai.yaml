@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan New Feature"
+  short_description: "Suggest repo-fit feature ideas"
+  default_prompt: "Use $plan-new-feature to inspect this repository and propose feature ideas in narrowed and broad sections."
