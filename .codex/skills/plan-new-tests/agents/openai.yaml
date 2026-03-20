@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan New Tests"
+  short_description: "Find missing test cases from code"
+  default_prompt: "Use $plan-new-tests to read the implementation and current tests, then list likely missing test cases and a short follow-up plan."

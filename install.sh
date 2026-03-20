@@ -15,8 +15,10 @@ DOTFILES_TO_LINK=(
   .profile
   .vimrc
   .config/direnv
+  .claude/skills
   .codex/skills
   .copilot/skills
+  .gemini/skills
 )
 
 # OSの判定
