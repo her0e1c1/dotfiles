@@ -1,0 +1,4 @@
+interface:
+  display_name: "Confirm Typo"
+  short_description: "Confirm likely typos before acting"
+  default_prompt: "Use $confirm-typo when a user request appears to contain a high-confidence typo and you should confirm the intended wording before acting."
