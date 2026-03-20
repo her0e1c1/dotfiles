@@ -74,11 +74,11 @@ Expected files:
 - `.codex/skills/plan-new-tests/references/checklist.md`
 - `.codex/skills/plan-new-tests/agents/openai.yaml`
 
-Cross-agent exposure should reuse the same canonical skill via symlinks rather than duplicating content:
+Cross-agent exposure should reuse the canonical Codex skill directory via whole-directory symlinks rather than per-skill duplication:
 
-- `.claude/skills/plan-new-tests` -> `.codex/skills/plan-new-tests`
-- `.copilot/skills/plan-new-tests` -> `.codex/skills/plan-new-tests`
-- `.gemini/skills/plan-new-tests` -> `.codex/skills/plan-new-tests`
+- `.claude/skills` -> `.codex/skills`
+- `.copilot/skills` -> `.codex/skills`
+- `.gemini/skills` -> `.codex/skills`
 
 No scripts are required for the first version because the problem is primarily judgment-driven and language-agnostic.
 

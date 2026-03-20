@@ -4,7 +4,7 @@
 
 **Goal:** Add a reusable `plan-new-tests` skill that teaches Codex to read implementation code and current tests, then list likely missing test cases and a short follow-up plan without changing or running tests.
 
-**Architecture:** Keep the canonical skill under `.codex/skills/plan-new-tests/` with a concise `SKILL.md`, a reusable checklist reference, and UI metadata in `agents/openai.yaml`. Expose the same skill to Claude, Copilot, and Gemini via symlinks so the instructions stay in one place.
+**Architecture:** Keep the canonical skill under `.codex/skills/plan-new-tests/` with a concise `SKILL.md`, a reusable checklist reference, and UI metadata in `agents/openai.yaml`. Expose the same shared skill set to Claude, Copilot, and Gemini by symlinking each agent's entire `skills` directory to `.codex/skills`.
 
 **Tech Stack:** Markdown, YAML, existing local skill-authoring scripts
 
@@ -16,9 +16,9 @@
 - Create: `.codex/skills/plan-new-tests/SKILL.md`
 - Create: `.codex/skills/plan-new-tests/agents/openai.yaml`
 - Create: `.codex/skills/plan-new-tests/references/checklist.md`
-- Create: `.claude/skills/plan-new-tests` (symlink)
-- Create: `.copilot/skills/plan-new-tests` (symlink)
-- Create: `.gemini/skills/plan-new-tests` (symlink)
+- Create: `.claude/skills` (symlink to `.codex/skills`)
+- Create: `.copilot/skills` (symlink to `.codex/skills`)
+- Create: `.gemini/skills` (symlink to `.codex/skills`)
 
 - [ ] **Step 1: Create the skill scaffold**
 
