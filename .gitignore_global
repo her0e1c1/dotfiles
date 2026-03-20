@@ -36,5 +36,7 @@ docker-compose.me.yml
 
 .bash_history
 
-# plan
+# my own space
+.me/
 .plan/
+.worktrees/
