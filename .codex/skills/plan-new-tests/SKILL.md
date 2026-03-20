@@ -1,6 +1,6 @@
 ---
 name: plan-new-tests
-description: Use when Codex needs to read the current implementation code and existing tests, identify likely missing test cases, and produce a concise test-addition plan without editing or running tests.
+description: Use when the agent needs to read the current implementation code and existing tests, identify likely missing test cases, and produce a concise test-addition plan without editing or running tests.
 ---
 
 # Plan New Tests

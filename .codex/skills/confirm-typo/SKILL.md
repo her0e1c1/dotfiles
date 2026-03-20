@@ -1,6 +1,6 @@
 ---
 name: confirm-typo
-description: Use when Codex is about to act on user input that appears to contain a typo and one correction candidate is strongly favored, so Codex should confirm the intended wording before proceeding.
+description: Use when the agent is about to act on user input that appears to contain a typo and one correction candidate is strongly favored, so the agent should confirm the intended wording before proceeding.
 ---
 
 # Confirm Typo

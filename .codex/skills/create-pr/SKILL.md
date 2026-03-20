@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: Use when Codex should create a GitHub pull request for the current branch and needs to infer the right base branch or decide whether local uncommitted changes belong in that PR.
+description: Use when the agent should create a GitHub pull request for the current branch and needs to infer the right base branch or decide whether local uncommitted changes belong in that PR.
 ---
 
 # Create PR

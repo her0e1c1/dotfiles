@@ -1,6 +1,6 @@
 ---
 name: plan-new-feature
-description: Use when Codex needs to inspect a repository broadly, synthesize all available local information, and propose recommended new feature ideas in narrowed and broad sections without implementing anything.
+description: Use when the agent needs to inspect a repository broadly, synthesize all available local information, and propose recommended new feature ideas in narrowed and broad sections without implementing anything.
 ---
 
 # Plan New Feature
