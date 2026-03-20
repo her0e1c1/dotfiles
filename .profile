@@ -904,14 +904,20 @@ alias cd="fzf_select_dir"
 # KEY BINDINGS
 #==============================================================================
 
-bind -x '"\ew": fzf_select_docker_shell'
-bind -x '"\eo": fzf_select_recent_files'
-bind -x '"\ed": fzf_select_dir'
-bind -x '"\eg": "cdls .."'
-bind -x '"\es": tmux_new'
-bind -x '"\C-r": fzf_select_history'
-bind '"\C-xr": reverse-search-history'
-bind '"\ei": edit-and-execute-command'
+# $- contains the current shell option flags; if it includes i, this is an interactive shell with readline enabled.
+# Skip bind commands in non-interactive shells to avoid "line editing not enabled" warnings.
+case $- in
+  *i*)
+    bind -x '"\ew": fzf_select_docker_shell'
+    bind -x '"\eo": fzf_select_recent_files'
+    bind -x '"\ed": fzf_select_dir'
+    bind -x '"\eg": "cdls .."'
+    bind -x '"\es": tmux_new'
+    bind -x '"\C-r": fzf_select_history'
+    bind '"\C-xr": reverse-search-history'
+    bind '"\ei": edit-and-execute-command'
+    ;;
+esac
 
 #==============================================================================
 # EXTERNAL TOOL INITIALIZATION

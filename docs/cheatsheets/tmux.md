@@ -27,6 +27,7 @@ Use this when you forget the custom prefix or the window/pane bindings from this
 | `M-u M-t` | Open the tree chooser |
 | `M-u M-s` | Choose a session |
 | `M-u C-s` | Rename the current session |
+| `M-s` | Open `tmux_new` in a popup for fuzzy session switching or creating `main` |
 | `M-Down` | Switch to the previous session |
 | `M-Up` | Switch to the next session |
 | `M-u M-p` | Choose a paste buffer |
