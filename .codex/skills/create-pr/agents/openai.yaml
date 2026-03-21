@@ -1,4 +1,4 @@
 interface:
   display_name: "Create PR"
   short_description: "Create a GitHub pull request from the current branch"
-  default_prompt: "Use $create-pr when Codex should turn the current branch into a GitHub pull request, including inferring the base branch, handling clearly related uncommitted changes, generating PR metadata, and creating the PR."
+  default_prompt: "Use $create-pr when Codex should create a GitHub pull request using only the minimum necessary `git` and `gh` actions, including any needed `git add`, `git commit`, `git push`, and `gh pr create`, without doing unrelated cleanup or extra work."

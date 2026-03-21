@@ -1,13 +1,21 @@
 ---
 name: create-pr
-description: Use when the agent should create a GitHub pull request for the current branch and needs to infer the right base branch or decide whether local uncommitted changes belong in that PR.
+description: Use when the agent should create a GitHub pull request for the current branch and the work should stay limited to the minimum `git` and `gh` actions needed to publish it.
 ---
 
 # Create PR
 
 ## Overview
 
-Turn the current branch into a GitHub pull request end to end. Inspect the Git state, infer the base branch when one candidate is clearly favored, include only clearly related local changes, then generate the PR title and body from the branch diff before running `gh pr create`.
+Turn the current branch into a GitHub pull request with a tight scope. Use only `git` and `gh`, do only the work needed to get the branch published, and treat `git add`, `git commit`, `git push`, and `gh pr create` as the allowed path to completion.
+
+## Guardrails
+
+- Use `git` and `gh` only.
+- Keep the task scoped to PR creation. Do not run tests, refactors, formatting passes, dependency changes, or unrelated cleanup.
+- `git add`, `git commit`, and `git push` are allowed when they are needed to publish the PR.
+- Do not rewrite existing history, restack branches, or reorganize unrelated local work unless the user explicitly asks.
+- If local changes are ambiguous, stop and ask instead of trying to be clever.
 
 ## Workflow
 
@@ -26,9 +34,10 @@ Turn the current branch into a GitHub pull request end to end. Inspect the Git s
    - keep unrelated local changes untouched
    - stop and ask the user if the boundary is ambiguous
 4. Create any needed commits:
+   - use `git add` only for changes that clearly belong in this PR
    - preserve existing history
-   - append only the new commits needed
-   - split into multiple commits when the change groups are distinct
+   - append only the new commits needed to publish the branch
+   - prefer the minimum commit work needed over commit cleanup
 5. Summarize `base...HEAD` and identify the branch's main purpose.
 6. Generate PR metadata:
    - adapt to a repository PR template if one exists
@@ -57,10 +66,17 @@ Turn the current branch into a GitHub pull request end to end. Inspect the Git s
 
 ### Commit Creation
 
+- `git add` only the changes that clearly belong in the PR.
 - Preserve the current branch history.
 - Add only the new commits needed for PR-ready history.
-- Generate commit messages from the grouped changes and split commits only when the work naturally separates.
+- Generate a practical commit message and avoid unnecessary commit splitting.
 - Do not rewrite prior commits unless the user separately asks for history cleanup.
+
+### Scope Discipline
+
+- Stay on the narrow path: inspect Git state, add related changes, commit if needed, push, and create the PR.
+- Do not do extra repository maintenance just because it might be helpful.
+- Do not expand the task into validation, cleanup, or follow-up implementation work.
 
 ## Stop Conditions
 
