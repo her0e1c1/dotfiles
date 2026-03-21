@@ -813,6 +813,53 @@ ai_worktree() {
   cd "$tmpdir"
 }
 
+ai_worktree_purge() {
+  if [ $# -ne 0 ]; then
+    echo "Usage: ai_worktree_purge"
+    return 1
+  fi
+
+  local root
+  root=$(git_repository_root) || return 1
+
+  local worktree_paths=()
+  local line
+
+  while IFS= read -r line; do
+    case "$line" in
+    worktree\ *)
+      local worktree_path="${line#worktree }"
+      if [ "$worktree_path" != "$root" ]; then
+        worktree_paths+=("$worktree_path")
+      fi
+      ;;
+    esac
+  done < <(git worktree list --porcelain)
+
+  if [ "${#worktree_paths[@]}" -eq 0 ]; then
+    echo "No secondary worktrees to purge."
+    return 0
+  fi
+
+  echo "Secondary worktrees to purge:"
+  local i
+  for i in "${!worktree_paths[@]}"; do
+    echo "- ${worktree_paths[$i]}"
+  done
+
+  local reply
+  read -p "Purge these worktrees? [y/N] " -r reply
+  echo
+  if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+    echo "Cancelled."
+    return 1
+  fi
+
+  for i in "${!worktree_paths[@]}"; do
+    git worktree remove --force "${worktree_paths[$i]}" || return 1
+  done
+}
+
 tmux_new() {
   tmux_attach_or_switch_session() {
     local session_name="$1"
