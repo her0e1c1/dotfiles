@@ -684,6 +684,26 @@ copilot_do() {
     -p "Please follow the instructions in $instruction_file"
 }
 
+# Free quick Copilot command for simple tasks
+copilot_easy() {
+  local model="gpt-5-mini"
+  local -a base_args=(
+    --model "$model"
+    --yolo
+    --autopilot
+    --deny-tool 'shell(rm)'
+    --deny-tool 'shell(git push)'
+  )
+
+  if (($# > 0)); then
+    local prompt=$1
+    shift
+    command copilot "${base_args[@]}" -p "$prompt" "$@"
+  else
+    command copilot "${base_args[@]}" "$@"
+  fi
+}
+
 codex_do() {
   if [ $# -eq 0 ]; then
     echo "Usage: codex_do <file> [codex_args...]"
@@ -950,6 +970,7 @@ alias ti="tmuxinator"
 alias vs="open_vscode"
 
 # Utility aliases
+alias z="copilot_easy"
 alias f="fzf_find_word"
 alias cd="fzf_select_dir"
 
