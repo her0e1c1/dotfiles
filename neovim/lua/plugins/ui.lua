@@ -17,6 +17,10 @@ return {
         colors.bg_float = "#000000"
         colors.bg_sidebar = "#000000"
       end,
+      on_highlights = function(highlights)
+        -- Brighten comments because the default contrast is too low on this black background.
+        highlights.Comment = { fg = "#A3BE8C" }
+      end,
     },
   },
   {
