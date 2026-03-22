@@ -695,6 +695,10 @@ copilot_easy() {
   fi
 }
 
+copilot_yolo() {
+  copilot --yolo --autopilot "$@"
+}
+
 codex_do() {
   if [ $# -eq 0 ]; then
     echo "Usage: codex_do <file> [codex_args...]"
@@ -723,6 +727,10 @@ Do not wait for more input, and do not leave background or interactive processes
     </dev/null
 }
 
+codex_yolo() {
+  codex exec --full-auto "$@"
+}
+
 gemini_do() {
   if [ $# -eq 0 ]; then
     echo "Usage: gemini_do <file> [gemini_args...]"
@@ -745,6 +753,10 @@ gemini_do() {
     --model pro \
     "$@" \
     -p "Please follow the instructions in $instruction_file"
+}
+
+gemini_yolo() {
+  gemini --approval-mode yolo "$@"
 }
 
 commit() {
