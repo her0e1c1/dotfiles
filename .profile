@@ -452,6 +452,16 @@ git_submodule_update() {
   git submodule update --recursive --remote
 }
 
+git_submodule_reset() {
+  local root
+  root=$(git_repository_root) || return 1
+  (
+    cd "$root" || return 1
+    git submodule update --init --recursive
+    git submodule foreach --recursive 'git reset --hard'
+  )
+}
+
 #==============================================================================
 # NETWORK AND SYSTEM UTILITIES
 #==============================================================================
