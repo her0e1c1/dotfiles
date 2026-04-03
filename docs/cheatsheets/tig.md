@@ -27,6 +27,7 @@ Use this when you remember the workflow but not the custom `tig` bindings in thi
 | `;mo` | `refs` | Merge with `-X ours` |
 | `;mt` | `refs` | Merge with `-X theirs` |
 | `I` | `main` | Start autosquash interactive rebase from the selected commit |
+| `I` | `refs` | Confirm and rebase onto the selected branch |
 | `O` | `main` | Rebase current HEAD onto a prompted base |
 | `K` | `main` | Cherry-pick the selected commit |
 | `R` | `main` | Revert the selected commit without committing |

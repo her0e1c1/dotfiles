@@ -87,6 +87,7 @@ bind main    S        ?git reset --soft %(commit)
 bind status  R        ?git reset --hard HEAD
 
 # refs
+bind refs    I        ?git rebase %(branch)
 bind refs    R        ?git rebase %(branch)
 
 # tree
