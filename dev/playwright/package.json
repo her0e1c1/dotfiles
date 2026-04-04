@@ -1,0 +1,17 @@
+{
+  "name": "playwright",
+  "private": true,
+  "devDependencies": {
+    "@playwright/cli": "^0.1.5",
+    "@playwright/test": "1.58.2",
+    "playwright": "1.58.2",
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "init": "playwright init-agents --loop=vscode",
+    "test": "playwright test",
+    "ui": "playwright test --ui --ui-host 0.0.0.0 --ui-port 9323",
+    "headed": "playwright test --headed",
+    "codegen": "playwright codegen"
+  }
+}

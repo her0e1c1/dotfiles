@@ -1,0 +1,25 @@
+{
+  "name": "playwright-dev",
+  "dockerComposeFile": "compose.yaml",
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/playwright",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/copilot-cli:1": {}
+  },
+  "postCreateCommand": "npm ci",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-playwright.playwright",
+        "github.copilot",
+        "github.copilot-chat"
+      ]
+    }
+  },
+  "forwardPorts": [
+    9323
+  ],
+  "remoteUser": "root"
+}
