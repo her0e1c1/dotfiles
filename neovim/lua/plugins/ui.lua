@@ -6,6 +6,35 @@ return {
     },
   },
   {
+    "folke/noice.nvim",
+    opts = {
+      -- Keep transient messages out of the top-right mini/notify views.
+      messages = {
+        enabled = false,
+      },
+      notify = {
+        enabled = false,
+      },
+      lsp = {
+        progress = {
+          enabled = false,
+        },
+        message = {
+          enabled = false,
+        },
+      },
+    },
+  },
+  {
+    "snacks.nvim",
+    opts = {
+      -- Disable top-right notifications so movement stays in the buffer.
+      notifier = {
+        enabled = false,
+      },
+    },
+  },
+  {
     "folke/tokyonight.nvim",
     opts = {
       style = "night",

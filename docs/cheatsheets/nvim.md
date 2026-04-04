@@ -18,6 +18,8 @@ Use this when you know the edit flow but forget the command name or this config'
 | `<leader><space>` | Find files from the project root |
 | `<leader>fr` | Open recent files |
 | `<leader>fd` | Open files in current directoires |
+| `<leader>l` | Open files in the current buffer's directory |
+| `<leader>L` | Pick a subdirectory, then open files under it recursively |
 
 ## Search
 
@@ -37,9 +39,10 @@ Use this when you know the edit flow but forget the command name or this config'
 | --- | --- |
 | `/` | Search lines in the current buffer via `Snacks` |
 | `g/` | Use the original Vim `/` search |
-| `<leader>d` | Pick files and directories in the current buffer's directory only |
-| `<leader>D` | Pick any subdirectory under the current buffer's directory |
-| `<leader>e` | Open Snacks explorer in the current buffer's directory |
+| `<leader>d` | Pick a subdirectory under the current buffer's directory and open Snacks explorer there |
+| `<leader>e` | Open Snacks explorer in the current buffer's directory, including dotfiles |
+| `<leader>l` | Open Snacks file picker in the current buffer's directory |
+| `<leader>L` | Pick a subdirectory under the current buffer's directory and open a recursive Snacks file picker there |
 | `<leader>f?` | Open Snacks keymap search |
 | `<leader>fc` | Open Telescope command search |
 | `<leader>fh` | Open Telescope help search |
