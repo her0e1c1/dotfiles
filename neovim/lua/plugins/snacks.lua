@@ -1,4 +1,8 @@
 local function current_buffer_dir()
+  if vim.bo.filetype == "netrw" and vim.b.netrw_curdir and vim.b.netrw_curdir ~= "" then
+    return vim.b.netrw_curdir
+  end
+
   local path = vim.api.nvim_buf_get_name(0)
   if path == "" then
     return vim.uv.cwd() or vim.fn.getcwd()
@@ -130,6 +134,40 @@ local function snacks_pick_subdirectory_for_files(dir)
   })
 end
 
+local function list_netrw_directory_history()
+  local items = {}
+  local history = vim.g.netrw_dir_history or {}
+
+  for _, dir in ipairs(history) do
+    items[#items + 1] = {
+      dir = dir,
+      label = dir,
+    }
+  end
+
+  return items
+end
+
+local function snacks_pick_netrw_directory_history()
+  local items = list_netrw_directory_history()
+  if #items == 0 then
+    vim.notify("No netrw directory history", vim.log.levels.INFO)
+    return
+  end
+
+  Snacks.picker.select(items, {
+    prompt = "netrw history",
+    format_item = function(item)
+      return item.label
+    end,
+  }, function(item)
+    if not item then
+      return
+    end
+    vim.cmd.edit(item.dir)
+  end)
+end
+
 return {
   {
     "folke/snacks.nvim",
@@ -177,6 +215,13 @@ return {
         desc = "Pick Subdirectory Explorer",
       },
       {
+        "<leader>D",
+        function()
+          snacks_pick_subdirectory_for_explorer(LazyVim.root())
+        end,
+        desc = "Pick Root Subdirectory Explorer",
+      },
+      {
         "<leader><space>",
         function()
           Snacks.picker.files({ cwd = current_buffer_dir() })
@@ -202,7 +247,14 @@ return {
         function()
           vim.cmd.edit(current_buffer_dir())
         end,
-        desc = "Open Current Directory in Oil",
+        desc = "Open Current Directory",
+      },
+      {
+        "<leader>O",
+        function()
+          snacks_pick_netrw_directory_history()
+        end,
+        desc = "Pick netrw Directory History",
       },
       {
         "<leader>L",

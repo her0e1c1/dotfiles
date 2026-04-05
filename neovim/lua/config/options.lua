@@ -17,8 +17,10 @@ vim.g.snacks_animate = false
 
 -- netrw のヘッダーを隠して一覧を見やすくする
 vim.g.netrw_banner = 0
--- netrw を tree 表示にしてディレクトリ構造を追いやすくする
-vim.g.netrw_liststyle = 3
+-- netrw を通常一覧表示にして tree 展開状態を引きずらない
+vim.g.netrw_liststyle = 1
+-- netrw のディレクトリ表示を毎回リフレッシュして前の状態を引きずらない
+vim.g.netrw_fastbrowse = 0
 
 -- 他のエディタによるファイルの変更を反映
 vim.opt.autoread = true
@@ -27,6 +29,19 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
   group = autoread_group,
   command = "if mode() != 'c' | checktime | endif",
 })
+
+local function record_netrw_dir_history(buf)
+  local dir = vim.b[buf].netrw_curdir
+  if not dir or dir == "" then
+    return
+  end
+
+  vim.g.netrw_dir_history = vim.g.netrw_dir_history or {}
+  vim.g.netrw_dir_history = vim.tbl_filter(function(item)
+    return item ~= dir
+  end, vim.g.netrw_dir_history)
+  table.insert(vim.g.netrw_dir_history, 1, dir)
+end
 
 local netrw_group = vim.api.nvim_create_augroup("custom_netrw", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
@@ -46,6 +61,14 @@ vim.api.nvim_create_autocmd("FileType", {
       silent = true,
       desc = "netrw Help",
     })
+  end,
+})
+vim.api.nvim_create_autocmd("BufEnter", {
+  group = netrw_group,
+  callback = function(event)
+    if vim.bo[event.buf].filetype == "netrw" then
+      record_netrw_dir_history(event.buf)
+    end
   end,
 })
 
