@@ -8,7 +8,9 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "init": "playwright init-agents --loop=vscode && playwright-cli install --skills",
+    "init": "npm run init:agents && npm run init:skills",
+    "init:agents": "playwright init-agents --loop=vscode",
+    "init:skills": "playwright-cli install --skills",
     "test": "playwright test",
     "ui": "playwright test --ui --ui-host 0.0.0.0 --ui-port 9323",
     "headed": "playwright test --headed",
