@@ -105,5 +105,6 @@
     "markdown": true,
     "scminput": false
   },
-  "editor.largeFileOptimizations": false
+  "editor.largeFileOptimizations": false,
+  "chat.viewSessions.orientation": "stacked"
 }
