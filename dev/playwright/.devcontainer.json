@@ -1,8 +1,8 @@
 {
   "name": "playwright-dev",
   "dockerComposeFile": "compose.yaml",
-  "service": "workspace",
-  "workspaceFolder": "/workspaces/playwright",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {},
     "ghcr.io/devcontainers/features/github-cli:1": {},

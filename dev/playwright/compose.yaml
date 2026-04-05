@@ -1,18 +1,16 @@
-name: playwright_devcontainer
+name: playwright
 
 services:
-  workspace:
-    # Pin the container browser bundle to the same Playwright release family as npm deps.
+  dev:
     image: mcr.microsoft.com/playwright:v1.59.0-jammy
     command: sleep infinity
     init: true
     # Required so Chromium has enough shared memory inside the container.
     ipc: host
     volumes:
-      - .:/workspaces/playwright:cached
-      # Keep container-built dependencies off the host and preserve Linux-compatible binaries.
-      - node_modules:/workspaces/playwright/node_modules
-    working_dir: /workspaces/playwright
+      - .:/workspace:cached
+      - node_modules:/workspace/node_modules
+    working_dir: /workspace
 
 volumes:
   node_modules:

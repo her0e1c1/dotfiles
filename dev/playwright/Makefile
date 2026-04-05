@@ -1,7 +1,9 @@
 
 .DEFAULT_GOAL := bash
 
-COMPOSE_FILE := compose.yaml
+.PHONY: bash
+bash:
+	devcontainer exec --workspace-folder $(CURDIR) bash
 
 .PHONY: up
 up:
@@ -9,30 +11,25 @@ up:
 
 .PHONY: down
 down:
-	docker compose -f $(COMPOSE_FILE) down
+	docker compose down
+
+.PHONY: clean
+clean:
+	docker compose down -v --remove-orphans
 
 .PHONY: setup
 setup:
-	# Build the devcontainer image before refreshing container-side dependencies.
 	devcontainer build --workspace-folder $(CURDIR)
-	# Install dependencies into the named volume without starting the long-lived devcontainer.
-	docker compose -f $(COMPOSE_FILE) run --rm workspace npm ci
+	docker compose run --rm dev npm ci
 
 .PHONY: install
 install:
-	# Refresh dependencies in the container-only node_modules volume without rebuilding the image.
-	docker compose -f $(COMPOSE_FILE) run --rm workspace npm install
+	docker compose run --rm dev npm install
 
 .PHONY: test
 test:
-	# Run tests in a one-off container so they use the same compose-based workflow as install/ui.
-	docker compose -f $(COMPOSE_FILE) run --rm workspace npm test
+	docker compose run --rm dev npm test
 
 .PHONY: ui
 ui:
-	# Publish the Playwright UI port only for this one-off container run.
-	docker compose -f $(COMPOSE_FILE) run --rm -p 9323:9323 workspace npm run ui
-
-.PHONY: bash
-bash:
-	devcontainer exec --workspace-folder $(CURDIR) bash
+	docker compose run --rm -p 9323:9323 dev npm run ui
