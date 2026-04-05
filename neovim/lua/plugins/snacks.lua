@@ -136,16 +136,53 @@ end
 
 local function list_netrw_directory_history()
   local items = {}
-  local history = vim.g.netrw_dir_history or {}
+  local seen = {}
 
-  for _, dir in ipairs(history) do
+  local function add(dir)
+    if not dir or dir == "" or seen[dir] then
+      return
+    end
+
+    seen[dir] = true
     items[#items + 1] = {
       dir = dir,
       label = dir,
     }
   end
 
+  for _, dir in ipairs(vim.g.netrw_dir_history or {}) do
+    add(dir)
+  end
+
+  local histmax = vim.g.netrw_dirhistmax or 0
+  local histcnt = vim.g.netrw_dirhistcnt
+  if histmax > 0 and histcnt ~= nil then
+    local index = histcnt
+    local first = true
+    while first or index ~= histcnt do
+      add(vim.g["netrw_dirhist_" .. index])
+      first = false
+      index = (index - 1) % histmax
+      if index < 0 then
+        index = index + histmax
+      end
+    end
+  end
+
   return items
+end
+
+local function push_netrw_directory_history(dir)
+  if not dir or dir == "" then
+    return
+  end
+
+  local history = vim.g.netrw_dir_history or {}
+  history = vim.tbl_filter(function(item)
+    return item ~= dir
+  end, history)
+  table.insert(history, 1, dir)
+  vim.g.netrw_dir_history = history
 end
 
 local function snacks_pick_netrw_directory_history()
@@ -164,6 +201,7 @@ local function snacks_pick_netrw_directory_history()
     if not item then
       return
     end
+    push_netrw_directory_history(item.dir)
     vim.cmd.edit(item.dir)
   end)
 end
@@ -245,7 +283,9 @@ return {
       {
         "<leader>o",
         function()
-          vim.cmd.edit(current_buffer_dir())
+          local dir = current_buffer_dir()
+          push_netrw_directory_history(dir)
+          vim.cmd.edit(dir)
         end,
         desc = "Open Current Directory",
       },

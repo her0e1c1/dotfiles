@@ -21,6 +21,8 @@ vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 1
 -- netrw のディレクトリ表示を毎回リフレッシュして前の状態を引きずらない
 vim.g.netrw_fastbrowse = 0
+-- netrw の標準ディレクトリ履歴を picker で使うため、履歴数を明示しておく
+vim.g.netrw_dirhistmax = 50
 
 -- 他のエディタによるファイルの変更を反映
 vim.opt.autoread = true
@@ -30,8 +32,7 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
   command = "if mode() != 'c' | checktime | endif",
 })
 
-local function record_netrw_dir_history(buf)
-  local dir = vim.b[buf].netrw_curdir
+local function push_netrw_dir_history(dir)
   if not dir or dir == "" then
     return
   end
@@ -41,6 +42,38 @@ local function record_netrw_dir_history(buf)
     return item ~= dir
   end, vim.g.netrw_dir_history)
   table.insert(vim.g.netrw_dir_history, 1, dir)
+end
+
+local function current_netrw_dir(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return nil
+  end
+
+  local dir = vim.b[buf].netrw_curdir
+  if dir and dir ~= "" then
+    return dir
+  end
+
+  local path = vim.api.nvim_buf_get_name(buf)
+  if path ~= "" and vim.fn.isdirectory(path) == 1 then
+    return path
+  end
+
+  return nil
+end
+
+local function sync_netrw_dir_history(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
+
+  local dir = current_netrw_dir(buf)
+  if not dir or dir == "" or vim.b[buf].netrw_last_history_dir == dir then
+    return
+  end
+
+  vim.b[buf].netrw_last_history_dir = dir
+  push_netrw_dir_history(dir)
 end
 
 local netrw_group = vim.api.nvim_create_augroup("custom_netrw", { clear = true })
@@ -61,14 +94,22 @@ vim.api.nvim_create_autocmd("FileType", {
       silent = true,
       desc = "netrw Help",
     })
+    sync_netrw_dir_history(event.buf)
+    vim.schedule(function()
+      sync_netrw_dir_history(event.buf)
+    end)
   end,
 })
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "CursorMoved" }, {
   group = netrw_group,
   callback = function(event)
-    if vim.bo[event.buf].filetype == "netrw" then
-      record_netrw_dir_history(event.buf)
+    if vim.bo[event.buf].filetype ~= "netrw" and current_netrw_dir(event.buf) == nil then
+      return
     end
+    sync_netrw_dir_history(event.buf)
+    vim.schedule(function()
+      sync_netrw_dir_history(event.buf)
+    end)
   end,
 })
 
