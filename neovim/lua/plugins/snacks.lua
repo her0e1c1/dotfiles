@@ -38,6 +38,44 @@ local function list_directory_items(dir, want_dirs)
   return items
 end
 
+local function directory_preview_text(dir)
+  local directories = {}
+  local files = {}
+
+  for name, entry_type in vim.fs.dir(dir) do
+    if entry_type == "directory" then
+      directories[#directories + 1] = name .. "/"
+    else
+      files[#files + 1] = name
+    end
+  end
+
+  table.sort(directories)
+  table.sort(files)
+
+  local lines = {}
+  for _, name in ipairs(directories) do
+    lines[#lines + 1] = name
+  end
+  for _, name in ipairs(files) do
+    lines[#lines + 1] = name
+  end
+
+  if #lines == 0 then
+    return "(empty)"
+  end
+
+  local max_lines = 200
+  if #lines > max_lines then
+    local hidden = #lines - max_lines
+    lines = vim.list_slice(lines, 1, max_lines)
+    lines[#lines + 1] = ""
+    lines[#lines + 1] = ("... and %d more"):format(hidden)
+  end
+
+  return table.concat(lines, "\n")
+end
+
 local function list_subdirectory_items_recursive(dir)
   local items = {}
 
@@ -146,7 +184,12 @@ local function list_netrw_directory_history()
     seen[dir] = true
     items[#items + 1] = {
       dir = dir,
-      label = dir,
+      text = dir,
+      preview = {
+        text = directory_preview_text(dir),
+        ft = "text",
+        loc = false,
+      },
     }
   end
 
@@ -192,18 +235,22 @@ local function snacks_pick_netrw_directory_history()
     return
   end
 
-  Snacks.picker.select(items, {
-    prompt = "netrw history",
-    format_item = function(item)
-      return item.label
+  Snacks.picker.pick({
+    title = "netrw history",
+    items = items,
+    preview = "preview",
+    format = function(item)
+      return { { item.dir } }
     end,
-  }, function(item)
-    if not item then
-      return
-    end
-    push_netrw_directory_history(item.dir)
-    vim.cmd.edit(item.dir)
-  end)
+    confirm = function(picker, item)
+      if not item then
+        return
+      end
+      picker:close()
+      push_netrw_directory_history(item.dir)
+      vim.cmd.edit(item.dir)
+    end,
+  })
 end
 
 return {
@@ -265,13 +312,6 @@ return {
           Snacks.picker.files({ cwd = current_buffer_dir() })
         end,
         desc = "Find Files (Current Dir)",
-      },
-      {
-        "<leader>fd",
-        function()
-          snacks_pick_directory_entries()
-        end,
-        desc = "Pick Dir Entries",
       },
       {
         "<leader>l",
@@ -417,7 +457,7 @@ return {
       },
       explorer = {
         enabled = true,
-        -- Let oil.nvim own directory buffers opened with :edit <dir>.
+        -- Keep directory buffers on netrw so :edit <dir> follows the netrw workflow.
         replace_netrw = false,
       },
       zen = {
