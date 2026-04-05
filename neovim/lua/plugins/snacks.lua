@@ -300,7 +300,14 @@ return {
               end,
             },
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },
-            { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+            {
+              icon = " ",
+              key = "l",
+              desc = "Files (cwd)",
+              action = function()
+                snacks_pick_directory_entries(vim.uv.cwd() or vim.fn.getcwd())
+              end,
+            },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
