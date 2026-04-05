@@ -9,6 +9,13 @@ up:
 down:
 	docker compose -f .devcontainer/compose.yaml down
 
+.PHONY: setup
+setup:
+	# Build the devcontainer image before refreshing container-side dependencies.
+	devcontainer build --workspace-folder $(CURDIR)
+	# Install dependencies into the named volume without starting the long-lived devcontainer.
+	docker compose -f .devcontainer/compose.yaml run --rm workspace npm ci
+
 .PHONY: test
 test:
 	devcontainer exec --workspace-folder $(CURDIR) npm test
