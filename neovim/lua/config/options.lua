@@ -15,12 +15,38 @@ vim.opt.signcolumn = "no"
 -- スクロールのアニメーションを無効化
 vim.g.snacks_animate = false
 
+-- netrw のヘッダーを隠して一覧を見やすくする
+vim.g.netrw_banner = 0
+-- netrw を tree 表示にしてディレクトリ構造を追いやすくする
+vim.g.netrw_liststyle = 3
+
 -- 他のエディタによるファイルの変更を反映
 vim.opt.autoread = true
 local autoread_group = vim.api.nvim_create_augroup("custom_autoread", { clear = true })
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
   group = autoread_group,
   command = "if mode() != 'c' | checktime | endif",
+})
+
+local netrw_group = vim.api.nvim_create_augroup("custom_netrw", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  group = netrw_group,
+  pattern = "netrw",
+  callback = function(event)
+    vim.keymap.set("n", "p", "-", {
+      buffer = event.buf,
+      remap = true,
+      silent = true,
+      desc = "netrw Parent Directory",
+    })
+    vim.keymap.set("n", "?", function()
+      vim.cmd.help("pi_netrw")
+    end, {
+      buffer = event.buf,
+      silent = true,
+      desc = "netrw Help",
+    })
+  end,
 })
 
 --  mdの```を省略せずに表示

@@ -4,44 +4,72 @@ local function current_buffer_dir()
     return vim.uv.cwd() or vim.fn.getcwd()
   end
 
+  if vim.fn.isdirectory(path) == 1 then
+    return path
+  end
+
   return vim.fs.dirname(path)
 end
 
+local function list_directory_items(dir, want_dirs)
+  local items = {}
+  local iter = vim.fs.dir(dir)
+
+  for name, entry_type in iter do
+    local is_dir = entry_type == "directory"
+    if is_dir == want_dirs then
+      items[#items + 1] = {
+        cwd = dir,
+        dir = is_dir,
+        file = name,
+        text = name,
+      }
+    end
+  end
+
+  table.sort(items, function(a, b)
+    return a.file < b.file
+  end)
+
+  return items
+end
+
+local function list_subdirectory_items_recursive(dir)
+  local items = {}
+
+  local function walk(root, prefix)
+    for name, entry_type in vim.fs.dir(root) do
+      if entry_type == "directory" then
+        local relative_path = prefix == "" and name or vim.fs.joinpath(prefix, name)
+        items[#items + 1] = {
+          cwd = dir,
+          dir = true,
+          file = relative_path,
+          text = relative_path,
+        }
+        walk(vim.fs.joinpath(root, name), relative_path)
+      end
+    end
+  end
+
+  walk(dir, "")
+
+  table.sort(items, function(a, b)
+    return a.file < b.file
+  end)
+
+  return items
+end
+
 local function snacks_pick_directory_entries(dir)
-  -- Ubuntu packages fd as `fdfind`, while macOS/Homebrew uses `fd`.
-  local fd_cmd = vim.fn.executable("fd") == 1 and "fd" or "fdfind"
   local target_dir = dir or current_buffer_dir()
 
   Snacks.picker.pick({
     title = "Dir Entries",
-    finder = function(_, ctx)
-      return require("snacks.picker.source.proc").proc({
-        cmd = fd_cmd,
-        cwd = target_dir,
-        args = {
-          "--max-depth",
-          "1",
-          "--hidden",
-          "--strip-cwd-prefix",
-          "--type",
-          "f",
-          ".",
-        },
-        transform = function(item)
-          item.cwd = target_dir
-          item.file = item.text
-          item.dir = vim.fn.isdirectory(vim.fs.joinpath(target_dir, item.file)) == 1
-        end,
-      }, ctx)
-    end,
+    items = list_directory_items(target_dir, false),
     format = "file",
     confirm = function(picker, item)
       if not item then
-        return
-      end
-      if item.dir then
-        picker:close()
-        snacks_pick_directory_entries(vim.fs.joinpath(target_dir, item.file))
         return
       end
       Snacks.picker.actions.jump(picker, item, {})
@@ -50,29 +78,11 @@ local function snacks_pick_directory_entries(dir)
 end
 
 local function snacks_pick_subdirectory_for_explorer(dir)
-  -- Ubuntu packages fd as `fdfind`, while macOS/Homebrew uses `fd`.
-  local fd_cmd = vim.fn.executable("fd") == 1 and "fd" or "fdfind"
   local target_dir = dir or current_buffer_dir()
 
   Snacks.picker.pick({
-    title = "Subdirectories",
-    finder = function(_, ctx)
-      return require("snacks.picker.source.proc").proc({
-        cmd = fd_cmd,
-        cwd = target_dir,
-        args = {
-          "--hidden",
-          "--strip-cwd-prefix",
-          "--type",
-          "d",
-          ".",
-        },
-        transform = function(item)
-          item.cwd = target_dir
-          item.file = item.text
-        end,
-      }, ctx)
-    end,
+    title = "Subdirectories (recursive)",
+    items = list_subdirectory_items_recursive(target_dir),
     format = "file",
     confirm = function(picker, item)
       if not item then
@@ -80,35 +90,17 @@ local function snacks_pick_subdirectory_for_explorer(dir)
       end
 
       picker:close()
-      Snacks.explorer({ cwd = vim.fs.joinpath(target_dir, item.file) })
+      vim.cmd.edit(vim.fs.joinpath(target_dir, item.file))
     end,
   })
 end
 
 local function snacks_pick_files_under_directory(dir)
-  -- Ubuntu packages fd as `fdfind`, while macOS/Homebrew uses `fd`.
-  local fd_cmd = vim.fn.executable("fd") == 1 and "fd" or "fdfind"
   local target_dir = dir or current_buffer_dir()
 
   Snacks.picker.pick({
     title = "Directory Files",
-    finder = function(_, ctx)
-      return require("snacks.picker.source.proc").proc({
-        cmd = fd_cmd,
-        cwd = target_dir,
-        args = {
-          "--hidden",
-          "--strip-cwd-prefix",
-          "--type",
-          "f",
-          ".",
-        },
-        transform = function(item)
-          item.cwd = target_dir
-          item.file = item.text
-        end,
-      }, ctx)
-    end,
+    items = list_directory_items(target_dir, false),
     format = "file",
     confirm = function(picker, item)
       if not item then
@@ -121,29 +113,11 @@ local function snacks_pick_files_under_directory(dir)
 end
 
 local function snacks_pick_subdirectory_for_files(dir)
-  -- Ubuntu packages fd as `fdfind`, while macOS/Homebrew uses `fd`.
-  local fd_cmd = vim.fn.executable("fd") == 1 and "fd" or "fdfind"
   local target_dir = dir or current_buffer_dir()
 
   Snacks.picker.pick({
     title = "Subdirectories",
-    finder = function(_, ctx)
-      return require("snacks.picker.source.proc").proc({
-        cmd = fd_cmd,
-        cwd = target_dir,
-        args = {
-          "--hidden",
-          "--strip-cwd-prefix",
-          "--type",
-          "d",
-          ".",
-        },
-        transform = function(item)
-          item.cwd = target_dir
-          item.file = item.text
-        end,
-      }, ctx)
-    end,
+    items = list_directory_items(target_dir, true),
     format = "file",
     confirm = function(picker, item)
       if not item then
@@ -203,6 +177,13 @@ return {
         desc = "Pick Subdirectory Explorer",
       },
       {
+        "<leader><space>",
+        function()
+          Snacks.picker.files({ cwd = current_buffer_dir() })
+        end,
+        desc = "Find Files (Current Dir)",
+      },
+      {
         "<leader>fd",
         function()
           snacks_pick_directory_entries()
@@ -215,6 +196,13 @@ return {
           snacks_pick_directory_entries()
         end,
         desc = "Pick Buffer Dir Entries",
+      },
+      {
+        "<leader>o",
+        function()
+          vim.cmd.edit(current_buffer_dir())
+        end,
+        desc = "Open Current Directory in Oil",
       },
       {
         "<leader>L",
@@ -337,6 +325,8 @@ return {
       },
       explorer = {
         enabled = true,
+        -- Let oil.nvim own directory buffers opened with :edit <dir>.
+        replace_netrw = false,
       },
       zen = {
         toggles = {
