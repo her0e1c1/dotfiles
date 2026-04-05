@@ -8,9 +8,9 @@
     "ghcr.io/devcontainers/features/desktop-lite:1": {
       "webPort": "6080"
     },
-    "ghcr.io/devcontainers/features/common-utils:2": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/copilot-cli:1": {}
+    "ghcr.io/devcontainers/features/common-utils:2": {}, // zsh, git, curl, etc
+    "ghcr.io/devcontainers/features/github-cli:1": {},  // gh
+    "ghcr.io/devcontainers/features/copilot-cli:1": {}  // copilot
   },
   "postCreateCommand": "npm ci",
   "mounts": [

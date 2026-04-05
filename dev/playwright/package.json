@@ -14,6 +14,6 @@
     "test": "playwright test",
     "ui": "playwright test --ui --ui-host 0.0.0.0 --ui-port 9323",
     "headed": "playwright test --headed",
-    "codegen": "playwright codegen"
+    "codegen": "playwright codegen --output generated.spec.ts"
   }
 }
