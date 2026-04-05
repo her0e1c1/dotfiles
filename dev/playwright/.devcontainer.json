@@ -13,6 +13,10 @@
     "ghcr.io/devcontainers/features/copilot-cli:1": {}
   },
   "postCreateCommand": "npm ci",
+  "mounts": [
+    // Required so Copilot CLI auth and config survive devcontainer rebuilds.
+    "type=volume,source=playwright_copilot_home,target=/root/.copilot"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
