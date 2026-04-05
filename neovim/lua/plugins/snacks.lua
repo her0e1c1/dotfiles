@@ -268,6 +268,14 @@ return {
               end,
             },
             {
+              icon = " ",
+              key = "d",
+              desc = "Directories (cwd)",
+              action = function()
+                snacks_pick_subdirectory_for_explorer(vim.uv.cwd() or vim.fn.getcwd())
+              end,
+            },
+            {
               icon = " ",
               key = "g",
               desc = "Find Text",
