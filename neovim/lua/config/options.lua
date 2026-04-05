@@ -32,6 +32,36 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
   command = "if mode() != 'c' | checktime | endif",
 })
 
+local netrw_history_file = vim.fs.joinpath(vim.fn.stdpath("state"), "netrw-dir-history.json")
+
+local function save_netrw_dir_history()
+  local ok, encoded = pcall(vim.fn.json_encode, vim.g.netrw_dir_history or {})
+  if not ok then
+    return
+  end
+
+  vim.fn.mkdir(vim.fs.dirname(netrw_history_file), "p")
+  vim.fn.writefile({ encoded }, netrw_history_file)
+end
+
+local function load_netrw_dir_history()
+  if vim.fn.filereadable(netrw_history_file) ~= 1 then
+    return
+  end
+
+  local lines = vim.fn.readfile(netrw_history_file)
+  if #lines == 0 then
+    return
+  end
+
+  local ok, decoded = pcall(vim.fn.json_decode, table.concat(lines, "\n"))
+  if ok and type(decoded) == "table" then
+    vim.g.netrw_dir_history = decoded
+  end
+end
+
+load_netrw_dir_history()
+
 local function push_netrw_dir_history(dir)
   if not dir or dir == "" then
     return
@@ -42,6 +72,7 @@ local function push_netrw_dir_history(dir)
     return item ~= dir
   end, vim.g.netrw_dir_history)
   table.insert(vim.g.netrw_dir_history, 1, dir)
+  save_netrw_dir_history()
 end
 
 local function current_netrw_dir(buf)
