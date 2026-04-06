@@ -430,6 +430,24 @@ return {
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },
             {
               icon = " ",
+              key = "o",
+              desc = "Open netrw (cwd)",
+              action = function()
+                local dir = vim.uv.cwd() or vim.fn.getcwd()
+                push_netrw_directory_history(dir)
+                vim.cmd.edit(dir)
+              end,
+            },
+            {
+              icon = " ",
+              key = "O",
+              desc = "netrw History",
+              action = function()
+                snacks_pick_netrw_directory_history()
+              end,
+            },
+            {
+              icon = " ",
               key = "l",
               desc = "Files (cwd)",
               action = function()
