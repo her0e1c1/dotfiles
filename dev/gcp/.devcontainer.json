@@ -1,0 +1,17 @@
+{
+  "name": "gcp-dev",
+  "dockerComposeFile": "compose.yaml",
+  "service": "gcp",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GoogleCloudTools.cloudcode",
+        "hashicorp.terraform",
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
+      ]
+    }
+  },
+  "remoteUser": "root"
+}

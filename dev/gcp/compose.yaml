@@ -1,0 +1,39 @@
+name: gcp
+
+x-service-defaults: &service-defaults
+  entrypoint: []
+  command:
+    - sleep
+    - infinity
+  # Required so the same project and location defaults are available in every service.
+  env_file:
+    - path: .env
+      required: false
+  init: true
+  user: "0:0"
+  volumes:
+    - .:/workspace:cached
+    # Required so gcloud login state and ADC survive container rebuilds and are shared by all services.
+    - gcloud_config:/root/.config/gcloud
+    # Required so kube contexts fetched by gcloud are shared by the gke-oriented workflows.
+    - kube_config:/root/.kube
+  working_dir: /workspace
+
+services:
+  gcp:
+    <<: *service-defaults
+    image: google/cloud-sdk:slim
+
+  k8s:
+    <<: *service-defaults
+    # Required because this image provides kubectl without bundling the broader Cloud SDK toolchain.
+    image: bitnami/kubectl:latest
+
+  terraform:
+    <<: *service-defaults
+    # Required because Terraform is maintained and published separately from the Cloud SDK images.
+    image: hashicorp/terraform:light
+
+volumes:
+  gcloud_config:
+  kube_config:
