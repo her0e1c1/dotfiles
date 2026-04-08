@@ -1,11 +1,6 @@
 name: gcp
 
 x-service-defaults: &service-defaults
-  entrypoint: []
-  command:
-    - sleep
-    - infinity
-  # Required so the same project and location defaults are available in every service.
   env_file:
     - path: .env
       required: false
@@ -24,10 +19,29 @@ services:
     <<: *service-defaults
     image: google/cloud-sdk:slim
 
+  proxy:
+    <<: *service-defaults
+    # Required because this image ships the Cloud SQL Auth Proxy binary without the broader Cloud SDK.
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.20.0
+    command:
+      - --address
+      - 0.0.0.0
+      - --port
+      - "3306"
+      - --credentials-file=${CLOUDSQL_PROXY_CREDENTIALS_FILE}
+      - ${CLOUDSQL_CONNECTION_NAME}
+
   k8s:
     <<: *service-defaults
     # Required because this image provides kubectl without bundling the broader Cloud SDK toolchain.
     image: bitnami/kubectl:latest
+
+  mysql:
+    <<: *service-defaults
+    # Required because this image provides the MySQL client tools used to connect through the local proxy service.
+    image: mysql:8.4
+    depends_on:
+      - proxy
 
   terraform:
     <<: *service-defaults
