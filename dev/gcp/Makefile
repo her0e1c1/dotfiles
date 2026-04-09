@@ -32,6 +32,14 @@ proxy-up:
 proxy-down:
 	docker compose down proxy
 
+.PHONY: adminer-up
+adminer-up:
+	docker compose --profile adminer up -d adminer
+
+.PHONY: adminer-down
+adminer-down:
+	docker compose --profile adminer down adminer
+
 .PHONY: login
 login:
 	docker compose run --rm dev gcloud auth login --no-launch-browser

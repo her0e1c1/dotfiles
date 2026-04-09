@@ -37,7 +37,33 @@ services:
       - --credentials-file=/config/gcloud/application_default_credentials.json
       - ${CLOUDSQL_CONNECTION_NAME}
 
+  adminer:
+    image: adminer
+    profiles:
+      - adminer
+    depends_on:
+      - proxy
+    env_file: .env
+    environment:
+      # Required to prefill the default host for the local-only Adminer container
+      ADMINER_DEFAULT_SERVER: ${MYSQL_HOST}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sql.rule=Host(`adminer.localhost`)"
+      - "traefik.http.routers.sql.entrypoints=web"
+      - "traefik.http.services.sql.loadbalancer.server.port=8080"
+    networks:
+      - default
+      # Required to expose Adminer through the local Traefik network without publishing host ports
+      - traefik
+    volumes:
+      - ./config/adminer/db.php:/var/www/html/plugins-enabled/db.php:ro
+
 volumes:
   gcloud_config:
   kube_config:
   copilot_config:
+
+networks:
+  traefik:
+    external: true
