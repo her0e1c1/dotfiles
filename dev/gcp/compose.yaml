@@ -1,53 +1,43 @@
-name: gcp
-
-x-service-defaults: &service-defaults
-  env_file:
-    - path: .env
-      required: false
-  init: true
-  user: "0:0"
-  volumes:
-    - .:/workspace:cached
-    # Required so gcloud login state and ADC survive container rebuilds and are shared by all services.
-    - gcloud_config:/root/.config/gcloud
-    # Required so kube contexts fetched by gcloud are shared by the gke-oriented workflows.
-    - kube_config:/root/.kube
-  working_dir: /workspace
+name: gcp-dev
 
 services:
-  gcp:
-    <<: *service-defaults
-    image: google/cloud-sdk:slim
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /config/gcloud/application_default_credentials.json
+      KUBECONFIG: /root/.kube/config
+      CLOUDSDK_CONFIG: /config/gcloud
+      MYSQL_HOST: proxy
+      MYSQL_PORT: 3306
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:cached
+      - gcloud_config:/config/gcloud
+      - kube_config:/root/.kube
+      - copilot_config:/root/.copilot
+    command: sleep infinity
 
   proxy:
-    <<: *service-defaults
-    # Required because this image ships the Cloud SQL Auth Proxy binary without the broader Cloud SDK.
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.20.0
+    user: root
+    env_file: .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /config/gcloud/application_default_credentials.json
+      CLOUDSDK_CONFIG: /config/gcloud
+    volumes:
+      - gcloud_config:/config/gcloud
     command:
       - --address
       - 0.0.0.0
       - --port
       - "3306"
-      - --credentials-file=${CLOUDSQL_PROXY_CREDENTIALS_FILE}
+      - --credentials-file=/config/gcloud/application_default_credentials.json
       - ${CLOUDSQL_CONNECTION_NAME}
-
-  k8s:
-    <<: *service-defaults
-    # Required because this image provides kubectl without bundling the broader Cloud SDK toolchain.
-    image: bitnami/kubectl:latest
-
-  mysql:
-    <<: *service-defaults
-    # Required because this image provides the MySQL client tools used to connect through the local proxy service.
-    image: mysql:8.4
-    depends_on:
-      - proxy
-
-  terraform:
-    <<: *service-defaults
-    # Required because Terraform is maintained and published separately from the Cloud SDK images.
-    image: hashicorp/terraform:light
 
 volumes:
   gcloud_config:
   kube_config:
+  copilot_config:
