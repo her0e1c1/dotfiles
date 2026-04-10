@@ -61,7 +61,7 @@ services:
       # Required to expose Adminer through the local Traefik network without publishing host ports
       - traefik
     volumes:
-      - ./config/adminer/db.php:/var/www/html/plugins-enabled/db.php:ro
+      - ./config/adminer:/var/www/html/db:ro
 
   k9s:
     image: derailed/k9s
