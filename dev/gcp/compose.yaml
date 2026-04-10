@@ -49,7 +49,6 @@ services:
       - proxy
     env_file: .env
     environment:
-      # Required to prefill the default host for the local-only Adminer container
       ADMINER_DEFAULT_SERVER: ${MYSQL_HOST}
     labels:
       - "traefik.enable=true"
@@ -58,7 +57,6 @@ services:
       - "traefik.http.services.sql.loadbalancer.server.port=8080"
     networks:
       - default
-      # Required to expose Adminer through the local Traefik network without publishing host ports
       - traefik
     volumes:
       - ./config/adminer:/var/www/html/db:ro
@@ -68,11 +66,9 @@ services:
     env_file: .env
     environment:
       KUBECONFIG: /root/.kube/config
-      CLOUDSDK_CONFIG: /config/gcloud
     stdin_open: true
     tty: true
     volumes:
-      - gcloud_config:/config/gcloud
       - kube_config:/root/.kube
     networks:
       - default
