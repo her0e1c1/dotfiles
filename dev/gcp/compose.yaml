@@ -18,6 +18,8 @@ services:
       - gcloud_config:/config/gcloud
       - kube_config:/root/.kube
       - copilot_config:/root/.copilot
+    networks:
+      - default
     command: sleep infinity
 
   proxy:
@@ -29,6 +31,8 @@ services:
       CLOUDSDK_CONFIG: /config/gcloud
     volumes:
       - gcloud_config:/config/gcloud
+    networks:
+      - default
     command:
       - --address
       - 0.0.0.0
@@ -59,11 +63,26 @@ services:
     volumes:
       - ./config/adminer/db.php:/var/www/html/plugins-enabled/db.php:ro
 
+  k9s:
+    image: derailed/k9s
+    env_file: .env
+    environment:
+      KUBECONFIG: /root/.kube/config
+      CLOUDSDK_CONFIG: /config/gcloud
+    stdin_open: true
+    tty: true
+    volumes:
+      - gcloud_config:/config/gcloud
+      - kube_config:/root/.kube
+    networks:
+      - default
+
 volumes:
   gcloud_config:
   kube_config:
   copilot_config:
 
 networks:
+  default:
   traefik:
     external: true

@@ -40,6 +40,10 @@ adminer-up:
 adminer-down:
 	docker compose --profile adminer down adminer
 
+.PHONY: k9s
+k9s:
+	docker compose run --rm k9s
+
 .PHONY: login
 login:
 	docker compose run --rm dev gcloud auth login --no-launch-browser
