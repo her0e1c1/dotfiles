@@ -118,6 +118,12 @@ vim.api.nvim_create_autocmd("FileType", {
       silent = true,
       desc = "netrw Parent Directory",
     })
+    vim.keymap.set("n", "l", "<leader>l", {
+      buffer = event.buf,
+      remap = true,
+      silent = true,
+      desc = "netrw Directory Entries Picker",
+    })
     vim.keymap.set("n", "?", function()
       require("which-key").show({ global = false })
     end, {

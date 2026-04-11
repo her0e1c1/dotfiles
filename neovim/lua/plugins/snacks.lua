@@ -217,15 +217,9 @@ local function list_netrw_directory_history()
   local histmax = vim.g.netrw_dirhistmax or 0
   local histcnt = vim.g.netrw_dirhistcnt
   if histmax > 0 and histcnt ~= nil then
-    local index = histcnt
-    local first = true
-    while first or index ~= histcnt do
+    for offset = 0, histmax - 1 do
+      local index = (histcnt - offset) % histmax
       add(vim.g["netrw_dirhist_" .. index])
-      first = false
-      index = (index - 1) % histmax
-      if index < 0 then
-        index = index + histmax
-      end
     end
   end
 
@@ -281,7 +275,17 @@ return {
       {
         "/",
         function()
-          Snacks.picker.lines({ pattern = vim.fn.expand("<cword>") })
+          Snacks.picker.lines({
+            pattern = vim.fn.expand("<cword>"),
+            layout = "default",
+            on_show = function(picker)
+              local cursor = vim.api.nvim_win_get_cursor(picker.main)
+              local info = vim.api.nvim_win_call(picker.main, vim.fn.winsaveview)
+              picker.list:view(cursor[1], info.topline)
+              picker:show_preview()
+              picker.layout:maximize()
+            end,
+          })
         end,
         mode = { "n", "v" },
         desc = "Buffer Lines",
