@@ -72,7 +72,6 @@ services:
       - ./config/adminer/index.php:/var/www/html/index.php:ro
       - ./config/adminer/db:/var/www/html/db:ro
     healthcheck:
-      # Required so Compose can wait until Adminer is serving HTTP.
       test:
         - CMD
         - php
@@ -90,10 +89,14 @@ services:
     env_file: .env
     environment:
       KUBECONFIG: /root/.kube/config
+      TERM: xterm-256color
+      COLORTERM=: ruecolor
+      XDG_CONFIG_HOME: /config
     stdin_open: true
     tty: true
     volumes:
       - kube_config:/root/.kube
+      - ./config/k9s:/config/k9s
     networks:
       - default
 

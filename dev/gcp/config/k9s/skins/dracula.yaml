@@ -1,0 +1,121 @@
+# Dracula skin for k9s
+
+foreground: &foreground "#f8f8f2"
+background: &background "#282a36"
+current_line: &current_line "#44475a"
+selection: &selection "#44475a"
+comment: &comment "#6272a4"
+
+cyan: &cyan "#8be9fd"
+green: &green "#50fa7b"
+yellow: &yellow "#f1fa8c"
+orange: &orange "#ffb86c"
+magenta: &magenta "#bd93f9"
+pink: &pink "#ff79c6"
+blue: &blue "#8be9fd"
+red: &red "#ff5555"
+white: &white "#f8f8f2"
+
+k9s:
+  body:
+    fgColor: *foreground
+    bgColor: *background
+    logoColor: *pink
+
+  prompt:
+    fgColor: *foreground
+    bgColor: *background
+    suggestColor: *orange
+
+  info:
+    fgColor: *orange
+    sectionColor: *foreground
+
+  dialog:
+    fgColor: *foreground
+    bgColor: *background
+    buttonFgColor: *background
+    buttonBgColor: *green
+    buttonFocusFgColor: *background
+    buttonFocusBgColor: *yellow
+    labelFgColor: *comment
+    fieldFgColor: *foreground
+
+  frame:
+    border:
+      fgColor: *comment
+      focusColor: *pink
+
+    menu:
+      fgColor: *foreground
+      keyColor: *pink
+      numKeyColor: *pink
+
+    crumbs:
+      fgColor: *background
+      bgColor: *cyan
+      activeColor: *pink
+
+    status:
+      newColor: *blue
+      modifyColor: *yellow
+      addColor: *green
+      errorColor: *red
+      highlightColor: *pink
+      killColor: *magenta
+      completedColor: *comment
+
+    title:
+      fgColor: *foreground
+      bgColor: *background
+      highlightColor: *pink
+      counterColor: *green
+      filterColor: *magenta
+
+  views:
+    charts:
+      bgColor: *background
+      defaultDialColors:
+        - *cyan
+        - *red
+      defaultChartColors:
+        - *cyan
+        - *red
+
+    table:
+      fgColor: *foreground
+      bgColor: *background
+      markColor: *pink
+      header:
+        fgColor: *foreground
+        bgColor: *background
+        sorterColor: *cyan
+
+    xray:
+      fgColor: *foreground
+      bgColor: *background
+      cursorColor: *current_line
+      graphicColor: *pink
+      showIcons: false
+
+    yaml:
+      keyColor: *green
+      colonColor: *pink
+      valueColor: *foreground
+
+    logs:
+      fgColor: *foreground
+      bgColor: *background
+      indicator:
+        fgColor: *foreground
+        bgColor: *selection
+      toggleOnColor: *cyan
+      toggleOffColor: *comment
+
+    help:
+      fgColor: *foreground
+      bgColor: *background
+      indicator:
+        fgColor: *red
+        bgColor: *background
+
