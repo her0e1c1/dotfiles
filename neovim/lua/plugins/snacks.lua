@@ -1,3 +1,6 @@
+-- Resolve the directory that should act as "here" for picker actions.
+-- netrw buffers store a directory directly, normal file buffers use the file's parent directory,
+-- and unnamed buffers fall back to the current working directory.
 local function current_buffer_dir()
   if vim.bo.filetype == "netrw" and vim.b.netrw_curdir and vim.b.netrw_curdir ~= "" then
     return vim.b.netrw_curdir
@@ -17,15 +20,20 @@ end
 
 local push_netrw_directory_history
 
+-- Return Neovim's current working directory in one place so other helpers do not repeat the fallback logic.
 local function current_working_dir()
   return vim.uv.cwd() or vim.fn.getcwd()
 end
 
+-- Open a directory with netrw after recording it in our custom directory history.
+-- This keeps direct opens and picker-based opens consistent.
 local function open_directory(dir)
   push_netrw_directory_history(dir)
   vim.cmd.edit(dir)
 end
 
+-- Read one directory and convert its entries into Snacks picker items.
+-- `want_dirs` filters the result to directories only, files only, or everything when it is nil.
 local function list_directory_entries(dir, want_dirs)
   local items = {}
 
@@ -48,6 +56,8 @@ local function list_directory_entries(dir, want_dirs)
   return items
 end
 
+-- Build plain-text preview content for a directory history item.
+-- Directories are listed first so the preview feels similar to a simple terminal listing.
 local function directory_preview_text(dir)
   local directories = {}
   local files = {}
@@ -86,6 +96,8 @@ local function directory_preview_text(dir)
   return table.concat(lines, "\n")
 end
 
+-- Shared wrapper for directory-based pickers.
+-- It handles the common picker setup so each caller only needs to describe its title and confirm behavior.
 local function pick_directory_entries(opts)
   local target_dir = opts.dir or current_buffer_dir()
 
@@ -103,10 +115,13 @@ local function pick_directory_entries(opts)
   })
 end
 
+-- Reuse Snacks' built-in "open selected file" action from custom pickers.
 local function jump_to_picker_item(picker, item)
   Snacks.picker.actions.jump(picker, item, {})
 end
 
+-- Show the current directory as a simple entry list.
+-- Choosing a directory opens netrw there, while choosing a file jumps to that file.
 local function snacks_pick_directory_entries(dir)
   pick_directory_entries({
     dir = dir,
@@ -126,6 +141,7 @@ local function snacks_pick_directory_entries(dir)
   })
 end
 
+-- Show only files from a target directory and open the selected file.
 local function snacks_pick_files_under_directory(dir)
   pick_directory_entries({
     dir = dir,
@@ -137,6 +153,7 @@ local function snacks_pick_files_under_directory(dir)
   })
 end
 
+-- Let the user choose a subdirectory first, then narrow the next picker to files under that directory.
 local function snacks_pick_subdirectory_for_files(dir)
   pick_directory_entries({
     dir = dir,
@@ -149,10 +166,13 @@ local function snacks_pick_subdirectory_for_files(dir)
   })
 end
 
+-- Combine our in-memory and netrw-provided directory history into one picker list.
+-- Duplicate paths are removed so the history does not show the same directory twice.
 local function list_netrw_directory_history()
   local items = {}
   local seen = {}
 
+  -- Add one directory to the picker list together with a lightweight preview of its contents.
   local function add(dir)
     if not dir or dir == "" or seen[dir] then
       return
@@ -192,6 +212,8 @@ local function list_netrw_directory_history()
   return items
 end
 
+-- Keep a most-recent-first list of visited directories for custom netrw pickers.
+-- Existing entries are moved to the front instead of being stored twice.
 push_netrw_directory_history = function(dir)
   if not dir or dir == "" then
     return
@@ -205,6 +227,7 @@ push_netrw_directory_history = function(dir)
   vim.g.netrw_dir_history = history
 end
 
+-- Show the saved directory history and reopen the chosen entry with netrw.
 local function snacks_pick_netrw_directory_history()
   local items = list_netrw_directory_history()
   if #items == 0 then
@@ -229,32 +252,39 @@ local function snacks_pick_netrw_directory_history()
   })
 end
 
+-- Open the directory that belongs to the current buffer.
 local function open_current_directory()
   open_directory(current_buffer_dir())
 end
 
+-- Open the current working directory, which is useful from the dashboard.
 local function open_cwd_directory()
   open_directory(current_working_dir())
 end
 
+-- Open the ls-like directory picker starting from the current working directory.
 local function pick_cwd_directory_entries()
   snacks_pick_directory_entries(current_working_dir())
 end
 
+-- Create a small dashboard action that forwards to Snacks' built-in dashboard picker helper.
 local function dashboard_pick(source, opts)
   return function()
     Snacks.dashboard.pick(source, opts)
   end
 end
 
+-- Open the keymap picker so custom shortcuts are easy to discover.
 local function pick_keymaps()
   Snacks.picker.keymaps()
 end
 
+-- Search inside the current buffer with the Snacks line picker.
 local function pick_buffer_lines()
   Snacks.picker.lines()
 end
 
+-- Toggle Snacks' zen mode from a named helper that can be reused in keymaps.
 local function toggle_zen()
   Snacks.zen()
 end
