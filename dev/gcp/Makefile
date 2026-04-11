@@ -32,7 +32,7 @@ proxy:
 .PHONY: adminer
 adminer:
 	docker compose --profile adminer down adminer
-	docker compose --profile adminer up -d adminer
+	docker compose --profile adminer up -d --wait proxy adminer
 
 .PHONY: k9s
 k9s:
