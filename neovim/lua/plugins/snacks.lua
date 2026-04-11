@@ -18,6 +18,7 @@ local function current_buffer_dir()
   return vim.fs.dirname(path)
 end
 
+-- Declared early because helpers above call this before its full definition appears below.
 local push_netrw_directory_history
 
 -- Return Neovim's current working directory in one place so other helpers do not repeat the fallback logic.
@@ -252,43 +253,6 @@ local function snacks_pick_netrw_directory_history()
   })
 end
 
--- Open the directory that belongs to the current buffer.
-local function open_current_directory()
-  open_directory(current_buffer_dir())
-end
-
--- Open the current working directory, which is useful from the dashboard.
-local function open_cwd_directory()
-  open_directory(current_working_dir())
-end
-
--- Open the ls-like directory picker starting from the current working directory.
-local function pick_cwd_directory_entries()
-  snacks_pick_directory_entries(current_working_dir())
-end
-
--- Create a small dashboard action that forwards to Snacks' built-in dashboard picker helper.
-local function dashboard_pick(source, opts)
-  return function()
-    Snacks.dashboard.pick(source, opts)
-  end
-end
-
--- Open the keymap picker so custom shortcuts are easy to discover.
-local function pick_keymaps()
-  Snacks.picker.keymaps()
-end
-
--- Search inside the current buffer with the Snacks line picker.
-local function pick_buffer_lines()
-  Snacks.picker.lines()
-end
-
--- Toggle Snacks' zen mode from a named helper that can be reused in keymaps.
-local function toggle_zen()
-  Snacks.zen()
-end
-
 return {
   {
     "folke/snacks.nvim",
@@ -297,7 +261,9 @@ return {
     keys = {
       {
         "/",
-        pick_buffer_lines,
+        function()
+          Snacks.picker.lines()
+        end,
         mode = { "n", "v" },
         desc = "Buffer Lines",
       },
@@ -324,7 +290,9 @@ return {
       },
       {
         "<leader>o",
-        open_current_directory,
+        function()
+          open_directory(current_buffer_dir())
+        end,
         desc = "Open Current Directory",
       },
       {
@@ -343,12 +311,16 @@ return {
       },
       {
         "<leader>f?",
-        pick_keymaps,
+        function()
+          Snacks.picker.keymaps()
+        end,
         desc = "Find Keymaps",
       },
       {
         "<leader>z",
-        toggle_zen,
+        function()
+          Snacks.zen()
+        end,
         desc = "Toggle Zen Mode",
       },
     },
@@ -369,38 +341,50 @@ return {
               icon = " ",
               key = "f",
               desc = "Find File",
-              action = dashboard_pick("files"),
+              action = function()
+                Snacks.dashboard.pick("files")
+              end,
             },
             {
               icon = " ",
               key = "g",
               desc = "Find Text",
-              action = dashboard_pick("live_grep"),
+              action = function()
+                Snacks.dashboard.pick("live_grep")
+              end,
             },
             {
               icon = " ",
               key = "r",
               desc = "Recent Files",
-              action = dashboard_pick("oldfiles"),
+              action = function()
+                Snacks.dashboard.pick("oldfiles")
+              end,
             },
             {
               icon = " ",
               key = "c",
               desc = "Config",
-              action = dashboard_pick("files", { cwd = vim.fn.stdpath("config") }),
+              action = function()
+                Snacks.dashboard.pick("files", { cwd = vim.fn.stdpath("config") })
+              end,
             },
             {
               icon = " ",
               key = "?",
               desc = "Keymaps",
-              action = pick_keymaps,
+              action = function()
+                Snacks.picker.keymaps()
+              end,
             },
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },
             {
               icon = " ",
               key = "o",
               desc = "Open netrw (cwd)",
-              action = open_cwd_directory,
+              action = function()
+                open_directory(current_working_dir())
+              end,
             },
             {
               icon = " ",
@@ -414,7 +398,9 @@ return {
               icon = " ",
               key = "l",
               desc = "Files (cwd)",
-              action = pick_cwd_directory_entries,
+              action = function()
+                snacks_pick_directory_entries(current_working_dir())
+              end,
             },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
@@ -453,15 +439,12 @@ return {
           fullscreen = true,
         },
         sources = {
-          -- ファイル検索の除外
           files = {
-            hidden = true, -- 必要に応じて変更
+            hidden = true,
             exclude = { "**/__pycache__/**", "*.pyc", "*.pyo" },
           },
-          -- ripgrep 検索の除外
           grep = {
             hidden = true,
-            -- ripgrep に直接グロブを渡す
             args = { "--glob", "!__pycache__/**", "--glob", "!*.pyc", "--glob", "!*.pyo" },
           },
         },
