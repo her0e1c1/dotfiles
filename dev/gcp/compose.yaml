@@ -38,15 +38,24 @@ services:
       - 0.0.0.0
       - --port
       - "3306"
+      # Required so Compose can wait for a usable Cloud SQL proxy.
+      - --health-check
       - --credentials-file=/config/gcloud/application_default_credentials.json
       - ${CLOUDSQL_CONNECTION_NAME}
+    healthcheck:
+      test: ["CMD", "/cloud-sql-proxy", "wait", "--max", "3s"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   adminer:
     image: adminer
     profiles:
       - adminer
     depends_on:
-      - proxy
+      proxy:
+        condition: service_healthy
     env_file: .env
     environment:
       ADMINER_DEFAULT_SERVER: ${MYSQL_HOST}
@@ -63,6 +72,8 @@ services:
 
   k9s:
     image: derailed/k9s
+    profiles:
+      - k9s
     env_file: .env
     environment:
       KUBECONFIG: /root/.kube/config

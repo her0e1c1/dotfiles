@@ -53,6 +53,7 @@ kube:
 	'
 
 .PHONY: mysql
-mysql: proxy
+mysql:
+	docker compose up -d --wait proxy
 	docker compose run --rm dev sh -cu \
 		'mysql --protocol=TCP -h "$${MYSQL_HOST}" -P "$${MYSQL_PORT}" -u "$${MYSQL_USER}" $${MYSQL_DATABASE:+$${MYSQL_DATABASE}}'
