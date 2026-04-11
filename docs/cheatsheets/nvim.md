@@ -15,6 +15,8 @@ Use this when you know the edit flow but forget the command name or this config'
 ## Find Files
 
 | `<leader><space>` | Find files from the project root |
+| `<leader>d` | Pick subdirectories (max depth 1) under the current directory |
+| `<leader>D` | Pick recursive subdirectories under the project root |
 | `<leader>fr` | Open recent files |
 | `<leader>fd` | Open files in current directoires |
 | `<leader>l` | Show `ls -1`-style entries for the current buffer's directory |
@@ -37,7 +39,8 @@ Use this when you know the edit flow but forget the command name or this config'
 | Key | Purpose |
 | --- | --- |
 | `/` | Search lines in the current buffer via `Snacks` |
-| `g/` | Use the original Vim `/` search |
+| `<leader>d` | Pick subdirectories (max depth 1, via `fdfind`) and open in `netrw` |
+| `<leader>D` | Pick recursive subdirectories from the project root and open in `netrw` |
 | `<leader>l` | Show `ls -1`-style directory entries; open files or enter directories with `netrw` |
 | `<leader>L` | Open Snacks buffer picker |
 | `?` | In `netrw`, open `which-key` for buffer-local keymaps |

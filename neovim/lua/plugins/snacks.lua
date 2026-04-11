@@ -106,6 +106,7 @@ local function pick_directory_entries(opts)
     title = opts.title,
     items = list_directory_entries(target_dir, opts.want_dirs),
     format = opts.format or "file",
+    formatters = opts.formatters,
     confirm = function(picker, item)
       if not item then
         return
@@ -127,9 +128,12 @@ local function snacks_pick_directory_entries(dir)
   pick_directory_entries({
     dir = dir,
     title = "Dir Entries",
-    format = function(item)
-      return { { item.file } }
-    end,
+    format = "file",
+    formatters = {
+      file = {
+        filename_only = true,
+      },
+    },
     confirm = function(picker, item, target_dir)
       if item.dir then
         picker:close()
@@ -138,6 +142,46 @@ local function snacks_pick_directory_entries(dir)
       end
 
       jump_to_picker_item(picker, item)
+    end,
+  })
+end
+
+-- Pick subdirectories recursively via `fdfind` and open the selected one in netrw.
+local function snacks_pick_recursive_subdirectories(opts)
+  opts = opts or {}
+  local target_dir = opts.dir or current_buffer_dir()
+  local max_depth = opts.max_depth
+  local args = { "--hidden", "--strip-cwd-prefix", "--type", "d" }
+
+  if max_depth ~= nil then
+    vim.list_extend(args, { "--max-depth", tostring(max_depth) })
+  end
+
+  vim.list_extend(args, { "--exclude", ".git", "." })
+
+  Snacks.picker.pick({
+    title = "Subdirectories (recursive)",
+    format = function(item)
+      return { { item.file } }
+    end,
+    finder = function(_, ctx)
+      return require("snacks.picker.source.proc").proc({
+        cmd = "fdfind",
+        cwd = target_dir,
+        args = args,
+        transform = function(item)
+          item.cwd = target_dir
+          item.dir = true
+          item.file = item.text
+        end,
+      }, ctx)
+    end,
+    confirm = function(picker, item)
+      if not item then
+        return
+      end
+      picker:close()
+      open_directory(vim.fs.joinpath(target_dir, item.file))
     end,
   })
 end
@@ -257,6 +301,20 @@ return {
         desc = "Pick Buffer Dir Entries",
       },
       {
+        "<leader>d",
+        function()
+          snacks_pick_recursive_subdirectories({ max_depth = 1 })
+        end,
+        desc = "Pick Recursive Subdirectories",
+      },
+      {
+        "<leader>D",
+        function()
+          snacks_pick_recursive_subdirectories({ dir = LazyVim.root() })
+        end,
+        desc = "Pick Root Recursive Subdirectories",
+      },
+      {
         "<leader>L",
         function()
           Snacks.picker.buffers()
@@ -319,6 +377,14 @@ return {
               desc = "Find Text",
               action = function()
                 Snacks.dashboard.pick("live_grep")
+              end,
+            },
+            {
+              icon = " ",
+              key = "d",
+              desc = "Subdirectories (cwd)",
+              action = function()
+                snacks_pick_recursive_subdirectories({ dir = current_working_dir() })
               end,
             },
             {
