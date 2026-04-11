@@ -17,13 +17,12 @@ end
 
 local push_netrw_directory_history
 
-local function list_directory_items(dir, want_dirs)
+local function list_directory_entries(dir, want_dirs)
   local items = {}
-  local iter = vim.fs.dir(dir)
 
-  for name, entry_type in iter do
+  for name, entry_type in vim.fs.dir(dir) do
     local is_dir = entry_type == "directory"
-    if is_dir == want_dirs then
+    if want_dirs == nil or is_dir == want_dirs then
       items[#items + 1] = {
         cwd = dir,
         dir = is_dir,
@@ -31,25 +30,6 @@ local function list_directory_items(dir, want_dirs)
         text = name,
       }
     end
-  end
-
-  table.sort(items, function(a, b)
-    return a.file < b.file
-  end)
-
-  return items
-end
-
-local function list_directory_entries(dir)
-  local items = {}
-
-  for name, entry_type in vim.fs.dir(dir) do
-    items[#items + 1] = {
-      cwd = dir,
-      dir = entry_type == "directory",
-      file = name,
-      text = name,
-    }
   end
 
   table.sort(items, function(a, b)
@@ -129,7 +109,7 @@ local function snacks_pick_files_under_directory(dir)
 
   Snacks.picker.pick({
     title = "Directory Files",
-    items = list_directory_items(target_dir, false),
+    items = list_directory_entries(target_dir, false),
     format = "file",
     confirm = function(picker, item)
       if not item then
@@ -146,7 +126,7 @@ local function snacks_pick_subdirectory_for_files(dir)
 
   Snacks.picker.pick({
     title = "Subdirectories",
-    items = list_directory_items(target_dir, true),
+    items = list_directory_entries(target_dir, true),
     format = "file",
     confirm = function(picker, item)
       if not item then
