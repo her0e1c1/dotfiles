@@ -430,24 +430,6 @@ return {
           fullscreen = true,
         },
         sources = {
-          explorer = {
-            hidden = true,
-            layout = {
-              preset = "sidebar",
-              preview = false,
-              fullscreen = false,
-            },
-            jump = {
-              close = false,
-            },
-            win = {
-              list = {
-                keys = {
-                  ["p"] = "explorer_up",
-                },
-              },
-            },
-          },
           -- ファイル検索の除外
           files = {
             hidden = true, -- 必要に応じて変更
