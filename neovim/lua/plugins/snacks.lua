@@ -17,6 +17,15 @@ end
 
 local push_netrw_directory_history
 
+local function current_working_dir()
+  return vim.uv.cwd() or vim.fn.getcwd()
+end
+
+local function open_directory(dir)
+  push_netrw_directory_history(dir)
+  vim.cmd.edit(dir)
+end
+
 local function list_directory_entries(dir, want_dirs)
   local items = {}
 
@@ -77,62 +86,63 @@ local function directory_preview_text(dir)
   return table.concat(lines, "\n")
 end
 
-local function snacks_pick_directory_entries(dir)
-  local target_dir = dir or current_buffer_dir()
+local function pick_directory_entries(opts)
+  local target_dir = opts.dir or current_buffer_dir()
 
   Snacks.picker.pick({
-    title = "Dir Entries",
-    items = list_directory_entries(target_dir),
-    format = function(item)
-      return { { item.file } }
-    end,
+    title = opts.title,
+    items = list_directory_entries(target_dir, opts.want_dirs),
+    format = opts.format or "file",
     confirm = function(picker, item)
       if not item then
         return
       end
 
+      opts.confirm(picker, item, target_dir)
+    end,
+  })
+end
+
+local function jump_to_picker_item(picker, item)
+  Snacks.picker.actions.jump(picker, item, {})
+end
+
+local function snacks_pick_directory_entries(dir)
+  pick_directory_entries({
+    dir = dir,
+    title = "Dir Entries",
+    format = function(item)
+      return { { item.file } }
+    end,
+    confirm = function(picker, item, target_dir)
       if item.dir then
-        local path = vim.fs.joinpath(target_dir, item.file)
         picker:close()
-        push_netrw_directory_history(path)
-        vim.cmd.edit(path)
+        open_directory(vim.fs.joinpath(target_dir, item.file))
         return
       end
 
-      Snacks.picker.actions.jump(picker, item, {})
+      jump_to_picker_item(picker, item)
     end,
   })
 end
 
 local function snacks_pick_files_under_directory(dir)
-  local target_dir = dir or current_buffer_dir()
-
-  Snacks.picker.pick({
+  pick_directory_entries({
+    dir = dir,
     title = "Directory Files",
-    items = list_directory_entries(target_dir, false),
-    format = "file",
+    want_dirs = false,
     confirm = function(picker, item)
-      if not item then
-        return
-      end
-
-      Snacks.picker.actions.jump(picker, item, {})
+      jump_to_picker_item(picker, item)
     end,
   })
 end
 
 local function snacks_pick_subdirectory_for_files(dir)
-  local target_dir = dir or current_buffer_dir()
-
-  Snacks.picker.pick({
+  pick_directory_entries({
+    dir = dir,
     title = "Subdirectories",
-    items = list_directory_entries(target_dir, true),
-    format = "file",
-    confirm = function(picker, item)
-      if not item then
-        return
-      end
-
+    want_dirs = true,
+    confirm = function(picker, item, target_dir)
       picker:close()
       snacks_pick_files_under_directory(vim.fs.joinpath(target_dir, item.file))
     end,
@@ -214,10 +224,39 @@ local function snacks_pick_netrw_directory_history()
         return
       end
       picker:close()
-      push_netrw_directory_history(item.dir)
-      vim.cmd.edit(item.dir)
+      open_directory(item.dir)
     end,
   })
+end
+
+local function open_current_directory()
+  open_directory(current_buffer_dir())
+end
+
+local function open_cwd_directory()
+  open_directory(current_working_dir())
+end
+
+local function pick_cwd_directory_entries()
+  snacks_pick_directory_entries(current_working_dir())
+end
+
+local function dashboard_pick(source, opts)
+  return function()
+    Snacks.dashboard.pick(source, opts)
+  end
+end
+
+local function pick_keymaps()
+  Snacks.picker.keymaps()
+end
+
+local function pick_buffer_lines()
+  Snacks.picker.lines()
+end
+
+local function toggle_zen()
+  Snacks.zen()
 end
 
 return {
@@ -228,9 +267,7 @@ return {
     keys = {
       {
         "/",
-        function()
-          Snacks.picker.lines()
-        end,
+        pick_buffer_lines,
         mode = { "n", "v" },
         desc = "Buffer Lines",
       },
@@ -257,11 +294,7 @@ return {
       },
       {
         "<leader>o",
-        function()
-          local dir = current_buffer_dir()
-          push_netrw_directory_history(dir)
-          vim.cmd.edit(dir)
-        end,
+        open_current_directory,
         desc = "Open Current Directory",
       },
       {
@@ -280,16 +313,12 @@ return {
       },
       {
         "<leader>f?",
-        function()
-          Snacks.picker.keymaps()
-        end,
+        pick_keymaps,
         desc = "Find Keymaps",
       },
       {
         "<leader>z",
-        function()
-          Snacks.zen()
-        end,
+        toggle_zen,
         desc = "Toggle Zen Mode",
       },
     },
@@ -310,52 +339,38 @@ return {
               icon = " ",
               key = "f",
               desc = "Find File",
-              action = function()
-                Snacks.dashboard.pick("files")
-              end,
+              action = dashboard_pick("files"),
             },
             {
               icon = " ",
               key = "g",
               desc = "Find Text",
-              action = function()
-                Snacks.dashboard.pick("live_grep")
-              end,
+              action = dashboard_pick("live_grep"),
             },
             {
               icon = " ",
               key = "r",
               desc = "Recent Files",
-              action = function()
-                Snacks.dashboard.pick("oldfiles")
-              end,
+              action = dashboard_pick("oldfiles"),
             },
             {
               icon = " ",
               key = "c",
               desc = "Config",
-              action = function()
-                Snacks.dashboard.pick("files", { cwd = vim.fn.stdpath("config") })
-              end,
+              action = dashboard_pick("files", { cwd = vim.fn.stdpath("config") }),
             },
             {
               icon = " ",
               key = "?",
               desc = "Keymaps",
-              action = function()
-                Snacks.picker.keymaps()
-              end,
+              action = pick_keymaps,
             },
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },
             {
               icon = " ",
               key = "o",
               desc = "Open netrw (cwd)",
-              action = function()
-                local dir = vim.uv.cwd() or vim.fn.getcwd()
-                push_netrw_directory_history(dir)
-                vim.cmd.edit(dir)
-              end,
+              action = open_cwd_directory,
             },
             {
               icon = " ",
@@ -369,9 +384,7 @@ return {
               icon = " ",
               key = "l",
               desc = "Files (cwd)",
-              action = function()
-                snacks_pick_directory_entries(vim.uv.cwd() or vim.fn.getcwd())
-              end,
+              action = pick_cwd_directory_entries,
             },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
