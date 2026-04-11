@@ -68,7 +68,20 @@ services:
       - default
       - traefik
     volumes:
-      - ./config/adminer:/var/www/html/db:ro
+      # Required to keep the bundled /var/www/html/adminer.php intact while overriding only our entrypoints.
+      - ./config/adminer/index.php:/var/www/html/index.php:ro
+      - ./config/adminer/db:/var/www/html/db:ro
+    healthcheck:
+      # Required so Compose can wait until Adminer is serving HTTP.
+      test:
+        - CMD
+        - php
+        - -r
+        - exit((int) (@file_get_contents("http://127.0.0.1:8080/") === false));
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   k9s:
     image: derailed/k9s
