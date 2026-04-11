@@ -262,7 +262,7 @@ return {
       {
         "/",
         function()
-          Snacks.picker.lines()
+          Snacks.picker.lines({ search = vim.fn.expand("<cword>") })
         end,
         mode = { "n", "v" },
         desc = "Buffer Lines",
