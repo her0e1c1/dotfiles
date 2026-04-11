@@ -37,19 +37,24 @@ gke:
 	docker compose run --rm dev sh -cu \
 		'gcloud container clusters get-credentials "$${CLUSTER_NAME}" --location "$${CLUSTER_LOCATION}" --project "$${GOOGLE_CLOUD_PROJECT}"'
 
-.PHONY: proxy
-proxy:
-	docker compose down proxy
-	docker compose up -d proxy
+.PHONY: proxy-sql
+proxy-sql:
+	docker compose down proxy-sql
+	docker compose up -d proxy-sql
+
+.PHONY: proxy-gke
+proxy-gke:
+	docker compose down proxy-gke
+	docker compose up -d proxy-gke
 
 .PHONY: adminer
 adminer:
 	docker compose --profile adminer down adminer
-	docker compose --profile adminer up -d --wait proxy adminer
+	docker compose --profile adminer up -d --wait proxy-sql adminer
 
 .PHONY: mysql
 mysql:
-	docker compose up -d --wait proxy
+	docker compose up -d --wait proxy-sql
 	docker compose run --rm dev sh -cu \
 		'mysql --protocol=TCP -h "$${MYSQL_HOST}" -P "$${MYSQL_PORT}" -u "$${MYSQL_USER}" $${MYSQL_DATABASE:+$${MYSQL_DATABASE}}'
 

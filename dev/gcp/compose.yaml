@@ -13,7 +13,7 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /config/gcloud/application_default_credentials.json
       KUBECONFIG: /root/.kube/config
       CLOUDSDK_CONFIG: /config/gcloud
-      MYSQL_HOST: proxy
+      MYSQL_HOST: proxy-sql
       MYSQL_PORT: 3306
     working_dir: /workspace
     volumes:
@@ -25,7 +25,7 @@ services:
       - default
     command: sleep infinity
 
-  proxy:
+  proxy-sql:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.20.0
     user: root
     env_file: .env
@@ -52,12 +52,40 @@ services:
       retries: 5
       start_period: 5s
 
+  proxy-gke:
+    image: dev-gcp:latest
+    env_file: .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /config/gcloud/application_default_credentials.json
+      KUBECONFIG: /root/.kube/config
+      CLOUDSDK_CONFIG: /config/gcloud
+    volumes:
+      - gcloud_config:/config/gcloud
+      - kube_config:/root/.kube
+    networks:
+      - default
+    # Required so k9s can reach the Kubernetes API via this in-network proxy without needing the GKE auth plugin.
+    command:
+      - sh
+      - -lc
+      - kubectl proxy --address=0.0.0.0 --port=8001 --accept-hosts='.*'
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -fsS
+        - http://127.0.0.1:8001/version
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   adminer:
     image: adminer
     profiles:
       - adminer
     depends_on:
-      proxy:
+      proxy-sql:
         condition: service_healthy
     env_file: .env
     environment:
@@ -89,16 +117,18 @@ services:
     image: derailed/k9s
     profiles:
       - k9s
+    depends_on:
+      proxy-gke:
+        condition: service_healthy
     env_file: .env
     environment:
-      KUBECONFIG: /root/.kube/config
+      KUBECONFIG: /config/k9s/kubeconfig-proxy.yaml
       TERM: xterm-256color
       COLORTERM=: ruecolor
       XDG_CONFIG_HOME: /config
     stdin_open: true
     tty: true
     volumes:
-      - kube_config:/root/.kube
       - ./config/k9s:/config/k9s
     networks:
       - default
