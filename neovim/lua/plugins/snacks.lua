@@ -161,9 +161,7 @@ local function snacks_pick_recursive_subdirectories(opts)
 
   Snacks.picker.pick({
     title = "Subdirectories (recursive)",
-    format = function(item)
-      return { { item.file } }
-    end,
+    format = "file",
     finder = function(_, ctx)
       return require("snacks.picker.source.proc").proc({
         cmd = "fdfind",
