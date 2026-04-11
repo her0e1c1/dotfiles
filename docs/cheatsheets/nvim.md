@@ -18,7 +18,7 @@ Use this when you know the edit flow but forget the command name or this config'
 | `<leader>fr` | Open recent files |
 | `<leader>fd` | Open files in current directoires |
 | `<leader>l` | Show `ls -1`-style entries for the current buffer's directory |
-| `<leader>L` | Pick a subdirectory, then open files under it recursively |
+| `<leader>L` | Open Snacks buffer picker |
 
 ## Search
 
@@ -39,7 +39,7 @@ Use this when you know the edit flow but forget the command name or this config'
 | `/` | Search lines in the current buffer via `Snacks` |
 | `g/` | Use the original Vim `/` search |
 | `<leader>l` | Show `ls -1`-style directory entries; open files or enter directories with `netrw` |
-| `<leader>L` | Pick a subdirectory under the current buffer's directory and open a recursive Snacks file picker there |
+| `<leader>L` | Open Snacks buffer picker |
 | `?` | In `netrw`, open `which-key` for buffer-local keymaps |
 | `g?` | In `netrw`, open the built-in keymap help |
 | `<leader>f?` | Open Snacks keymap search |

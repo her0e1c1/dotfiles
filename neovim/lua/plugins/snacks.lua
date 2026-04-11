@@ -142,31 +142,6 @@ local function snacks_pick_directory_entries(dir)
   })
 end
 
--- Show only files from a target directory and open the selected file.
-local function snacks_pick_files_under_directory(dir)
-  pick_directory_entries({
-    dir = dir,
-    title = "Directory Files",
-    want_dirs = false,
-    confirm = function(picker, item)
-      jump_to_picker_item(picker, item)
-    end,
-  })
-end
-
--- Let the user choose a subdirectory first, then narrow the next picker to files under that directory.
-local function snacks_pick_subdirectory_for_files(dir)
-  pick_directory_entries({
-    dir = dir,
-    title = "Subdirectories",
-    want_dirs = true,
-    confirm = function(picker, item, target_dir)
-      picker:close()
-      snacks_pick_files_under_directory(vim.fs.joinpath(target_dir, item.file))
-    end,
-  })
-end
-
 -- Combine our in-memory and netrw-provided directory history into one picker list.
 -- Duplicate paths are removed so the history does not show the same directory twice.
 local function list_netrw_directory_history()
@@ -262,17 +237,10 @@ return {
       {
         "/",
         function()
-          Snacks.picker.lines({ search = vim.fn.expand("<cword>") })
+          Snacks.picker.lines({ pattern = vim.fn.expand("<cword>") })
         end,
         mode = { "n", "v" },
         desc = "Buffer Lines",
-      },
-      {
-        "g/",
-        "/",
-        mode = { "n", "v" },
-        remap = true,
-        desc = "Native search (original /)",
       },
       {
         "<leader><space>",
@@ -289,6 +257,13 @@ return {
         desc = "Pick Buffer Dir Entries",
       },
       {
+        "<leader>L",
+        function()
+          Snacks.picker.buffers()
+        end,
+        desc = "Pick Buffers",
+      },
+      {
         "<leader>o",
         function()
           open_directory(current_buffer_dir())
@@ -301,13 +276,6 @@ return {
           snacks_pick_netrw_directory_history()
         end,
         desc = "Pick netrw Directory History",
-      },
-      {
-        "<leader>L",
-        function()
-          snacks_pick_subdirectory_for_files()
-        end,
-        desc = "Pick Subdirectory Files",
       },
       {
         "<leader>f?",
