@@ -7,7 +7,6 @@ Use this when you know the edit flow but forget the command name or this config'
 | Command | Purpose |
 | --- | --- |
 | `:e` | Reload the current buffer |
-| `<leader>e` | toggle explorer |
 | `<leader>/` | grep across the project |
 | `<leader>uw` | toggle line wrap |
 | `<leader>z` | zen mode |
@@ -39,8 +38,6 @@ Use this when you know the edit flow but forget the command name or this config'
 | --- | --- |
 | `/` | Search lines in the current buffer via `Snacks` |
 | `g/` | Use the original Vim `/` search |
-| `<leader>d` | Pick a subdirectory under the current buffer's directory and open Snacks explorer there |
-| `<leader>e` | Open Snacks explorer in the current buffer's directory, including dotfiles |
 | `<leader>l` | Show `ls -1`-style directory entries; open files or enter directories with `netrw` |
 | `<leader>L` | Pick a subdirectory under the current buffer's directory and open a recursive Snacks file picker there |
 | `?` | In `netrw`, open `which-key` for buffer-local keymaps |

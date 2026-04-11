@@ -97,33 +97,6 @@ local function directory_preview_text(dir)
   return table.concat(lines, "\n")
 end
 
-local function list_subdirectory_items_recursive(dir)
-  local items = {}
-
-  local function walk(root, prefix)
-    for name, entry_type in vim.fs.dir(root) do
-      if entry_type == "directory" then
-        local relative_path = prefix == "" and name or vim.fs.joinpath(prefix, name)
-        items[#items + 1] = {
-          cwd = dir,
-          dir = true,
-          file = relative_path,
-          text = relative_path,
-        }
-        walk(vim.fs.joinpath(root, name), relative_path)
-      end
-    end
-  end
-
-  walk(dir, "")
-
-  table.sort(items, function(a, b)
-    return a.file < b.file
-  end)
-
-  return items
-end
-
 local function snacks_pick_directory_entries(dir)
   local target_dir = dir or current_buffer_dir()
 
@@ -147,24 +120,6 @@ local function snacks_pick_directory_entries(dir)
       end
 
       Snacks.picker.actions.jump(picker, item, {})
-    end,
-  })
-end
-
-local function snacks_pick_subdirectory_for_explorer(dir)
-  local target_dir = dir or current_buffer_dir()
-
-  Snacks.picker.pick({
-    title = "Subdirectories (recursive)",
-    items = list_subdirectory_items_recursive(target_dir),
-    format = "file",
-    confirm = function(picker, item)
-      if not item then
-        return
-      end
-
-      picker:close()
-      vim.cmd.edit(vim.fs.joinpath(target_dir, item.file))
     end,
   })
 end
@@ -307,38 +262,6 @@ return {
         desc = "Native search (original /)",
       },
       {
-        "<leader>e",
-        function()
-          local cwd = vim.fn.expand("%:p:h")
-          if cwd == "" then
-            cwd = vim.uv.cwd() or vim.fn.getcwd()
-          end
-          Snacks.explorer({ cwd = cwd })
-        end,
-        desc = "Open Explorer",
-      },
-      {
-        "<leader>E",
-        function()
-          Snacks.explorer({ cwd = LazyVim.root() })
-        end,
-        desc = "Toggle Explorer",
-      },
-      {
-        "<leader>d",
-        function()
-          snacks_pick_subdirectory_for_explorer()
-        end,
-        desc = "Pick Subdirectory Explorer",
-      },
-      {
-        "<leader>D",
-        function()
-          snacks_pick_subdirectory_for_explorer(LazyVim.root())
-        end,
-        desc = "Pick Root Subdirectory Explorer",
-      },
-      {
         "<leader><space>",
         function()
           Snacks.picker.files({ cwd = current_buffer_dir() })
@@ -409,22 +332,6 @@ return {
               desc = "Find File",
               action = function()
                 Snacks.dashboard.pick("files")
-              end,
-            },
-            {
-              icon = " ",
-              key = "e",
-              desc = "Explorer",
-              action = function()
-                Snacks.explorer({ cwd = vim.uv.cwd() or vim.fn.getcwd() })
-              end,
-            },
-            {
-              icon = " ",
-              key = "d",
-              desc = "Directories (cwd)",
-              action = function()
-                snacks_pick_subdirectory_for_explorer(vim.uv.cwd() or vim.fn.getcwd())
               end,
             },
             {
@@ -506,7 +413,7 @@ return {
         },
       },
       explorer = {
-        enabled = true,
+        enabled = false,
         -- Keep directory buffers on netrw so :edit <dir> follows the netrw workflow.
         replace_netrw = false,
       },
