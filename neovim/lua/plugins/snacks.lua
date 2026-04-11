@@ -15,6 +15,8 @@ local function current_buffer_dir()
   return vim.fs.dirname(path)
 end
 
+local push_netrw_directory_history
+
 local function list_directory_items(dir, want_dirs)
   local items = {}
   local iter = vim.fs.dir(dir)
@@ -29,6 +31,25 @@ local function list_directory_items(dir, want_dirs)
         text = name,
       }
     end
+  end
+
+  table.sort(items, function(a, b)
+    return a.file < b.file
+  end)
+
+  return items
+end
+
+local function list_directory_entries(dir)
+  local items = {}
+
+  for name, entry_type in vim.fs.dir(dir) do
+    items[#items + 1] = {
+      cwd = dir,
+      dir = entry_type == "directory",
+      file = name,
+      text = name,
+    }
   end
 
   table.sort(items, function(a, b)
@@ -108,12 +129,23 @@ local function snacks_pick_directory_entries(dir)
 
   Snacks.picker.pick({
     title = "Dir Entries",
-    items = list_directory_items(target_dir, false),
-    format = "file",
+    items = list_directory_entries(target_dir),
+    format = function(item)
+      return { { item.file } }
+    end,
     confirm = function(picker, item)
       if not item then
         return
       end
+
+      if item.dir then
+        local path = vim.fs.joinpath(target_dir, item.file)
+        picker:close()
+        push_netrw_directory_history(path)
+        vim.cmd.edit(path)
+        return
+      end
+
       Snacks.picker.actions.jump(picker, item, {})
     end,
   })
@@ -215,7 +247,7 @@ local function list_netrw_directory_history()
   return items
 end
 
-local function push_netrw_directory_history(dir)
+push_netrw_directory_history = function(dir)
   if not dir or dir == "" then
     return
   end
