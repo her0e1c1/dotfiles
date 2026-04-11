@@ -43,6 +43,8 @@ Use this when you know the edit flow but forget the command name or this config'
 | `<leader>e` | Open Snacks explorer in the current buffer's directory, including dotfiles |
 | `<leader>l` | Show `ls -1`-style directory entries; open files or enter directories with `netrw` |
 | `<leader>L` | Pick a subdirectory under the current buffer's directory and open a recursive Snacks file picker there |
+| `?` | In `netrw`, open `which-key` for buffer-local keymaps |
+| `g?` | In `netrw`, open the built-in keymap help |
 | `<leader>f?` | Open Snacks keymap search |
 | `<leader>fc` | Open Telescope command search |
 | `<leader>fh` | Open Telescope help search |

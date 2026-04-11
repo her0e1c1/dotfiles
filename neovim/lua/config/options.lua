@@ -119,7 +119,14 @@ vim.api.nvim_create_autocmd("FileType", {
       desc = "netrw Parent Directory",
     })
     vim.keymap.set("n", "?", function()
-      vim.cmd.help("pi_netrw")
+      require("which-key").show({ global = false })
+    end, {
+      buffer = event.buf,
+      silent = true,
+      desc = "netrw Keymaps",
+    })
+    vim.keymap.set("n", "g?", function()
+      vim.cmd.help("netrw-browse-maps")
     end, {
       buffer = event.buf,
       silent = true,
