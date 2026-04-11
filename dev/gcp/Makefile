@@ -24,21 +24,15 @@ clean:
 pull:
 	docker compose pull
 
-.PHONY: proxy-up
-proxy-up:
+.PHONY: proxy
+proxy:
+	docker compose down proxy
 	docker compose up -d proxy
 
-.PHONY: proxy-down
-proxy-down:
-	docker compose down proxy
-
-.PHONY: adminer-up
-adminer-up:
-	docker compose --profile adminer up -d adminer
-
-.PHONY: adminer-down
-adminer-down:
+.PHONY: adminer
+adminer:
 	docker compose --profile adminer down adminer
+	docker compose --profile adminer up -d adminer
 
 .PHONY: k9s
 k9s:
@@ -59,6 +53,6 @@ kube:
 	'
 
 .PHONY: mysql
-mysql: proxy-up
+mysql: proxy
 	docker compose run --rm dev sh -cu \
 		'mysql --protocol=TCP -h "$${MYSQL_HOST}" -P "$${MYSQL_PORT}" -u "$${MYSQL_USER}" $${MYSQL_DATABASE:+$${MYSQL_DATABASE}}'
