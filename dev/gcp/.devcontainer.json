@@ -1,8 +1,6 @@
 {
-  "name": "dev-gcp",
   "dockerComposeFile": "compose.yaml",
   "service": "dev",
-  "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
   "customizations": {
     "vscode": {
@@ -12,6 +10,5 @@
         "ms-kubernetes-tools.vscode-kubernetes-tools"
       ]
     }
-  },
-  "remoteUser": "root"
+  }
 }
