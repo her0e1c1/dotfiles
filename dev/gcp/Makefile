@@ -6,7 +6,7 @@ sh:
 
 .PHONY: build
 build:
-	devcontainer build --workspace-folder .
+	devcontainer build --workspace-folder . --config .devcontainer.build.json --image-name dev-gcp:latest
 
 .PHONY: up
 up:
@@ -56,4 +56,3 @@ mysql:
 .PHONY: k9s
 k9s:
 	docker compose run --rm k9s
-

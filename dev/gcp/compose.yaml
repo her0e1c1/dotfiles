@@ -1,10 +1,13 @@
-name: gcp-dev
+name: dev-gcp
 
 services:
-  dev:
+  image:
     build:
       context: .
       dockerfile: Dockerfile
+
+  dev:
+    image: dev-gcp:latest
     env_file: .env
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /config/gcloud/application_default_credentials.json

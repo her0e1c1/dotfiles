@@ -1,0 +1,8 @@
+{
+  "dockerComposeFile": "compose.yaml",
+  "service": "image",
+  "features": {
+    "ghcr.io/devcontainers/features/copilot-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {}
+  }
+}
