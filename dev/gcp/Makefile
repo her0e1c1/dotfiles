@@ -1,16 +1,19 @@
 .DEFAULT_GOAL := sh
 
+# Required so devcontainer resolves the workspace from this Makefile's directory.
+WORKSPACE_FOLDER := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+
 .PHONY: sh
 sh:
-	devcontainer exec --workspace-folder . /bin/bash
+	devcontainer exec --workspace-folder "$(WORKSPACE_FOLDER)" /bin/bash
 
 .PHONY: build
 build:
-	devcontainer build --workspace-folder . --config .devcontainer.build.json --image-name dev-gcp:latest
+	devcontainer build --workspace-folder "$(WORKSPACE_FOLDER)" --config "$(WORKSPACE_FOLDER)/.devcontainer.build.json" --image-name dev-gcp:latest
 
 .PHONY: up
 up:
-	devcontainer up --workspace-folder .
+	devcontainer up --workspace-folder "$(WORKSPACE_FOLDER)"
 
 .PHONY: down
 down:

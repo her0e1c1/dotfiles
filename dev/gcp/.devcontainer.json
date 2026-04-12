@@ -1,6 +1,7 @@
 {
   "dockerComposeFile": "compose.yaml",
   "service": "dev",
+  "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
   "customizations": {
     "vscode": {
