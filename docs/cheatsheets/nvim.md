@@ -23,6 +23,24 @@ Use this when you know the edit flow but forget the command name or this config'
 | `<leader>fr` | Open recent files |
 | `<leader>fc` | Lua Config Files |
 
+## Netrw
+
+Open netrw with `o` from the dashboard or `:e .` from anywhere.
+
+| Command | Purpose |
+| --- | --- |
+| `<Enter>` | Open file or enter directory |
+| `-` | Go to parent directory |
+| `%` | Create a new file |
+| `d` | Create a new directory |
+| `R` | Rename file or directory |
+| `D` | Delete file or directory |
+| `a` | Create a new file (`%` remap) |
+| `o` | Open netrw directory history (`<leader>O` remap) |
+| `l` | Show directory entries picker |
+| `?` | Show local netrw keymaps |
+| `g?` | Open `:help netrw-browse-maps` |
+
 ## Search
 
 | `<leader>:` | Command History |
@@ -59,6 +77,11 @@ Use this when you know the edit flow but forget the command name or this config'
 | `:w` | Save the current buffer |
 | `:q` | Quit the current window |
 | `:qa` | Quit all windows |
+
+## Lines Binds
+
+| `<C-w>` | Clear line |
+| `<C-q>` | Selection mode |
 
 ## Ohters
 
