@@ -65,4 +65,6 @@ Use this when you know the edit flow but forget the command name or this config'
 ```lua
 -- run code
 :lua print(vim.fn.getcwd())
+-- run global function
+:lua print(vim.inspect(list_netrw_directory_history()))
 ```

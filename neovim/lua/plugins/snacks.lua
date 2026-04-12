@@ -51,6 +51,21 @@ local function directory_preview_ls_command(dir)
   return { "ls", "-lA", "--color=always", dir }
 end
 
+-- Keep only the first occurrence of each non-empty value.
+local function unique(list)
+  local items = {}
+  local seen = {}
+
+  for _, value in ipairs(list) do
+    if value and value ~= "" and not seen[value] then
+      seen[value] = true
+      items[#items + 1] = value
+    end
+  end
+
+  return items
+end
+
 -- Shared wrapper for directory-based pickers.
 -- It handles the common picker setup so each caller only needs to describe its title and confirm behavior.
 -- Show the current directory as a simple entry list.
@@ -113,39 +128,58 @@ end
 
 -- Read netrw's directory history ring into a picker-friendly list.
 local function list_netrw_directory_history()
-  local items = {}
-  local seen = {}
+  local dirs = {}
   local histmax = vim.g.netrw_dirhistmax or 0
   local histcnt = vim.g.netrw_dirhistcnt
   if histmax <= 0 or histcnt == nil then
-    return items
-  end
-
-  local function add_from_ring(index)
-    local dir = vim.g["netrw_dirhist_" .. index]
-    if not dir or dir == "" or seen[dir] then
-      return
-    end
-
-    seen[dir] = true
-    items[#items + 1] = {
-      dir = dir,
-      file = dir,
-      text = dir,
-    }
+    return {}
   end
 
   for offset = 0, histmax - 1 do
     local index = (histcnt - offset) % histmax
-    add_from_ring(index)
+    dirs[#dirs + 1] = vim.g["netrw_dirhist_" .. index]
   end
 
-  return items
+  return unique(dirs)
+end
+
+-- Read .netrwhist directly and return only the saved directory strings.
+local function list_netrw_dirhist_dirs()
+  local dirs = {}
+  local path = vim.fs.joinpath(vim.fn.stdpath("data"), ".netrwhist")
+  local file = io.open(path, "r")
+
+  if not file then
+    return dirs
+  end
+
+  for line in file:lines() do
+    dirs[#dirs + 1] = line:match("^let g:netrw_dirhist_%d+%s*=%s*'(.*)'$")
+  end
+
+  file:close()
+  return unique(dirs)
 end
 
 -- Show the saved directory history and reopen the chosen entry with netrw.
-local function snacks_pick_netrw_directory_history()
-  local items = list_netrw_directory_history()
+local function snacks_pick_netrw_directory_history(opts)
+  opts = opts or {}
+
+  local dirs
+  if opts.read_from_netrwhist then
+    dirs = list_netrw_dirhist_dirs()
+  else
+    dirs = list_netrw_directory_history()
+  end
+
+  local items = vim.tbl_map(function(dir)
+    return {
+      dir = dir,
+      file = dir,
+      text = dir,
+    }
+  end, dirs)
+
   if #items == 0 then
     vim.notify("No netrw directory history", vim.log.levels.INFO)
     return
@@ -328,7 +362,7 @@ return {
               key = "O",
               desc = "netrw History",
               action = function()
-                snacks_pick_netrw_directory_history()
+                snacks_pick_netrw_directory_history({ read_from_netrwhist = true })
               end,
             },
             {
