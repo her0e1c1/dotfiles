@@ -114,6 +114,35 @@ abspath() {
   fi
 }
 
+make_rec() {
+  if [ -f Makefile ]; then
+    make "$@"
+    return $?
+  fi
+
+  local search_dir=$(dirname "$(pwd)")
+  while :; do
+    local makefile="$search_dir/Makefile"
+    if [ -f "$makefile" ]; then
+      local make_dir=$(dirname "$makefile")
+      local wrapper_file=$(mktemp "${TMPDIR:-/tmp}/make_rec.XXXXXX") || return 1
+      printf 'include %s\n' "$makefile" >"$wrapper_file"
+      make -I "$make_dir" -f "$wrapper_file" "$@"
+      local status=$?
+      rm -f "$wrapper_file"
+      return $status
+    fi
+
+    if [ "$search_dir" = "/" ]; then
+      break
+    fi
+    search_dir=$(dirname "$search_dir")
+  done
+
+  echo "make_rec: Makefile not found under $(pwd) or its parents" >&2
+  return 1
+}
+
 # Color utilities
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -953,7 +982,7 @@ alias vim='fzf_select_recent_files'
 alias n=nvim_start
 
 # Basic command aliases
-alias m='make'
+alias m='make_rec'
 alias g="git"
 alias ll='ls -alF'
 alias ls='ls -aCF'
