@@ -14,22 +14,22 @@ Use this when you know the edit flow but forget the command name or this config'
 
 ## Find Files
 
-| `<leader><space>` | Find files from the project root |
+|j`<leader><space>` | Find files from the current working directory |
 | `<leader>d` | Pick subdirectories (max depth 1) under the current directory |
 | `<leader>D` | Pick recursive subdirectories under the project root |
-| `<leader>fr` | Open recent files |
-| `<leader>fd` | Open files in current directoires |
 | `<leader>l` | Show `ls -1`-style entries for the current buffer's directory |
 | `<leader>L` | Open Snacks buffer picker |
+| `<leader>fF` | Open files from the project root |
+| `<leader>fr` | Open recent files |
+| `<leader>fc` | Lua Config Files |
 
 ## Search
 
 | `<leader>:` | Command History |
-| `<leader>fc` | Lua Config Files |
-| `<leader>:fb` | Buffer Search |
 
 ## Buffer
 
+| `<leader>:fb` | Buffer Search |
 | `H` | go to prev buffer |
 | `L` | go to next buffer |
 | `<leader>bd` | delete buffer |
@@ -38,17 +38,9 @@ Use this when you know the edit flow but forget the command name or this config'
 
 | Key | Purpose |
 | --- | --- |
-| `/` | Search lines in the current buffer via `Snacks` |
-| `<leader>d` | Pick subdirectories (max depth 1, via `fdfind`) and open in `netrw` |
-| `<leader>D` | Pick recursive subdirectories from the project root and open in `netrw` |
-| `<leader>l` | Show `ls -1`-style directory entries; open files or enter directories with `netrw` |
-| `<leader>L` | Open Snacks buffer picker |
-| `?` | In `netrw`, open `which-key` for buffer-local keymaps |
-| `g?` | In `netrw`, open the built-in keymap help |
 | `<leader>f?` | Open Snacks keymap search |
 | `<leader>fc` | Open Telescope command search |
 | `<leader>fh` | Open Telescope help search |
-| `<leader>z` | Toggle Snacks zen mode |
 
 ## Discovery
 
@@ -57,8 +49,6 @@ Use this when you know the edit flow but forget the command name or this config'
 | `<leader>f?` | Open Snacks keymap search |
 | `<leader>n` | Show notification history |
 | `:lua Snacks.picker.keymaps()` | Search available keymaps |
-| `:Telescope commands` | Search available commands |
-| `:Telescope help_tags` | Search help topics |
 | `:Lazy` | Inspect installed plugins |
 | `:Mason` | Inspect installed LSP/tools |
 | `:LspInfo` | Inspect attached LSP clients |
@@ -70,6 +60,9 @@ Use this when you know the edit flow but forget the command name or this config'
 | `:q` | Quit the current window |
 | `:qa` | Quit all windows |
 
-## Dangerous / Destructive
+## Ohters
 
-None beyond normal editor commands. This page intentionally excludes broad Vim builtins and focuses on the shortcuts that differ in this config.
+```lua
+-- run code
+:lua print(vim.fn.getcwd())
+```

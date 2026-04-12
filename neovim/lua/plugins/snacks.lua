@@ -1,36 +1,25 @@
--- Resolve the directory that should act as "here" for picker actions.
--- netrw buffers store a directory directly, normal file buffers use the file's parent directory,
--- and unnamed buffers fall back to the current working directory.
-local function current_buffer_dir()
-  if vim.bo.filetype == "netrw" and vim.b.netrw_curdir and vim.b.netrw_curdir ~= "" then
-    return vim.b.netrw_curdir
-  end
-
-  local path = vim.api.nvim_buf_get_name(0)
-  if path == "" then
-    return vim.uv.cwd() or vim.fn.getcwd()
-  end
-
-  if vim.fn.isdirectory(path) == 1 then
-    return path
-  end
-
-  return vim.fs.dirname(path)
-end
-
--- Declared early because helpers above call this before its full definition appears below.
-local push_netrw_directory_history
-
 -- Return Neovim's current working directory in one place so other helpers do not repeat the fallback logic.
 local function current_working_dir()
   return vim.uv.cwd() or vim.fn.getcwd()
 end
 
--- Open a directory with netrw after recording it in our custom directory history.
--- This keeps direct opens and picker-based opens consistent.
-local function open_directory(dir)
-  push_netrw_directory_history(dir)
-  vim.cmd.edit(dir)
+-- Resolve the directory that should act as "here" for picker actions.
+-- netrw buffers store a directory directly, normal file buffers use the file's parent directory,
+-- and unnamed buffers fall back to the current working directory.
+local function current_buffer_dir()
+  -- falsy values are false and nil only
+  if vim.bo.filetype == "netrw" and (vim.b.netrw_curdir or "") ~= "" then
+    return vim.b.netrw_curdir
+  end
+
+  local path = vim.api.nvim_buf_get_name(0) -- 0 == current buffer
+  if path == "" then
+    return current_working_dir()
+  end
+  if vim.fn.isdirectory(path) == 1 then
+    return path
+  end
+  return vim.fs.dirname(path)
 end
 
 -- Read one directory and convert its entries into Snacks picker items.
@@ -38,10 +27,10 @@ end
 local function list_directory_entries(dir, want_dirs)
   local items = {}
 
-  for name, entry_type in vim.fs.dir(dir) do
-    local is_dir = entry_type == "directory"
+  for name, type in vim.fs.dir(dir) do -- only items in cur dir
+    local is_dir = type == "directory"
     if want_dirs == nil or is_dir == want_dirs then
-      items[#items + 1] = {
+      items[#items + 1] = { -- append last
         cwd = dir,
         dir = is_dir,
         file = name,
@@ -57,91 +46,29 @@ local function list_directory_entries(dir, want_dirs)
   return items
 end
 
--- Build plain-text preview content for a directory history item.
--- Directories are listed first so the preview feels similar to a simple terminal listing.
-local function directory_preview_text(dir)
-  local directories = {}
-  local files = {}
-
-  for name, entry_type in vim.fs.dir(dir) do
-    if entry_type == "directory" then
-      directories[#directories + 1] = name .. "/"
-    else
-      files[#files + 1] = name
-    end
-  end
-
-  table.sort(directories)
-  table.sort(files)
-
-  local lines = {}
-  for _, name in ipairs(directories) do
-    lines[#lines + 1] = name
-  end
-  for _, name in ipairs(files) do
-    lines[#lines + 1] = name
-  end
-
-  if #lines == 0 then
-    return "(empty)"
-  end
-
-  local max_lines = 200
-  if #lines > max_lines then
-    local hidden = #lines - max_lines
-    lines = vim.list_slice(lines, 1, max_lines)
-    lines[#lines + 1] = ""
-    lines[#lines + 1] = ("... and %d more"):format(hidden)
-  end
-
-  return table.concat(lines, "\n")
+-- Build the command used to render a colorized directory preview.
+local function directory_preview_ls_command(dir)
+  return { "ls", "-lA", "--color=always", dir }
 end
 
 -- Shared wrapper for directory-based pickers.
 -- It handles the common picker setup so each caller only needs to describe its title and confirm behavior.
-local function pick_directory_entries(opts)
-  local target_dir = opts.dir or current_buffer_dir()
+-- Show the current directory as a simple entry list.
+-- Selecting an item always jumps using Snacks' default action.
+local function snacks_pick_directory_entries(dir)
+  local target_dir = dir or current_buffer_dir()
 
   Snacks.picker.pick({
-    title = opts.title,
-    items = list_directory_entries(target_dir, opts.want_dirs),
-    format = opts.format or "file",
-    formatters = opts.formatters,
-    confirm = function(picker, item)
-      if not item then
-        return
-      end
-
-      opts.confirm(picker, item, target_dir)
-    end,
-  })
-end
-
--- Reuse Snacks' built-in "open selected file" action from custom pickers.
-local function jump_to_picker_item(picker, item)
-  Snacks.picker.actions.jump(picker, item, {})
-end
-
--- Show the current directory as a simple entry list.
--- Choosing a directory opens netrw there, while choosing a file jumps to that file.
-local function snacks_pick_directory_entries(dir)
-  pick_directory_entries({
-    dir = dir,
     title = "Dir Entries",
+    items = list_directory_entries(target_dir, nil),
     format = "file",
     formatters = {
       file = {
         filename_only = true,
       },
     },
-    confirm = function(picker, item, target_dir)
-      if item.dir then
-        picker:close()
-        open_directory(vim.fs.joinpath(target_dir, item.file))
-        return
-      end
-
-      jump_to_picker_item(picker, item)
+    confirm = function(picker, item)
+      Snacks.picker.actions.jump(picker, item, {})
     end,
   })
 end
@@ -179,19 +106,23 @@ local function snacks_pick_recursive_subdirectories(opts)
         return
       end
       picker:close()
-      open_directory(vim.fs.joinpath(target_dir, item.file))
+      vim.cmd.edit(vim.fs.joinpath(target_dir, item.file))
     end,
   })
 end
 
--- Combine our in-memory and netrw-provided directory history into one picker list.
--- Duplicate paths are removed so the history does not show the same directory twice.
+-- Read netrw's directory history ring into a picker-friendly list.
 local function list_netrw_directory_history()
   local items = {}
   local seen = {}
+  local histmax = vim.g.netrw_dirhistmax or 0
+  local histcnt = vim.g.netrw_dirhistcnt
+  if histmax <= 0 or histcnt == nil then
+    return items
+  end
 
-  -- Add one directory to the picker list together with a lightweight preview of its contents.
-  local function add(dir)
+  local function add_from_ring(index)
+    local dir = vim.g["netrw_dirhist_" .. index]
     if not dir or dir == "" or seen[dir] then
       return
     end
@@ -199,44 +130,17 @@ local function list_netrw_directory_history()
     seen[dir] = true
     items[#items + 1] = {
       dir = dir,
+      file = dir,
       text = dir,
-      preview = {
-        text = directory_preview_text(dir),
-        ft = "text",
-        loc = false,
-      },
     }
   end
 
-  for _, dir in ipairs(vim.g.netrw_dir_history or {}) do
-    add(dir)
-  end
-
-  local histmax = vim.g.netrw_dirhistmax or 0
-  local histcnt = vim.g.netrw_dirhistcnt
-  if histmax > 0 and histcnt ~= nil then
-    for offset = 0, histmax - 1 do
-      local index = (histcnt - offset) % histmax
-      add(vim.g["netrw_dirhist_" .. index])
-    end
+  for offset = 0, histmax - 1 do
+    local index = (histcnt - offset) % histmax
+    add_from_ring(index)
   end
 
   return items
-end
-
--- Keep a most-recent-first list of visited directories for custom netrw pickers.
--- Existing entries are moved to the front instead of being stored twice.
-push_netrw_directory_history = function(dir)
-  if not dir or dir == "" then
-    return
-  end
-
-  local history = vim.g.netrw_dir_history or {}
-  history = vim.tbl_filter(function(item)
-    return item ~= dir
-  end, history)
-  table.insert(history, 1, dir)
-  vim.g.netrw_dir_history = history
 end
 
 -- Show the saved directory history and reopen the chosen entry with netrw.
@@ -250,16 +154,13 @@ local function snacks_pick_netrw_directory_history()
   Snacks.picker.pick({
     title = "netrw history",
     items = items,
-    preview = "preview",
-    format = function(item)
-      return { { item.dir } }
+    preview = function(ctx)
+      require("snacks.picker.preview").cmd(directory_preview_ls_command(ctx.item.dir), ctx, { pty = true })
     end,
+    format = "file",
     confirm = function(picker, item)
-      if not item then
-        return
-      end
       picker:close()
-      open_directory(item.dir)
+      vim.cmd.edit(item.dir)
     end,
   })
 end
@@ -326,7 +227,7 @@ return {
       {
         "<leader>o",
         function()
-          open_directory(current_buffer_dir())
+          vim.cmd.edit(current_buffer_dir())
         end,
         desc = "Open Current Directory",
       },
@@ -386,7 +287,7 @@ return {
               key = "d",
               desc = "Subdirectories (cwd)",
               action = function()
-                snacks_pick_recursive_subdirectories({ dir = current_working_dir() })
+                snacks_pick_recursive_subdirectories({ dir = current_working_dir(), max_depth = 3 })
               end,
             },
             {
@@ -419,7 +320,7 @@ return {
               key = "o",
               desc = "Open netrw (cwd)",
               action = function()
-                open_directory(current_working_dir())
+                vim.cmd.edit(current_working_dir())
               end,
             },
             {
