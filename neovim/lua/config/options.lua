@@ -39,17 +39,35 @@ local function set_netrw_keymaps(buf)
     silent = true,
     desc = "netrw Parent Directory",
   })
+  vim.keymap.set("n", "a", "%", {
+    buffer = buf,
+    remap = true,
+    silent = true,
+    desc = "netrw Create File",
+  })
   vim.keymap.set("n", "o", "<leader>O", {
     buffer = buf,
     remap = true,
     silent = true,
     desc = "netrw Directory History",
   })
-  vim.keymap.set("n", "a", "%", {
+  vim.keymap.set("n", "b", "<leader>fb", {
     buffer = buf,
     remap = true,
     silent = true,
-    desc = "netrw Create File",
+    desc = "netrw Buffer Picker",
+  })
+  vim.keymap.set("n", "f", "<leader>fF", {
+    buffer = buf,
+    remap = true,
+    silent = true,
+    desc = "netrw Project Root Files",
+  })
+  vim.keymap.set("n", "r", "<leader>fr", {
+    buffer = buf,
+    remap = true,
+    silent = true,
+    desc = "netrw Recent Files",
   })
   vim.keymap.set("n", "l", "<leader>l", {
     buffer = buf,

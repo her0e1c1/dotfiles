@@ -162,23 +162,21 @@ local function list_netrw_dirhist_dirs()
 end
 
 -- Show the saved directory history and reopen the chosen entry with netrw.
-local function snacks_pick_netrw_directory_history(opts)
-  opts = opts or {}
-
-  local dirs
-  if opts.read_from_netrwhist then
-    dirs = list_netrw_dirhist_dirs()
-  else
-    dirs = list_netrw_directory_history()
+local function snacks_pick_netrw_directory_history()
+  local function history_items(dirs)
+    return vim.tbl_map(function(dir)
+      return {
+        dir = dir,
+        file = dir,
+        text = dir,
+      }
+    end, dirs)
   end
 
-  local items = vim.tbl_map(function(dir)
-    return {
-      dir = dir,
-      file = dir,
-      text = dir,
-    }
-  end, dirs)
+  local items = history_items(list_netrw_directory_history())
+  if #items == 0 then
+    items = history_items(list_netrw_dirhist_dirs())
+  end
 
   if #items == 0 then
     vim.notify("No netrw directory history", vim.log.levels.INFO)
@@ -231,6 +229,12 @@ return {
         desc = "Find Files (Current Dir)",
       },
       {
+        "<leader>fF",
+        "<leader>ff",
+        remap = true,
+        desc = "Find Files (Project Root)",
+      },
+      {
         "<leader>l",
         function()
           snacks_pick_directory_entries()
@@ -253,9 +257,8 @@ return {
       },
       {
         "<leader>L",
-        function()
-          Snacks.picker.buffers()
-        end,
+        "<leader>fb",
+        remap = true,
         desc = "Pick Buffers",
       },
       {
@@ -271,6 +274,12 @@ return {
           snacks_pick_netrw_directory_history()
         end,
         desc = "Pick netrw Directory History",
+      },
+      {
+        "<leader>r",
+        "<leader>fr",
+        remap = true,
+        desc = "Recent Files",
       },
       {
         "<leader>f?",
@@ -362,7 +371,7 @@ return {
               key = "O",
               desc = "netrw History",
               action = function()
-                snacks_pick_netrw_directory_history({ read_from_netrwhist = true })
+                snacks_pick_netrw_directory_history()
               end,
             },
             {

@@ -19,7 +19,7 @@ Use this when you know the edit flow but forget the command name or this config'
 | `<leader>D` | Pick recursive subdirectories under the project root |
 | `<leader>l` | Show `ls -1`-style entries for the current buffer's directory |
 | `<leader>L` | Open Snacks buffer picker |
-| `<leader>fF` | Open files from the project root |
+| `<leader>fF` | Open files from the project root (`<leader>ff` remap) |
 | `<leader>fr` | Open recent files |
 | `<leader>fc` | Lua Config Files |
 
@@ -36,6 +36,9 @@ Open netrw with `o` from the dashboard or `:e .` from anywhere.
 | `R` | Rename file or directory |
 | `D` | Delete file or directory |
 | `a` | Create a new file (`%` remap) |
+| `b` | Open buffer picker (`<leader>fb` remap) |
+| `f` | Open project root files (`<leader>fF` remap) |
+| `r` | Open recent files (`<leader>fr` remap) |
 | `o` | Open netrw directory history (`<leader>O` remap) |
 | `l` | Show directory entries picker |
 | `?` | Show local netrw keymaps |
@@ -47,7 +50,8 @@ Open netrw with `o` from the dashboard or `:e .` from anywhere.
 
 ## Buffer
 
-| `<leader>:fb` | Buffer Search |
+| `<leader>fb` | Buffer Search |
+| `<leader>L` | Buffer Search (`<leader>fb` remap) |
 | `H` | go to prev buffer |
 | `L` | go to next buffer |
 | `<leader>bd` | delete buffer |
