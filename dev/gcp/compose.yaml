@@ -70,9 +70,10 @@ services:
     healthcheck:
       test:
         - CMD
-        - curl
-        - -fsS
-        - http://127.0.0.1:8001/version
+        # Required so health reflects whether kubectl can authenticate to the cluster, not just whether the local proxy is listening.
+        - kubectl
+        - get
+        - --raw=/version
       interval: 5s
       timeout: 5s
       retries: 5
