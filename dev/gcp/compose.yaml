@@ -88,7 +88,7 @@ services:
         condition: service_healthy
     env_file: .env
     environment:
-      ADMINER_DEFAULT_SERVER: ${MYSQL_HOST}
+      MYSQL_HOST: proxy-sql
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sql.rule=Host(`adminer.localhost`)"
