@@ -53,24 +53,24 @@ gke:
 
 .PHONY: proxy-sql
 proxy-sql:
-	docker compose down proxy-sql
-	docker compose up -d proxy-sql
+	docker compose --profile sql down proxy-sql
+	docker compose --profile sql up -d proxy-sql
 
 .PHONY: proxy-gke
 proxy-gke:
-	docker compose down proxy-gke
-	docker compose up -d proxy-gke
+	docker compose --profile gke down proxy-gke
+	docker compose --profile gke up -d proxy-gke
 
 .PHONY: adminer
 adminer:
-	docker compose --profile adminer down adminer
-	docker compose --profile adminer up -d --wait proxy-sql adminer
+	docker compose --profile adminer --profile sql down adminer
+	docker compose --profile adminer --profile sql up -d --wait proxy-sql adminer
 
 .PHONY: mysql
 mysql:
-	docker compose up -d --wait proxy-sql
+	docker compose --profile sql up -d --wait proxy-sql
 	docker compose run --rm -q --entrypoint /workspace/scripts/mysql.sh dev $(ARGS)
 
 .PHONY: k9s
 k9s:
-	docker compose run --rm -q k9s
+	docker compose --profile k9s --profile gke run --rm -q k9s

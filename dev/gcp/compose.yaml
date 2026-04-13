@@ -1,5 +1,7 @@
 services:
   image:
+    profiles:
+      - image
     build:
       context: .
       dockerfile: Dockerfile
@@ -26,6 +28,8 @@ services:
 
   proxy-sql:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.20.0
+    profiles:
+      - sql
     user: root
     env_file: .env
     environment:
@@ -40,7 +44,6 @@ services:
       - 0.0.0.0
       - --port
       - "3306"
-      # Required so Compose can wait for a usable Cloud SQL proxy.
       - --health-check
       - --credentials-file=/config/gcloud/application_default_credentials.json
       - ${CLOUDSQL_CONNECTION_NAME}
@@ -53,6 +56,8 @@ services:
 
   proxy-gke:
     image: dev-gcp:latest
+    profiles:
+      - gke
     env_file: .env
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /config/gcloud/application_default_credentials.json
@@ -63,7 +68,6 @@ services:
       - kube_config:/root/.kube
     networks:
       - default
-    # Required so k9s can reach the Kubernetes API via this in-network proxy without needing the GKE auth plugin.
     command:
       - sh
       - -lc
@@ -71,7 +75,6 @@ services:
     healthcheck:
       test:
         - CMD
-        # Required so health reflects whether kubectl can authenticate to the cluster, not just whether the local proxy is listening.
         - kubectl
         - get
         - --raw=/version
