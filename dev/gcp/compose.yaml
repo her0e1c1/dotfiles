@@ -16,6 +16,7 @@ services:
     working_dir: /workspace
     volumes:
       - .:/workspace:cached
+      - ./config/direnv/direnv.toml:/root/.config/direnv/direnv.toml:ro
       - gcloud_config:/config/gcloud
       - kube_config:/root/.kube
       - copilot_config:/root/.copilot
