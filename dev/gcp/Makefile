@@ -5,6 +5,7 @@ HERE := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 SUBDIR := $(patsubst /%,%,$(patsubst $(HERE)%,%,$(CURDIR)))
 
 SCRIPT_TARGETS := $(shell find . -type f -name '*.sh' | sort)
+script_dir = $(patsubst %/,%,$(dir $(1)))
 
 .PHONY: $(SCRIPT_TARGETS)
 $(SCRIPT_TARGETS):
@@ -12,7 +13,7 @@ $(SCRIPT_TARGETS):
 		-w /workspace/$(SUBDIR) \
 		--entrypoint direnv \
 		dev \
-		exec . bash $@ $(ARGS)
+		exec $(call script_dir,$@) bash $@ $(ARGS)
 
 .PHONY: sh
 sh:
