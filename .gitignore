@@ -2,3 +2,4 @@
 # Keep git worktree directories out of repo status and commits
 .worktrees/
 .nvimlog
+Makefile.me

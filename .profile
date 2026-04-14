@@ -114,15 +114,18 @@ abspath() {
   fi
 }
 
-make_rec() {
-  if [ -f Makefile ]; then
-    make "$@"
+run_makefile_rec() {
+  local makefile_name="$1"
+  shift
+
+  if [ -f "$makefile_name" ]; then
+    make -f "$makefile_name" "$@"
     return $?
   fi
 
   local search_dir=$(dirname "$(pwd)")
   while :; do
-    local makefile="$search_dir/Makefile"
+    local makefile="$search_dir/$makefile_name"
     if [ -f "$makefile" ]; then
       local make_dir=$(dirname "$makefile")
       local wrapper_file=$(mktemp "${TMPDIR:-/tmp}/make_rec.XXXXXX") || return 1
@@ -139,8 +142,16 @@ make_rec() {
     search_dir=$(dirname "$search_dir")
   done
 
-  echo "make_rec: Makefile not found under $(pwd) or its parents" >&2
+  echo "run_makefile_rec: $makefile_name not found under $(pwd) or its parents" >&2
   return 1
+}
+
+make_rec() {
+  run_makefile_rec Makefile "$@"
+}
+
+me() {
+  run_makefile_rec Makefile.me "$@"
 }
 
 # Color utilities
@@ -1005,7 +1016,6 @@ alias dcw="docker compose up --remove-orphans --force-recreate --watch watch"
 alias dev="devcontainer_wrapper"
 
 # Project-specific aliases
-alias me="docker compose -f docker-compose.me.yml"
 alias mesh="docker compose -f docker-compose.me.yml run --remove-orphans sh"
 alias t="tmux_new"
 alias ti="tmuxinator"
