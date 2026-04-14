@@ -1,13 +1,17 @@
 
 .DEFAULT_GOAL := bash
 
-.PHONY: bash
-bash:
-	devcontainer exec --workspace-folder $(CURDIR) bash
+.PHONY: dev
+dev:
+	devcontainer exec --workspace-folder $(CURDIR) /bin/bash
 
 .PHONY: up
 up:
 	devcontainer up --workspace-folder $(CURDIR)
+
+.PHONY: bash
+bash:
+	docker compose run --rm dev /bin/bash
 
 .PHONY: down
 down:
