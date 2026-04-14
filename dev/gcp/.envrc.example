@@ -1,0 +1,6 @@
+source_up
+
+export BUILD_TRIGGER_ID=your-cloud-build-trigger-id
+export PUBSUB_TOPIC=your-pubsub-topic
+export PUBSUB_SUBSCRIPTION=your-pubsub-subscription
+
