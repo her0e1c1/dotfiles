@@ -12,7 +12,7 @@
     "init:agents": "playwright init-agents --loop=vscode",
     "init:skills": "playwright-cli install --skills",
     "test": "playwright test",
-    "ui": "playwright test --ui --ui-host 0.0.0.0 --ui-port 9323",
+    "test:ui": "playwright test --ui --ui-host 0.0.0.0 --ui-port 9323",
     "headed": "playwright test --headed",
     "codegen": "playwright codegen --output generated.spec.ts"
   }

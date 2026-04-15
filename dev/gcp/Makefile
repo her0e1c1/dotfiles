@@ -1,22 +1,32 @@
-.DEFAULT_GOAL := sh
+.DEFAULT_GOAL := bash
 
-# Required so devcontainer resolves the workspace from this Makefile's directory.
 HERE := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 SUBDIR := $(patsubst /%,%,$(patsubst $(HERE)%,%,$(CURDIR)))
-
-SCRIPT_TARGETS := $(shell find . -type f -name '*.sh' | sort)
+WORKDIR := /workspace/$(SUBDIR)
 script_dir = $(patsubst %/,%,$(dir $(1)))
+
+SCRIPT_TARGETS := $(shell find . -type f -name '*.sh')
+SQL_TARGETS := $(shell find . -type f -name '*.sql')
 
 .PHONY: $(SCRIPT_TARGETS)
 $(SCRIPT_TARGETS):
 	@docker compose run --rm -q \
-		-w /workspace/$(SUBDIR) \
+		-w $(WORKDIR) \
 		--entrypoint direnv \
 		dev \
 		exec $(call script_dir,$@) bash $@ $(ARGS)
 
-.PHONY: sh
-sh:
+.PHONY: $(SQL_TARGETS)
+$(SQL_TARGETS):
+	@docker compose --profile sql up -d --wait proxy-sql
+	docker compose run --rm -q -T -i \
+		-w /workspace \
+		--entrypoint /bin/sh \
+		dev \
+		-c '/workspace/scripts/mysql.sh' < "$@"
+
+.PHONY: dev
+dev:
 	devcontainer exec --workspace-folder "$(HERE)" /bin/bash
 
 .PHONY: build
@@ -26,6 +36,10 @@ build:
 .PHONY: up
 up:
 	devcontainer up --workspace-folder "$(HERE)"
+
+.PHONY: bash
+bash:
+	docker compose run -w $(WORKDIR) --rm -q dev /bin/bash
 
 .PHONY: down
 down:
@@ -70,7 +84,7 @@ adminer:
 .PHONY: mysql
 mysql:
 	docker compose --profile sql up -d --wait proxy-sql
-	docker compose run --rm -q --entrypoint /workspace/scripts/mysql.sh dev $(ARGS)
+	docker compose run --rm -q --entrypoint /workspace/scripts/mysql.sh dev
 
 .PHONY: k9s
 k9s:
