@@ -1,4 +1,0 @@
-source_up
-# Required by listen.sh to create and read from a temporary subscription.
-export PUBSUB_TOPIC=your-pubsub-topic
-export PUBSUB_SUBSCRIPTION=your-pubsub-subscription

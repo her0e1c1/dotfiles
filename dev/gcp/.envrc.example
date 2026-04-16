@@ -4,3 +4,5 @@ export BUILD_TRIGGER_ID=your-cloud-build-trigger-id
 export PUBSUB_TOPIC=your-pubsub-topic
 export PUBSUB_SUBSCRIPTION=your-pubsub-subscription
 
+# Set to any value to authorize the current public IP for the GKE control plane.
+# export USE_AUTHORIZE_NETWORK=1

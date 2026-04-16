@@ -62,9 +62,7 @@ auth:
 	docker compose run --rm -q dev gcloud auth application-default login --no-launch-browser
 
 .PHONY: gke
-gke:
-	docker compose run --rm -q dev sh -cu \
-		'gcloud container clusters get-credentials "$${CLUSTER_NAME}" --location "$${CLUSTER_LOCATION}" --project "$${GOOGLE_CLOUD_PROJECT}"'
+gke: scripts/gke/init.sh
 
 .PHONY: proxy-sql
 proxy-sql:
