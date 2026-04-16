@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-TARGET_VERSION=${1:-8.4.8}
+TARGET_VERSION=${TARGET_VERSION:-8.0.11}
+OUTPUT_FILE=${OUTPUT_FILE:-upgrade-check.txt}
 
-printf '%s\n' "${MYSQL_PWD}" | mysqlsh \
-  --passwords-from-stdin \
-  -- \
-  util checkForServerUpgrade \
-  "${MYSQL_USER}@${MYSQL_HOST}:${MYSQL_PORT}" \
-  --target-version="${TARGET_VERSION}"
+mysqlsh \
+  --mysql \
+  --host="${MYSQL_HOST}" \
+  --port="${MYSQL_PORT}" \
+  --user="${MYSQL_USER}" \
+  -- util check-for-server-upgrade \
+  --target-version="${TARGET_VERSION}" |
+  tee "${OUTPUT_FILE}"
