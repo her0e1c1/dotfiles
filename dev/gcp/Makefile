@@ -84,6 +84,11 @@ mysql:
 	docker compose --profile sql up -d --wait proxy-sql
 	docker compose run --rm -q --entrypoint /workspace/scripts/mysql.sh dev
 
+.PHONY: mysqlsh
+mysqlsh:
+	docker compose --profile sql up -d --wait proxy-sql
+	docker compose run --rm -q mysql sh scripts/mysql/check-for-server-upgrade.sh $(ARGS)
+
 .PHONY: k9s
 k9s:
 	docker compose --profile k9s --profile gke run --rm -q k9s

@@ -26,6 +26,24 @@ services:
       - default
     command: sleep infinity
 
+  mysql:
+    image: mysql:8.4
+    profiles:
+      - sql
+    depends_on:
+      proxy-sql:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      MYSQL_HOST: proxy-sql
+      MYSQL_PORT: 3306
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:cached
+    networks:
+      - default
+    command: sleep infinity
+
   proxy-sql:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.20.0
     profiles:
