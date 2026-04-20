@@ -39,7 +39,7 @@ up:
 
 .PHONY: bash
 bash:
-	docker compose run -w $(WORKDIR) --rm -q dev /bin/bash
+	docker compose run -w $(WORKDIR) --rm -q dev /bin/bash --login
 
 .PHONY: down
 down:

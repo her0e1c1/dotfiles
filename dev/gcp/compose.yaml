@@ -18,6 +18,7 @@ services:
     working_dir: /workspace
     volumes:
       - .:/workspace:cached
+      - ./.profile:/root/.profile:ro
       - ./config/direnv/direnv.toml:/root/.config/direnv/direnv.toml:ro
       - gcloud_config:/config/gcloud
       - kube_config:/root/.kube
