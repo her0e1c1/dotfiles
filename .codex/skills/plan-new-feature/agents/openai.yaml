@@ -1,4 +1,4 @@
 interface:
-  display_name: "Plan New Feature"
-  short_description: "Suggest repo-fit feature ideas"
-  default_prompt: "Use $plan-new-feature to inspect this repository and propose feature ideas in narrowed and broad sections."
+  display_name: "新機能計画"
+  short_description: "リポジトリに合う機能案を提案する"
+  default_prompt: "$plan-new-feature を使ってこのリポジトリを調査し、絞り込んだ案と広めの案に分けて機能案を提案する。"

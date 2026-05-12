@@ -1,29 +1,29 @@
 ---
 name: commit
-description: Review the current staged git diff, generate a concise commit message from staged changes only, and run git commit. Use when the user asks to commit staged changes or write a commit message for the staged diff.
+description: 現在 staged されている git diff を確認し、staged 変更だけに基づく簡潔なコミットメッセージを作成して git commit を実行する。ユーザーが staged 変更のコミット、または staged diff 用のコミットメッセージ作成を依頼したときに使う。
 ---
 
 # Commit
 
-Use this skill when the task is to create a commit message from the current staged diff, and usually to run `git commit`.
+現在の staged diff からコミットメッセージを作成し、通常は `git commit` も実行するタスクでこの skill を使う。
 
-## Workflow
+## ワークフロー
 
-1. Inspect staged changes only.
-   - Run `git status --short` to confirm what is staged.
-   - Run `git diff --cached --stat` for a compact summary.
-   - Run `git diff --cached` for the actual staged patch.
-2. Ignore unstaged and untracked changes completely unless the user explicitly asks about them.
-3. Write a commit message that reflects only the staged diff.
-   - Prefer an imperative subject.
-   - Keep the subject within 72 characters.
-   - Add a body only when notable user-facing or maintenance-impacting details need clarification.
-4. Run `git commit` with the generated message unless the user asked for message drafting only.
+1. staged 変更だけを確認する。
+   - `git status --short` を実行して、何が staged されているか確認する。
+   - `git diff --cached --stat` を実行して、簡潔な要約を見る。
+   - `git diff --cached` を実行して、実際の staged patch を読む。
+2. ユーザーが明示的に触れるよう依頼しない限り、unstaged 変更と untracked 変更は完全に無視する。
+3. staged diff だけを反映したコミットメッセージを書く。
+   - subject は命令形を優先する。
+   - subject は 72 文字以内に収める。
+   - ユーザー影響や保守上の影響がある詳細を補足する必要がある場合だけ body を追加する。
+4. ユーザーがメッセージ案だけを依頼していない限り、生成したメッセージで `git commit` を実行する。
 
-## Guardrails
+## ガードレール
 
-- Do not invent changes that are not present in the staged diff.
-- Do not mention unstaged changes in the commit message.
-- If nothing is staged, report that clearly and do not run `git commit`.
-- If `git commit` is blocked by sandbox or permissions, retry with the required escalation rather than stopping at the draft message.
-- If hooks or Git errors block the commit, report the exact blocker and avoid rewriting the message unless the failure requires it.
+- staged diff に存在しない変更を作り上げない。
+- コミットメッセージで unstaged 変更に言及しない。
+- staged されているものが何もない場合は、そのことを明確に報告し、`git commit` は実行しない。
+- sandbox や権限で `git commit` がブロックされた場合は、メッセージ案で止まらず、必要な escalation で再試行する。
+- hooks や Git エラーでコミットがブロックされた場合は、正確な blocker を報告し、失敗理由として必要な場合を除いてメッセージを書き換えない。

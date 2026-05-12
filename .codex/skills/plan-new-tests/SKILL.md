@@ -1,38 +1,38 @@
 ---
 name: plan-new-tests
-description: Use when the agent needs to read the current implementation code and existing tests, identify likely missing test cases, and produce a concise test-addition plan without editing or running tests.
+description: 現在の実装 code と既存 tests を読み、欠けていそうな test case を特定し、編集や test 実行はせずに簡潔な test 追加 plan を作る必要があるときに使う。
 ---
 
 # Plan New Tests
 
-## Overview
+## 概要
 
-Read the implementation first, then compare it with existing tests to find likely gaps. Output only a concise list of missing test-case candidates and a follow-up plan for adding them later.
+まず実装を読み、それから既存 tests と比較して、欠けていそうな箇所を見つける。出力は、missing test-case candidates の簡潔な list と、後で追加するための follow-up plan だけにする。
 
-Read `references/checklist.md` before starting if the codebase has multiple testing styles or the feature area is broad.
+codebase に複数の testing style がある場合、または feature area が広い場合は、開始前に `references/checklist.md` を読む。
 
-## Workflow
+## ワークフロー
 
-1. Read the relevant implementation code and extract major behaviors, branches, boundary conditions, and failure paths.
-2. Read the nearest existing tests and identify what behavior is already covered.
-3. Compare implementation behavior against test coverage and list likely missing test cases.
-4. Remove duplicates and keep the candidate list concise.
-5. Produce a short plan for follow-up test additions.
-6. State clearly that no tests were added or run.
+1. 関連する implementation code を読み、主要 behavior、branch、boundary condition、failure path を抽出する。
+2. 最も近い既存 tests を読み、すでに covered されている behavior を特定する。
+3. implementation behavior と test coverage を比較し、欠けていそうな test case を list 化する。
+4. 重複を取り除き、candidate list を簡潔に保つ。
+5. follow-up の test 追加に向けた短い plan を作る。
+6. test は追加も実行もしていないことを明記する。
 
-## Output
+## 出力
 
-Return:
+次を返す。
 
-- a concise list of likely missing test cases
-- a short follow-up plan for adding those tests later
+- 欠けていそうな test case の簡潔な list
+- 後でそれらの test を追加するための短い follow-up plan
 
-Do not include implementation edits, fixture edits, or test execution results.
+implementation edit、fixture edit、test execution result は含めない。
 
-## Guardrails
+## ガードレール
 
-- Reading implementation code is mandatory.
-- Do not mark a case as missing until existing tests have been checked.
-- Prefer concise candidate lists over long explanations.
-- Treat uncertain cases as candidates, not facts.
-- Do not add tests, edit code, or run commands that execute tests.
+- implementation code を読むことは必須。
+- 既存 tests を確認するまでは、case が missing だと断定しない。
+- 長い説明より、簡潔な candidate list を優先する。
+- 不確かな case は facts ではなく candidates として扱う。
+- tests の追加、code 編集、tests を実行する command は行わない。

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Confirm Typo"
-  short_description: "Confirm likely typos before acting"
-  default_prompt: "Use $confirm-typo when a user request appears to contain a high-confidence typo and you should confirm the intended wording before acting."
+  display_name: "Typo 確認"
+  short_description: "実行前に可能性の高い typo を確認する"
+  default_prompt: "ユーザー依頼に確度の高い typo が含まれていそうで、実行前に意図した文言を確認すべきときは $confirm-typo を使う。"

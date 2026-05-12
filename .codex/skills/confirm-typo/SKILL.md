@@ -1,53 +1,53 @@
 ---
 name: confirm-typo
-description: Use when the agent is about to act on user input that appears to contain a typo and one correction candidate is strongly favored, so the agent should confirm the intended wording before proceeding.
+description: ユーザー入力に typo らしき箇所があり、修正候補が 1 つに強く絞れる状態で、実行前に意図した文言を確認すべきときに使う。
 ---
 
 # Confirm Typo
 
-## Overview
+## 概要
 
-Pause only for high-confidence typo corrections. Treat the full user message as one utterance, ask a short confirmation question with one correction candidate, and continue only after approval.
+確度の高い typo 修正の場合だけ一時停止する。ユーザーのメッセージ全体を 1 つの発話として扱い、修正候補を 1 つだけ示して短く確認し、承認後にだけ続行する。
 
-## Workflow
+## ワークフロー
 
-1. Read the full user utterance in context.
-2. Identify wording that appears unnatural or misspelled in the current context.
-3. Generate correction candidates, prioritizing existing names in the current working directory or repository, then nearby known identifiers, then common commands, terms, and skill names.
-4. Ask for confirmation only when one candidate is clearly stronger than the alternatives and makes the full request read naturally.
-5. Phrase the question with one concrete correction only.
-6. If the user approves, continue the original request using the corrected interpretation.
-7. If the user rejects the correction, keep the original wording and do not push the alternative again unless the user provides new information.
+1. 文脈込みでユーザーの発話全体を読む。
+2. 現在の文脈で不自然、または綴り間違いに見える文言を特定する。
+3. 修正候補を作る。優先順は、現在の作業ディレクトリや repository にある既存名、近くの既知の識別子、一般的なコマンド・用語・skill 名とする。
+4. 代替候補より明らかに強い候補が 1 つあり、修正後の依頼全体が自然に読める場合だけ確認する。
+5. 質問には具体的な修正候補を 1 つだけ含める。
+6. ユーザーが承認した場合は、修正後の解釈で元の依頼を続行する。
+7. ユーザーが修正を否定した場合は、元の文言を維持し、ユーザーが新しい情報を出さない限り同じ代替案を再度押さない。
 
-## Confidence Rules
+## 確信度のルール
 
-Ask for confirmation only when:
+次の場合だけ確認する。
 
-- the suggested correction is materially more natural than the original wording
-- the candidate set effectively collapses to one strong option
-- the corrected wording fits the full request cleanly
-- competing candidates are weak enough that asking about one correction is not misleading
+- 提案する修正が元の文言より明らかに自然である。
+- 候補群が実質的に 1 つの強い選択肢へ収束している。
+- 修正後の文言が依頼全体にきれいに合う。
+- 競合候補が十分弱く、1 つの修正だけを確認しても誤解を招かない。
 
-Avoid confirmation when:
+次の場合は確認しない。
 
-- multiple candidates remain similarly plausible
-- the text could reasonably be an intentional name, project term, or arbitrary identifier
-- the issue looks like style, abbreviation, or phrasing preference rather than a likely typo
-- the proposed correction would substantially change the likely meaning of the request
+- 複数の候補が同程度に妥当なまま残っている。
+- その文字列が意図的な名前、プロジェクト用語、任意の識別子である可能性が十分ある。
+- 問題が typo ではなく、スタイル、略語、言い回しの好みに見える。
+- 提案する修正によって、依頼の意味が大きく変わりそうである。
 
-## Confirmation Style
+## 確認スタイル
 
-Use concise prompts such as:
+次のような簡潔な確認にする。
 
 - `touch README.md` でいいですか?
 - `README.md を作成` の意味でいいですか?
 - `brainstorming` skill のことですか?
 
-Ask before acting. Present one correction only. Avoid long explanations and confidence percentages.
+実行前に確認する。修正候補は 1 つだけ示す。長い説明や確信度のパーセンテージは避ける。
 
-## Approval Handling
+## 承認後の扱い
 
-- If the user approves, continue with the corrected interpretation.
-- If the user rejects the suggestion, respect the original wording.
-- If the user provides a different correction, use the user-provided wording instead.
-- Until approval is received, do not execute the corrected version.
+- ユーザーが承認した場合は、修正後の解釈で続行する。
+- ユーザーが提案を否定した場合は、元の文言を尊重する。
+- ユーザーが別の修正を示した場合は、ユーザーが示した文言を使う。
+- 承認を受けるまでは、修正版を実行しない。

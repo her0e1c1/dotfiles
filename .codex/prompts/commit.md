@@ -1,13 +1,13 @@
 # Commit Prompt
 
-Review the current staged git diff and create a concise commit message, then run `git commit`.
+現在 staged されている git diff を確認し、簡潔な commit message を作成してから `git commit` を実行する。
 
-Requirements:
-- Summarize the change based only on the staged diff
-- Prefer an imperative commit subject
-- Keep the subject within 72 characters
-- Mention notable user-facing or maintenance-impacting changes in the body only when needed
-- Do not invent changes that are not present in the diff
-- Ignore unstaged changes completely; they are out of scope for the commit
-- Execute `git commit` without asking the user for additional confirmation
-- Execute `git commit` with the generated message instead of only printing it
+要件:
+- staged diff だけに基づいて変更を要約する。
+- commit subject は命令形を優先する。
+- subject は 72 文字以内に収める。
+- ユーザー影響または保守上の影響がある変更は、必要な場合だけ body で触れる。
+- diff に存在しない変更を作り上げない。
+- unstaged 変更は完全に無視する。commit の scope 外である。
+- ユーザーに追加確認せず `git commit` を実行する。
+- メッセージを表示するだけでなく、生成した message で `git commit` を実行する。

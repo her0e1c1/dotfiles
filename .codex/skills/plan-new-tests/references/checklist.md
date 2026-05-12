@@ -1,32 +1,32 @@
-# Plan New Tests Checklist
+# Plan New Tests チェックリスト
 
-## Read the implementation
+## 実装を読む
 
-- Identify the target feature, module, or command path first.
-- Read the implementation code before reviewing tests.
-- Note major success paths, branching behavior, edge conditions, invalid inputs, and failure handling.
+- まず target feature、module、または command path を特定する。
+- tests を確認する前に implementation code を読む。
+- 主要な success paths、branching behavior、edge conditions、invalid inputs、failure handling を記録する。
 
-## Read existing tests
+## 既存 tests を読む
 
-- Find the nearest existing test files for the same feature or module.
-- Check what behaviors are already covered before proposing anything new.
-- Prefer nearby tests over distant shared examples when judging local coverage.
+- 同じ feature または module に最も近い existing test files を探す。
+- 新しいものを提案する前に、どの behavior がすでに covered されているか確認する。
+- local coverage を判断するときは、遠い shared examples より近くの tests を優先する。
 
-## Identify missing cases
+## Missing cases を特定する
 
-- Compare implementation behavior against current coverage.
-- Look for uncovered branches, boundary values, error paths, and important input variants.
-- Merge duplicates and keep only the cases that still look plausibly uncovered after reading tests.
-- Keep the list short enough to be actionable.
+- implementation behavior を current coverage と比較する。
+- uncovered branches、boundary values、error paths、重要な input variants を探す。
+- 重複をまとめ、tests を読んだ後でも plausibly uncovered に見える case だけを残す。
+- list は actionable な短さに保つ。
 
-## Produce the plan
+## Plan を作る
 
-- Return a concise candidate list of missing test cases.
-- Add a short follow-up plan describing how to approach the later test-writing work.
-- State clearly that no tests were added or run.
+- missing test cases の簡潔な candidate list を返す。
+- 後で test-writing work に取り組む方法を説明する短い follow-up plan を追加する。
+- tests は追加も実行もしていないことを明記する。
 
-## Avoid
+## 避けること
 
-- Do not propose implementation or fixture changes in this skill.
-- Do not claim a case is definitely missing if coverage is ambiguous.
-- Do not execute tests or leave fabricated verification status.
+- この skill では implementation や fixture の変更を提案しない。
+- coverage が曖昧な場合、case が definitely missing だと主張しない。
+- tests を実行せず、fabricated verification status も残さない。

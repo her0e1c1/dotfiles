@@ -1,43 +1,43 @@
 ---
 name: summarize-repository
-description: Use when the user asks to inspect, summarize, diagram, or generate documentation for a repository's structure, workflows, APIs, data model, runtime, configuration, features, or tests.
+description: ユーザーが repository の構造、workflow、API、data model、runtime、configuration、features、tests について、調査、要約、diagram 化、documentation 生成を依頼したときに使う。
 ---
 
 # Summarize Repository
 
-## Overview
+## 概要
 
-Inspect the repository broadly, infer its current structure from local evidence, and regenerate `docs/summary/` as a clean snapshot of the codebase.
+repository を広く調査し、local evidence から現在の構造を推定し、codebase の clean snapshot として `docs/summary/` を再生成する。
 
-Read [references/outputs.md](references/outputs.md) before writing the summary files.
+summary files を書く前に [references/outputs.md](references/outputs.md) を読む。
 
-## Workflow
+## ワークフロー
 
-1. Detect the repository's documentation language from existing docs such as `README`, `docs/`, or contribution guides.
-2. If the dominant documentation language is unclear, ask the user before generating output.
-3. Read the repository broadly enough to understand:
-   - purpose and major workflows
-   - entry points and runtime boundaries
-   - data stores and schema sources
+1. `README`、`docs/`、contribution guides などの既存 docs から、repository の documentation language を検出する。
+2. dominant documentation language が不明な場合は、output 生成前にユーザーへ確認する。
+3. 次を理解できるだけ repository を広く読む。
+   - purpose と主要 workflows
+   - entry points と runtime boundaries
+   - data stores と schema sources
    - API surfaces
-   - major features and representative use cases
-4. Recreate `docs/summary/` from the current repository state instead of incrementally preserving old summary files.
-5. Always produce a repository overview document.
-6. Use `references/outputs.md` as the source of truth for supported output artifacts and produce additional documents only when the repository contains enough evidence to support them.
-7. Mark uncertainty explicitly. Do not invent endpoints, entities, components, or flows that are not grounded in local evidence.
+   - 主要 features と representative use cases
+4. 古い summary files を incremental に保持するのではなく、現在の repository state から `docs/summary/` を再作成する。
+5. repository overview document は必ず生成する。
+6. supported output artifacts の source of truth として `references/outputs.md` を使い、repository にそれを支える十分な evidence がある場合だけ追加 document を生成する。
+7. 不確実性は明示する。local evidence に基づかない endpoint、entity、component、flow を作り上げない。
 
-## Output Rules
+## 出力ルール
 
-- Write into `docs/summary/`.
-- Treat the generated files as a fresh snapshot of the repository at the time of analysis.
-- Use the stable filenames and generation conditions in `references/outputs.md`.
-- Prefer Mermaid for diagrams so the output stays text-native and reviewable.
-- Keep prose concise and traceable to repository evidence.
-- When an output is skipped, say why in the overview or in an assumptions file rather than fabricating content.
+- `docs/summary/` に書く。
+- 生成した files は、分析時点の repository の fresh snapshot として扱う。
+- `references/outputs.md` にある stable filenames と generation conditions を使う。
+- diagram は Mermaid を優先し、output を text-native で reviewable に保つ。
+- prose は簡潔にし、repository evidence へ trace できるようにする。
+- output を skipped する場合は、content を捏造するのではなく、overview または assumptions file で理由を書く。
 
-## Guardrails
+## ガードレール
 
-- Base the summary on repository-local evidence, not generic expectations for the stack.
-- Prefer a smaller set of correct artifacts over a complete-looking but speculative package.
-- If an existing `docs/summary/` contains manual edits, replace it anyway unless the user explicitly requests a different policy.
-- If generated artifacts depend on ambiguous architecture or domain behavior, stop and ask focused follow-up questions.
+- stack への一般的な期待ではなく、repository-local evidence に基づいて summary を作る。
+- 完成して見えるが speculative な package より、小さくても正確な artifact set を優先する。
+- 既存の `docs/summary/` に手動編集が含まれる場合でも、ユーザーが別方針を明示しない限り置き換える。
+- 生成 artifact が曖昧な architecture や domain behavior に依存する場合は、停止して焦点を絞った follow-up question をする。

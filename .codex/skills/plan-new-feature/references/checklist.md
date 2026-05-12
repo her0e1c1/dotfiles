@@ -1,34 +1,34 @@
-# Plan New Feature Checklist
+# Plan New Feature チェックリスト
 
-## Gather signals
+## Signal を集める
 
-- Read the main README and any nearby docs first.
-- Inspect configuration, scripts, and entry-point files to see how the repo is used in practice.
-- Review recent commits to see what direction the project is already moving toward.
-- Use whatever local information exists, even if it is scattered or uneven.
+- まず main README と近くの docs を読む。
+- configuration、scripts、entry-point files を確認し、リポジトリが実際にどう使われているかを見る。
+- recent commits を確認し、project がすでにどの方向へ進んでいるかを見る。
+- 散らばっていたり偏りがあったりしても、存在する local information を使う。
 
-## Understand the current repo
+## 現在のリポジトリを理解する
 
-- Identify what the repository already helps the user do.
-- Note repeated workflows, manual steps, rough edges, and missing conveniences.
-- Look for partially-built directions, adjacent capabilities, and natural extensions.
+- リポジトリがすでにユーザーの何を助けているかを特定する。
+- 繰り返しの workflows、manual steps、rough edges、足りない conveniences を記録する。
+- 作りかけの方向性、隣接 capability、自然な extension を探す。
 
-## Generate ideas
+## アイデアを生成する
 
-- Prefer features that clearly fit the repository's current purpose.
-- Distinguish between high-fit practical ideas and wider exploratory ideas.
-- Avoid proposing generic ideas that could apply to any repository.
+- リポジトリの現在の purpose に明確に合う機能を優先する。
+- fit の高い practical ideas と、より広い exploratory ideas を区別する。
+- どのリポジトリにも当てはまる generic ideas は提案しない。
 
-## Write the output
+## 出力を書く
 
-- Use exactly two sections:
+- section は次の 2 つだけにする。
   - `Narrowed Recommendations`
   - `Broader Possibilities`
-- Give each idea a sufficient description so someone can evaluate it without extra explanation.
-- Keep descriptions concrete: what the feature would add, who it helps, or what gap it addresses.
+- 追加説明なしで評価できるよう、各アイデアに十分な説明を付ける。
+- 説明は具体的にする。機能が何を追加するか、誰を助けるか、どの gap に対応するかを書く。
 
-## Avoid
+## 避けること
 
-- Do not include detailed implementation plans.
-- Do not modify repository files.
-- Do not present uncertain inferences as facts when the repo evidence is weak.
+- 詳細な implementation plans は含めない。
+- repository files を変更しない。
+- repo evidence が弱い場合、不確かな inference を facts として提示しない。

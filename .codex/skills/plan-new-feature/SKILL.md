@@ -1,46 +1,46 @@
 ---
 name: plan-new-feature
-description: Use when the agent needs to inspect a repository broadly, synthesize all available local information, and propose recommended new feature ideas in narrowed and broad sections without implementing anything.
+description: リポジトリを広く調査し、利用可能なローカル情報を統合したうえで、実装はせずに、絞り込んだ案と広めの案に分けて新機能アイデアを提案する必要があるときに使う。
 ---
 
 # Plan New Feature
 
-## Overview
+## 概要
 
-Inspect the repository broadly, understand what it already does, and propose feature ideas that fit its current shape. Return two sections: one narrowed by feasibility and repo fit, and one broader set of possibilities.
+リポジトリを広く調査し、現在すでに何をしているかを理解したうえで、現状に合う新機能アイデアを提案する。実現しやすさとリポジトリへの適合度で絞り込んだ section と、より広い可能性の section の 2 つを返す。
 
-Read `references/checklist.md` before starting when the repository has multiple subsystems or sparse documentation.
+リポジトリに複数の subsystem がある場合、または documentation が薄い場合は、開始前に `references/checklist.md` を読む。
 
-## Workflow
+## ワークフロー
 
-1. Read all useful local signals you can find:
+1. 見つけられる有用な local signal をすべて読む。
    - README files
    - docs
    - config files
    - scripts
    - key entry points
    - recent commits
-2. Infer the repository's current purpose, workflows, strengths, and gaps.
-3. Generate feature ideas that fit the local context.
-4. Organize the output into:
+2. リポジトリの現在の目的、workflow、強み、gap を推定する。
+3. local context に合う新機能アイデアを作る。
+4. 出力を次の 2 section に整理する。
    - `Narrowed Recommendations`
    - `Broader Possibilities`
-5. Give each feature a sufficient description for later decision-making.
-6. State clearly that this skill proposes ideas only and does not implement them.
+5. 後で意思決定できるだけの十分な説明を各機能案に付ける。
+6. この skill はアイデアを提案するだけで、実装しないことを明記する。
 
-## Output
+## 出力
 
-Return:
+次を返す。
 
-- `Narrowed Recommendations`: feature ideas filtered by feasibility and repository fit
-- `Broader Possibilities`: wider ideas that may be less immediate or less certain
+- `Narrowed Recommendations`: 実現しやすさとリポジトリへの適合度で絞り込んだ新機能アイデア
+- `Broader Possibilities`: 即時性や確度がやや低い可能性も含む、より広いアイデア
 
-For each feature idea, provide a concise but sufficient description. Do not include detailed implementation plans.
+各新機能アイデアには、簡潔だが十分な説明を付ける。詳細な implementation plan は含めない。
 
-## Guardrails
+## ガードレール
 
-- Use repository-local evidence, not generic product advice.
-- Read broadly before proposing features.
-- Prefer concrete feature suggestions over vague strategy statements.
-- Separate higher-confidence ideas from wider exploration ideas.
-- Do not edit files, implement code, or run tests.
+- 汎用的な product advice ではなく、リポジトリ内の evidence を使う。
+- 機能を提案する前に広く読む。
+- 曖昧な strategy statement より、具体的な機能提案を優先する。
+- 確度の高いアイデアと、広い探索的アイデアを分ける。
+- ファイル編集、code 実装、test 実行はしない。

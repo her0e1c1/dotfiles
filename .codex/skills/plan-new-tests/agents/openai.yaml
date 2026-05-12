@@ -1,4 +1,4 @@
 interface:
-  display_name: "Plan New Tests"
-  short_description: "Find missing test cases from code"
-  default_prompt: "Use $plan-new-tests to read the implementation and current tests, then list likely missing test cases and a short follow-up plan."
+  display_name: "新規テスト計画"
+  short_description: "code から不足していそうな test case を探す"
+  default_prompt: "$plan-new-tests を使って implementation と現在の tests を読み、欠けていそうな test cases と短い follow-up plan を list 化する。"

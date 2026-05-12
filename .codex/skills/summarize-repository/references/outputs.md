@@ -1,136 +1,136 @@
 # Summary Outputs
 
-Use this file when deciding what to emit under `docs/summary/`.
+`docs/summary/` 配下に何を出力するか決めるときは、この file を使う。
 
-## Baseline Outputs
+## 基本出力
 
-Always generate:
+必ず生成する。
 
 - `docs/summary/repository-overview.md`
-  - purpose of the repository
-  - main subsystems or packages
-  - runtime or deployment shape when visible
-  - primary developer workflows if clear
-  - short note on what was intentionally omitted because evidence was weak
+  - リポジトリの purpose
+  - main subsystems または packages
+  - 見える場合は runtime または deployment shape
+  - 明確な場合は primary developer workflows
+- evidence が弱いため意図的に省略したものについての短い note
 
-Generate `docs/summary/assumptions-and-gaps.md` when important uncertainty remains after broad repository inspection.
+リポジトリを広く調査した後も重要な uncertainty が残る場合は、`docs/summary/assumptions-and-gaps.md` を生成する。
 
-## Optional Outputs
+## 任意出力
 
-Generate optional artifacts only when the repository contains enough direct evidence.
+リポジトリに十分な direct evidence がある場合だけ optional artifacts を生成する。
 
-### Architecture Diagram
+### アーキテクチャ図
 
-Generate `docs/summary/architecture.md` when service boundaries, packages, processes, or major integrations are visible.
+service boundaries、packages、processes、major integrations が見える場合は `docs/summary/architecture.md` を生成する。
 
-- Use Mermaid flowcharts or graphs.
-- Prefer a system-level diagram over low-value file trees.
-- Show only meaningful boundaries such as clients, services, workers, databases, queues, and third-party systems.
-- If internal layering matters, add one second diagram for module relationships. Do not add diagrams just to increase volume.
+- Mermaid flowcharts または graphs を使う。
+- 価値の低い file trees より system-level diagram を優先する。
+- clients、services、workers、databases、queues、third-party systems など、意味のある boundaries だけを示す。
+- internal layering が重要な場合は、module relationships 用の 2 つ目の diagram を追加する。量を増やすためだけに diagrams を追加しない。
 
-### ER Diagram
+### ER 図
 
-Generate `docs/summary/er-diagram.md` when schema definitions, ORM models, migrations, or SQL files clearly define entities and relationships.
+schema definitions、ORM models、migrations、SQL files が entities と relationships を明確に定義している場合は、`docs/summary/er-diagram.md` を生成する。
 
-- Use Mermaid `erDiagram`.
-- Include only entities with evidence in the repository.
-- If cardinality is uncertain, either omit the relation or state the uncertainty nearby.
-- Do not reverse-engineer a full ER model from a handful of field names.
+- Mermaid `erDiagram` を使う。
+- repository に evidence がある entities だけを含める。
+- cardinality が不確かな場合は、relation を省略するか、近くに uncertainty を明記する。
+- 少数の field names から full ER model を reverse-engineer しない。
 
-### OpenAPI Specification
+### OpenAPI 仕様
 
-Generate `docs/summary/openapi.yaml` when HTTP routes, request shapes, and response structures are sufficiently explicit in code or existing docs.
+HTTP routes、request shapes、response structures が code または既存 docs で十分明示されている場合は、`docs/summary/openapi.yaml` を生成する。
 
-- Prefer OpenAPI 3.1 unless the repository already standardizes on another version.
-- Include only routes and schemas supported by local evidence.
-- If auth, errors, or shared components are only partly visible, keep them minimal and annotate limitations in the overview.
-- Do not fabricate examples or schema details for undocumented fields.
+- リポジトリが別 version に標準化していない限り、OpenAPI 3.1 を優先する。
+- local evidence に支えられた routes と schemas だけを含める。
+- auth、errors、shared components が部分的にしか見えない場合は最小限にし、overview に limitations を注記する。
+- undocumented fields の examples や schema details を捏造しない。
 
 ### API Surfaces
 
-Generate `docs/summary/api-surfaces.md` when the repository exposes APIs that are not well represented by OpenAPI, or when multiple API styles need a concise map.
+リポジトリが OpenAPI ではうまく表せない API を公開している場合、または複数 API style を簡潔に map する必要がある場合は、`docs/summary/api-surfaces.md` を生成する。
 
-- Cover only APIs with direct local evidence, such as GraphQL schemas, gRPC or Protobuf definitions, RPC handlers, public SDK/library exports, webhook contracts, or event topics.
-- Include entry points, major operations, request or message shapes when visible, and known consumers or producers.
-- If an event-driven API has explicit channels, messages, and payloads, generate `docs/summary/asyncapi.yaml` instead of or alongside this document when it can be written without guessing.
-- Do not infer a public API from internal helper functions alone.
+- GraphQL schemas、gRPC または Protobuf definitions、RPC handlers、public SDK/library exports、webhook contracts、event topics など、direct local evidence がある APIs だけを扱う。
+- 見える場合は entry points、major operations、request または message shapes、既知の consumers または producers を含める。
+- event-driven API に明示的な channels、messages、payloads があり、推測なしで書ける場合は、この document の代わりに、または併せて `docs/summary/asyncapi.yaml` を生成する。
+- internal helper functions だけから public API を推定しない。
 
-### Runtime And Deployment
+### Runtime と Deployment
 
-Generate `docs/summary/runtime-and-deployment.md` when runtime or deployment evidence is visible.
+runtime または deployment evidence が見える場合は、`docs/summary/runtime-and-deployment.md` を生成する。
 
-- Use evidence from Dockerfiles, compose files, Kubernetes manifests, Terraform, serverless config, process managers, package scripts, Procfiles, CI deployment jobs, or documented release steps.
-- Describe processes, runtime dependencies, ports, jobs, scheduled tasks, and deployment boundaries when visible.
-- Keep secrets, credentials, account IDs, and environment-specific values out of the summary.
+- Dockerfiles、compose files、Kubernetes manifests、Terraform、serverless config、process managers、package scripts、Procfiles、CI deployment jobs、documented release steps から evidence を使う。
+- 見える場合は processes、runtime dependencies、ports、jobs、scheduled tasks、deployment boundaries を説明する。
+- secrets、credentials、account IDs、environment-specific values は summary に含めない。
 
 ### Configuration
 
-Generate `docs/summary/configuration.md` when configuration sources or environment variables are visible.
+configuration sources または environment variables が見える場合は、`docs/summary/configuration.md` を生成する。
 
-- Use evidence from `.env.example`, config schemas, typed settings, default config files, package scripts, deployment manifests, or docs.
-- Include variable or setting names, purpose, defaults, requiredness, and source files when clear.
-- Mark requiredness or defaults as unknown rather than inferring them from names.
-- Do not include real secret values.
+- `.env.example`、config schemas、typed settings、default config files、package scripts、deployment manifests、docs から evidence を使う。
+- 明確な場合は variable または setting names、purpose、defaults、requiredness、source files を含める。
+- requiredness や defaults は names から推定せず、unknown として mark する。
+- real secret values は含めない。
 
-### CLI And Commands
+### CLI と Commands
 
-Generate `docs/summary/cli-and-commands.md` when command-line entry points or task runners are visible.
+command-line entry points または task runners が見える場合は、`docs/summary/cli-and-commands.md` を生成する。
 
-- Cover CLIs, Make targets, package scripts, task runner files, shell entry points, and documented operational commands.
-- Include command purpose, entry point, important arguments, and side effects when visible.
-- Do not document incidental commands that are only used inside tests or one-off scripts unless they are central to repository workflows.
+- CLIs、Make targets、package scripts、task runner files、shell entry points、documented operational commands を扱う。
+- 見える場合は command purpose、entry point、important arguments、side effects を含める。
+- repository workflows の中心でない限り、tests や one-off scripts 内だけで使われる incidental commands は document 化しない。
 
 ### Module Map
 
-Generate `docs/summary/module-map.md` when package, workspace, or module boundaries are meaningful.
+package、workspace、module boundaries が意味を持つ場合は、`docs/summary/module-map.md` を生成する。
 
-- Use evidence from monorepo workspaces, package manifests, build config, imports, module exports, or source layout.
-- Show major packages or modules, their responsibilities, and important dependencies between them.
-- Prefer a concise dependency diagram or table over a full file tree.
-- Do not create this artifact for small single-module repositories unless it materially improves understanding.
+- monorepo workspaces、package manifests、build config、imports、module exports、source layout から evidence を使う。
+- major packages または modules、その responsibilities、重要な dependencies を示す。
+- full file tree より、簡潔な dependency diagram または table を優先する。
+- understanding を実質的に改善しない限り、小さな single-module repositories ではこの artifact を作らない。
 
 ### Feature Inventory
 
-Generate `docs/summary/features.md` when user-visible capabilities can be inferred from code, docs, menus, routes, commands, or tests.
+code、docs、menus、routes、commands、tests から user-visible capabilities を推定できる場合は、`docs/summary/features.md` を生成する。
 
-For each feature include:
+各 feature には次を含める。
 
-- concise title
-- what the feature does
-- key entry points or files
-- major constraints or integration points when visible
+- 簡潔な title
+- feature が何をするか
+- key entry points または files
+- 見える場合は major constraints または integration points
 
-### Use Cases And Sequence Diagrams
+### Use Cases と Sequence Diagrams
 
-Generate `docs/summary/use-cases.md` when the repository reveals meaningful end-to-end workflows.
+リポジトリが meaningful な end-to-end workflows を示している場合は、`docs/summary/use-cases.md` を生成する。
 
-- List the most representative use cases instead of trying to cover every path.
-- Pair each strong use case with a Mermaid sequence diagram when the actor, system interactions, and major steps are clear.
-- Favor breadth across core flows over deep edge-case sequencing.
-- If a flow depends on hidden business logic, summarize it in prose instead of over-specifying a sequence diagram.
+- すべての path を網羅しようとせず、最も representative な use cases を list 化する。
+- actor、system interactions、major steps が明確な場合は、強い use case ごとに Mermaid sequence diagram を添える。
+- deep edge-case sequencing より core flows の breadth を優先する。
+- flow が hidden business logic に依存する場合は、sequence diagram を過度に具体化せず prose で要約する。
 
 ### Testing
 
-Generate `docs/summary/testing.md` when tests, fixtures, or test commands reveal meaningful verification structure.
+tests、fixtures、test commands が meaningful な verification structure を示している場合は、`docs/summary/testing.md` を生成する。
 
-- Describe test suites, test types, key fixtures, helper utilities, and how tests are run.
-- Include major coverage boundaries and notable gaps only when they are visible from local evidence.
-- Distinguish unit, integration, end-to-end, contract, snapshot, and manual checks when the repository makes that distinction.
-- Do not estimate coverage or quality without repository evidence.
+- test suites、test types、key fixtures、helper utilities、tests の実行方法を説明する。
+- major coverage boundaries と notable gaps は、local evidence から見える場合だけ含める。
+- リポジトリが区別している場合は、unit、integration、end-to-end、contract、snapshot、manual checks を区別する。
+- repository evidence なしに coverage や quality を推定しない。
 
-## Generation Heuristics
+## 生成 heuristics
 
-Use these checks before adding each artifact:
+各 artifact を追加する前に、次を確認する。
 
-1. Can the artifact be supported by multiple local signals, not one weak hint?
-2. Would the artifact help a future reader understand the repository materially faster?
-3. Can the artifact be written without inventing missing details?
+1. 1 つの弱い hint ではなく、複数の local signals で artifact を支えられるか。
+2. その artifact は future reader がリポジトリを実質的に早く理解する助けになるか。
+3. missing details を捏造せずに artifact を書けるか。
 
-If any answer is `no`, skip that artifact.
+いずれかの答えが `no` なら、その artifact は skip する。
 
-## Style
+## 文体
 
-- Match the repository's dominant documentation language.
-- Prefer direct statements over promotional wording.
-- Use short sections and stable filenames.
-- Keep Mermaid syntax simple and portable.
+- リポジトリの dominant documentation language に合わせる。
+- promotional wording より direct statements を優先する。
+- 短い sections と stable filenames を使う。
+- Mermaid syntax は simple で portable に保つ。

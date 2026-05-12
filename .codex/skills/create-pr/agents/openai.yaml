@@ -1,4 +1,4 @@
 interface:
-  display_name: "Create PR"
-  short_description: "Create a GitHub pull request from the current branch"
-  default_prompt: "Use $create-pr when Codex should create a GitHub pull request using only the minimum necessary `git` and `gh` actions, including any needed `git add`, `git commit`, `git push`, and `gh pr create`, without doing unrelated cleanup or extra work."
+  display_name: "PR 作成"
+  short_description: "現在の branch から GitHub pull request を作成する"
+  default_prompt: "Codex が GitHub pull request を作成するときは $create-pr を使う。必要な `git add`、`git commit`、`git push`、`gh pr create` を含め、最小限の `git` と `gh` 操作だけを行い、無関係な cleanup や追加作業はしない。"

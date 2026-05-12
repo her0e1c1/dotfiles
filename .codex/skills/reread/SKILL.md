@@ -1,20 +1,20 @@
 ---
 name: reread
-description: Use before editing files. Re-read the latest contents and diff, understand user-made manual changes, and avoid overwriting them unless explicitly requested.
+description: ファイル編集前に使う。最新の内容と diff を読み直し、ユーザーによる手動変更を理解して、明示的に依頼されていない限り上書きしない。
 ---
 
 # Reread
 
-## Purpose
-Refresh your understanding from the current files on disk and preserve intentional user edits.
+## 目的
+disk 上の現在のファイルから理解を更新し、意図的なユーザー編集を保持する。
 
-## When to use
-- Before modifying files
+## 使うタイミング
+- ファイルを変更する前
 
-## Behavior
-- Re-read the relevant files
-- Check the current diff before editing
-- Treat the latest state as the source of truth
-- Understand and preserve user-made manual changes
-- Do not overwrite manual edits unless the user explicitly asks
-- Continue from the refreshed state
+## 振る舞い
+- 関連ファイルを読み直す。
+- 編集前に現在の diff を確認する。
+- 最新状態を source of truth として扱う。
+- ユーザーが手動で行った変更を理解し、保持する。
+- ユーザーが明示的に依頼しない限り、手動編集を上書きしない。
+- 更新した状態から作業を続ける。
