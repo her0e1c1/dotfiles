@@ -976,6 +976,22 @@ tmux_new() {
 }
 
 #==============================================================================
+# CLIPBOARD COMMAND
+#==============================================================================
+
+# Use the platform clipboard command when available.
+copy() {
+  if exists pbcopy; then
+    pbcopy "$@"
+  elif exists clip.exe; then
+    clip.exe "$@"
+  else
+    echo "copy: pbcopy or clip.exe not found" >&2
+    return 1
+  fi
+}
+
+#==============================================================================
 # URL ENCODING ALIASES
 #==============================================================================
 

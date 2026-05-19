@@ -1,6 +1,6 @@
 ---
 name: summarize-repository
-description: ユーザーが repository の構造、workflow、API、data model、runtime、configuration、features、tests について、調査、要約、diagram 化、documentation 生成を依頼したときに使う。
+description: ユーザーが repository の概要把握、またはそのための documentation 生成を依頼したときに使う。
 ---
 
 # Summarize Repository
