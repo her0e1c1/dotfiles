@@ -84,6 +84,12 @@ mysql:
 	docker compose --profile sql up -d --wait proxy-sql
 	docker compose run --rm -q --entrypoint /workspace/scripts/mysql.sh dev
 
+.PHONY: mysql-table
+mysql-table:
+	docker compose --profile sql up -d --wait proxy-sql
+	docker compose run --rm -q -w /workspace --entrypoint /bin/sh dev \
+		-c 'mysqldump --protocol=TCP -h "$$MYSQL_HOST" -P "$$MYSQL_PORT" -u "$$MYSQL_USER" --no-data --result-file=/workspace/table.sql "$${MYSQL_DATABASE:?MYSQL_DATABASE is required}"'
+
 .PHONY: mysqlsh
 mysqlsh:
 	docker compose --profile sql up -d --wait proxy-sql
