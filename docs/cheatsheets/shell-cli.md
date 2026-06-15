@@ -44,6 +44,8 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `me` | `docker compose -f docker-compose.me.yml` |
 | `mesh` | Run a shell in `docker-compose.me.yml` |
 | `docker_remove_volume` | Fuzzy-select removable Docker volumes and remove the selection |
+| `git_worktree [-s] <name>` | Create `.worktrees/<name>` and a matching branch; `-s` appends a three-character random suffix |
+| `git_worktree_purge` | Remove secondary Git worktrees after confirmation |
 | `t [name]` | Alias for `tmux_new [name]` |
 | `ti` | `tmuxinator` |
 | `tmux_new [name]` | With no name, pick an existing tmux session via `fzf` or create `main` if none exist; with a name, create or attach. Inside tmux it switches clients and creates new sessions detached to avoid nested tmux |

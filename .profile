@@ -725,7 +725,7 @@ copilot_do() {
   fi
 
   local name="copilot-$(basename "${instruction_file%.*}")"
-  ai_worktree "$name" || return 1
+  git_worktree -s "$name" || return 1
 
   copilot \
     --autopilot \
@@ -764,7 +764,7 @@ codex_do() {
   fi
 
   local name="codex-$(basename "${instruction_file%.*}")"
-  ai_worktree "$name" || return 1
+  git_worktree -s "$name" || return 1
 
   # Ask Codex to terminate after the final response and avoid waiting on tty input.
   codex exec \
@@ -796,7 +796,7 @@ gemini_do() {
   fi
 
   local name="gemini-$(basename "${instruction_file%.*}")"
-  ai_worktree "$name" || return 1
+  git_worktree -s "$name" || return 1
 
   gemini \
     --approval-mode yolo \
@@ -860,9 +860,16 @@ EOF
   rm -f "$policy_file"
 }
 
-ai_worktree() {
-  if [ $# -eq 0 ]; then
-    echo "Usage: ai_worktree <name>"
+git_worktree() {
+  local suffix=false
+
+  if [ "${1:-}" = "-s" ]; then
+    suffix=true
+    shift
+  fi
+
+  if [ $# -ne 1 ]; then
+    echo "Usage: git_worktree [-s] <name>"
     return 1
   fi
 
@@ -870,14 +877,18 @@ ai_worktree() {
   local root=$(git_repository_root) || return 1
   local base=$(git_current_branch)
   local worktree="${root}/.worktrees"
-  local prefix="${worktree}/${name}-"
   mkdir -p "$worktree" || return 1
-  local tmpdir=$(mktemp -d "${prefix}XXX") || return 1
+
+  local tmpdir="${worktree}/${name}"
+  if [ "$suffix" = true ]; then
+    tmpdir=$(mktemp -d "${tmpdir}-XXX") || return 1
+  fi
+
   local new_branch
   new_branch=$(basename "$tmpdir")
 
   git worktree add -b "$new_branch" "$tmpdir" HEAD || {
-    rmdir "$tmpdir"
+    [ ! -d "$tmpdir" ] || rmdir "$tmpdir"
     return 1
   }
 
@@ -886,9 +897,9 @@ ai_worktree() {
   cd "$tmpdir"
 }
 
-ai_worktree_purge() {
+git_worktree_purge() {
   if [ $# -ne 0 ]; then
-    echo "Usage: ai_worktree_purge"
+    echo "Usage: git_worktree_purge"
     return 1
   fi
 
