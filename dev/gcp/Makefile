@@ -56,10 +56,20 @@ pull:
 .PHONY: login
 login:
 	docker compose run --rm -q dev gcloud auth login --no-launch-browser
+	$(MAKE) copy-to-host
+
+.PHONY: copy
+copy:
+	docker compose run --rm -q --entrypoint /bin/sh gcloud -c 'mkdir -p /config/gcloud && cp -a /host/gcloud/. /config/gcloud/'
+
+.PHONY: copy-to-host
+copy-to-host:
+	docker compose run --rm -q --entrypoint /bin/sh gcloud -c 'mkdir -p /host/gcloud && cp -a /config/gcloud/. /host/gcloud/'
 
 .PHONY: auth
 auth:
 	docker compose run --rm -q dev gcloud auth application-default login --no-launch-browser
+	$(MAKE) copy-to-host
 
 .PHONY: gke
 gke: scripts/gke/init.sh

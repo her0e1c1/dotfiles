@@ -45,6 +45,15 @@ services:
       - default
     command: sleep infinity
 
+  gcloud:
+    image: dev-gcp:latest
+    volumes:
+      # Mount host gcloud credentials so Make targets can sync them with the shared Docker volume.
+      - ${HOME}/.config/gcloud:/host/gcloud
+      - gcloud_config:/config/gcloud
+    networks:
+      - default
+
   proxy-sql:
     image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.20.0
     profiles:
