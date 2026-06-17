@@ -8,6 +8,9 @@ script_dir = $(patsubst %/,%,$(dir $(1)))
 SCRIPT_TARGETS := $(shell find . -type f -name '*.sh')
 SQL_TARGETS := $(shell find . -type f -name '*.sql')
 
+.env:
+	cp .env.example .env
+
 .PHONY: $(SCRIPT_TARGETS)
 $(SCRIPT_TARGETS):
 	@docker compose run --rm -q \
