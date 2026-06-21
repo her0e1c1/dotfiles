@@ -14,6 +14,9 @@ export CLICOLOR=1
 export LSCOLORS=DxGxcxdxCxegedabagacad
 export FZF_DEFAULT_OPTS="--reverse --height 40%"
 
+# Include user-installed CLI tools such as pipx shims.
+export PATH="$HOME/.local/bin:$PATH"
+
 # brew install make
 export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
 
