@@ -1,0 +1,11 @@
+# Mirrors the devcontainer's Node-based Playwright development environment locally.
+[tools]
+node = "lts"
+# Required to match the devcontainer GitHub CLI feature.
+"aqua:cli/cli" = "latest"
+# Required to match the devcontainer Copilot CLI feature.
+"aqua:github/copilot-cli" = "latest"
+
+[tasks.setup]
+description = "Install local dependencies like the devcontainer postCreateCommand"
+run = "npm ci"

@@ -42,11 +42,14 @@ BREW_PACKAGES=(
   tmux
   fzf
   direnv
+  # Required to activate mise-managed project and local tool settings in the shell
+  mise
   tig
 )
 
 # CLIツール（apt用）
 # dockerは個別にインストールすること
+# mise: curl https://mise.run | sh
 APT_PACKAGES=(
   git
   gh

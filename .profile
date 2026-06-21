@@ -73,6 +73,10 @@ if echo "$SHELL" | grep -q bash; then
     share_history
   }
   PROMPT_COMMAND="bash_post_command_hook"
+
+  if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate bash)"
+  fi
 fi
 
 #==============================================================================

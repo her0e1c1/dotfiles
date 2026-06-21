@@ -2,3 +2,4 @@ test-results
 .playwright-cli
 .playwright-mcp
 generated.spec.ts
+node_modules

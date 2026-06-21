@@ -30,6 +30,7 @@ __pycache__/
 .docker
 docker-compose.me.yml
 Makefile.me
+mise.local.toml
 
 # vscode
 .vscode-server/
