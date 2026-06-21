@@ -56,6 +56,26 @@ if echo "$SHELL" | grep -q bash; then
     history -r
   }
 
+  mise_prompt_status() {
+    if ! command -v mise >/dev/null 2>&1; then
+      echo ""
+      return
+    fi
+
+    if [ "${MISE_PROMPT_STATUS_PWD:-}" = "$PWD" ]; then
+      echo "${MISE_PROMPT_STATUS:-}"
+      return
+    fi
+
+    MISE_PROMPT_STATUS_PWD="$PWD"
+    if [ -n "$(mise config ls --no-header 2>/dev/null)" ]; then
+      MISE_PROMPT_STATUS="$(green "[mise]")"
+    else
+      MISE_PROMPT_STATUS=""
+    fi
+    echo "$MISE_PROMPT_STATUS"
+  }
+
   bash_post_command_hook() {
     local ecode=$?
     local e='$'
@@ -69,7 +89,10 @@ if echo "$SHELL" | grep -q bash; then
       branch=$(green "$(git_current_branch)")
       origin=$(git config --get remote.origin.url)
     fi
-    export PS1="\u@\w [$branch:$origin]\n[\H]$ "
+    local mise_status
+    mise_status=$(mise_prompt_status)
+    [ -n "$mise_status" ] && mise_status=" $mise_status"
+    export PS1="\u@\w [$branch:$origin]$mise_status\n[\H]$ "
     share_history
   }
   PROMPT_COMMAND="bash_post_command_hook"
