@@ -1090,7 +1090,9 @@ case $- in
 *i*)
   bind -x '"\ew": fzf_select_docker_shell'
   bind -x '"\eo": fzf_select_recent_files'
-  bind -x '"\ed": fzf_select_dir'
+  # Do not use bind -x here: cd works, but the displayed PS1 stays on the old directory.
+  # Run as a normal command so PROMPT_COMMAND refreshes PS1 after cd.
+  bind '"\ed": "fzf_select_dir\n"'
   bind -x '"\eg": "cdls .."'
   bind -x '"\es": tmux_new'
   bind -x '"\C-r": fzf_select_history'
