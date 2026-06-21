@@ -8,4 +8,20 @@ node = "lts"
 
 [tasks.setup]
 description = "Install local dependencies like the devcontainer postCreateCommand"
-run = "npm ci"
+# Required because local Playwright runs need browser binaries outside the devcontainer image.
+run = [
+  "npm ci",
+  "npx playwright install",
+]
+
+[tasks.clean]
+description = "Remove local install and Playwright-generated artifacts"
+run = """
+rm -rf \
+  node_modules \
+  test-results \
+  .playwright-cli \
+  .playwright-mcp \
+  generated.spec.ts \
+  playwright-report
+"""
