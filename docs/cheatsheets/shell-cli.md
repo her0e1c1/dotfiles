@@ -44,7 +44,7 @@ Use this when you forget the aliases, fzf helpers, or readline bindings defined 
 | `me` | `docker compose -f docker-compose.me.yml` |
 | `mesh` | Run a shell in `docker-compose.me.yml` |
 | `docker_remove_volume` | Fuzzy-select removable Docker volumes and remove the selection |
-| `git_worktree [-s] <name>` | Create `.worktrees/<name>` and a matching branch; `-s` appends a three-character random suffix |
+| `git_worktree [-s] [-c] <name>` | Create `.worktrees/<name>` and a matching branch; `-s` appends a three-character random suffix; `-c` copies `.env` and `mise.local.toml` when present |
 | `git_worktree_purge` | Remove secondary Git worktrees after confirmation |
 | `t [name]` | Alias for `tmux_new [name]` |
 | `ti` | `tmuxinator` |

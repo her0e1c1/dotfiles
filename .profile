@@ -892,14 +892,28 @@ EOF
 
 git_worktree() {
   local suffix=false
+  local copy_local_config=false
+  local OPTIND=1
+  local opt
 
-  if [ "${1:-}" = "-s" ]; then
-    suffix=true
-    shift
-  fi
+  while getopts ":sc" opt; do
+    case "$opt" in
+    s)
+      suffix=true
+      ;;
+    c)
+      copy_local_config=true
+      ;;
+    \? | :)
+      echo "Usage: git_worktree [-s] [-c] <name>"
+      return 1
+      ;;
+    esac
+  done
+  shift $((OPTIND - 1))
 
   if [ $# -ne 1 ]; then
-    echo "Usage: git_worktree [-s] <name>"
+    echo "Usage: git_worktree [-s] [-c] <name>"
     return 1
   fi
 
@@ -921,6 +935,16 @@ git_worktree() {
     [ ! -d "$tmpdir" ] || rmdir "$tmpdir"
     return 1
   }
+
+  if [ "$copy_local_config" = true ]; then
+    # Carry local-only environment settings into new worktrees when requested.
+    local local_config
+    for local_config in .env mise.local.toml; do
+      if [ -f "${root}/${local_config}" ] && [ ! -e "${tmpdir}/${local_config}" ]; then
+        cp "${root}/${local_config}" "${tmpdir}/${local_config}" || return 1
+      fi
+    done
+  fi
 
   git config "branch.${new_branch}.base" "$base"
 
