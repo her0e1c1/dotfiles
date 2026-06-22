@@ -71,8 +71,10 @@ if echo "$SHELL" | grep -q bash; then
     fi
 
     MISE_PROMPT_STATUS_PWD="$PWD"
-    if [ -n "$(mise config ls --no-header 2>/dev/null)" ]; then
-      MISE_PROMPT_STATUS="$(green "[mise]")"
+    local mise_config
+    mise_config=$(mise config ls --no-header 2>/dev/null | awk 'END {print $1}')
+    if [ -n "$mise_config" ]; then
+      MISE_PROMPT_STATUS="$(green "[$mise_config]")"
     else
       MISE_PROMPT_STATUS=""
     fi
