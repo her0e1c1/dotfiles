@@ -64,7 +64,7 @@ Use this when you remember the workflow but not the custom `tig` bindings in thi
 | --- | --- | --- |
 | `dd` | `refs` | Delete the selected local branch |
 | `dr` | `refs` | Delete the selected remote branch |
-| `dw` | `refs` | Force-remove `.worktrees/<branch>` and delete its branch |
+| `dw` | `refs` | Force-remove the selected branch's worktree and delete its branch |
 | `dt` | `refs` | Delete the selected tag |
 | `dd` | `stash` | Drop the selected stash |
 | `dc` | `status` | Run `git clean -d -f` |

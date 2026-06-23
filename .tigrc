@@ -61,7 +61,7 @@ bind tree    dd       !git rm %(file)
 bind status  dd       !@rm %(file)
 bind blame   dd       !@rm %(file)
 bind refs    dr       ?@sh -c "git push --delete %(remote) %(branch) &"
-bind refs    dw       !@git worktree remove -ff "$(git rev-parse --show-toplevel)/.worktrees/%(branch)" && git branch -D "%(branch)"
+bind refs    dw       !@sh -c 'path=$(git worktree list | grep -F "[$1]" | sed -n "1{s/ .*//;p;}"); [ -n "$path" ] && git worktree remove -ff "$path" && git branch -D "$1"' sh "%(branch)"
 bind refs    dp       !git remote update --prune
 bind refs    dt       !git tag -d %(tag)
 bind status  dc       ?git clean -d -f
