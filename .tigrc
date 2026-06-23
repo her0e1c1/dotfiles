@@ -61,7 +61,7 @@ bind tree    dd       !git rm %(file)
 bind status  dd       !@rm %(file)
 bind blame   dd       !@rm %(file)
 bind refs    dr       ?@sh -c "git push --delete %(remote) %(branch) &"
-bind refs    dw       !@sh -c 'path=$(git worktree list | grep -F "[%(branch)]" | sed -n "1{s/ .*//;p;}"); [ -n "$path" ] || exit 1; git worktree remove -f "$path" && dir=$(dirname "$path") && worktrees=$(git rev-parse --show-toplevel)/.worktrees && while [ "$dir" != "$worktrees" ] && rmdir "$dir" 2>/dev/null; do dir=$(dirname "$dir"); done; git branch -D %(branch)'  # Clean empty parent dirs left by nested .worktrees paths
+bind refs    dw       !@git worktree remove -ff "$(git rev-parse --show-toplevel)/.worktrees/%(branch)" && git branch -D "%(branch)"
 bind refs    dp       !git remote update --prune
 bind refs    dt       !git tag -d %(tag)
 bind status  dc       ?git clean -d -f
