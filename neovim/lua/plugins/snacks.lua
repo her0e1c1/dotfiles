@@ -222,15 +222,22 @@ return {
         desc = "Buffer Lines",
       },
       {
-        "<leader><space>",
+        "<leader>ff",
         function()
           Snacks.picker.files({ cwd = current_buffer_dir() })
         end,
         desc = "Find Files (Current Dir)",
       },
       {
+        "<leader><space>",
+        function()
+          Snacks.picker.files({ cwd = LazyVim.root() })
+        end,
+        desc = "Find Files (Project Root)",
+      },
+      {
         "<leader>fF",
-        "<leader>ff",
+        "<leader><space>",
         remap = true,
         desc = "Find Files (Project Root)",
       },

@@ -14,12 +14,13 @@ Use this when you know the edit flow but forget the command name or this config'
 
 ## Find Files
 
-|j`<leader><space>` | Find files from the current working directory |
+| `<leader><space>` | Open files from the project root (`<leader>fF` remap) |
+| `<leader>ff` | Find files from the current working directory |
 | `<leader>d` | Pick subdirectories (max depth 1) under the current directory |
 | `<leader>D` | Pick recursive subdirectories under the project root |
 | `<leader>l` | Show `ls -1`-style entries for the current buffer's directory |
 | `<leader>L` | Open Snacks buffer picker |
-| `<leader>fF` | Open files from the project root (`<leader>ff` remap) |
+| `<leader>fF` | Open files from the project root |
 | `<leader>fr` | Open recent files |
 | `<leader>fc` | Lua Config Files |
 
