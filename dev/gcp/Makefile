@@ -103,6 +103,11 @@ mysql-table:
 	docker compose run --rm -q -w /workspace --entrypoint /bin/sh dev \
 		-c 'mysqldump --protocol=TCP -h "$$MYSQL_HOST" -P "$$MYSQL_PORT" -u "$$MYSQL_USER" --no-data --result-file=/workspace/table.sql "$${MYSQL_DATABASE:?MYSQL_DATABASE is required}"'
 
+.PHONY: schemaspy
+schemaspy:
+	docker compose --profile sql up -d --wait proxy-sql
+	docker compose --profile sql --profile schemaspy run --rm schemaspy
+
 .PHONY: mysqlsh
 mysqlsh:
 	docker compose --profile sql up -d --wait proxy-sql

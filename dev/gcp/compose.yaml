@@ -45,6 +45,41 @@ services:
       - default
     command: sleep infinity
 
+  schemaspy:
+    # Snapshot image is required because the stable SchemaSpy image does not run on M1 Macs.
+    image: schemaspy/schemaspy:snapshot
+    # Required so the SchemaSpy image runs consistently on Apple Silicon hosts.
+    platform: linux/amd64
+    profiles:
+      - schemaspy
+    depends_on:
+      proxy-sql:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      MYSQL_HOST: proxy-sql
+      MYSQL_PORT: 3306
+    networks:
+      - default
+    volumes:
+      # SchemaSpy writes its generated HTML report to /output.
+      - ./.docker/schemaspy:/output
+    command:
+      - -t
+      - mysql
+      - -host
+      - proxy-sql:3306
+      - -u
+      - ${MYSQL_USER:?MYSQL_USER is required}
+      - -db
+      - ${MYSQL_DATABASE:?MYSQL_DATABASE is required}
+      - -p
+      - ${MYSQL_PWD:?MYSQL_PWD is required}
+      - -connprops
+      - useSSL\=false
+      - -s
+      - ${MYSQL_DATABASE:?MYSQL_DATABASE is required}
+
   gcloud:
     image: dev-gcp:latest
     volumes:
