@@ -1077,6 +1077,7 @@ alias n=nvim_start
 
 # Basic command aliases
 alias m='make_rec'
+alias mi='mise'
 alias g="git"
 alias ll='ls -alF'
 alias ls='ls -aCF'
