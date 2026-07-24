@@ -775,9 +775,18 @@ copilot_model() {
 
   shift
   case "${1-}" in
+    "")
+      ;;
     low | medium | high | xhigh)
       effort="$1"
       shift
+      ;;
+    --)
+      shift
+      ;;
+    *)
+      echo "Invalid Copilot reasoning effort: $1 (available: low, medium, high, xhigh)" >&2
+      return 2
       ;;
   esac
 
@@ -792,9 +801,18 @@ codex_model() {
 
   shift
   case "${1-}" in
+    "")
+      ;;
     minimal | low | medium | high | xhigh)
       effort="$1"
       shift
+      ;;
+    --)
+      shift
+      ;;
+    *)
+      echo "Invalid Codex reasoning effort: $1 (available: minimal, low, medium, high, xhigh)" >&2
+      return 2
       ;;
   esac
 
