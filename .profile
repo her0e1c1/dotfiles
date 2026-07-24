@@ -734,7 +734,93 @@ nvim_end() {
 #==============================================================================
 
 copilot() {
-  copilot --model "auto"
+  copilot_model "auto" "$@"
+}
+
+copilot_sonnet5() {
+  copilot_model "claude-sonnet-5" "$@"
+}
+
+copilot_sonnet46() {
+  copilot_model "claude-sonnet-4.6" "$@"
+}
+
+copilot_haiku() {
+  copilot_model "claude-haiku-4.5" "$@"
+}
+
+copilot_gpt55() {
+  copilot_model "gpt-5.5" "$@"
+}
+
+copilot_gpt54() {
+  copilot_model "gpt-5.4" "$@"
+}
+
+copilot_gpt53() {
+  copilot_model "gpt-5.3-codex" "$@"
+}
+
+copilot_opus48() {
+  copilot_model "claude-opus-4.8" "$@"
+}
+
+copilot_opus46() {
+  copilot_model "claude-opus-4.6" "$@"
+}
+
+copilot_model() {
+  local model="$1"
+  local effort="medium"
+
+  shift
+  case "${1-}" in
+    low | medium | high | xhigh)
+      effort="$1"
+      shift
+      ;;
+  esac
+
+  command copilot --model "$model" \
+    --reasoning-effort "$effort" \
+    "$@"
+}
+
+codex_model() {
+  local model="$1"
+  local effort="medium"
+
+  shift
+  case "${1-}" in
+    minimal | low | medium | high | xhigh)
+      effort="$1"
+      shift
+      ;;
+  esac
+
+  command codex --model "$model" \
+    --config "model_reasoning_effort=\"$effort\"" \
+    "$@"
+}
+
+codex_54() {
+  codex_model "gpt-5.4" "$@"
+}
+
+codex_53() {
+  codex_model "gpt-5.3-codex" "$@"
+}
+
+codex_52() {
+  codex_model "gpt-5.2-codex" "$@"
+}
+
+codex_51() {
+  codex_model "gpt-5.1-codex" "$@"
+}
+
+codex_51mini() {
+  codex_model "gpt-5.1-codex-mini" "$@"
 }
 
 git_worktree() {
