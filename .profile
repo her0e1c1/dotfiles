@@ -749,15 +749,20 @@ copilot_haiku() {
   copilot_model "claude-haiku-4.5" "$@"
 }
 
-copilot_gpt55() {
+alias copilot_low=copilot_haiku
+alias copilot_mid=copilot_sonnet46
+alias copilot_high=copilot_sonnet5
+alias copilot_xhigh=copilot_opus48
+
+copilot55() {
   copilot_model "gpt-5.5" "$@"
 }
 
-copilot_gpt54() {
+copilot54() {
   copilot_model "gpt-5.4" "$@"
 }
 
-copilot_gpt53() {
+copilot53() {
   copilot_model "gpt-5.3-codex" "$@"
 }
 
@@ -821,23 +826,31 @@ codex_model() {
     "$@"
 }
 
-codex_54() {
+codex56() {
+  codex_model "gpt-5.6" "$@"
+}
+
+codex55() {
+  codex_model "gpt-5.5" "$@"
+}
+
+codex54() {
   codex_model "gpt-5.4" "$@"
 }
 
-codex_53() {
+codex53() {
   codex_model "gpt-5.3-codex" "$@"
 }
 
-codex_52() {
+codex52() {
   codex_model "gpt-5.2-codex" "$@"
 }
 
-codex_51() {
+codex51() {
   codex_model "gpt-5.1-codex" "$@"
 }
 
-codex_51mini() {
+codex51mini() {
   codex_model "gpt-5.1-codex-mini" "$@"
 }
 
