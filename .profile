@@ -854,6 +854,18 @@ codex51mini() {
   codex_model "gpt-5.1-codex-mini" "$@"
 }
 
+codexsol() {
+  command codex --profile sol "$@"
+}
+
+codexterra() {
+  command codex --profile terra "$@"
+}
+
+codexluna() {
+  command codex --profile luna "$@"
+}
+
 git_worktree() {
   local suffix=false
   local copy_local_config=false
@@ -1071,6 +1083,7 @@ alias vs="open_vscode"
 alias z="copilot_easy"
 alias f="fzf_find_word"
 alias cd="fzf_select_dir"
+alias codex='codexterra'
 
 #==============================================================================
 # KEY BINDINGS
