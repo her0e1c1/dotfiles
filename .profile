@@ -900,12 +900,13 @@ git_worktree() {
   mkdir -p "$worktree" || return 1
 
   local tmpdir="${worktree}/${name}"
+  mkdir -p "$(dirname "$tmpdir")" || return 1
   if [ "$suffix" = true ]; then
     tmpdir=$(mktemp -d "${tmpdir}-XXX") || return 1
   fi
 
   local new_branch
-  new_branch=$(basename "$tmpdir")
+  new_branch="${tmpdir#"${worktree}/"}"
 
   git worktree add -b "$new_branch" "$tmpdir" HEAD || {
     [ ! -d "$tmpdir" ] || rmdir "$tmpdir"
