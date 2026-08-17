@@ -749,10 +749,27 @@ copilot_haiku() {
   copilot_model "claude-haiku-4.5" "$@"
 }
 
+copilot_sol() {
+  copilot_model "gpt-5.6-sol" "$@"
+}
+
+copilot_ter() {
+  copilot_model "gpt-5.6-terra" "$@"
+}
+
+copilot_luna() {
+  copilot_model "gpt-5.6-luna" "$@"
+}
+
+copilot_opus5() {
+  copilot_model "claude-opus-5" "$@"
+}
+
 alias copilot_low=copilot_haiku
 alias copilot_mid=copilot_sonnet46
 alias copilot_high=copilot_sonnet5
 alias copilot_xhigh=copilot_opus48
+alias copilot_terra=copilot_ter
 
 copilot55() {
   copilot_model "gpt-5.5" "$@"
@@ -782,7 +799,7 @@ copilot_model() {
   case "${1-}" in
     "")
       ;;
-    low | medium | high | xhigh)
+    none | minimal | low | medium | high | xhigh | max)
       effort="$1"
       shift
       ;;
@@ -790,7 +807,7 @@ copilot_model() {
       shift
       ;;
     *)
-      echo "Invalid Copilot reasoning effort: $1 (available: low, medium, high, xhigh)" >&2
+      echo "Invalid Copilot reasoning effort: $1 (available: none, minimal, low, medium, high, xhigh, max)" >&2
       return 2
       ;;
   esac
