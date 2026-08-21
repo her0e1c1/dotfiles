@@ -925,7 +925,12 @@ git_worktree() {
   local new_branch
   new_branch="${tmpdir#"${worktree}/"}"
 
-  git worktree add -b "$new_branch" "$tmpdir" HEAD || {
+  local branch_created=false
+  if git show-ref --verify --quiet "refs/heads/${new_branch}"; then
+    git worktree add "$tmpdir" "$new_branch"
+  else
+    git worktree add -b "$new_branch" "$tmpdir" HEAD && branch_created=true
+  fi || {
     [ ! -d "$tmpdir" ] || rmdir "$tmpdir"
     return 1
   }
@@ -940,7 +945,9 @@ git_worktree() {
     done
   fi
 
-  git config "branch.${new_branch}.base" "$base"
+  if [ "$branch_created" = true ]; then
+    git config "branch.${new_branch}.base" "$base"
+  fi
 
   cd "$tmpdir"
 }
