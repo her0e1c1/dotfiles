@@ -534,6 +534,133 @@ git_submodule_reset() {
   )
 }
 
+git_delete_local_branches() {
+  local weeks=""
+  local assume_yes=0
+  local list_only=0
+  local option
+
+  if [ $# -eq 0 ]; then
+    set -- -h
+  fi
+
+  OPTIND=1
+  while getopts ":hlyw:" option; do
+    case "$option" in
+    h)
+      echo "Usage: git_delete_local_branches -w N [-l | -y]"
+      echo
+      echo "Delete local branches whose last commit is at least N weeks old"
+      echo "and which do not have an open GitHub pull request. Any linked"
+      echo "worktree is removed before its branch."
+      echo
+      echo "Options:"
+      echo "  -h    Show this help (default when no options are given)"
+      echo "  -l    List matching branches and the total count without deleting"
+      echo "  -w N  Select branches not updated for N weeks or more"
+      echo "  -y    Delete every selected branch without prompting"
+      return 0
+      ;;
+    l) list_only=1 ;;
+    y) assume_yes=1 ;;
+    w) weeks="$OPTARG" ;;
+    :)
+      echo "git_delete_local_branches: -$OPTARG requires an argument" >&2
+      return 2
+      ;;
+    \?)
+      echo "git_delete_local_branches: unknown option: -$OPTARG" >&2
+      echo "Run 'git_delete_local_branches -h' for help." >&2
+      return 2
+      ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+
+  if [ $# -ne 0 ]; then
+    echo "git_delete_local_branches: unexpected argument: $1" >&2
+    return 2
+  fi
+  if [ "$list_only" -eq 1 ] && [ "$assume_yes" -eq 1 ]; then
+    echo "git_delete_local_branches: -l and -y cannot be used together" >&2
+    return 2
+  fi
+  if ! [[ "$weeks" =~ ^[1-9][0-9]*$ ]]; then
+    echo "git_delete_local_branches: -w N must be a positive integer" >&2
+    return 2
+  fi
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "git_delete_local_branches: not inside a Git repository" >&2
+    return 1
+  fi
+  # GitHub CLI is required to keep branches that still have an open PR.
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "git_delete_local_branches: gh is required to check open pull requests" >&2
+    return 1
+  fi
+
+  local open_pr_branches
+  if ! open_pr_branches=$(gh pr list --state open --limit 1000 \
+    --json headRefName --jq '.[].headRefName'); then
+    echo "git_delete_local_branches: failed to retrieve open pull requests" >&2
+    return 1
+  fi
+
+  local current_branch
+  current_branch=$(git branch --show-current)
+  local cutoff=$(( $(date +%s) - weeks * 7 * 24 * 60 * 60 ))
+  local branch updated_at updated_date worktree_path reply
+  local found=0
+
+  while IFS=$'\t' read -r branch updated_at updated_date <&3; do
+    [ -n "$branch" ] || continue
+    [ "$branch" = "$current_branch" ] && continue
+    [ "$updated_at" -le "$cutoff" ] || continue
+    if printf '%s\n' "$open_pr_branches" | grep -Fqx -- "$branch"; then
+      continue
+    fi
+
+    worktree_path=$(git worktree list --porcelain | awk \
+      -v branch_ref="branch refs/heads/$branch" '
+        /^worktree / { worktree_path = substr($0, 10) }
+        $0 == branch_ref { print worktree_path; exit }
+      ')
+    found=$((found + 1))
+    if [ "$list_only" -eq 1 ]; then
+      if [ -n "$worktree_path" ]; then
+        printf '%s\t%s\tworktree: %s\n' "$branch" "$updated_date" "$worktree_path"
+      else
+        printf '%s\t%s\n' "$branch" "$updated_date"
+      fi
+      continue
+    fi
+
+    if [ "$assume_yes" -eq 1 ]; then
+      reply=y
+    elif [ -n "$worktree_path" ]; then
+      read -r -p "Delete '$branch' and worktree '$worktree_path' (last updated $updated_date)? [y/N] " reply
+    else
+      read -r -p "Delete '$branch' (last updated $updated_date)? [y/N] " reply
+    fi
+
+    if [[ "$reply" =~ ^[Yy]$ ]]; then
+      if [ -n "$worktree_path" ] && ! git worktree remove --force -- "$worktree_path"; then
+        echo "git_delete_local_branches: failed to remove worktree: $worktree_path" >&2
+        continue
+      fi
+      git branch -D -- "$branch"
+    fi
+  done 3< <(git for-each-ref --sort=committerdate \
+    --format='%(refname:short)%09%(committerdate:unix)%09%(committerdate:short)' \
+    refs/heads/)
+
+  if [ "$list_only" -eq 1 ]; then
+    printf '%d local branch(es) matched.\n' "$found"
+  elif [ "$found" -eq 0 ]; then
+    echo "No local branches matched."
+  fi
+}
+
 #==============================================================================
 # NETWORK AND SYSTEM UTILITIES
 #==============================================================================
