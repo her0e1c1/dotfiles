@@ -552,7 +552,8 @@ git_delete_local_branches() {
       echo
       echo "Delete local branches whose last commit is at least N weeks old"
       echo "and which do not have an open GitHub pull request. Any linked"
-      echo "worktree is removed before its branch."
+      echo "worktree is removed before its branch. Remote-tracking branches"
+      echo "are pruned first, and Git refuses to delete unmerged branches."
       echo
       echo "Options:"
       echo "  -h    Show this help (default when no options are given)"
@@ -596,6 +597,11 @@ git_delete_local_branches() {
   # GitHub CLI is required to keep branches that still have an open PR.
   if ! command -v gh >/dev/null 2>&1; then
     echo "git_delete_local_branches: gh is required to check open pull requests" >&2
+    return 1
+  fi
+
+  if ! git fetch --all --prune; then
+    echo "git_delete_local_branches: failed to prune remote-tracking branches" >&2
     return 1
   fi
 
@@ -648,7 +654,7 @@ git_delete_local_branches() {
         echo "git_delete_local_branches: failed to remove worktree: $worktree_path" >&2
         continue
       fi
-      git branch -D -- "$branch"
+      git branch -d -- "$branch"
     fi
   done 3< <(git for-each-ref --sort=committerdate \
     --format='%(refname:short)%09%(committerdate:unix)%09%(committerdate:short)' \
