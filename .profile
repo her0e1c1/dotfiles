@@ -661,6 +661,42 @@ git_delete_local_branches() {
   fi
 }
 
+git_delete_remote_closed_branches() {
+  local assume_yes=0
+  if [ $# -eq 1 ] && [ "$1" = "-y" ]; then
+    assume_yes=1
+  elif [ $# -ne 0 ]; then
+    echo "Usage: git_delete_remote_closed_branches [-y]" >&2
+    return 2
+  fi
+
+  # GitHub CLI is required to find PRs created by the current user.
+  local closed_pr_branches open_pr_branches remote_refs
+  closed_pr_branches=$(gh pr list --state closed --author @me --limit 1000 \
+    --json headRefName --jq '[.[].headRefName] | unique[]') || return 1
+  open_pr_branches=$(gh pr list --state open --limit 1000 \
+    --json headRefName --jq '.[].headRefName') || return 1
+  remote_refs=$(git ls-remote --heads origin) || return 1
+
+  local branch reply
+  for branch in $closed_pr_branches; do
+    printf '%s\n' "$remote_refs" | awk -v ref="refs/heads/$branch" \
+      '$2 == ref { found = 1 } END { exit !found }' || continue
+    if printf '%s\n' "$open_pr_branches" | grep -Fqx -- "$branch"; then
+      continue
+    fi
+
+    if [ "$assume_yes" -eq 1 ]; then
+      reply=y
+    else
+      read -r -p "Delete remote branch 'origin/$branch'? [y/N] " reply
+    fi
+    if [[ "$reply" =~ ^[Yy]$ ]]; then
+      git push origin --delete "$branch"
+    fi
+  done
+}
+
 #==============================================================================
 # NETWORK AND SYSTEM UTILITIES
 #==============================================================================
