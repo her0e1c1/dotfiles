@@ -906,6 +906,18 @@ copilot() {
   copilot_model "auto" "$@"
 }
 
+copilot_balance() {
+  copilot_model "auto" -- --auto-tier balance "$@"
+}
+
+copilot_efficiency() {
+  copilot_model "auto" -- --auto-tier efficiency "$@"
+}
+
+copilot_intelligence() {
+  copilot_model "auto" -- --auto-tier intelligence "$@"
+}
+
 copilot_sonnet5() {
   copilot_model "claude-sonnet-5" "$@"
 }
