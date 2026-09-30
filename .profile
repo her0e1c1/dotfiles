@@ -918,6 +918,10 @@ copilot_intelligence() {
   copilot_model "auto" -- --auto-tier intelligence "$@"
 }
 
+copilot_sonnet55() {
+  copilot_model "claude-sonnet-5.5" "$@"
+}
+
 copilot_sonnet5() {
   copilot_model "claude-sonnet-5" "$@"
 }
@@ -940,6 +944,10 @@ copilot_ter() {
 
 copilot_luna() {
   copilot_model "gpt-5.6-luna" "$@"
+}
+
+copilot_opus55() {
+  copilot_model "claude-opus-5.5" "$@"
 }
 
 copilot_opus5() {
