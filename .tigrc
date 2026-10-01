@@ -116,6 +116,7 @@ bind tree    ;gb      @>gh browse %(file)
 bind status  ;gb      @>gh browse %(file)
 
 # diff
+bind diff    w        :toggle wrap-lines
 bind generic ;dd      !>sh -c "git diff %(commit)..%(repo:head) | tig"
 bind generic ;dr      !>sh -c "git diff %(repo:head)..%(commit) | tig"
 bind generic ;d3      !>sh -c "git diff %(commit)...%(repo:head) | tig"
