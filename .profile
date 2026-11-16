@@ -1266,7 +1266,7 @@ alias vim='fzf_select_recent_files'
 alias n=nvim_start
 
 # Basic command aliases
-alias m='mise'
+alias m='mise run'
 alias mi='mise'
 alias mk='make'
 alias g="git"
