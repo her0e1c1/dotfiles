@@ -604,6 +604,10 @@ git_delete_local_branches() {
     echo "git_delete_local_branches: failed to prune remote-tracking branches" >&2
     return 1
   fi
+  if ! git worktree prune; then
+    echo "git_delete_local_branches: failed to prune worktree information" >&2
+    return 1
+  fi
 
   local open_pr_branches
   if ! open_pr_branches=$(gh pr list --state open --limit 1000 \
