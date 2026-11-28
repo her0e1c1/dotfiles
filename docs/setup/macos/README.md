@@ -1,5 +1,7 @@
 # macOS Setup
 
+If you see `No developer tools were found` when running the `curl` command from the [installation instructions](../../../README.md#run-install-script), follow the on-screen prompts in the dialog that opens to install the Command Line Tools. Once installation finishes, run the `curl` command again.
+
 Run from the dotfiles repository as the Mac user whose settings you want to change.
 
 ```bash
