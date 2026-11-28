@@ -1,4 +1,4 @@
-.PHONY: install dot pkg macos env github
+.PHONY: install dot pkg macos macos-server env github
 
 ENVRC_SOURCE := $(CURDIR)/.envrc.example
 ENVRC_TARGET ?= $(HOME)/.envrc
@@ -16,6 +16,12 @@ pkg:
 
 macos:
 	./install.sh --configure-macos
+
+# macOS requires approval in System Settings to install a local configuration profile.
+macos-server:
+	@test "$$(uname -s)" = Darwin || { echo "macos-server requires macOS" >&2; exit 1; }
+	@open "$(CURDIR)/scripts/macos-server-icloud.mobileconfig"
+	@echo "In System Settings > General > Device Management, install macOS Server iCloud Restrictions."
 
 env:
 	@test -f "$(ENVRC_SOURCE)" || { echo "missing: $(ENVRC_SOURCE)"; exit 1; }
