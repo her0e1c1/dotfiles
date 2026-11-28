@@ -6,13 +6,20 @@ node = "lts"
 # Required to match the devcontainer Copilot CLI feature.
 "aqua:github/copilot-cli" = "latest"
 
-[tasks.setup]
-description = "Install local dependencies like the devcontainer postCreateCommand"
-# Required because local Playwright runs need browser binaries outside the devcontainer image.
+[tasks.init]
+alias = "setup"
+description = "Install local dependencies and Playwright browsers"
+sources = ["package.json", "package-lock.json"]
+outputs = ["node_modules"]
 run = [
   "npm ci",
   "npx playwright install",
 ]
+
+[tasks.test]
+description = "Run Playwright tests"
+depends = ["init"]
+run = "npm test"
 
 [tasks.clean]
 description = "Remove local install and Playwright-generated artifacts"
