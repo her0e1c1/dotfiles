@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadIdentifier</key>
+    <string>io.github.her0e1c1.dotfiles.macos-server.icloud</string>
+    <key>PayloadUUID</key>
+    <string>46DF157F-18B8-4F0A-8AF5-9277548994B1</string>
+    <key>PayloadDisplayName</key>
+    <string>macOS Server iCloud Restrictions</string>
+    <key>PayloadDescription</key>
+    <string>Disables iCloud Drive and other iCloud syncing on this Mac.</string>
+    <key>PayloadScope</key>
+    <string>System</string>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.applicationaccess</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>PayloadIdentifier</key>
+            <string>io.github.her0e1c1.dotfiles.macos-server.icloud.restrictions</string>
+            <key>PayloadUUID</key>
+            <string>2E9FF2F6-F50C-40E3-A8F9-F06CA441049F</string>
+            <key>PayloadDisplayName</key>
+            <string>iCloud Sync Restrictions</string>
+            <!-- Use macOS Restrictions to prevent iCloud syncing across accounts on the server. -->
+            <key>allowCloudDocumentSync</key>
+            <false/>
+            <key>allowCloudDesktopAndDocuments</key>
+            <false/>
+            <key>allowCloudPhotoLibrary</key>
+            <false/>
+            <key>allowCloudKeychainSync</key>
+            <false/>
+            <key>allowCloudNotes</key>
+            <false/>
+            <key>allowCloudAddressBook</key>
+            <false/>
+            <key>allowCloudCalendar</key>
+            <false/>
+            <key>allowCloudBookmarks</key>
+            <false/>
+            <key>allowCloudMail</key>
+            <false/>
+        </dict>
+    </array>
+</dict>
+</plist>

@@ -17,8 +17,12 @@ pkg:
 macos:
 	./install.sh --configure-macos
 
+# macOS requires approval in System Settings to install a local configuration profile.
 macos-server:
+	@test "$$(uname -s)" = Darwin || { echo "macos-server requires macOS" >&2; exit 1; }
 	./scripts/macos-server.sh
+	@open "$(CURDIR)/scripts/macos-server-icloud.mobileconfig"
+	@echo "In System Settings > General > Device Management, install macOS Server iCloud Restrictions."
 
 env:
 	@test -f "$(ENVRC_SOURCE)" || { echo "missing: $(ENVRC_SOURCE)"; exit 1; }
