@@ -6,7 +6,7 @@ Run this in Terminal on the server Mac while logged in with the account you will
 make macos-server
 ```
 
-The command also opens the [iCloud restrictions profile](README.md#server-icloud-settings), which requires manual approval in System Settings.
+Finish the [iCloud sync settings](README.md#server-icloud-settings) in System Settings for the server user.
 
 - The Mac stays awake while idle. After 10 minutes of inactivity, the display turns off. The Mac requires authentication immediately after the display turns off or the screen saver starts.
 - Screen Sharing and SSH allow the account that ran the script and users already on each service's allowlist. If a service allowed all users, the script switches it to its allowlist.

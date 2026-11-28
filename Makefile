@@ -17,12 +17,17 @@ pkg:
 macos:
 	./install.sh --configure-macos
 
-# macOS requires approval in System Settings to install a local configuration profile.
+# iCloud sync is configured per user, so open its settings from a graphical login.
 macos-server:
 	@test "$$(uname -s)" = Darwin || { echo "macos-server requires macOS" >&2; exit 1; }
 	./scripts/macos-server.sh
-	@open "$(CURDIR)/scripts/macos-server-icloud.mobileconfig"
-	@echo "In System Settings > General > Device Management, install macOS Server iCloud Restrictions."
+	@printf '\n%s\n' 'Finish iCloud setup in the server user’s graphical session (Screen Sharing also works).' \
+	  'In System Settings > Apple Account > iCloud > Drive, turn off Sync this Mac and verify it is off.' \
+	  'Under iCloud > See All, turn off the other app sync settings you do not need.'
+	@if [ -z "$${SSH_CONNECTION:-}" ] && [ "$$(launchctl managername 2>/dev/null)" = Aqua ]; then \
+		open -b com.apple.systempreferences 'x-apple.systempreferences:com.apple.systempreferences.AppleIDSettings:icloud' \
+			|| echo 'Open System Settings manually to finish iCloud setup.' >&2; \
+	fi
 
 env:
 	@test -f "$(ENVRC_SOURCE)" || { echo "missing: $(ENVRC_SOURCE)"; exit 1; }
