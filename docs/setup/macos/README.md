@@ -8,6 +8,8 @@ make macos
 
 The full installer calls [`scripts/macos.sh`](../../../scripts/macos.sh) on macOS. You can also run `./scripts/macos.sh` directly. If the changes do not take effect immediately, log out and back in.
 
+If Terminal was open during setup, quit it with Command-Q and reopen it to load the updated profiles. If Terminal restores a previous session, open a new window to check Option as Meta.
+
 | Setting | Value |
 | --- | --- |
 | Appearance | Dark |
@@ -19,7 +21,7 @@ The full installer calls [`scripts/macos.sh`](../../../scripts/macos.sh) on macO
 | Press-and-hold accent menu | Disabled |
 | Terminal profile for new windows | Basic |
 | Terminal startup profile | Basic |
-| Terminal Option as Meta key in Basic | Enabled |
+| Terminal Option as Meta key | Enabled in all profiles present during setup |
 | Trackpad tap to click | Enabled |
 | Trackpad dragging style | Three-finger drag |
 | Trackpad tap to drag | Disabled |
