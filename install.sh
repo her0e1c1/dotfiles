@@ -65,7 +65,12 @@ APT_PACKAGES=(
 # GUIアプリ（brew install --cask）
 BREW_CASK_PACKAGES=(
   # codex
+  antigravity
+  chatgpt
+  # Claude Desktop includes the Code tab for Claude Code.
+  claude
   docker-desktop
+  github-copilot-app
   google-chrome
   visual-studio-code
   # Required for nvim to render Nerd Font glyphs correctly
