@@ -21,7 +21,7 @@ If Terminal was open during setup, quit it with Command-Q and reopen it to load 
 | Press-and-hold accent menu | Disabled |
 | Terminal profile for new windows | Basic |
 | Terminal startup profile | Basic |
-| Terminal Option as Meta key | Enabled in all profiles present during setup |
+| Terminal Option as Meta key | Both Option keys in all profiles present during setup |
 | Trackpad tap to click | Enabled |
 | Trackpad dragging style | Three-finger drag |
 | Trackpad tap to drag | Disabled |

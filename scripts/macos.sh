@@ -66,14 +66,19 @@ if (!profiles) {
   }
 }
 
-if (!profiles.objectForKey("Basic")) {
+if (ObjC.unwrap(profiles.objectForKey("Basic")) === undefined) {
   const path = terminal.pathForResourceOfTypeInDirectory("Basic", "terminal", builtInDirectory);
   profiles.setObjectForKey($.NSDictionary.dictionaryWithContentsOfFile(path), "Basic");
 }
 
+// macOS 27's menu uses integer tag 1 for Both Option keys. Older Terminal versions use a checkbox.
+const optionAsMeta = $.NSProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
+  ? $.NSNumber.numberWithInt(1)
+  : $.NSNumber.numberWithBool(true);
+
 for (const name of ObjC.deepUnwrap(profiles.allKeys)) {
   const profile = profiles.objectForKey(name).mutableCopy;
-  profile.setObjectForKey($.NSNumber.numberWithBool(true), "useOptionAsMetaKey");
+  profile.setObjectForKey(optionAsMeta, "useOptionAsMetaKey");
   profiles.setObjectForKey(profile, name);
 }
 prefs.setObjectForKey(profiles, profilesKey);
