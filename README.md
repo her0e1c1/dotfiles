@@ -3,8 +3,10 @@
 
 ## Run install script
 
+Running the install script requires `sudo`.
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/her0e1c1/dotfiles/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/her0e1c1/dotfiles/master/install.sh | sudo bash
 ```
 
 ## Run make install
