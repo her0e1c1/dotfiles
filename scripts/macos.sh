@@ -38,13 +38,12 @@ defaults -currentHost write -g com.apple.trackpad.threeFingerVertSwipeGesture -i
 defaults -currentHost write -g com.apple.trackpad.fourFingerVertSwipeGesture -int 2
 defaults write com.apple.dock showAppExposeGestureEnabled -bool true
 
-# 3 is the maximum tracking speed in System Settings.
-defaults write -g com.apple.mouse.scaling -float 3
-defaults write -g com.apple.trackpad.scaling -float 3
+defaults write -g com.apple.mouse.scaling -float 2.5
+defaults write -g com.apple.trackpad.scaling -float 2.5
 
-# Update the active mouse speed as well. HID uses 16.16 fixed-point values.
+# Apply the mouse speed immediately. HID represents 2.5 as 2.5 × 65536.
 if command -v hidutil >/dev/null 2>&1; then
-  hidutil property --set '{"HIDMouseAcceleration":196608}'
+  hidutil property --set '{"HIDMouseAcceleration":163840}'
 fi
 
 # Use Foundation to update the nested Terminal profile while preserving its other settings.
