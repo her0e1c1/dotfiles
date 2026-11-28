@@ -4,4 +4,4 @@ Use these guides when initializing a machine or restoring environment-specific s
 
 | Page | Focus |
 | --- | --- |
-| [macOS setup](macos/README.md) | macOS system and Terminal settings |
+| [macOS setup](macos/README.md) | macOS system, input, Dock, and Terminal settings |

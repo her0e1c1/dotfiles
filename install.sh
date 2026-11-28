@@ -97,7 +97,7 @@ Options:
   --install-packages   Install package manager and packages
   --install-vscode     Install VSCode settings
   --install-shell      Install shell configuration
-  --configure-macos    Configure macOS system and Terminal settings
+  --configure-macos    Configure macOS system, input, Dock, and Terminal settings
 
 Examples:
   $0                   Full installation

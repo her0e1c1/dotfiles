@@ -89,4 +89,47 @@ const factoryProfilesPath = "/System/Applications/Utilities/Terminal.app/Content
 configureTerminal($.NSUserDefaults.alloc.initWithSuiteName("com.apple.Terminal"), factoryProfilesPath);
 JXA
 
-echo "macOS settings saved. If needed, log out and back in to apply them."
+echo "Configuring macOS Dock..."
+
+dock_tile() {
+  # Dock uses URL type 15 for file URLs to application bundles.
+  printf '<dict>
+    <key>tile-type</key><string>file-tile</string>
+    <key>tile-data</key><dict>
+      <key>file-data</key><dict>
+        <key>_CFURLString</key><string>file://%s/</string>
+        <key>_CFURLStringType</key><integer>15</integer>
+      </dict>
+    </dict>
+  </dict>' "${1// /%20}"
+}
+
+dock_apps=(
+  /Applications/Safari.app
+  /System/Applications/Utilities/Terminal.app
+)
+
+if [[ -d /Applications/ChatGPT.app ]]; then
+  dock_apps+=(/Applications/ChatGPT.app)
+fi
+
+dock_apps+=("/System/Applications/System Settings.app")
+
+dock_tiles=()
+for app in "${dock_apps[@]}"; do
+  if [[ ! -d "$app" ]]; then
+    printf 'Cannot configure Dock: application not found at %s\n' "$app" >&2
+    exit 1
+  fi
+  dock_tiles+=("$(dock_tile "$app")")
+done
+
+# Finder is supplied by macOS and stays ahead of the pinned apps.
+defaults write com.apple.dock persistent-apps -array "${dock_tiles[@]}"
+
+# Without a running Dock, the saved preferences apply at the next login.
+if pgrep -u "$UID" -x Dock >/dev/null; then
+  killall Dock
+fi
+
+echo "macOS system, input, Dock, and Terminal settings saved. If needed, log out and back in to apply them."
