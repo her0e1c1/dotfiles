@@ -35,14 +35,11 @@ Dock setup replaces the current list of pinned apps each time it runs. Finder is
 
 ## Server iCloud settings
 
-From a graphical session on the server Mac, run the following command to apply the [home server settings](server.md) and open the configuration profile.
+Run `make macos-server` to apply the [home server settings](server.md). The command prints the iCloud steps and opens System Settings when run from a graphical login. If you ran it over SSH, use Screen Sharing to complete the steps on the server.
 
-```bash
-make macos-server
-```
+Use the macOS account whose sync settings you want to change. If System Settings shows **Sign In** at the top of the sidebar, iCloud sync is already off for that user. Otherwise, open **System Settings → Apple Account → iCloud**.
 
-In **System Settings → General → Device Management**, select **macOS Server iCloud Restrictions** under **Downloaded** and click **Install**. Use a screen sharing session if the server has no display. [Apple’s profile installation guide](https://support.apple.com/guide/mac-help/mh35561/mac)
+1. Open **Drive**, turn off **Sync this Mac**, and confirm it is off. This also stops syncing Desktop and Documents. If prompted, choose to keep a copy of files you still need on the server. [Apple’s guide to turning off iCloud Drive](https://support.apple.com/en-us/126628)
+2. Under **iCloud → See All**, turn off and verify any other sync settings you want disabled, such as Photos, Passwords, or Notes. Save local copies of any iCloud data you need before turning off sync. [Apple’s iCloud settings guide](https://support.apple.com/guide/mac-help/mh36834/mac)
 
-The profile disables iCloud Drive (including Desktop and Documents), Photos, Keychain, Notes, Contacts, Calendar, Safari bookmark sync, and iCloud Mail for all users on the Mac. If the Mac already syncs files or photos, [copy anything you need locally](https://support.apple.com/en-us/108306) before installing the profile.
-
-You can run `make macos-server` again to open an updated profile for installation. To remove the restrictions, remove the profile in **Device Management**.
+If the previously installed **macOS Server iCloud Restrictions** profile prevents you from changing the switches, remove that profile in **System Settings → General → Device Management** and check the switches again. [Apple’s profile removal guide](https://support.apple.com/guide/mac-help/mh35561/mac)
