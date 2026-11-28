@@ -51,43 +51,37 @@ fi
 osascript -l JavaScript <<'JXA'
 ObjC.import("Foundation");
 
-function configureTerminal(prefs, factoryProfilesPath) {
-  const profilesKey = "Window Settings";
-  const storedProfiles = prefs.objectForKey(profilesKey);
-  const profiles = storedProfiles.isNil()
-    ? $.NSMutableDictionary.alloc.init
-    : storedProfiles.mutableCopy;
+const prefs = $.NSUserDefaults.alloc.initWithSuiteName("com.apple.Terminal");
+const terminal = $.NSBundle.bundleWithPath("/System/Applications/Utilities/Terminal.app");
+const profilesKey = "Window Settings";
+const builtInDirectory = "Initial Settings";
+let profiles = prefs.dictionaryForKey(profilesKey).mutableCopy;
 
-  // On a fresh setup, retain all of Terminal's built-in profiles.
-  if (storedProfiles.isNil()) {
-    const files = $.NSFileManager.defaultManager.contentsOfDirectoryAtPathError(factoryProfilesPath, null);
-    for (const file of ObjC.deepUnwrap(files)) {
-      if (file.endsWith(".terminal")) {
-        const profile = $.NSDictionary.dictionaryWithContentsOfFile(factoryProfilesPath + "/" + file);
-        profiles.setObjectForKey(profile, file.slice(0, -".terminal".length));
-      }
-    }
-  }
-
-  const storedBasic = profiles.objectForKey("Basic");
-  const basic = storedBasic.isNil()
-    ? $.NSDictionary.dictionaryWithContentsOfFile(factoryProfilesPath + "/Basic.terminal").mutableCopy
-    : storedBasic.mutableCopy;
-  basic.setObjectForKey($.NSNumber.numberWithBool(true), "useOptionAsMetaKey");
-  profiles.setObjectForKey(basic, "Basic");
-
-  prefs.setObjectForKey(profiles, profilesKey);
-  prefs.setObjectForKey("Basic", "Default Window Settings");
-  prefs.setObjectForKey("Basic", "Startup Window Settings");
-
-  if (!prefs.synchronize) {
-    throw new Error("Could not save Terminal preferences");
+// Keep the full set of bundled profiles when Terminal has no saved profiles yet.
+if (!profiles) {
+  profiles = $.NSMutableDictionary.alloc.init;
+  const paths = terminal.pathsForResourcesOfTypeInDirectory("terminal", builtInDirectory);
+  for (const path of ObjC.deepUnwrap(paths)) {
+    const name = ObjC.unwrap($(path).lastPathComponent.stringByDeletingPathExtension);
+    profiles.setObjectForKey($.NSDictionary.dictionaryWithContentsOfFile(path), name);
   }
 }
 
-const factoryProfilesPath = "/System/Applications/Utilities/Terminal.app/Contents/Resources/Initial Settings";
-configureTerminal($.NSUserDefaults.alloc.initWithSuiteName("com.apple.Terminal"), factoryProfilesPath);
+let basic = profiles.objectForKey("Basic").mutableCopy;
+if (!basic) {
+  const path = terminal.pathForResourceOfTypeInDirectory("Basic", "terminal", builtInDirectory);
+  basic = $.NSDictionary.dictionaryWithContentsOfFile(path).mutableCopy;
+}
+basic.setObjectForKey($.NSNumber.numberWithBool(true), "useOptionAsMetaKey");
+profiles.setObjectForKey(basic, "Basic");
+prefs.setObjectForKey(profiles, profilesKey);
+if (!prefs.synchronize) {
+  throw new Error("Could not save Terminal preferences");
+}
 JXA
+
+defaults write com.apple.Terminal 'Default Window Settings' -string Basic
+defaults write com.apple.Terminal 'Startup Window Settings' -string Basic
 
 echo "Configuring macOS Dock..."
 
