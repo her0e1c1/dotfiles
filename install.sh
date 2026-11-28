@@ -97,12 +97,12 @@ Options:
   --install-packages   Install package manager and packages
   --install-vscode     Install VSCode settings
   --install-shell      Install shell configuration
-  --configure-macos    Configure macOS trackpad and pointer settings
+  --configure-macos    Configure macOS system and Terminal settings
 
 Examples:
   $0                   Full installation
   $0 --install-vscode  Install only VSCode settings
-  $0 --configure-macos  Configure only macOS input settings
+  $0 --configure-macos  Configure only macOS settings
 EOF
 }
 
@@ -260,7 +260,7 @@ configure_shell() {
 
 configure_macos() {
   if [[ "$OS" != "macos" ]]; then
-    info "Skipping macOS input settings on $OS"
+    info "Skipping macOS settings on $OS"
     return
   fi
 

@@ -10,6 +10,16 @@ The full installer calls [`scripts/macos.sh`](../../../scripts/macos.sh) on macO
 
 | Setting | Value |
 | --- | --- |
+| Appearance | Dark |
+| Dock auto-hide | Enabled |
+| Dock icon size | 128 |
+| Stage Manager | Enabled |
+| Finder view style | List |
+| App Exposé trackpad gesture | Swipe down with four fingers |
+| Press-and-hold accent menu | Disabled |
+| Terminal profile for new windows | Basic |
+| Terminal startup profile | Basic |
+| Terminal Option as Meta key in Basic | Enabled |
 | Trackpad tap to click | Enabled |
 | Trackpad dragging style | Three-finger drag |
 | Trackpad tap to drag | Disabled |
