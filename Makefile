@@ -20,6 +20,7 @@ macos:
 # macOS requires approval in System Settings to install a local configuration profile.
 macos-server:
 	@test "$$(uname -s)" = Darwin || { echo "macos-server requires macOS" >&2; exit 1; }
+	./scripts/macos-server.sh
 	@open "$(CURDIR)/scripts/macos-server-icloud.mobileconfig"
 	@echo "In System Settings > General > Device Management, install macOS Server iCloud Restrictions."
 

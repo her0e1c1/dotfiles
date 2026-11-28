@@ -35,7 +35,7 @@ Dock setup replaces the current list of pinned apps each time it runs. Finder is
 
 ## Server iCloud settings
 
-From a graphical session on the server Mac, run the following command to open the configuration profile.
+From a graphical session on the server Mac, run the following command to apply the [home server settings](server.md) and open the configuration profile.
 
 ```bash
 make macos-server
