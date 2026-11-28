@@ -46,7 +46,7 @@ if command -v hidutil >/dev/null 2>&1; then
   hidutil property --set '{"HIDMouseAcceleration":163840}'
 fi
 
-# Use Foundation to update the nested Terminal profile while preserving its other settings.
+# Use Foundation to update the nested Terminal profiles while preserving their other settings.
 osascript -l JavaScript <<'JXA'
 ObjC.import("Foundation");
 
@@ -66,21 +66,26 @@ if (!profiles) {
   }
 }
 
-let basic = profiles.objectForKey("Basic").mutableCopy;
-if (!basic) {
+if (!profiles.objectForKey("Basic")) {
   const path = terminal.pathForResourceOfTypeInDirectory("Basic", "terminal", builtInDirectory);
-  basic = $.NSDictionary.dictionaryWithContentsOfFile(path).mutableCopy;
+  profiles.setObjectForKey($.NSDictionary.dictionaryWithContentsOfFile(path), "Basic");
 }
-basic.setObjectForKey($.NSNumber.numberWithBool(true), "useOptionAsMetaKey");
-profiles.setObjectForKey(basic, "Basic");
+
+for (const name of ObjC.deepUnwrap(profiles.allKeys)) {
+  const profile = profiles.objectForKey(name).mutableCopy;
+  profile.setObjectForKey($.NSNumber.numberWithBool(true), "useOptionAsMetaKey");
+  profiles.setObjectForKey(profile, name);
+}
 prefs.setObjectForKey(profiles, profilesKey);
+prefs.setObjectForKey($("Basic"), "Default Window Settings");
+prefs.setObjectForKey($("Basic"), "Startup Window Settings");
 if (!prefs.synchronize) {
   throw new Error("Could not save Terminal preferences");
 }
 JXA
 
-defaults write com.apple.Terminal 'Default Window Settings' -string Basic
-defaults write com.apple.Terminal 'Startup Window Settings' -string Basic
+# Terminal loads saved profiles on launch, so an open window can retain the old keyboard setting.
+echo "If Terminal is open, quit it with Command-Q and reopen it to apply Option as Meta."
 
 echo "Configuring macOS Dock..."
 
