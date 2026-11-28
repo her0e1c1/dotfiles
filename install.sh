@@ -72,6 +72,8 @@ BREW_CASK_PACKAGES=(
   docker-desktop
   github-copilot-app
   google-chrome
+  # Installs the standalone macOS VPN client.
+  tailscale-app
   visual-studio-code
   # Required for nvim to render Nerd Font glyphs correctly
   # Settings -> Text -> Font -> Change... -> JetBrainsMono Nerd Font
