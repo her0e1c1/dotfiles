@@ -48,7 +48,7 @@ dock_tile() {
         <key>_CFURLStringType</key><integer>15</integer>
       </dict>
     </dict>
-  </dict>' "$1"
+  </dict>' "${1// /%20}"
 }
 
 dock_apps=(
@@ -56,19 +56,18 @@ dock_apps=(
   /System/Applications/Utilities/Terminal.app
 )
 
+if [[ -d /Applications/ChatGPT.app ]]; then
+  dock_apps+=(/Applications/ChatGPT.app)
+fi
+
+dock_apps+=("/System/Applications/System Settings.app")
+
+dock_tiles=()
 for app in "${dock_apps[@]}"; do
   if [[ ! -d "$app" ]]; then
     printf 'Cannot configure Dock: application not found at %s\n' "$app" >&2
     exit 1
   fi
-done
-
-if [[ -d /Applications/ChatGPT.app ]]; then
-  dock_apps+=(/Applications/ChatGPT.app)
-fi
-
-dock_tiles=()
-for app in "${dock_apps[@]}"; do
   dock_tiles+=("$(dock_tile "$app")")
 done
 
