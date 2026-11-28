@@ -91,10 +91,12 @@ Options:
   --install-packages   Install package manager and packages
   --install-vscode     Install VSCode settings
   --install-shell      Install shell configuration
+  --configure-macos    Configure macOS trackpad and pointer settings
 
 Examples:
   $0                   Full installation
   $0 --install-vscode  Install only VSCode settings
+  $0 --configure-macos  Configure only macOS input settings
 EOF
 }
 
@@ -250,12 +252,50 @@ configure_shell() {
   success "Created/overwritten ~/.bash_profile with 'source ~/.bashrc'"
 }
 
+configure_macos() {
+  if [[ "$OS" != "macos" ]]; then
+    info "Skipping macOS input settings on $OS"
+    return
+  fi
+
+  info "Configuring macOS trackpad and pointer settings..."
+
+  # macOS stores gestures separately for built-in and Bluetooth trackpads.
+  local domain
+  for domain in com.apple.AppleMultitouchTrackpad com.apple.driver.AppleBluetoothMultitouch.trackpad; do
+    defaults write "$domain" Clicking -bool true
+    defaults write "$domain" TrackpadThreeFingerDrag -bool true
+    # Clear tap-to-drag and swipes that compete with three-finger dragging.
+    defaults write "$domain" Dragging -bool false
+    defaults write "$domain" TrackpadThreeFingerHorizSwipeGesture -int 0
+    defaults write "$domain" TrackpadThreeFingerVertSwipeGesture -int 0
+  done
+
+  # Keep the per-Mac gesture and tap preferences in sync with the trackpad domains.
+  defaults -currentHost write -g com.apple.mouse.tapBehavior -int 1
+  defaults -currentHost write -g com.apple.trackpad.threeFingerDragGesture -bool true
+  defaults -currentHost write -g com.apple.trackpad.threeFingerHorizSwipeGesture -int 0
+  defaults -currentHost write -g com.apple.trackpad.threeFingerVertSwipeGesture -int 0
+
+  # 3 is the maximum tracking speed in System Settings.
+  defaults write -g com.apple.mouse.scaling -float 3
+  defaults write -g com.apple.trackpad.scaling -float 3
+
+  # Update the active mouse speed as well. HID uses 16.16 fixed-point values.
+  if command -v hidutil >/dev/null 2>&1; then
+    hidutil property --set '{"HIDMouseAcceleration":196608}'
+  fi
+
+  success "macOS input settings saved. If needed, log out and back in to apply them."
+}
+
 # メイン処理
 main() {
   local should_install_dotfiles=false
   local should_install_packages=false
   local should_install_vscode=false
   local should_install_shell=false
+  local should_configure_macos=false
   local has_install_flag=false
 
   # オプション解析
@@ -285,6 +325,11 @@ main() {
       has_install_flag=true
       shift
       ;;
+    --configure-macos)
+      should_configure_macos=true
+      has_install_flag=true
+      shift
+      ;;
     *)
       error "Unknown option: $1"
       ;;
@@ -297,6 +342,7 @@ main() {
     should_install_packages=true
     should_install_vscode=true
     should_install_shell=true
+    should_configure_macos=true
   fi
 
   echo "=== Dotfiles Installer ==="
@@ -330,6 +376,10 @@ main() {
   # シェル設定
   if [ "$should_install_shell" = true ]; then
     configure_shell
+  fi
+
+  if [ "$should_configure_macos" = true ]; then
+    configure_macos
   fi
 
   echo

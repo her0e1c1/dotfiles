@@ -20,24 +20,23 @@ Disable press-and-hold accent selection so holding a key repeats the same charac
 defaults write -g ApplePressAndHoldEnabled -bool false
 ```
 
-### Trackpad
+### Trackpad and Pointer
 
-Open `System Settings` -> `Trackpad`.
+Run from the dotfiles repository as the Mac user whose settings you want to change.
 
-| Setting | Value |
-| --- | --- |
-| Click | Enable one-finger click |
-| Secondary click | Click or tap with two fingers |
-| Tracking speed | Set the cursor speed to a comfortable level |
+```bash
+make macos
+```
 
-### Three-Finger Drag
-
-Open `System Settings` -> `Accessibility` -> `Pointer Control` -> `Trackpad Options`.
+You can also run `./install.sh --configure-macos`. The full installer applies the same settings on macOS. If the changes do not take effect immediately, log out and back in.
 
 | Setting | Value |
 | --- | --- |
-| Use trackpad for dragging | Enabled |
-| Dragging style | Three-Finger Drag |
+| Trackpad tap to click | Enabled |
+| Trackpad dragging style | Three-finger drag |
+| Mouse and trackpad tracking speed | Fastest |
+
+For two-finger secondary click, open `System Settings` → `Trackpad` → `Point & Click` and set `Secondary click` to `Click or Tap with Two Fingers`.
 
 ### Terminal
 
