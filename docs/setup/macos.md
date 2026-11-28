@@ -28,7 +28,7 @@ Run from the dotfiles repository as the Mac user whose settings you want to chan
 make macos
 ```
 
-You can also run `./install.sh --configure-macos`. The full installer applies the same settings on macOS. If the changes do not take effect immediately, log out and back in.
+You can also run `./scripts/macos.sh` directly. The full installer calls the same script on macOS. If the changes do not take effect immediately, log out and back in.
 
 | Setting | Value |
 | --- | --- |
