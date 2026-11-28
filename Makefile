@@ -1,4 +1,4 @@
-.PHONY: install dot pkg env
+.PHONY: install dot pkg macos env
 
 ENVRC_SOURCE := $(CURDIR)/.envrc.example
 ENVRC_TARGET ?= $(HOME)/.envrc
@@ -11,6 +11,9 @@ dot:
 
 pkg:
 	./install.sh --install-packages
+
+macos:
+	./install.sh --configure-macos
 
 env:
 	@test -f "$(ENVRC_SOURCE)" || { echo "missing: $(ENVRC_SOURCE)"; exit 1; }

@@ -4,4 +4,4 @@ Use these guides when initializing a machine or restoring environment-specific s
 
 | Page | Focus |
 | --- | --- |
-| [macos.md](macos.md) | Initial macOS settings for trackpad, Terminal, hostname, key repeat, and Apple Watch unlock |
+| [macOS setup](macos/README.md) | macOS trackpad and pointer settings |

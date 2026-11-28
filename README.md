@@ -19,7 +19,7 @@ Sign in with github account by selecting `Backup and Sync Settings`
 
 ## Setup Guides
 
-- [macOS setup](docs/setup/macos.md)
+- [macOS setup](docs/setup/macos/README.md)
 
 ## Cheatsheets
 
