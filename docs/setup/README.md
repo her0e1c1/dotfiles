@@ -5,3 +5,4 @@ Use these guides when initializing a machine or restoring environment-specific s
 | Page | Focus |
 | --- | --- |
 | [macOS setup](macos/README.md) | macOS system, input, Dock, and Terminal settings |
+| [macOS home server](macos/server.md) | Screen lock, remote access, and remote development |
