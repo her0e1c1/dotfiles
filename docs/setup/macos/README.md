@@ -17,3 +17,6 @@ The full installer calls [`scripts/macos.sh`](../../../scripts/macos.sh) on macO
 | Trackpad three-finger vertical swipe | Disabled |
 | Mouse tracking speed | Fastest |
 | Trackpad tracking speed | Fastest |
+| Dock pinned apps | Finder → Safari → Terminal → ChatGPT (if installed in `/Applications`) → System Settings |
+
+Dock setup replaces the current list of pinned apps each time it runs. Finder is displayed automatically by macOS.
